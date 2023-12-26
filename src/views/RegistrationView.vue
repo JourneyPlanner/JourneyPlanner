@@ -35,6 +35,8 @@ export default {
 
     async function signUp() {
       if (!state.accepted) {
+        this.v$.$touch()
+        console.log(v$.$error);
         return;
       }
       const {user, error} = await supabase.auth.signUp(
@@ -90,7 +92,7 @@ export default {
               <h2 class="text-xl font-nunito font-semibold">Passwort wiederholen</h2>
               <input v-model=v$.passwordRepeat.$model type="password"
                      class="font-nunito text-xl border rounded border-none focus:outline-none focus:ring-2 focus:ring-call-to-action pl-1"
-                     placeholder="Passwort eingeben">
+                     placeholder="Passwort eingeben" @keyup.enter="signUp">
               <p v-if="v$.passwordRepeat.$error" class="text-delete text-base font-nunito">Nicht ident zu Passwort</p>
               <div class="check">
                 <label class="font-nunito text-base">
@@ -104,9 +106,9 @@ export default {
               <p v-if="v$.accepted.$error" class="text-delete text-base font-nunito">Bitte akzeptieren Sie die
                 Datenschutzerklärung</p>
               <div class="my-3">
-                <button :disabled="v$.$invalid" @mouseover="v$.$touch()" type="button"
-                        class="registerButton bg-call-to-action rounded-3xl font-nunito text-xl font-bold p-1 px-2"
-                        @click="signUp">Registrieren
+                <button :disabled="v$.$invalid" type="button"
+                        class="disabled:opacity-50 registerButton bg-call-to-action rounded-3xl font-nunito text-xl font-bold p-1 px-2 hover:opacity-80"
+                        @click="signUp" @keyup.enter="signUp">Registrieren
                 </button>
                 <RouterLink
                     class="font-nunito text-base font-bold px-2 break-after-all underline underline-offset-2 lg:ml-4"

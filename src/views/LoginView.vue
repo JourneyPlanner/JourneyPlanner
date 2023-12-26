@@ -1,75 +1,88 @@
-<script lang="ts">
-import { reactive, ref } from "vue";
+<script lang="ts" setup>
+import {reactive, ref} from "vue";
 //@ts-ignore
-import { supabase } from "@/lib/supabaseClient";
-import { useVuelidate } from '@vuelidate/core'
-import { required, email } from '@vuelidate/validators'
+import {supabase} from "@/lib/supabaseClient";
+import {useVuelidate} from '@vuelidate/core'
+import {required, email} from '@vuelidate/validators'
 import Footer from "@/components/Footer.vue";
 import PersonWalkingIllustration from "@/components/illustrations/PersonWalkingIllustration.vue";
 import BackToHomeButton from "@/components/buttons/BackToHomeButton.vue";
 import router from "@/router";
-import { useRoute } from "vue-router";
+import {useRoute} from "vue-router";
 
-export default {
-  components: { BackToHomeButton, PersonWalkingIllustration, Footer },
-  setup() {
-    const registered = ref(false);
-    if (useRoute().query.registered == "true") {
-      registered.value = true;
-    }
+import Toast from 'primevue/toast';
+import {useToast} from 'primevue/usetoast';
 
-    const unauthorized = ref(false);
-    if (useRoute().query.unauthorized == "true") {
-      unauthorized.value = true;
-    }
+const registered = ref(false);
+const toast = useToast();
 
-    const redirect = useRoute().query.redirect;
+if (useRoute().query.registered == "true") {
+  registered.value = true;
+}
+
+const unauthorized = ref(false);
+if (useRoute().query.unauthorized == "true") {
+  unauthorized.value = true;
+}
+
+const redirect = useRoute().query.redirect;
+if (redirect) {
+  unauthorized.value = true;
+}
+
+const state = reactive({
+  password: '',
+  contact: {
+    email: ''
+  }
+})
+
+const rules = {
+  password: {required},
+  contact: {
+    email: {required, email: email} // Matches state.contact.email
+  }
+}
+
+const v$ = useVuelidate(rules, state)
+
+async function signIn() {
+  const {data, error} = await supabase.auth.signInWithPassword(
+      {
+        email: state.contact.email,
+        password: state.password
+      }
+  )
+  if (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Fehler beim einloggen',
+      detail: 'Du hast einen Falschen Benutzernamen oder ein falsches Passwort angegben.',
+      life: 5000
+    });
+  } else {
+    toast.add({
+      severity: 'success',
+      summary: 'Angemeldet!',
+      detail: 'Du wirst gleich weitergeleitet...',
+      life: 1000
+    });
+  }
+
+  if (error) {
+    console.log(error);
+  } else {
     if (redirect) {
-      unauthorized.value = true;
+      await router.push(redirect + '');
     }
-
-    const wrongPassw = ref(false);
-    const state = reactive({
-      password: '',
-      contact: {
-        email: ''
-      }
-    })
-
-    const rules = {
-      password: {required},
-      contact: {
-        email: {required, email: email} // Matches state.contact.email
-      }
-    }
-
-    const v$ = useVuelidate(rules, state)
-
-    async function signIn() {
-      const {data, error} = await supabase.auth.signInWithPassword(
-          {
-            email: state.contact.email,
-            password: state.password
-          }
-      )
-
-      if (error) {
-        console.log(error);
-        wrongPassw.value = true;
-      } else {
-        if (redirect) {
-          await router.push(redirect +  '');
-        }
-        await router.push("/dashboard");
-      }
-    }
-
-    return {state, v$, signIn, wrongPassw, registered, unauthorized}
+    await router.push("/dashboard");
   }
 }
 
 </script>
 <template>
+  <Toast/>
+
   <div class="relative text-text-black">
     <div class="about bg-background flex">
       <div class="w-1/2 items-center justify-center overflow-x-hidden">
@@ -102,17 +115,15 @@ export default {
           <h1 class="xl:text-3xl md:text-3xl sm:text-3xl pl-6.1538em font-nunito pt-[15%]">Login</h1>
           <form class="bg-primary rounded-2xl xl:w-[25vw] md:w-[50vw] sm:w-[75vw]">
             <div class="inside flex flex-col pl-8 ">
-              <p v-if="wrongPassw" class="pt-3 text-delete text-base font-nunito font-bold">Falscher Benutzername oder
-                Passwort</p>
               <h2 class="col-start-1 text-xl font-nunito font-semibold">E-Mail</h2>
               <input v-model="v$.contact.email.$model" class="font-nunito text-xl" placeholder="E-Mail eingeben">
               <p v-if="v$.contact.email.$error" class="text-delete text-base font-nunito">Nicht das richtige Format</p>
               <h2 class="text-xl font-nunito font-semibold">Passwort</h2>
               <input v-model=v$.password.$model type="password" class="font-nunito text-xl"
-                     placeholder="Passwort eingeben">
+                     placeholder="Passwort eingeben" @keyup.enter="signIn">
               <div class="my-3">
-                <button :disabled="v$.$invalid" @mouseover="v$.$touch()" type="button"
-                        class="bg-call-to-action rounded-3xl font-nunito text-xl font-bold p-1.5 px-6"
+                <button :disabled="v$.$invalid" type="button"
+                        class="disabled:opacity-50 bg-call-to-action border-call-to-action rounded-3xl font-nunito text-xl font-bold p-1.5 px-6 hover:opacity-80 shadow-lg"
                         @click="signIn">Login
                 </button>
                 <RouterLink
