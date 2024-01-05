@@ -23,6 +23,7 @@ export default {
   data() {
     return {
       currentUserRole: ref(),
+      eventCount: ref(0),
       noEvents: ref(true),
       activities: ref(),
       showDataBool: false,
@@ -43,6 +44,11 @@ export default {
       calendarPlugins: [interactionPlugin, momentTimezonePlugin],
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin, TimeGridPlugin, momentTimezonePlugin],
+        headerToolbar: {
+          start: 'title prev,next today',
+          center: '',
+          end: 'dayGridYear dayGridMonth timeGridWeek timeGridDay'
+        },
         initialView: 'timeGridWeek',
         initialDate: '',
         initialEvents: [],
@@ -115,6 +121,11 @@ export default {
           .eq('pk_activity_uuid', event.event._def.extendedProps.defId);
       if (error) {
         console.log(error);
+      }
+      event.draggedEl.parentNode.removeChild(event.draggedEl);
+      this.eventCount--;
+      if (this.eventCount <= 0){
+        this.noEvents = true;
       }
     },
     async initializeJourneyID() {
@@ -199,6 +210,7 @@ export default {
             this.index++;
           } else {
             this.noEvents = false;
+            this.eventCount++;
           }
         });
         if (this.INITIAL_EVENTS.length <= 0) {
@@ -330,7 +342,8 @@ export default {
               <div class="grid grid-cols-6 pb-3 justify-center items-center">
                 <h2 class="col-span-2 font-nunito text-2xl text-text-black font-semibold">Aktivitäten</h2>
                 <RouterLink :to='$route.fullPath + "/aktivitaet/neu"' class="col-start-6 bg-call-to-action
-                rounded-3xl flex text-text-black font-nunito text-center items-center justify-center text-xl font-bold shadow-md hover:opacity-80" v-tooltip.bottom="{
+                rounded-3xl flex text-text-black font-nunito text-center items-center justify-center text-xl font-bold shadow-md hover:opacity-80"
+                            v-tooltip.bottom="{
                value: 'Aktivität erstellen',
                  style:{
                    width: '30vw'
@@ -351,7 +364,7 @@ export default {
                   </div>
                 </div>
                 <div v-if="noEvents" class="text-center justify-center w-[100%]">
-                  <p class="font-nunito-sans text-base text-text-black py-3"> Noch keine Aktivitäten
+                  <p class="font-nunito-sans text-base text-text-black py-3"> Keine Aktivitäten
                     vorhanden.</p>
                 </div>
               </div>
@@ -365,7 +378,7 @@ export default {
               </div>
               <FullCalendar v-if="INITIAL_EVENTS.length > 0 || nothing_To_Render"
                             :options="calendarOptions"
-                            class="px-4 bg-background rounded-md pt-3"
+                            class="px-4 bg-background rounded-md py-3"
               />
               <p class="font-nunito text-base text-text-black font-semibold text-center pt-1">Wird automatisch
                 gespeichert! Aktivität anklicken, um alle Informationen zu sehen.</p>
