@@ -1,17 +1,12 @@
-<script setup>
-import { TolgeeProvider, T } from "@tolgee/vue";
-</script>
-
 <template>
-  <div>
-    <TolgeeProvider>
-      <NuxtLayout>
-        <NuxtPage />
-        <T keyName="translation_key" />
-      </NuxtLayout>
-      <template v-slot:fallback>
-        <div>Loading...</div>
-      </template>
-    </TolgeeProvider>
-  </div>
+  <TolgeeProvider>
+    <NuxtLayout>
+      <NuxtPage />
+      <label for="test"><T keyName="translation_key" /></label>
+      <input type="text" id="test" />
+    </NuxtLayout>
+    <template v-slot:fallback>
+      <div>Loading...</div>
+    </template>
+  </TolgeeProvider>
 </template>
