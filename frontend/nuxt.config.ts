@@ -18,7 +18,6 @@ export default defineNuxtConfig({
       include: ["Password"],
     },
   },
-  css: ["primevue/resources/themes/aura-light-green/theme.css"],
   veeValidate: {
     autoImports: true,
     componentNames: {
