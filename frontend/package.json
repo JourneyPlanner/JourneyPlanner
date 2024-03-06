@@ -11,11 +11,14 @@
   },
   "dependencies": {
     "@tolgee/vue": "^5.19.6",
+    "@vee-validate/nuxt": "^4.12.5",
     "nuxt": "^3.10.3",
+    "primevue": "^3.49.1",
     "vue": "^3.4.19",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
-    "@nuxtjs/tailwindcss": "^6.11.4"
+    "@nuxtjs/tailwindcss": "^6.11.4",
+    "nuxt-primevue": "^0.3.1"
   }
 }

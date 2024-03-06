@@ -1,28 +1,8 @@
 <script setup lang="ts">
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { T } from "@tolgee/vue";
-
-// const state = reactive({
-//   accepted: false,
-//   password: "",
-//   passwordRepeat: "",
-//   username: "",
-//   contact: {
-//     email: "",
-//   },
-// });
-
-// const rules = {
-//   accepted: { checked: sameAs(true), $autoDirty: true },
-//   username: { required }, // Matches state.firstName
-//   password: { required, minlength: minLength(6) },
-//   passwordRepeat: { sameAsPassword: sameAs(computed(() => state.password)) },
-//   contact: {
-//     email: { required, email: email }, // Matches state.contact.email
-//   },
-// };
-
-// const v$ = useVuelidate(rules, state);
+import Aircraft from "~/public/icons/Aircraft.vue";
+import Clouds from "~/public/icons/Clouds.vue";
 
 const state = reactive({
   accepted: false,
@@ -36,6 +16,9 @@ const state = reactive({
 
 function onSubmit(values: JSON) {
   console.log(JSON.stringify(values));
+  console.log(values);
+  console.log(values.email);
+  registerUser(values);
 }
 
 function passwordRules(value: string) {
@@ -67,19 +50,18 @@ function requiredEmail(value: string) {
   return "This field must be a valid email address";
 }
 
-async function registerUser() {
-  const todo = await $fetch("localhost:8000", {
-    method: "POST",
-    body: {
-      // My todo data
-    },
-  });
+async function registerUser(values: JSON) {
+  const todo = await $fetch("http://127.0.0.1:8000/sanctum/csrf-cookie");
+  console.log(todo);
 }
 </script>
 
 <template>
   <div class="w-full flex justify-center items-center">
-    <div class="xl:w-1/2 md:w-1/3 sm:w-0"></div>
+    <div class="xl:w-1/2 md:w-1/3 sm:w-0">
+      <Aircraft></Aircraft>
+      <Clouds></Clouds>
+    </div>
     <div class="flex xl:w-1/2 md:w-2/3 sm:w-full justify-center items-center">
       <div class="text-center mt-10">
         <fieldset
@@ -88,80 +70,80 @@ async function registerUser() {
         >
           <legend for="outerBlock">Registration</legend>
           <Form @submit="onSubmit">
-            <div class="relative">
+            <div class="relative my-2">
               <Field
                 type="text"
                 id="email"
                 name="email"
                 value=""
-                class="block w-full px-3 py-2 pl-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                class="block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 dark:bg-gray-700 border-0 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
                 :rules="requiredEmail"
               />
               <ErrorMessage name="email" />
               <label
                 for="email"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-                ><T keyName="register.email.input.label"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                ><T keyName="form.input.email"
               /></label>
             </div>
 
-            <div class="relative">
+            <div class="relative my-2">
               <Field
                 type="text"
                 id="username"
                 name="username"
                 value=""
-                class="my-3 block w-full px-3 py-2 pl-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                class="block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 dark:bg-gray-700 border-0 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
                 :rules="required"
               />
               <ErrorMessage name="username" />
               <label
                 for="username"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-                ><T keyName="register.username.input.label"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                ><T keyName="form.input.username"
               /></label>
             </div>
 
-            <div class="relative">
+            <div class="relative my-2">
               <Field
+                type="password"
                 id="password"
                 name="password"
-                type="password"
                 value=""
-                class="my-3 block w-full px-3 py-2 pl-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                class="block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 dark:bg-gray-700 border-0 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
                 v-model="state.password"
-                placeholder=""
                 :rules="passwordRules"
               />
               <ErrorMessage name="password" />
               <label
                 for="password"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-                ><T keyName="register.password.input.label"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                ><T keyName="form.input.password"
               /></label>
             </div>
 
-            <div class="relative">
+            <div class="relative my-2">
               <Field
                 type="password"
                 id="repeatPassword"
                 name="repeatPassword"
                 value=""
-                class="my-3 block w-full px-3 py-2 pl-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                class="block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 dark:bg-gray-700 border-0 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
                 :rules="sameAsPassword"
               />
               <ErrorMessage name="repeatPassword" />
               <label
                 for="repeatPassword"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-                ><T keyName="register.repeatPassword.input.label"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                ><T keyName="form.input.password.repeat"
               /></label>
             </div>
             <button class="rounded-2xl bg-yellow-400 py-1 px-4">
-              <T keyName="register.submit.button" />
+              <T keyName="form.button.register" />
             </button>
           </Form>
         </fieldset>

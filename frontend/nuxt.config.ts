@@ -1,8 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  modules: ["@nuxtjs/tailwindcss", "nuxt-primevue", "@vee-validate/nuxt"],
   css: ["@/assets/css/fonts/fonts.css"],
-  modules: ["@nuxtjs/tailwindcss", "nuxt-primevue"],
   runtimeConfig: {
     public: {
       NUXT_TOLGEE_API_KEY: process.env.NUXT_TOLGEE_API_KEY,
@@ -10,8 +10,22 @@ export default defineNuxtConfig({
     },
   },
   primevue: {
+    options: {
+      ripple: true,
+      unstyled: false,
+    },
     components: {
       include: ["Password"],
+    },
+  },
+  css: ["primevue/resources/themes/aura-light-green/theme.css"],
+  veeValidate: {
+    autoImports: true,
+    componentNames: {
+      Form: "VeeForm",
+      Field: "VeeField",
+      FieldArray: "VeeFieldArray",
+      ErrorMessage: "VeeErrorMessage",
     },
   },
 });
