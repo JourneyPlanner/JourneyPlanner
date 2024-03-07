@@ -27,7 +27,7 @@ function passwordRules(value: string) {
   if (value.length >= 6) {
     return true;
   }
-  return t("form.input.password");
+  return t.value("form.input.password");
 }
 
 function sameAsPassword(value: string) {
