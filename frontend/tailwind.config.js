@@ -21,6 +21,7 @@ export default {
       footer: "#7b7b7b" /* footer text */,
       error: "#d43d3d" /* error text */,
       link: "#5ba5c5" /* link text */,
+      cancel: "#BB7474" /* cancel button */,
     },
   },
   plugins: [],
