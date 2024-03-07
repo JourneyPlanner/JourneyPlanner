@@ -14,6 +14,5 @@ export default defineNuxtPlugin((nuxtApp) => {
     staticData: {},
   });
 
-  console.log(config);
   nuxtApp.vueApp.use(VueTolgee, { tolgee });
 });
