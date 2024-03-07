@@ -1,47 +1,26 @@
 <script setup lang="ts">
-import { Form, Field, ErrorMessage } from "vee-validate";
-import { T } from "@tolgee/vue";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
 
-const journeyName = ref("");
-const journeyDestination = ref("");
-const journeyRange = ref("");
+/* function test() {
+  return t.value("form.input.journey.range");
+} */
 
-let journeyRangeIsFocused = ref(false);
+//TODO: localize error message
+const { handleSubmit } = useForm({
+  validationSchema: yup.object({
+    journeyName: yup
+      .string()
+      .required("error message here")
+      .label("Journey Name"),
+    journeyDestination: yup.string().required(),
+    journeyRange: yup.array().of(yup.date()).required(),
+  }),
+});
 
-const handleFocus = () => {
-  journeyRangeIsFocused.value = true;
-};
-
-const handleBlur = () => {
-  journeyRangeIsFocused.value = false;
-};
-
-function required(value: string) {
-  if (value.length > 0) {
-    return true;
-  }
-  return "This field is required";
-}
-
-function requiredJourneyName(value: string) {
-  if (value.length > 0) {
-    return true;
-  }
-
-  return "name fehlt";
-}
-
-function requiredJourneyDestination(value: string) {
-  if (value.length > 0) {
-    return true;
-  }
-
-  return "destination fehlt";
-}
-
-function onSubmit() {
-  console.log("submit");
-}
+const onSubmit = handleSubmit((values) => {
+  alert(JSON.stringify(values, null, 2));
+});
 </script>
 
 <template>
@@ -53,57 +32,22 @@ function onSubmit() {
       <legend for="create-journey" class="text-3xl px-2 font-bold">
         <T keyName="form.header.journey.create" />
       </legend>
-      <Form @submit="onSubmit" class="px-5">
-        <Input
+      <form @submit="onSubmit" class="px-5">
+        <FormInput
           id="journey-name"
           name="journeyName"
-          :value="journeyName"
-          validation="requiredJourneyName"
           translationKey="form.input.journey.name"
         />
-        <Input
+        <FormInput
           id="journey-destination"
           name="journeyDestination"
-          :value="journeyDestination"
-          validation="requiredJourneyDestination"
           translationKey="form.input.journey.destination"
         />
-        <div class="relative">
-          <Calendar
-            id="journey-range-calendar"
-            v-model="journeyRange"
-            selectionMode="range"
-            showButtonBar
-            dateFormat="dd/mm/yy"
-            value=""
-            inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text font-bold bg-input border-2 border-border focus:outline-none focus:ring-1 peer"
-            @focus="handleFocus"
-            @focusout="handleBlur"
-            @input="handleFocus"
-            @date-select="handleFocus"
-            @clear-click="handleBlur"
-            @hide="handleBlur"
-            :pt="{
-              day: { class: 'text-text font-nunito' },
-              panel: { class: 'text-text font-nunito' },
-              monthPicker: { class: 'text-cta' },
-            }"
-          />
-          <label
-            for="journey-range-calendar"
-            class="absolute text-sm top-0 left-0 px-3.5 py-4 pointer-events-none transition-all duration-300"
-            :class="{
-              'text-input-placeholder': !journeyRangeIsFocused,
-              'text-input-label': journeyRangeIsFocused,
-              '-translate-y-4 -translate-x-4 scale-75':
-                journeyRangeIsFocused || journeyRange,
-              'translate-y-0 scale-100':
-                !journeyRangeIsFocused && !journeyRange,
-            }"
-          >
-            <T keyName="form.input.journey.range" />
-          </label>
-        </div>
+        <FormCalendar
+          id="journey-range-calendar"
+          name="journeyRange"
+          translationKey="form.input.journey.range"
+        />
 
         <!-- Journey invite input
 
@@ -134,12 +78,13 @@ function onSubmit() {
             <T keyName="common.button.cancel" />
           </button>
           <button
+            type="submit"
             class="px-7 py-1 bg-input font-bold text-text border-2 border-cta rounded-2xl"
           >
             <T keyName="common.button.create" />
           </button>
         </div>
-      </Form>
+      </form>
     </fieldset>
   </div>
 </template>
