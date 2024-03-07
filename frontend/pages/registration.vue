@@ -3,6 +3,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import { useTranslate, T } from "@tolgee/vue";
 import Aircraft from "~/public/icons/Aircraft.vue";
 import Clouds from "~/public/icons/Clouds.vue";
+import axios from "axios";
 
 const { t } = useTranslate();
 
@@ -16,10 +17,8 @@ const state = reactive({
   },
 });
 
-function onSubmit(values: JSON) {
-  console.log(JSON.stringify(values));
+function onSubmit(values: Object) {
   console.log(values);
-  console.log(values.email);
   registerUser(values);
 }
 
@@ -52,9 +51,15 @@ function requiredEmail(value: string) {
   return "This field must be a valid email address";
 }
 
-async function registerUser(values: JSON) {
-  const todo = await $fetch("http://127.0.0.1:8000/sanctum/csrf-cookie");
-  console.log(todo);
+async function registerUser(userData: Object) {
+  axios.get("/sanctum/csrf-cookie").then((response) => {
+    axios.post("/register", userData, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+  });
 }
 </script>
 

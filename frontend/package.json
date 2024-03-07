@@ -12,6 +12,7 @@
   "dependencies": {
     "@tolgee/vue": "^5.19.6",
     "@vee-validate/nuxt": "^4.12.5",
+    "axios": "^1.6.7",
     "nuxt": "^3.10.3",
     "primevue": "^3.49.1",
     "vue": "^3.4.19",

@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     public: {
       NUXT_TOLGEE_API_KEY: process.env.NUXT_TOLGEE_API_KEY,
       NUXT_TOLGEE_API_URL: process.env.NUXT_TOLGEE_API_URL,
+      NUXT_BACKEND_URL: process.env.NUXT_BACKEND_URL,
     },
   },
   primevue: {
