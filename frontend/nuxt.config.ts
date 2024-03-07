@@ -2,7 +2,10 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss", "nuxt-primevue", "@vee-validate/nuxt"],
-  css: ["@/assets/css/fonts/fonts.css"],
+  css: [
+    "@/assets/css/fonts/fonts.css",
+    "primevue/resources/themes/aura-light-blue/theme.css",
+  ],
   runtimeConfig: {
     public: {
       NUXT_TOLGEE_API_KEY: process.env.NUXT_TOLGEE_API_KEY,
@@ -15,7 +18,7 @@ export default defineNuxtConfig({
       unstyled: false,
     },
     components: {
-      include: ["Password"],
+      include: ["Password", "Calendar", "Divider", "Button"],
     },
   },
   veeValidate: {
