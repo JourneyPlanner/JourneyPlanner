@@ -1,54 +1,27 @@
 <script setup lang="ts">
-import { Form, Field, ErrorMessage } from "vee-validate";
+import { useForm } from "vee-validate";
 import { useTranslate, T } from "@tolgee/vue";
 import Aircraft from "~/public/icons/Aircraft.vue";
-import Clouds from "~/public/icons/Clouds.vue";
+import Clouds from "/icons/Clouds.vue";
 import axios from "axios";
+import * as yup from "yup";
 
 const { t } = useTranslate();
 
-const state = reactive({
-  accepted: false,
-  password: "",
-  passwordRepeat: "",
-  username: "",
-  contact: {
-    email: "",
-  },
+const { handleSubmit } = useForm({
+  validationSchema: yup.object({
+    email: yup.string().email().required(),
+    username: yup.string().required(),
+    password: yup.string().min(8).required(),
+  }),
 });
 
-function onSubmit(values: Object) {
+const onSubmit = handleSubmit((values) => {
   console.log(values);
-  registerUser(values);
-}
+});
 
-function passwordRules(value: string) {
-  if (value.length >= 6) {
-    return true;
-  }
-  return t.value("form.input.password.error");
-}
-
-function sameAsPassword(value: string) {
-  if (value === state.password) {
-    return true;
-  }
-  return "Passwords do not match";
-}
-
-function required(value: string) {
-  if (value.length > 0) {
-    return true;
-  }
-  return "This field is required";
-}
-
-function requiredEmail(value: string) {
-  const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-  if (value.length > 0 && regex.test(value)) {
-    return true;
-  }
-  return "This field must be a valid email address";
+function onInvalidSubmit() {
+  console.log("Invalid submit");
 }
 
 async function registerUser(userData: Object) {
@@ -64,21 +37,16 @@ async function registerUser(userData: Object) {
 </script>
 
 <template>
-  <div class="w-full flex justify-center items-center">
-    <div class="xl:w-1/2 md:w-1/3 sm:w-0 h-screen">
+  <div class="w-full flex justify-center items-center font-nunito">
+    <div class="xl:w-1/3 md:w-1/4 sm:w-0 h-screen">
       <Aircraft
-        class="xl:w-[140%] md:w-[140%] w-0 object-none -ml-[10vw] overflow-hidden mt-12"
+        class="xl:w-[230%] md:w-[350%] w-0 object-none -ml-[20vw] overflow-hidden mt-12 z-0"
       />
-      <div class="w-full flex justify-center">
-        <Clouds
-          class="xl:w-[70%] md:w-[70%] w-0 -mt-28 after:object-none overflow-hidden"
-        />
-      </div>
     </div>
     <div
-      class="flex xl:w-1/2 md:w-2/3 sm:w-full items-center h-screen xl:justify-normal md:justify-normal justify-center"
+      class="flex xl:w-1/3 md:w-2/4 sm:w-full items-center h-screen justify-center w-full"
     >
-      <div class="text-center mt-10 w-3/4 h-4/5">
+      <div class="text-center mt-6 sm:w-3/4 w-full h-3/4 z-20">
         <fieldset
           id="outerBlock"
           class="h-full px-3 py-2 pl-2 bg-surface rounded-2xl border-border border-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 flex flex-col items-center"
@@ -105,44 +73,22 @@ async function registerUser(userData: Object) {
               translationKey="form.input.username"
             />
 
-            <div class="relative my-6">
-              <Field
-                type="password"
-                id="password"
-                name="password"
-                value=""
-                class="block border-border bg-input py-4 rounded-xl px-2.5 pb-2.5 w-full text-2xl dark:bg-gray-700 border-2 dark:text-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                placeholder=" "
-                v-model="state.password"
-                :rules="passwordRules"
-              />
-              <ErrorMessage name="password" />
-              <label
-                for="password"
-                class="absolute text-2xl text-input-placeholder font-nunito dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-input-label peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-50 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                ><T keyName="form.input.password"
-              /></label>
-            </div>
-
-            <div class="relative my-2">
-              <Field
-                type="password"
+            <FormPassword
+              id="password"
+              name="password"
+              :feedback="true"
+              translationKey="form.input.password"
+            />
+            <div class="mt-4">
+              <FormPassword
                 id="repeatPassword"
                 name="repeatPassword"
-                value=""
-                class="block border-border bg-input py-4 rounded-xl px-2.5 pb-2.5 w-full text-2xl dark:bg-gray-700 border-2 dark:text-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                placeholder=" "
-                :rules="sameAsPassword"
+                :feedback="false"
+                translationKey="form.input.password.repeat"
               />
-              <ErrorMessage name="repeatPassword" />
-              <label
-                for="repeatPassword"
-                class="absolute text-2xl text-input-placeholder font-nunito dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-input-label peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-50 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                ><T keyName="form.input.password.repeat"
-              /></label>
             </div>
 
-            <div class="flex items-center">
+            <div class="flex items-center text-left">
               <input
                 id="link-checkbox"
                 type="checkbox"
@@ -162,7 +108,7 @@ async function registerUser(userData: Object) {
             </div>
 
             <button
-              class="rounded-3xl bg-input border-cta border-2 py-4 px-12 font-nunito font-bold text-3xl hover:bg-cta"
+              class="rounded-3xl bg-input border-cta border-2 py-2 px-10 font-nunito font-bold text-2xl hover:bg-cta"
             >
               <T keyName="form.button.register" />
             </button>
@@ -170,5 +116,6 @@ async function registerUser(userData: Object) {
         </fieldset>
       </div>
     </div>
+    <div class="xl:w-1/3 md:w-1/4 sm:w-0 h-screen"></div>
   </div>
 </template>
