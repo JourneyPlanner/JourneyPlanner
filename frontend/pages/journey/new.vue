@@ -1,17 +1,21 @@
 <script setup lang="ts">
+import { useTolgee } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
+import { useTranslate } from "@tolgee/vue";
+
+const { t } = useTranslate();
 
 /* function test() {
   return t.value("form.input.journey.range");
 } */
 
-//TODO: localize error message
+//TODO: use correct error message
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
     journeyName: yup
       .string()
-      .required("error message here")
+      .required(t.value("form.input.journey.name"))
       .label("Journey Name"),
     journeyDestination: yup.string().required(),
     journeyRange: yup.array().of(yup.date()).required(),
