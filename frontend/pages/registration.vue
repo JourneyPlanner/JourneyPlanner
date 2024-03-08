@@ -27,7 +27,7 @@ function passwordRules(value: string) {
   if (value.length >= 6) {
     return true;
   }
-  return t.value("form.input.password");
+  return t.value("form.input.password.error");
 }
 
 function sameAsPassword(value: string) {
@@ -62,23 +62,30 @@ async function registerUser(values: JSON) {
   <div class="w-full flex justify-center items-center">
     <div class="xl:w-1/2 md:w-1/3 sm:w-0 h-screen">
       <Aircraft
-        class="xl:w-[150%] md:w-[150%] w-0 object-none -ml-[25vh] overflow-hidden mt-20"
+        class="xl:w-[140%] md:w-[140%] w-0 object-none -ml-[10vw] overflow-hidden mt-12"
       />
-      <Clouds
-        class="xl:w-[200%] md:w-[200%] w-0 object-none -ml-[30vh] overflow-hidden"
-      />
+      <div class="w-full flex justify-center">
+        <Clouds
+          class="xl:w-[70%] md:w-[70%] w-0 -mt-28 after:object-none overflow-hidden"
+        />
+      </div>
     </div>
-    <div class="flex xl:w-1/2 md:w-2/3 sm:w-full items-center h-screen">
-      <div class="text-center mt-10 w-4/5 h-4/5">
+    <div
+      class="flex xl:w-1/2 md:w-2/3 sm:w-full items-center h-screen xl:justify-normal md:justify-normal justify-center"
+    >
+      <div class="text-center mt-10 w-3/4 h-4/5">
         <fieldset
           id="outerBlock"
           class="h-full px-3 py-2 pl-2 bg-surface rounded-2xl border-border border-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 flex flex-col items-center"
         >
-          <legend for="outerBlock" class="font-nunito font-bold text-3xl ml-2">
+          <legend
+            for="outerBlock"
+            class="font-nunito font-bold text-3xl ml-2 px-3"
+          >
             Registration
           </legend>
           <Form @submit="onSubmit" class="w-3/4">
-            <div class="relative my-8">
+            <div class="relative my-6">
               <Field
                 type="text"
                 id="email"
@@ -96,7 +103,7 @@ async function registerUser(values: JSON) {
               /></label>
             </div>
 
-            <div class="relative my-8">
+            <div class="relative my-6">
               <Field
                 type="text"
                 id="username"
@@ -114,7 +121,7 @@ async function registerUser(values: JSON) {
               /></label>
             </div>
 
-            <div class="relative my-8">
+            <div class="relative my-6">
               <Field
                 type="password"
                 id="password"
