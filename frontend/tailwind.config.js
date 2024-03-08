@@ -19,6 +19,7 @@ export default {
     },
     colors: {
       background: "#fcfcfc" /* background color */,
+      "background-dark": "#f1f1f1" /* dark background color */,
       cta: "#f8d351" /* yellow banana */,
       surface: "rgba(228, 239, 244, 0.8)" /* form surface with opacity */,
       text: "#333333" /* grey text */,

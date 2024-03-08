@@ -9,8 +9,9 @@
   </TolgeeProvider>
 </template>
 
-<style scoped>
+<style lang="postcss">
+/* default background in light and dark: mode  */
 body {
-  @apply min-h-screen bg-cta dark:bg-error dark:text-text;
+  @apply min-h-screen bg-background dark:bg-background-dark;
 }
 </style>
