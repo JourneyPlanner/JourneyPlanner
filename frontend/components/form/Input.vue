@@ -4,13 +4,12 @@ import { useField } from "vee-validate";
 const isFocused = ref(false);
 
 const props = defineProps({
-  name: String,
+  name: { type: String, required: true },
   type: String,
   id: String,
-  translationKey: String,
+  translationKey: { type: String, required: true },
 });
 
-//TODO: fix TS error
 const { value, errorMessage } = useField(() => props.name);
 </script>
 
@@ -38,8 +37,7 @@ const { value, errorMessage } = useField(() => props.name);
         'translate-y-0 scale-100': !isFocused && !value,
       }"
     >
-      <!-- TODO: fix TS error (temp: hardcoded language) -->
-      <T :keyName="translationKey || 'Date (from - to)'"
+      <T :keyName="translationKey"
     /></label>
   </div>
 </template>
