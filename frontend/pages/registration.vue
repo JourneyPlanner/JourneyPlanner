@@ -2,7 +2,7 @@
 import { useForm } from "vee-validate";
 import { useTranslate, T } from "@tolgee/vue";
 import Aircraft from "~/public/icons/Aircraft.vue";
-import Clouds from "/icons/Clouds.vue";
+import Clouds from "~/public/icons/Clouds.vue";
 import axios from "axios";
 import * as yup from "yup";
 
@@ -57,17 +57,14 @@ async function registerUser(userData: Object) {
           >
             Registration
           </legend>
-          <Form @submit="onSubmit" class="w-3/4">
+          <form @submit="onSubmit" class="w-4/5">
             <FormInput
-              type="text"
               id="email"
               name="email"
               translationKey="form.input.email"
-              :rules="requiredEmail"
             />
 
             <FormInput
-              type="text"
               id="username"
               name="username"
               translationKey="form.input.username"
@@ -112,7 +109,7 @@ async function registerUser(userData: Object) {
             >
               <T keyName="form.button.register" />
             </button>
-          </Form>
+          </form>
         </fieldset>
       </div>
     </div>
