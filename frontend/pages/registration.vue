@@ -98,23 +98,12 @@ async function registerUser(userData: Object) {
               :rules="requiredEmail"
             />
 
-            <div class="relative my-6">
-              <Field
-                type="text"
-                id="username"
-                name="username"
-                value=""
-                class="block border-border bg-input py-4 rounded-xl px-2.5 pb-2.5 w-full text-2xl dark:bg-gray-700 border-2 dark:text-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                placeholder=" "
-                :rules="required"
-              />
-              <ErrorMessage name="username" />
-              <label
-                for="username"
-                class="absolute text-2xl text-input-placeholder font-nunito dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-input-label peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-50 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                ><T keyName="form.input.username"
-              /></label>
-            </div>
+            <FormInput
+              type="text"
+              id="username"
+              name="username"
+              translationKey="form.input.username"
+            />
 
             <div class="relative my-6">
               <Field
