@@ -51,7 +51,7 @@ const { value, errorMessage } = useField(() => props.name);
     <span class="text-error text-xs">{{ errorMessage }}</span>
     <label
       for="journey-range-calendar"
-      class="absolute text-sm top-0 left-0 px-4 py-4 pointer-events-none transition-all duration-300"
+      class="absolute text-sm top-0 left-0 pl-4 py-4 pointer-events-none transition-all duration-300"
       :class="{
         'text-input-placeholder': !isFocused,
         'text-input-label': isFocused,
