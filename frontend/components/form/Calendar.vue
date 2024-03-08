@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
+import Calendar from "primevue/calendar";
 
 let isFocused = ref(false);
 
@@ -12,10 +13,10 @@ const handleBlur = () => {
 };
 
 const props = defineProps({
-  name: String,
+  name: { type: String, required: true },
   type: String,
   id: String,
-  translationKey: String,
+  translationKey: { type: String, required: true },
 });
 
 const { value, errorMessage } = useField(() => props.name);
@@ -27,9 +28,9 @@ const { value, errorMessage } = useField(() => props.name);
     <Calendar
       :id="id"
       :name="name"
-      v-model="value"
+      v-model="value as string"
       selectionMode="range"
-      showButtonBar
+      :showButtonBar="true"
       :numberOfMonths="2"
       dateFormat="dd/mm/yy"
       inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text font-bold bg-input border-2 border-border focus:outline-none focus:ring-1"
