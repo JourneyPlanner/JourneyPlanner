@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useTolgee } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { useTranslate } from "@tolgee/vue";
@@ -15,15 +14,23 @@ const { handleSubmit } = useForm({
   validationSchema: yup.object({
     journeyName: yup
       .string()
-      .required(t.value("form.input.journey.name"))
-      .label("Journey Name"),
-    journeyDestination: yup.string().required(),
-    journeyRange: yup.array().of(yup.date()).required(),
+      .required(t.value("form.error.journey.name"))
+      .label(t.value("form.input.journey.name")),
+    journeyDestination: yup
+      .string()
+      .required(t.value("form.error.journey.destination"))
+      .label(t.value("form.input.journey.destination")),
+    journeyRange: yup
+      .array()
+      .of(yup.date())
+      .required(t.value("form.error.journey.range"))
+      .label(t.value("form.input.journey.range")),
   }),
 });
 
 const onSubmit = handleSubmit((values) => {
-  alert(JSON.stringify(values, null, 2));
+  //TODO: handle API call here
+  console.log(values);
 });
 </script>
 

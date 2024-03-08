@@ -25,15 +25,14 @@ const { value, errorMessage } = useField(() => props.name);
       @focus="isFocused = true"
       @blur="isFocused = false"
     />
-    <!-- <ErrorMessage :name="name" class="text-error" /> -->
-    <span class="text-error">{{ errorMessage }}</span>
+    <span class="text-error text-xs">{{ errorMessage }}</span>
     <label
       :for="id"
       class="absolute text-sm top-0 left-0 px-4 py-4 pointer-events-none transition-all duration-300"
       :class="{
         'text-input-placeholder': !isFocused,
         'text-input-label': isFocused,
-        '-translate-y-4 -translate-x-4 scale-75': isFocused || value,
+        '-translate-y-3 -translate-x-4 scale-75': isFocused || value,
         'translate-y-0 scale-100': !isFocused && !value,
       }"
     >

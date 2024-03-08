@@ -12,6 +12,7 @@
   "dependencies": {
     "@tolgee/vue": "^5.19.6",
     "@vee-validate/nuxt": "^4.12.5",
+    "@vee-validate/yup": "^4.12.6",
     "nuxt": "^3.10.3",
     "primevue": "^3.49.1",
     "vue": "^3.4.19",
@@ -19,6 +20,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@nuxtjs/color-mode": "^3.3.2",
     "@nuxtjs/tailwindcss": "^6.11.4",
     "nuxt-primevue": "^0.3.1"
   }

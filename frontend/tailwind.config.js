@@ -1,6 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [],
+  content: [
+    `components/**/*.{vue,js}`,
+    `layouts/**/*.vue`,
+    `pages/**/*.vue`,
+    `composables/**/*.{js,ts}`,
+    `plugins/**/*.{js,ts}`,
+    `App.{js,ts,vue}`,
+    `app.{js,ts,vue}`,
+  ],
+  darkMode: "class",
   theme: {
     extend: {
       fontFamily: {
@@ -9,6 +18,7 @@ export default {
       },
     },
     colors: {
+      background: "#fcfcfc" /* background color */,
       cta: "#f8d351" /* yellow banana */,
       surface: "rgba(228, 239, 244, 0.8)" /* form surface with opacity */,
       text: "#333333" /* grey text */,
