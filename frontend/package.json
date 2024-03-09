@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "dev:host": "nuxt dev --host '0' --port 3000",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
@@ -12,13 +13,27 @@
   "dependencies": {
     "@tolgee/vue": "^5.19.6",
     "@vee-validate/nuxt": "^4.12.5",
+<<<<<<< HEAD
+    "@vee-validate/yup": "^4.12.6",
+=======
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
+    "axios": "^1.6.7",
     "nuxt": "^3.10.3",
     "primevue": "^3.49.1",
+    "uuid": "^9.0.1",
     "vue": "^3.4.19",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "yup": "^1.4.0"
+<<<<<<< HEAD
+    "vue-router": "^4.3.0",
+    "yup": "^1.4.0"
+=======
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
   },
   "devDependencies": {
+    "@nuxtjs/color-mode": "^3.3.2",
     "@nuxtjs/tailwindcss": "^6.11.4",
+    "@types/uuid": "^9.0.8",
     "nuxt-primevue": "^0.3.1"
   }
 }

@@ -1,6 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [],
+  content: [
+    `components/**/*.{vue,js}`,
+    `layouts/**/*.vue`,
+    `pages/**/*.vue`,
+    `composables/**/*.{js,ts}`,
+    `plugins/**/*.{js,ts}`,
+    `App.{js,ts,vue}`,
+    `app.{js,ts,vue}`,
+  ],
+  darkMode: "class",
   theme: {
     extend: {
       fontFamily: {
@@ -9,18 +18,27 @@ export default {
       },
     },
     colors: {
-      cta: "#f8d351" /* yellow banana */,
+      background: "#fcfcfc" /* background color */,
+      "background-dark": "#f1f1f1" /* dark background color */,
+      "cta-border": "#f8d351" /* yellow banana */,
+      "cta-bg": "#fee384" /* cta fill */,
       surface: "rgba(228, 239, 244, 0.8)" /* form surface with opacity */,
       text: "#333333" /* grey text */,
+      "text-disabled": "#686868" /* disabled text */,
       input: "#f8f8f8" /* input background */,
       "input-label": "#5ba5c5" /* input label */,
       "input-placeholder": "#7b7b7b" /* input placeholder */,
+      "input-disabled": "#f1f1f1",
       border: "#69aecd" /* border */,
-      "disabled-bg": "#f1f1f1" /* disabled background */,
-      "disabled-text": "#686868" /* disabled text */,
       footer: "#7b7b7b" /* footer text */,
       error: "#d43d3d" /* error text */,
       link: "#5ba5c5" /* link text */,
+<<<<<<< HEAD
+      "cancel-border": "#BB7474" /* cancel button */,
+      "cancel-bg": "#d98f8f" /* cancel button */,
+=======
+      cancel: "#BB7474" /* cancel button */,
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
     },
   },
   plugins: [],

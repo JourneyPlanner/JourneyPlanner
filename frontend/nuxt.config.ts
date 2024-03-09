@@ -1,12 +1,27 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "nuxt-primevue", "@vee-validate/nuxt"],
-  css: ["@/assets/css/fonts/fonts.css"],
+  modules: [
+    "@nuxtjs/tailwindcss",
+    "@nuxtjs/color-mode",
+    "nuxt-primevue",
+    "@vee-validate/nuxt",
+  ],
+  css: [
+    "@/assets/css/fonts/fonts.css",
+    "primevue/resources/themes/aura-light-blue/theme.css",
+  ],
+  colorMode: {
+    classSuffix: "",
+    preference: "light",
+    fallback: "light",
+  },
   runtimeConfig: {
     public: {
       NUXT_TOLGEE_API_KEY: process.env.NUXT_TOLGEE_API_KEY,
       NUXT_TOLGEE_API_URL: process.env.NUXT_TOLGEE_API_URL,
+      NUXT_BACKEND_URL: process.env.NUXT_BACKEND_URL,
+      NUXT_BACKEND_URL: process.env.NUXT_BACKEND_URL,
     },
   },
   primevue: {
@@ -15,10 +30,10 @@ export default defineNuxtConfig({
       unstyled: false,
     },
     components: {
-      include: ["Password"],
+      include: ["Password", "Calendar", "Divider", "Button"],
+      include: ["Password", "Calendar", "Divider", "Button"],
     },
   },
-  css: ["primevue/resources/themes/aura-light-green/theme.css"],
   veeValidate: {
     autoImports: true,
     componentNames: {
