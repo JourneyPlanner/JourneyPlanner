@@ -24,13 +24,24 @@ const { value, errorMessage } = useField(() => props.name);
       placeholder=" "
       @focus="isFocused = true"
       @blur="isFocused = false"
+      @input="$emit('input', $event)"
     />
     <label
       :for="id"
-      class="absolute left-0 ml-1.5 mt-1 transition-transform -translate-y-0.5 bg-white px-1 text-xs duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-focus:text-input-label peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs"
+      class="absolute text-input-placeholder left-0 ml-1.5 mt-1 transition-transform -translate-y-0.5 bg-white px-1 text-xs duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-focus:text-input-label peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs"
     >
       <T :keyName="translationKey"
     /></label>
-    <span class="text-error text-xs">{{ errorMessage }}</span>
+    <br v-if="errorMessage" />
+    <div class="h-1.5">
+      <span
+        class="ml-4 text-error text-xs"
+        :class="{
+          invisible: !errorMessage,
+          visible: errorMessage,
+        }"
+        >{{ errorMessage }}</span
+      >
+    </div>
   </div>
 </template>

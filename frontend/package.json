@@ -15,6 +15,7 @@
     "@vee-validate/yup": "^4.12.6",
     "nuxt": "^3.10.3",
     "primevue": "^3.49.1",
+    "uuid": "^9.0.1",
     "vue": "^3.4.19",
     "vue-router": "^4.3.0",
     "yup": "^1.4.0"
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@nuxtjs/color-mode": "^3.3.2",
     "@nuxtjs/tailwindcss": "^6.11.4",
+    "@types/uuid": "^9.0.8",
     "nuxt-primevue": "^0.3.1"
   }
 }
