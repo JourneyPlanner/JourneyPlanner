@@ -44,7 +44,7 @@ const { value, errorMessage } = useField(() => props.name);
       @hide="handleBlur"
       :pt="{
         panel: { class: 'text-text font-nunito' },
-        header: { class: 'flex border-b border-text' },
+        //header: { class: 'flex border-b border-text' },
       }"
     />
     <br />

@@ -105,10 +105,9 @@ const onSubmit = handleSubmit((values) => {
             <T keyName="common.button.cancel" />
           </button>
 
-          <!-- TODO: make create button color cta if all filled out -->
           <button
             type="submit"
-            class="px-7 py-1 font-bold text-text border-2 bg-input border-cta rounded-xl"
+            class="px-7 py-1 font-bold text-text border-2 bg-input hover:bg-cta-bg border-cta-border rounded-xl"
           >
             <T keyName="common.button.create" />
           </button>
