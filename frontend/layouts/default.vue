@@ -2,7 +2,7 @@
   <div class="flex flex-col h-screen justify-between">
     <slot />
     <footer
-      class="text-footer text-sm font-nunito pb-3 flex items-center justify-center"
+      class="text-footer text-xs md:text-sm font-nunito pb-3 flex items-center justify-center"
     >
       <a
         href="mailto:contact@journeyplanner.io"

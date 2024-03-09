@@ -51,34 +51,38 @@ const onSubmit = handleSubmit((values) => {
 </script>
 
 <template>
-  <div class="flex justify-center items-center font-nunito mt-20">
-    <fieldset
-      id="create-journey"
-      class="w-1/3 px-5 rounded-2xl border-2 border-border shadow-sm bg-surface"
-    >
-      <legend for="create-journey" class="text-3xl px-2 font-bold">
-        <T keyName="form.header.journey.create" />
-      </legend>
-      <form @submit="onSubmit" class="px-5">
-        <FormInput
-          id="journey-name"
-          name="journeyName"
-          translationKey="form.input.journey.name"
-        />
-        <FormInput
-          id="journey-destination"
-          name="journeyDestination"
-          translationKey="form.input.journey.destination"
-        />
-        <FormCalendar
-          id="journey-range-calendar"
-          name="journeyRange"
-          translationKey="form.input.journey.dates"
-        />
+  <div class="flex flex-col h-screen justify-between">
+    <div class="flex justify-center items-center font-nunito mt-20">
+      <fieldset
+        id="create-journey"
+        class="lg:w-1/3 px-5 rounded-2xl border-2 border-border shadow-sm bg-surface"
+      >
+        <legend
+          for="create-journey"
+          class="text-2xl text-center lg:text-left lg:text-3xl px-2 font-bold"
+        >
+          <T keyName="form.header.journey.create" />
+        </legend>
+        <form @submit="onSubmit" class="px-1 lg:px-5">
+          <FormInput
+            id="journey-name"
+            name="journeyName"
+            translationKey="form.input.journey.name"
+          />
+          <FormInput
+            id="journey-destination"
+            name="journeyDestination"
+            translationKey="form.input.journey.destination"
+          />
+          <FormCalendar
+            id="journey-range-calendar"
+            name="journeyRange"
+            translationKey="form.input.journey.dates"
+          />
 
-        <Divider type="solid" class="text-input-label border border-10" />
+          <Divider type="solid" class="text-input-label border border-10" />
 
-        <!--
+          <!--
         <div class="relative my-2">
           <input
             type="text"
@@ -97,38 +101,39 @@ const onSubmit = handleSubmit((values) => {
         </div>
         -->
 
-        <div class="flex justify-between mb-5">
-          <button
-            type="button"
-            class="px-7 py-1 text-text font-bold border-2 bg-input hover:bg-cancel-bg border-cancel-border rounded-xl"
-          >
-            <T keyName="common.button.cancel" />
-          </button>
+          <div class="flex justify-between mb-5">
+            <button
+              type="button"
+              class="px-7 py-1 text-text font-bold border-2 bg-input hover:bg-cancel-bg border-cancel-border rounded-xl"
+            >
+              <T keyName="common.button.cancel" />
+            </button>
 
-          <button
-            type="submit"
-            class="px-7 py-1 font-bold text-text border-2 bg-input hover:bg-cta-bg border-cta-border rounded-xl"
-          >
-            <T keyName="common.button.create" />
-          </button>
-        </div>
-      </form>
-    </fieldset>
-  </div>
-  <div>
-    <div class="flex flex-row justify-between h-full items-end">
-      <SvgPeopleBackpackMap class="" />
-      <div class="flex flex-row items-end">
-        <SvgWomanSuitcaseLeft class="" />
-        <SvgWomanSuitcaseRight class="ml-10" />
-      </div>
+            <button
+              type="submit"
+              class="px-7 py-1 font-bold text-text border-2 bg-input hover:bg-cta-bg border-cta-border rounded-xl"
+            >
+              <T keyName="common.button.create" />
+            </button>
+          </div>
+        </form>
+      </fieldset>
     </div>
-    <Divider
-      type="solid"
-      class="text-[#CCCCCC] border-b"
-      :pt="{
-        root: { class: 'mt-0' },
-      }"
-    />
+    <div class="pb-3">
+      <div class="flex flex-row justify-between h-full items-end">
+        <SvgPeopleBackpackMap class="hidden lg:block" />
+        <div class="flex flex-row items-end justify-between w-full lg:w-auto">
+          <SvgWomanSuitcaseLeft class="" />
+          <SvgWomanSuitcaseRight class="" />
+        </div>
+      </div>
+      <Divider
+        type="solid"
+        class="text-[#CCCCCC] border-b"
+        :pt="{
+          root: { class: 'mt-0' },
+        }"
+      />
+    </div>
   </div>
 </template>
