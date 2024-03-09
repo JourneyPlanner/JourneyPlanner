@@ -3,6 +3,7 @@ import { useForm } from "vee-validate";
 import { useTranslate, T } from "@tolgee/vue";
 import Aircraft from "~/public/icons/Aircraft.vue";
 import Clouds from "~/public/icons/Clouds.vue";
+import Cloud from "~/public/icons/Cloud.vue";
 import axios from "axios";
 import * as yup from "yup";
 
@@ -11,13 +12,16 @@ const { t } = useTranslate();
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
     email: yup.string().email().required(),
-    username: yup.string().required(),
+    name: yup.string().required(),
     password: yup.string().min(8).required(),
+    password_confirmation: yup
+      .string()
+      .oneOf([yup.ref("password")], "Passwords must match"),
   }),
 });
 
 const onSubmit = handleSubmit((values) => {
-  console.log(values);
+  registerUser(values);
 });
 
 function onInvalidSubmit() {
@@ -49,7 +53,7 @@ async function registerUser(userData: Object) {
       <div class="text-center mt-6 sm:w-3/4 w-full h-3/4 z-20">
         <fieldset
           id="outerBlock"
-          class="h-full px-3 py-2 pl-2 bg-surface rounded-2xl border-border border-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 flex flex-col items-center"
+          class="h-full px-3 py-2 pl-2 bg-surface rounded-3xl border-border border-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 flex flex-col items-center"
         >
           <legend
             for="outerBlock"
@@ -65,8 +69,8 @@ async function registerUser(userData: Object) {
             />
 
             <FormInput
-              id="username"
-              name="username"
+              id="name"
+              name="name"
               translationKey="form.input.username"
             />
 
@@ -78,8 +82,8 @@ async function registerUser(userData: Object) {
             />
             <div class="mt-4">
               <FormPassword
-                id="repeatPassword"
-                name="repeatPassword"
+                id="password_confirmation"
+                name="password_confirmation"
                 :feedback="false"
                 translationKey="form.input.password.repeat"
               />
@@ -113,6 +117,16 @@ async function registerUser(userData: Object) {
         </fieldset>
       </div>
     </div>
-    <div class="xl:w-1/3 md:w-1/4 sm:w-0 h-screen"></div>
+    <div class="xl:w-1/3 md:w-1/4 sm:w-0 h-screen">
+      <Cloud
+        class="xl:w-[60%] md:w-[90%] w-0 object-none overflow-hidden mt-64 z-0"
+      />
+      <Cloud
+        class="xl:w-[60%] md:w-[90%] w-0 object-none overflow-hidden mt-12 z-0"
+      />
+      <Cloud
+        class="xl:w-[60%] md:w-[90%] w-0 object-none overflow-hidden mt-12 z-0"
+      />
+    </div>
   </div>
 </template>
