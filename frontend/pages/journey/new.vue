@@ -1,5 +1,6 @@
 <script setup lang="ts">
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { T } from "@tolgee/vue";
 
@@ -44,6 +45,8 @@ function onSubmit() {
   console.log("submit");
 }
 =======
+=======
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
 import { useTolgee } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
@@ -70,6 +73,9 @@ const { handleSubmit } = useForm({
 const onSubmit = handleSubmit((values) => {
   alert(JSON.stringify(values, null, 2));
 });
+<<<<<<< HEAD
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
+=======
 >>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
 </script>
 
@@ -82,6 +88,7 @@ const onSubmit = handleSubmit((values) => {
       <legend for="create-journey" class="text-3xl px-2 font-bold">
         <T keyName="form.header.journey.create" />
       </legend>
+<<<<<<< HEAD
 <<<<<<< HEAD
       <Form @submit="onSubmit" class="px-5">
         <Input
@@ -135,6 +142,8 @@ const onSubmit = handleSubmit((values) => {
           </label>
         </div>
 =======
+=======
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
       <form @submit="onSubmit" class="px-5">
         <FormInput
           id="journey-name"
@@ -151,6 +160,9 @@ const onSubmit = handleSubmit((values) => {
           name="journeyRange"
           translationKey="form.input.journey.range"
         />
+<<<<<<< HEAD
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
+=======
 >>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
 
         <!-- Journey invite input
@@ -183,6 +195,10 @@ const onSubmit = handleSubmit((values) => {
           </button>
           <button
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+            type="submit"
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
 =======
             type="submit"
 >>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
@@ -192,7 +208,11 @@ const onSubmit = handleSubmit((values) => {
           </button>
         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
       </Form>
+=======
+      </form>
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
 =======
       </form>
 >>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61

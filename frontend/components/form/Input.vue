@@ -21,6 +21,7 @@ const { value, errorMessage } = useField(() => props.name);
       :name="name"
       v-model="value"
 <<<<<<< HEAD
+<<<<<<< HEAD
       class="peer w-full rounded-lg placeholder:text-transparent px-2.5 pb-1 pt-4 text-md text-text font-bold bg-input border-2 border-border focus:outline-none focus:ring-1"
       placeholder=" "
       @focus="isFocused = true"
@@ -45,6 +46,8 @@ const { value, errorMessage } = useField(() => props.name);
       >
     </div>
 =======
+=======
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
       class="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text font-bold bg-input border-2 border-border focus:outline-none focus:ring-1"
       placeholder=" "
       @focus="isFocused = true"
@@ -64,6 +67,9 @@ const { value, errorMessage } = useField(() => props.name);
     >
       <T :keyName="translationKey"
     /></label>
+<<<<<<< HEAD
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
+=======
 >>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
   </div>
 </template>

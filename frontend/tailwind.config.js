@@ -34,8 +34,12 @@ export default {
       error: "#d43d3d" /* error text */,
       link: "#5ba5c5" /* link text */,
 <<<<<<< HEAD
+<<<<<<< HEAD
       "cancel-border": "#BB7474" /* cancel button */,
       "cancel-bg": "#d98f8f" /* cancel button */,
+=======
+      cancel: "#BB7474" /* cancel button */,
+>>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
 =======
       cancel: "#BB7474" /* cancel button */,
 >>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
