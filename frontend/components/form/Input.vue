@@ -14,7 +14,7 @@ const { value, errorMessage } = useField(() => props.name);
 </script>
 
 <template>
-  <div class="relative my-5">
+  <div class="relative mt-2 mb-7">
     <input
       :type="type || 'text'"
       :id="id"
@@ -35,7 +35,7 @@ const { value, errorMessage } = useField(() => props.name);
     <br v-if="errorMessage" />
     <div class="h-1.5">
       <span
-        class="ml-4 text-error text-xs"
+        class="ml-2.5 text-error text-xs"
         :class="{
           invisible: !errorMessage,
           visible: errorMessage,

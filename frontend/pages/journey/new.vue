@@ -8,6 +8,10 @@ const { t } = useTranslate();
 
 const journeyInvite = uuidv4();
 
+/**
+ * form validation
+ * when submitting form, fields are checked for validation
+ */
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
     journeyName: yup
@@ -31,7 +35,14 @@ const { handleSubmit } = useForm({
   }),
 });
 
+/**
+ * form submit
+ * when submitting form, values are checked for validation with handleSubmit
+ * and then a journey object is created and sent to the backend
+ */
 const onSubmit = handleSubmit((values) => {
+  /* TODO: api call & router middleware */
+
   let name = values.journeyName;
   let destination = values.journeyDestination;
   let from = values.journeyRange[0];
@@ -45,9 +56,8 @@ const onSubmit = handleSubmit((values) => {
     to,
     invite,
   };
-
-  console.log(journey);
 });
+const checked = ref(false);
 </script>
 
 <template>
@@ -80,28 +90,28 @@ const onSubmit = handleSubmit((values) => {
             translationKey="form.input.journey.dates"
           />
 
+          <!--
           <Divider type="solid" class="text-input-label border border-10" />
 
-          <!--
-        <div class="relative my-2">
-          <input
-            type="text"
-            id="journey-invite"
-            name="journey-invite"
-            v-model="journeyInvite"
-            disabled
-            class="peer w-full rounded-lg placeholder:text-transparent px-2.5 pb-1 pt-4 text-md text-text font-bold bg-input-disabled border-2 border-border focus:outline-none focus:ring-1"
-            placeholder=" "
-          />
-          <label
-            for="journey-invite"
-            class="absolute text-input-placeholder left-0 ml-1.5 mt-1 transition-transform -translate-y-0.5 bg-white px-1 text-xs duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-focus:text-input-label peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs"
-            ><T keyName="form.input.journey.invite"
-          /></label>
-        </div>
-        -->
+          <div class="relative my-2">
+            <input
+              type="text"
+              id="journey-invite"
+              name="journey-invite"
+              v-model="journeyInvite"
+              disabled
+              class="peer w-full rounded-lg placeholder:text-transparent px-2.5 pb-1 pt-4 text-md text-text font-bold bg-input-disabled border-2 border-border focus:outline-none focus:ring-1"
+              placeholder=" "
+            />
+            <label
+              for="journey-invite"
+              class="absolute text-input-placeholder left-0 ml-1.5 mt-1 transition-transform -translate-y-0.5 bg-white px-1 text-xs duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-focus:text-input-label peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs"
+              ><T keyName="form.input.journey.invite"
+            /></label>
+          </div>
+          -->
 
-          <div class="flex justify-between mb-5">
+          <div class="flex justify-between mt-4 mb-5">
             <button
               type="button"
               class="px-7 py-1 text-text font-bold border-2 bg-input hover:bg-cancel-bg border-cancel-border rounded-xl"

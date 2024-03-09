@@ -18,7 +18,7 @@ export default {
       },
     },
     colors: {
-      background: "#fcfcfc" /* background color */,
+      background: "#FCFCFC" /* background color */,
       "background-dark": "#f1f1f1" /* dark background color */,
       "cta-border": "#f8d351" /* yellow banana */,
       "cta-bg": "#fee384" /* cta fill */,
