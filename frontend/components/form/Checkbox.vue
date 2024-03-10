@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
 import { bool, boolean } from "yup";
+// this is not a reusuable component, it's a checkbox for the registration form
+import { useTolgee } from "@tolgee/vue";
 
-let isFocused = ref(false);
+const tolgee = useTolgee();
+console.log(tolgee);
 
-const handleFocus = () => {
-  isFocused.value = true;
-};
+const language = tolgee.value.getLanguage();
 
-const handleBlur = () => {
-  isFocused.value = false;
-};
+console.log(language);
 
 const props = defineProps({
   name: { type: String, required: true },
   id: String,
+  type: String,
 });
 
 const { value, errorMessage } = useField(() => props.name);
@@ -59,6 +59,12 @@ const { value, errorMessage } = useField(() => props.name);
         class="text-input-label underline dark:text-border"
         ><T keyName="common.privacypolicy"
       /></NuxtLink>
+      <p v-if="language === 'de'">gelesen und akzeptiere sie</p>
     </label>
+  </div>
+  <div class="h-3 text-left">
+    <span class="ml-2.5 text-error dark:text-error-dark text-left text-xs">{{
+      errorMessage
+    }}</span>
   </div>
 </template>
