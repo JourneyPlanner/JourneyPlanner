@@ -40,8 +40,9 @@ const { handleSubmit } = useForm({
  * when submitting form, values are checked for validation with handleSubmit
  * and then a journey object is created and sent to the backend
  */
-const onSubmit = handleSubmit((values) => {
+const onSubmit = handleSubmit(async (values) => {
   /* TODO: api call & router middleware */
+  /* TODO: error messages */
 
   let name = values.journeyName;
   let destination = values.journeyDestination;
@@ -56,11 +57,13 @@ const onSubmit = handleSubmit((values) => {
     to,
     invite,
   };
+
+  await navigateTo('/dashboard');
 });
-const checked = ref(false);
 </script>
 
 <template>
+  <!-- TODO: darkmode -->
   <div class="flex flex-col h-screen justify-between">
     <div class="flex justify-center items-center font-nunito mt-20">
       <fieldset
@@ -112,12 +115,14 @@ const checked = ref(false);
           -->
 
           <div class="flex justify-between mt-4 mb-5">
-            <button
-              type="button"
-              class="px-7 py-1 text-text font-bold border-2 bg-input hover:bg-cancel-bg border-cancel-border rounded-xl"
-            >
-              <T keyName="common.button.cancel" />
-            </button>
+            <NuxtLink to="/dashboard">
+              <button
+                type="button"
+                class="px-7 py-1 text-text font-bold border-2 bg-input hover:bg-cancel-bg border-cancel-border rounded-xl"
+              >
+                <T keyName="common.button.cancel" />
+              </button>
+            </NuxtLink>
 
             <button
               type="submit"

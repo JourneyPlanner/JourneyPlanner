@@ -29,7 +29,6 @@ const { value, errorMessage } = useField(() => props.name);
       :id="id"
       :name="name"
       v-model="value as string"
-      weekLabel="test"
       selectionMode="range"
       :manualInput="true"
       :showButtonBar="true"
