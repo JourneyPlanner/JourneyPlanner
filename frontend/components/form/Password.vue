@@ -35,6 +35,10 @@ const { value, errorMessage } = useField(() => props.name);
       class="w-full"
       :feedback="feedback"
       inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-white bg-input border-2 border-border focus:outline-none focus:ring-1 dark:bg-input-dark"
+      :prompt-label="$t('form.input.password.label.prompt')"
+      :weak-label="$t('form.input.password.label.weak')"
+      :medium-label="$t('form.input.password.label.medium')"
+      :strong-label="$t('form.input.password.label.strong')"
       @focus="handleFocus"
       @focusout="handleBlur"
       @input="handleFocus"
@@ -44,7 +48,28 @@ const { value, errorMessage } = useField(() => props.name);
       :pt="{
         input: { class: 'font-medium' },
       }"
-    />
+    >
+      <template #footer>
+        <Divider type="solid" class="text-input-placeholder border border-10" />
+        <p class="mt-2">
+          <T keyName="form.input.password.prompt.suggestion" />
+        </p>
+        <ul class="pl-2 ml-2 mt-0 list-disc" style="line-height: 1.5">
+          <li>
+            <T keyName="form.input.password.prompt.suggestion.lowercase" />
+          </li>
+          <li>
+            <T keyName="form.input.password.prompt.suggestion.uppercase" />
+          </li>
+          <li><T keyName="form.input.password.prompt.suggestion.numeric" /></li>
+          <li>
+            <T
+              keyName="form.input.password.prompt.suggestion.minimum.charakters"
+            />
+          </li>
+        </ul>
+      </template>
+    </Password>
     <div class="h-3 text-left">
       <span class="ml-2.5 text-error dark:text-error-dark text-left text-xs">{{
         errorMessage

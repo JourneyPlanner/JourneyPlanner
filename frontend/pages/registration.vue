@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useForm } from "vee-validate";
 import { useTranslate, T, useTolgee } from "@tolgee/vue";
+import Toast from "primevue/toast";
 import * as yup from "yup";
 
 const { t } = useTranslate();
-const client = useSanctumClient();
+const toast = useToast();
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
@@ -29,25 +30,44 @@ const { handleSubmit } = useForm({
 });
 
 const onSubmit = handleSubmit((values) => {
-  console.log(values);
   registerUser(values);
 });
 
-function onInvalidSubmit() {
-  console.log("Invalid submit");
-}
-
 async function registerUser(userData: Object) {
-  const { data, pending, error, refresh } = await useAsyncData("users", () =>
+  const client = useSanctumClient();
+  const { error, status } = await useAsyncData("users", () =>
     client("/register", {
       method: "POST",
       body: userData,
     })
   );
+  if (status.value === "success") {
+    toast.add({
+      severity: "success",
+      summary: "Success",
+      detail: "User registered",
+      life: 3000,
+    });
+  } else if (error.value.statusCode === 422) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "User already exists",
+      life: 3000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "Unknown error occurred",
+      life: 3000,
+    });
+  }
 }
 </script>
 
 <template>
+  <Toast />
   <div
     class="w-full flex justify-center items-center font-nunito dark:bg-background-dark"
   >
