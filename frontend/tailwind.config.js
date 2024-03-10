@@ -19,30 +19,31 @@ export default {
     },
     colors: {
       background: "#fcfcfc" /* background color */,
-      "background-dark": "#f1f1f1" /* dark background color */,
+      "background-dark": "#2c2c2c" /* dark background color */,
       "cta-border": "#f8d351" /* yellow banana */,
       "cta-bg": "#fee384" /* cta fill */,
+      "cta-bg-dark": "#a09671" /* cta fill dark */,
+      "clouds-bg": "#f0f0f0" /* clouds background*/,
+      "clouds-bg-dark": "#404040" /* clouds background dark */,
       surface: "rgba(228, 239, 244, 0.8)" /* form surface with opacity */,
+      "surface-dark":
+        "rgba(228, 239, 244, 0.22)" /* dark form surface with opacity */,
       text: "#333333" /* grey text */,
       "text-disabled": "#686868" /* disabled text */,
       input: "#f8f8f8" /* input background */,
+      "input-dark": "#454849" /* input background dark */,
       "input-label": "#5ba5c5" /* input label */,
       "input-placeholder": "#7b7b7b" /* input placeholder */,
       "input-disabled": "#f1f1f1",
       border: "#69aecd" /* border */,
       footer: "#7b7b7b" /* footer text */,
       error: "#d43d3d" /* error text */,
+      "error-dark": "#f25e5e" /* error text dark */,
       link: "#5ba5c5" /* link text */,
-<<<<<<< HEAD
-<<<<<<< HEAD
       "cancel-border": "#BB7474" /* cancel button */,
       "cancel-bg": "#d98f8f" /* cancel button */,
-=======
       cancel: "#BB7474" /* cancel button */,
->>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
-=======
-      cancel: "#BB7474" /* cancel button */,
->>>>>>> a36efa6789044101f1cc82332b7a4dad2c552c61
+      white: "#ffffff" /* white*/,
     },
   },
   plugins: [],
