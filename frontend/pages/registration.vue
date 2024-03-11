@@ -24,7 +24,7 @@ const { handleSubmit } = useForm({
       .required(t.value("form.input.required")),
     terms: yup
       .boolean()
-      .oneOf([true])
+      .oneOf([true], t.value("form.input.terms.error"))
       .required(t.value("form.input.terms.error")),
   }),
 });
