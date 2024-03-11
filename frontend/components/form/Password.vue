@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
 import Password from "primevue/password";
-import { bool, boolean } from "yup";
+import { useTolgee } from "@tolgee/vue";
+
+const tolgee = useTolgee();
+const language = tolgee.value.getLanguage();
+
+const german = computed(() => {
+  return language === "de";
+});
 
 let isFocused = ref(false);
 
@@ -77,12 +84,16 @@ const { value, errorMessage } = useField(() => props.name);
     </div>
     <label
       :for="id"
-      class="absolute text-sm top-0 left-0 pl-4 py-4 pointer-events-none transition-all duration-300"
+      class="absolute text-sm top-0 left-0 pl-3 py-4 pointer-events-none transition-all duration-300"
       :class="{
         'text-input-placeholder': !isFocused,
         'text-input-label': isFocused,
-        '-translate-y-4 -translate-x-3 scale-75': isFocused || value,
+        '-translate-y-4  scale-75': isFocused || value,
         'translate-y-0 scale-100': !isFocused && !value,
+        '-translate-x-2': (feedback && isFocused) || (feedback && value),
+        '-translate-x-3.5': (!feedback && isFocused) || (!feedback && value),
+        'pl-1.5':
+          (!feedback && isFocused && german) || (!feedback && value && german),
       }"
     >
       <T :keyName="translationKey" />

@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
-import { bool, boolean } from "yup";
 // this is not a reusuable component, it's a checkbox for the registration form
-import { useTranslate, useTolgee } from "@tolgee/vue";
+import { useTolgee } from "@tolgee/vue";
 
-const { t } = useTranslate();
 const tolgee = useTolgee();
 
 const language = tolgee.value.getLanguage();

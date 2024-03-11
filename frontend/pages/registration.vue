@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from "vee-validate";
-import { useTranslate, T, useTolgee } from "@tolgee/vue";
+import { useTranslate, T } from "@tolgee/vue";
 import Toast from "primevue/toast";
 import * as yup from "yup";
 
