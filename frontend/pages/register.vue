@@ -39,6 +39,13 @@ const onSubmit = handleSubmit((values) => {
  * @param {Object} userData
  */
 async function registerUser(userData: Object) {
+  toast.add({
+    severity: "info",
+    summary: t.value("common.toast.info.heading"),
+    detail: t.value("form.registration.toast.info"),
+    life: 3000,
+  });
+
   const client = useSanctumClient();
   await client("/register", {
     method: "POST",
@@ -47,7 +54,7 @@ async function registerUser(userData: Object) {
       if (response.ok) {
         toast.add({
           severity: "success",
-          summary: t.value("form.registration.toast.success.heading"),
+          summary: t.value("common.toast.success.heading"),
           detail: t.value("form.registration.toast.success"),
           life: 3000,
         });
@@ -55,25 +62,25 @@ async function registerUser(userData: Object) {
       } else if (response.status === 422) {
         toast.add({
           severity: "error",
-          summary: t.value("form.registration.toast.error.heading"),
+          summary: t.value("common.toast.error.heading"),
           detail: t.value("form.registration.toast.error"),
-          life: 3000,
+          life: 6000,
         });
       } else {
         toast.add({
           severity: "error",
-          summary: t.value("form.registration.toast.error.heading"),
+          summary: t.value("common.toast.error.heading"),
           detail: t.value("common.error.unknown"),
-          life: 3000,
+          life: 6000,
         });
       }
     },
     async onRequestError() {
       toast.add({
         severity: "error",
-        summary: t.value("form.registration.toast.error.heading"),
+        summary: t.value("common.toast.error.heading"),
         detail: t.value("common.error.unknown"),
-        life: 3000,
+        life: 6000,
       });
     },
   });

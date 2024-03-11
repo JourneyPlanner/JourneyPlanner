@@ -45,5 +45,12 @@ export default defineNuxtConfig({
   sanctum: {
     baseUrl: process.env.NUXT_BACKEND_URL, // Laravel API
     origin: process.env.NUXT_FRONTEND_URL, // Nuxt app, by default will be used 'useRequestURL().origin'
+    redirect: {
+      keepRequestedRoute: true,
+      onLogin: "/dashboard",
+      onLogout: "/",
+      onAuthOnly: "/login",
+      onGuestOnly: "/",
+    },
   },
 });

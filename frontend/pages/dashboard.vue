@@ -1,8 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+definePageMeta({
+  middleware: ["sanctum:auth"],
+});
+</script>
 
 <template>
   <div class="font-nunito bg-surface flex justify-between">
-    <h1 class=" mt-10 ml-10 h-20 font-bold text-4xl">
+    <h1 class="mt-10 ml-10 h-20 font-bold text-4xl">
       <T keyName="common.dashboard" />
     </h1>
     <NuxtLink to="/journey/new" class="mt-10">

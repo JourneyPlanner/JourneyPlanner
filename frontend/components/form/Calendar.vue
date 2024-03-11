@@ -34,19 +34,26 @@ const { value, errorMessage } = useField(() => props.name);
       :showButtonBar="true"
       :numberOfMonths="1"
       dateFormat="dd/mm/yy"
-      inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text font-bold bg-input border-2 border-border focus:outline-none focus:ring-1"
+      panelClass="bg-input dark:bg-background-dark dark:text-white"
+      inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text font-bold bg-input dark:bg-input-dark border-2 border-border focus:outline-none focus:ring-1"
       @focus="handleFocus"
       @hide="handleBlur"
       @input="handleFocus"
       @date-select="$emit('input', $event), handleFocus"
       :pt="{
         panel: { class: 'text-text font-nunito' },
-        //header: { class: 'flex border-b border-text' },
+        header: {
+          class:
+            'flex border-b bg-input dark:bg-background-dark dark:text-white',
+        },
       }"
     />
     <br />
     <div class="h-3">
-      <span class="ml-2.5 text-error text-xs">{{ errorMessage }}</span>
+      <span
+        class="ml-2.5 text-error dark:font-bold dark:text-error-dark text-xs"
+        >{{ errorMessage }}</span
+      >
     </div>
     <label
       for="journey-range-calendar"

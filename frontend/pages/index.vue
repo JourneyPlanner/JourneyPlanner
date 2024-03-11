@@ -5,6 +5,11 @@ const tolgee = useTolgee(["language"]);
 const changeLanguage = (e) => {
   tolgee.value.changeLanguage(e.target.value);
 };
+const { logout } = useSanctumAuth();
+
+async function logoutUser() {
+  await logout();
+}
 </script>
 
 <template>
@@ -12,7 +17,9 @@ const changeLanguage = (e) => {
     class="flex flex-col justify-center items-center text-center font-nunito"
   >
     <div class="text-center mt-10">
-      <h1 class="text-4xl font-bold">JourneyPlanner</h1>
+      <h1 class="text-4xl font-bold text-text dark:text-white">
+        JourneyPlanner
+      </h1>
     </div>
     <div class="flex flex-row gap-5 mt-5">
       <select v-model="colorMode.preference" class="border w-28 h-8">
@@ -32,14 +39,20 @@ const changeLanguage = (e) => {
         <option value="de">Deutsch</option>
       </select>
     </div>
-    <div class="mt-5">
-      <NuxtLink to="/registration" class="mt-10">
+    <div class="mt-5 flex gap-5">
+      <NuxtLink to="/register" class="">
         <button
-          class="bg-cta-bg border-2 border-cta-border text-text min-w-28 py-2 rounded-lg font-bold"
+          class="hover:bg-cta-bg dark:hover:bg-cta-bg-dark border-2 border-cta-border text-text min-w-28 py-2 rounded-lg font-bold"
         >
           <T keyName="form.button.register" />
         </button>
       </NuxtLink>
+      <button
+        class="hover:bg-cta-bg dark:hover:bg-cta-bg-dark border-2 border-cta-border text-text min-w-28 py-2 rounded-lg font-bold"
+        @click="logoutUser"
+      >
+        <T keyName="form.button.logout" />
+      </button>
     </div>
   </div>
 </template>
