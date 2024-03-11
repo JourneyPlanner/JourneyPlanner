@@ -6,11 +6,8 @@ import { useTranslate, useTolgee } from "@tolgee/vue";
 
 const { t } = useTranslate();
 const tolgee = useTolgee();
-console.log(tolgee);
 
 const language = tolgee.value.getLanguage();
-
-console.log(language);
 
 const props = defineProps({
   name: { type: String, required: true },
