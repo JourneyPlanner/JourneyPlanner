@@ -44,22 +44,22 @@ async function registerUser(userData: Object) {
   if (status.value === "success") {
     toast.add({
       severity: "success",
-      summary: "Success",
-      detail: "User registered",
+      summary: t.value("form.registration.toast.success.heading"),
+      detail: t.value("form.registration.toast.success"),
       life: 3000,
     });
   } else if (error.value.statusCode === 422) {
     toast.add({
       severity: "error",
-      summary: "Error",
-      detail: "User already exists",
+      summary: t.value("form.registration.toast.error.heading"),
+      detail: t.value("form.registration.toast.error"),
       life: 3000,
     });
   } else {
     toast.add({
       severity: "error",
-      summary: "Error",
-      detail: "Unknown error occurred",
+      summary: t.value("form.registration.toast.error.heading"),
+      detail: T.value("common.error.unknown"),
       life: 3000,
     });
   }
