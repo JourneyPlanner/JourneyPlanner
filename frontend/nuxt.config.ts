@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     "@nuxtjs/color-mode",
     "nuxt-primevue",
     "@vee-validate/nuxt",
+    "nuxt-auth-sanctum",
   ],
   css: [
     "@/assets/css/fonts/fonts.css",
@@ -20,6 +21,7 @@ export default defineNuxtConfig({
     public: {
       NUXT_TOLGEE_API_KEY: process.env.NUXT_TOLGEE_API_KEY,
       NUXT_TOLGEE_API_URL: process.env.NUXT_TOLGEE_API_URL,
+      NUXT_BACKEND_URL: process.env.NUXT_BACKEND_URL,
     },
   },
   primevue: {
@@ -28,7 +30,7 @@ export default defineNuxtConfig({
       unstyled: false,
     },
     components: {
-      include: ["Password", "Calendar", "Divider", "Button"],
+      include: ["Password", "Calendar", "Divider", "Button", "Checkbox"],
     },
   },
   veeValidate: {
@@ -39,5 +41,9 @@ export default defineNuxtConfig({
       FieldArray: "VeeFieldArray",
       ErrorMessage: "VeeErrorMessage",
     },
+  },
+  sanctum: {
+    baseUrl: process.env.NUXT_BACKEND_URL, // Laravel API
+    origin: process.env.NUXT_FRONTEND_URL, // Nuxt app, by default will be used 'useRequestURL().origin'
   },
 });
