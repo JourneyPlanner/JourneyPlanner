@@ -4,6 +4,10 @@ import { useTranslate, T } from "@tolgee/vue";
 import Toast from "primevue/toast";
 import * as yup from "yup";
 
+definePageMeta({
+  middleware: ["sanctum:guest"],
+});
+
 const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
