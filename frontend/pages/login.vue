@@ -19,38 +19,50 @@ const { handleSubmit } = useForm({
 });
 
 const onSubmit = handleSubmit((values) => {
-  registerUser(values);
+  loginUser(values);
 });
 
-async function registerUser(userData: Object) {
+interface User {
+  email: string;
+  password: string;
+}
+/**
+ * use the sanctum client to login a user
+ * shows toast messages if success/error
+ * @param {Object} userData
+ */
+async function loginUser(userData: User) {
+  console.log(userData);
   const userCredentials = {
-    email: userData.email,
     password: userData.password,
+    email: userData.email,
   };
 
-  await login(userCredentials);
-
-  if (status.value === "success") {
+  toast.add({
+    severity: "info",
+    summary: t.value("common.toast.info.heading"),
+    detail: t.value("form.login.toast.info"),
+    life: 3000,
+  });
+  try {
+    await login(userCredentials);
     toast.add({
       severity: "success",
       summary: t.value("form.registration.toast.success.heading"),
       detail: t.value("form.registration.toast.success"),
       life: 3000,
     });
-  } else if (error.value.statusCode === 422) {
-    toast.add({
-      severity: "error",
-      summary: t.value("form.registration.toast.error.heading"),
-      detail: t.value("form.registration.toast.error"),
-      life: 3000,
-    });
-  } else {
-    toast.add({
-      severity: "error",
-      summary: t.value("form.registration.toast.error.heading"),
-      detail: T.value("common.error.unknown"),
-      life: 3000,
-    });
+    await navigateTo("/dashboard");
+  } catch (error: any) {
+    if (error.response?.status === 422) {
+      toast.add({
+        severity: "error",
+        summary: t.value("common.toast.error.heading"),
+        detail: t.value("form.login.toast.error"),
+        life: 3000,
+      });
+      return;
+    }
   }
 }
 </script>
@@ -62,28 +74,28 @@ async function registerUser(userData: Object) {
   >
     <div class="xl:w-1/3 md:w-1/4 sm:w-0 w-0 h-[90vh] dark:background-dark">
       <SvgCloud
-        class="xl:w-[60%] md:w-[90%] w-0 object-none overflow-hidden mt-40 z-10 dark:fill-clouds-bg -ml-28"
+        class="xl:w-[50%] md:w-[80%] w-0 object-none overflow-hidden mt-[20vh] z-50 dark:fill-clouds-bg -ml-24"
       />
       <SvgCloud
-        class="xl:w-[50%] md:w-[80%] w-0 object-none overflow-hidden mt-32 z-10 ml-[12vw]"
+        class="absolute xl:w-[20%] md:w-[25%] md:left-[6vh] left-[23vh] w-0 object-none overflow-hidden top-[49vh] z-30"
       />
       <div class="overflow-hidden">
         <SvgCloudReversed
-          class="xl:w-[45%] md:w-[70%] w-0 object-none overflow-hidden mt-40 z-10 dark:fill-clouds-bg"
+          class="xl:w-[45%] md:w-[70%] w-0 object-none overflow-hidden mt-[55vh] z-50 dark:fill-clouds-bg"
         />
         <SvgBalloon
-          class="absolute xl:w-[5%] md:w-[5%] w-0 top-[42vh] left-[30vh] -z-10"
+          class="absolute xl:w-[4%] md:w-[5%] md:left-[15vh] w-0 top-[45vh] left-[32vh] z-0"
         />
         <SvgBalloon
-          class="absolute xl:w-[7%] md:w-[8%] left-[68vh] w-0 top-12 -z-50"
+          class="absolute xl:w-[7%] md:w-[8%] left-[68vh] w-0 top-12"
         />
       </div>
     </div>
     <div
-      class="relative overflow-hidden flex xl:w-1/3 md:w-2/4 sm:w-full items-center h-[90vh] justify-center w-full"
+      class="relative overflow-hidden flex xl:w-1/3 md:w-2/4 sm:w-full items-center h-[90vh] justify-center w-full z-20"
     >
       <div
-        class="xl:flex xl:items-center xl:justify-center md:flex md:items-center md:justify-center text-center mt-6 sm:w-3/4 w-full h-3/4 z-20"
+        class="xl:flex xl:items-center xl:justify-center md:flex md:items-center md:justify-center text-center mt-6 sm:w-3/4 w-full h-[75vh] z-20"
       >
         <fieldset
           id="outerBlock"
@@ -105,7 +117,7 @@ async function registerUser(userData: Object) {
             <FormPassword
               id="password"
               name="password"
-              :feedback="false"
+              :feedbackStyle="true"
               translationKey="form.input.password"
             />
 
@@ -116,7 +128,7 @@ async function registerUser(userData: Object) {
             </button>
           </form>
           <NuxtLink
-            to="/registration"
+            to="/register"
             class="dark:text-white underline mt-auto font-nunito font-semibold my-1"
           >
             <T keyName="form.text.no_account" />
