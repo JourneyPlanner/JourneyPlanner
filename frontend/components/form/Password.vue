@@ -33,7 +33,6 @@ const { value, errorMessage } = useField(() => props.name);
 
 <template>
   <div class="relative">
-    <!-- TODO: language (de/en)-->
     <Password
       :id="id"
       :name="name"
@@ -71,16 +70,17 @@ const { value, errorMessage } = useField(() => props.name);
           <li><T keyName="form.input.password.prompt.suggestion.numeric" /></li>
           <li>
             <T
-              keyName="form.input.password.prompt.suggestion.minimum.charakters"
+              keyName="form.input.password.prompt.suggestion.minimum.characters"
             />
           </li>
         </ul>
       </template>
     </Password>
     <div class="h-3 text-left">
-      <span class="ml-2.5 text-error dark:text-error-dark text-left text-xs">{{
-        errorMessage
-      }}</span>
+      <span
+        class="ml-3 text-error dark:text-error-dark dark:font-bold text-left text-xs"
+        >{{ errorMessage }}</span
+      >
     </div>
     <label
       :for="id"

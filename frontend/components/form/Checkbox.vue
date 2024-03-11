@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { useField } from "vee-validate";
 // this is not a reusuable component, it's a checkbox for the registration form
+
+import { useField } from "vee-validate";
 import { useTolgee } from "@tolgee/vue";
 
 const tolgee = useTolgee();
@@ -55,12 +56,13 @@ const { value, errorMessage } = useField(() => props.name);
         class="text-input-label underline dark:text-border"
         ><T keyName="common.privacypolicy"
       /></NuxtLink>
-      <span v-if="language === 'de'"> &#0020; gelesen und akzeptiere sie</span>
+      <span v-if="language === 'de'"> gelesen und akzeptiere sie.</span>
     </label>
   </div>
   <div class="h-3 text-left">
-    <span class="ml-2.5 text-error dark:text-error-dark text-left text-xs">{{
-      errorMessage
-    }}</span>
+    <span
+      class="ml-4 text-error dark:text-error-dark dark:font-bold text-left text-xs"
+      >{{ errorMessage }}</span
+    >
   </div>
 </template>

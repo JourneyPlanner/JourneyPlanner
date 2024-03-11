@@ -35,7 +35,7 @@ const { value, errorMessage } = useField(() => props.name);
     <br v-if="errorMessage" />
     <div class="h-1.5 text-left">
       <span
-        class="ml-4 text-error dark:text-error-dark text-xs"
+        class="ml-3 text-error dark:text-error-dark dark:font-bold text-xs"
         :class="{
           invisible: !errorMessage,
           visible: errorMessage,
