@@ -40,35 +40,43 @@ const onSubmit = handleSubmit((values) => {
  */
 async function registerUser(userData: Object) {
   const client = useSanctumClient();
-  const { error, status } = await useAsyncData("users", () =>
-    client("/register", {
-      method: "POST",
-      body: userData,
-    })
-  );
-  if (status.value === "success") {
-    toast.add({
-      severity: "success",
-      summary: t.value("form.registration.toast.success.heading"),
-      detail: t.value("form.registration.toast.success"),
-      life: 3000,
-    });
-    await navigateTo("/dashboard");
-  } else if (error.value.statusCode === 422) {
-    toast.add({
-      severity: "error",
-      summary: t.value("form.registration.toast.error.heading"),
-      detail: t.value("form.registration.toast.error"),
-      life: 3000,
-    });
-  } else {
-    toast.add({
-      severity: "error",
-      summary: t.value("form.registration.toast.error.heading"),
-      detail: t.value("common.error.unknown"),
-      life: 3000,
-    });
-  }
+  await client("/register", {
+    method: "POST",
+    body: userData,
+    async onResponse({ response }) {
+      if (response.ok) {
+        toast.add({
+          severity: "success",
+          summary: t.value("form.registration.toast.success.heading"),
+          detail: t.value("form.registration.toast.success"),
+          life: 3000,
+        });
+        await navigateTo("/dashboard");
+      } else if (response.status === 422) {
+        toast.add({
+          severity: "error",
+          summary: t.value("form.registration.toast.error.heading"),
+          detail: t.value("form.registration.toast.error"),
+          life: 3000,
+        });
+      } else {
+        toast.add({
+          severity: "error",
+          summary: t.value("form.registration.toast.error.heading"),
+          detail: t.value("common.error.unknown"),
+          life: 3000,
+        });
+      }
+    },
+    async onRequestError() {
+      toast.add({
+        severity: "error",
+        summary: t.value("form.registration.toast.error.heading"),
+        detail: t.value("common.error.unknown"),
+        life: 3000,
+      });
+    },
+  });
 }
 </script>
 

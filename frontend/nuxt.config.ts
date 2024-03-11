@@ -43,7 +43,7 @@ export default defineNuxtConfig({
     },
   },
   sanctum: {
-    baseUrl: "http://localhost:8000/", // Laravel API
-    origin: "http://localhost:3000", // Nuxt app, by default will be used 'useRequestURL().origin'
+    baseUrl: process.env.NUXT_BACKEND_URL, // Laravel API
+    origin: process.env.NUXT_FRONTEND_URL, // Nuxt app, by default will be used 'useRequestURL().origin'
   },
 });
