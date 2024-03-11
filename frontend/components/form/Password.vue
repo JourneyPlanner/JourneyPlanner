@@ -34,6 +34,7 @@ const { value, errorMessage } = useField(() => props.name);
 <template>
   <div class="relative">
     <Password
+      panelClass="dark:bg-background-dark dark:text-white"
       :id="id"
       :name="name"
       v-model="value"
