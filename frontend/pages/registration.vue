@@ -53,6 +53,7 @@ async function registerUser(userData: Object) {
       detail: t.value("form.registration.toast.success"),
       life: 3000,
     });
+    await navigateTo("/dashboard");
   } else if (error.value.statusCode === 422) {
     toast.add({
       severity: "error",
