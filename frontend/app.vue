@@ -2,11 +2,16 @@
   <TolgeeProvider>
     <NuxtLayout>
       <NuxtPage />
-      <label for="test"><T keyName="translation_key" /></label>
-      <input type="text" id="test" />
     </NuxtLayout>
     <template v-slot:fallback>
       <div>Loading...</div>
     </template>
   </TolgeeProvider>
 </template>
+
+<style lang="postcss">
+/* default background in light and dark: mode  */
+body {
+  @apply min-h-screen bg-background dark:bg-background-dark;
+}
+</style>
