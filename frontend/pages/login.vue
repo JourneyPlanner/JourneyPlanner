@@ -106,7 +106,7 @@ async function loginUser(userData: User) {
         >
           <legend
             for="outerBlock"
-            class="font-nunito font-bold text-3xl ml-4 px-3 dark:text-white"
+            class="text-3xl text-center lg:text-left lg:ml-7 px-2 font-bold text-text dark:text-white"
           >
             Login
           </legend>

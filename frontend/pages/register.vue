@@ -91,20 +91,18 @@ async function registerUser(userData: Object) {
       />
     </div>
     <div
-      class="relative overflow-hidden flex xl:w-1/3 md:w-2/4 sm:w-full items-center h-[90vh] justify-center w-full z-20"
+      class="flex xl:w-1/3 md:w-2/4 sm:w-full items-center h-[90vh] justify-center w-full"
     >
-      <div
-        class="xl:flex xl:items-center xl:justify-center md:flex md:items-center md:justify-center text-center mt-6 sm:w-3/4 w-full h-[75vh] z-20"
-      >
+      <div class="text-center mt-6 sm:w-3/4 w-full h-3/4 z-20">
         <fieldset
           id="outerBlock"
-          class="w-full h-auto px-3 py-2 pl-2 bg-surface dark:bg-surface-dark rounded-3xl border-border border-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 flex flex-col items-center"
+          class="h-auto px-3 py-2 bg-surface dark:bg-surface-dark rounded-3xl border-border border-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 flex flex-col items-center"
         >
           <legend
             for="outerBlock"
             class="text-3xl text-center lg:text-left lg:ml-7 px-2 font-bold text-text dark:text-white"
           >
-            Login
+            <T keyName="form.header.register" />
           </legend>
           <form @submit="onSubmit" class="w-4/5">
             <FormInput
