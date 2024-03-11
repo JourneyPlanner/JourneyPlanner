@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from "vee-validate";
-import { useTranslate, T, useTolgee } from "@tolgee/vue";
+import { useTranslate, T } from "@tolgee/vue";
 import Toast from "primevue/toast";
 import * as yup from "yup";
 
@@ -19,7 +19,10 @@ const { handleSubmit } = useForm({
 });
 
 const onSubmit = handleSubmit((values) => {
-  loginUser(values);
+  loginUser({
+    email: values.email as string,
+    password: values.password as string,
+  });
 });
 
 interface User {
@@ -29,7 +32,7 @@ interface User {
 /**
  * use the sanctum client to login a user
  * shows toast messages if success/error
- * @param {Object} userData
+ * @param {User} userData
  */
 async function loginUser(userData: User) {
   console.log(userData);
