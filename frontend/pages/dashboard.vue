@@ -2,6 +2,7 @@
 definePageMeta({
   middleware: ["sanctum:auth"],
 });
+
 </script>
 
 <template>
@@ -10,9 +11,7 @@ definePageMeta({
       <T keyName="common.dashboard" />
     </h1>
     <NuxtLink to="/journey/new" class="mt-10">
-      <button
-        class="bg-cta-bg border-2 border-cta-border text-text min-w-44 py-2 rounded-lg font-bold mr-10"
-      >
+      <button class="bg-cta-bg border-2 border-cta-border text-text min-w-44 py-2 rounded-lg font-bold mr-10">
         <T keyName="form.header.journey.create" />
       </button>
     </NuxtLink>

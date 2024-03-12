@@ -51,6 +51,7 @@ async function registerUser(userData: Object) {
     method: "POST",
     body: userData,
     async onResponse({ response }) {
+      console.log(response);
       if (response.ok) {
         toast.add({
           severity: "success",
@@ -89,86 +90,49 @@ async function registerUser(userData: Object) {
 
 <template>
   <Toast />
-  <div
-    class="w-full flex justify-center items-center font-nunito dark:bg-background-dark"
-  >
+  <div class="w-full flex justify-center items-center font-nunito dark:bg-background-dark">
     <div class="xl:w-1/3 md:w-1/4 sm:w-0 h-[90vh] dark:background-dark">
-      <SvgAircraft
-        class="xl:w-[230%] md:w-[350%] w-0 object-none -ml-[20vw] overflow-hidden mt-16 z-0"
-      />
+      <SvgAircraft class="xl:w-[230%] md:w-[350%] w-0 object-none -ml-[20vw] overflow-hidden mt-16 z-0" />
     </div>
-    <div
-      class="flex xl:w-1/3 md:w-2/4 sm:w-full items-center h-[90vh] justify-center w-full"
-    >
+    <div class="flex xl:w-1/3 md:w-2/4 sm:w-full items-center h-[90vh] justify-center w-full">
       <div class="text-center mt-6 sm:w-3/4 w-full h-3/4 z-20">
-        <fieldset
-          id="outerBlock"
-          class="h-auto px-3 py-2 bg-surface dark:bg-surface-dark rounded-3xl border-border border-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 flex flex-col items-center"
-        >
-          <legend
-            for="outerBlock"
-            class="text-3xl text-center lg:text-left lg:ml-7 px-2 font-bold text-text dark:text-white"
-          >
+        <fieldset id="outerBlock"
+          class="h-auto px-3 py-2 bg-surface dark:bg-surface-dark rounded-3xl border-border border-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 flex flex-col items-center">
+          <legend for="outerBlock"
+            class="text-3xl text-center lg:text-left lg:ml-7 px-2 font-bold text-text dark:text-white">
             <T keyName="form.header.register" />
           </legend>
           <form @submit="onSubmit" class="w-4/5">
-            <FormInput
-              id="email"
-              name="email"
-              translationKey="form.input.email"
-            />
+            <FormInput id="email" name="email" translationKey="form.input.email" />
 
-            <FormInput
-              id="name"
-              name="name"
-              translationKey="form.input.username"
-            />
+            <FormInput id="name" name="name" translationKey="form.input.username" />
 
-            <FormPassword
-              id="password"
-              name="password"
-              :feedback="true"
-              :feedbackStyle="true"
-              translationKey="form.input.password"
-            />
+            <FormPassword id="password" name="password" :feedback="true" :feedbackStyle="true"
+              translationKey="form.input.password" />
             <div class="mt-4">
-              <FormPassword
-                id="password_confirmation"
-                name="password_confirmation"
-                :feedback="false"
-                translationKey="form.input.password.repeat"
-              />
+              <FormPassword id="password_confirmation" name="password_confirmation" :feedback="false"
+                translationKey="form.input.password.repeat" />
             </div>
             <div class="mt-5">
               <FormCheckbox id="terms" name="terms" />
             </div>
 
             <button
-              class="rounded-2xl my-5 mt-8 bg-input border-cta-border border-2 py-2.5 px-6 font-nunito font-bold text-md hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
-            >
+              class="rounded-2xl my-5 mt-8 bg-input border-cta-border border-2 py-2.5 px-6 font-nunito font-bold text-md hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark">
               <T keyName="form.button.register" />
             </button>
           </form>
-          <NuxtLink
-            to="/login"
-            class="dark:text-white underline mt-auto font-nunito font-semibold my-1"
-          >
+          <NuxtLink to="/login" class="dark:text-white underline mt-auto font-nunito font-semibold my-1">
             <T keyName="form.text.already_account" />
           </NuxtLink>
         </fieldset>
       </div>
     </div>
     <div class="xl:w-1/3 md:w-1/4 sm:w-0 w-0 h-[90vh]">
-      <SvgCloud
-        class="xl:w-[60%] md:w-[90%] w-0 object-none overflow-hidden mt-52 z-0 dark:fill-clouds-bg"
-      />
-      <SvgCloud
-        class="xl:w-[50%] md:w-[80%] w-0 object-none overflow-hidden mt-32 z-0 -ml-[12vw]"
-      />
+      <SvgCloud class="xl:w-[60%] md:w-[90%] w-0 object-none overflow-hidden mt-52 z-0 dark:fill-clouds-bg" />
+      <SvgCloud class="xl:w-[50%] md:w-[80%] w-0 object-none overflow-hidden mt-32 z-0 -ml-[12vw]" />
       <div class="overflow-hidden">
-        <SvgCloud
-          class="xl:w-[60%] md:w-[90%] w-0 object-none overflow-hidden mt-16 z-0 ml-[20vw] overflow-x-hidden"
-        />
+        <SvgCloud class="xl:w-[60%] md:w-[90%] w-0 object-none overflow-hidden mt-16 z-0 ml-[20vw] overflow-x-hidden" />
       </div>
     </div>
   </div>

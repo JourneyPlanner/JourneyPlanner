@@ -98,7 +98,7 @@ const onSubmit = handleSubmit(async (values) => {
 <template>
   <Toast />
   <div class="flex flex-col h-screen justify-between z-10">
-    <div class="flex justify-center items-center font-nunito mt-20">
+    <div class="flex justify-center items-center font-nunito mt-16">
       <fieldset id="create-journey"
         class="w-full sm:w-1/4 md:w-1/3 px-5 rounded-2xl border-2 border-border shadow-sm bg-surface dark:bg-surface-dark">
         <legend for="create-journey"
