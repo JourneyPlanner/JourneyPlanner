@@ -40,7 +40,7 @@ class JourneyController extends Controller
         );
 
         $journey = Journey::create($validated);
-        $journey->users()->attach(auth()->id());
+        $journey->users()->attach(auth()->id(), ['role' => 1]);
 
         return response()->json(
             [

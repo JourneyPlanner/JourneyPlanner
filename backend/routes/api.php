@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\JourneyController;
+use App\Http\Controllers\JourneyUserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,5 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::resource('journey', JourneyController::class)->only('store')->middleware('auth:sanctum');
+
+Route::resource('journey/{id}/user', JourneyUserController::class)->only('index')->middleware('auth:sanctum');
