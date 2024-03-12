@@ -48,7 +48,7 @@ const { value, errorMessage } = useField(() => props.name);
     </div>
 
     <label
-      for="link-checkbox"
+      :for="id"
       class="ms-2 text-sm text-gray-900 dark:text-gray-300 select-none dark:text-white font-nunito font-light"
       ><T keyName="form.input.text.privacypolicy" />
       <NuxtLink
