@@ -42,6 +42,7 @@ export default {
       link: "#5ba5c5" /* link text */,
       "cancel-border": "#BB7474" /* cancel button */,
       "cancel-bg": "#d98f8f" /* cancel button */,
+      "cancel-bg-dark": "#7c6464" /* cancel button dark */,
       cancel: "#BB7474" /* cancel button */,
       white: "#ffffff" /* white*/,
     },
