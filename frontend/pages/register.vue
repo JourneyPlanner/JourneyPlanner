@@ -121,6 +121,7 @@ async function registerUser(userData: Object) {
               id="password"
               name="password"
               :feedback="true"
+              :feedbackStyle="true"
               translationKey="form.input.password"
             />
             <div class="mt-4">

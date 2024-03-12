@@ -25,6 +25,7 @@ const props = defineProps({
   type: String,
   id: String,
   feedback: Boolean,
+  feedbackStyle: Boolean,
   translationKey: { type: String, required: true },
 });
 
@@ -91,10 +92,13 @@ const { value, errorMessage } = useField(() => props.name);
         'text-input-label': isFocused,
         '-translate-y-4  scale-75': isFocused || value,
         'translate-y-0 scale-100': !isFocused && !value,
-        '-translate-x-2': (feedback && isFocused) || (feedback && value),
-        '-translate-x-3.5': (!feedback && isFocused) || (!feedback && value),
+        '-translate-x-2':
+          (feedbackStyle && isFocused) || (feedbackStyle && value),
+        '-translate-x-3.5':
+          (!feedbackStyle && isFocused) || (!feedbackStyle && value),
         'pl-1.5':
-          (!feedback && isFocused && german) || (!feedback && value && german),
+          (!feedbackStyle && isFocused && german) ||
+          (!feedbackStyle && value && german),
       }"
     >
       <T :keyName="translationKey" />
