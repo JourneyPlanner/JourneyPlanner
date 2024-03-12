@@ -84,14 +84,14 @@ async function loginUser(userData: User) {
         class="xl:w-[50%] md:w-[80%] w-0 object-none overflow-hidden mt-[20vh] z-50 dark:fill-clouds-bg -ml-24"
       />
       <SvgCloud
-        class="absolute xl:w-[20%] md:w-[25%] md:left-[6vh] left-[23vh] w-0 object-none overflow-hidden top-[49vh] z-30"
+        class="absolute xl:w-[20%] md:w-[25%] md:left-[18vh] left-[35vh] w-0 object-none overflow-hidden top-[49vh] z-30"
       />
       <div class="overflow-hidden">
         <SvgCloudReversed
           class="xl:w-[45%] md:w-[70%] w-0 object-none overflow-hidden mt-[55vh] z-50 dark:fill-clouds-bg"
         />
         <SvgBalloon
-          class="absolute xl:w-[4%] md:w-[5%] md:left-[15vh] w-0 top-[45vh] left-[32vh] z-0"
+          class="absolute xl:w-[4%] md:w-[5%] md:left-[28vh] w-0 top-[45vh] left-[45vh] z-0"
         />
         <SvgBalloon
           class="absolute xl:w-[7%] md:w-[8%] left-[68vh] w-0 top-12"
@@ -129,7 +129,7 @@ async function loginUser(userData: User) {
             />
 
             <button
-              class="rounded-2xl my-6 bg-input border-cta-border border-2 py-2 px-10 font-nunito font-bold text-2xl hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
+              class="rounded-2xl my-5 mt-4 bg-input border-cta-border border-2 py-2.5 px-6 font-nunito font-bold text-md hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
             >
               <T keyName="form.button.login" />
             </button>
@@ -146,7 +146,7 @@ async function loginUser(userData: User) {
         class="xl:w-0 md:w-0 sm:w-[30vh] w-[30vh] z-0 absolute top-[50vh] overflow-hidden -left-4"
       />
       <SvgBalloonWithPeople
-        class="xl:w-0 md:w-0 sm:w-[30vh] w-[30vh] z-0 absolute sm:-right-12 -right-24 top-72 overflow-hidden"
+        class="xl:w-0 md:w-0 sm:w-[30vh] w-[30vh] z-0 absolute sm:-right-12 -right-24 top-[30vh] overflow-hidden"
       />
     </div>
     <div
