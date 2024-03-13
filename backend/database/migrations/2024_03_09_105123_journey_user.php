@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('journey_user', function (Blueprint $table) {
             $table->foreignUuid('journey_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
