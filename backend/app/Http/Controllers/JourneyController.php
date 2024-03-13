@@ -25,7 +25,7 @@ class JourneyController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store the new journey and add the authenticated user to it
      */
     public function store(Request $request): JsonResponse
     {
@@ -40,7 +40,8 @@ class JourneyController extends Controller
         );
 
         $journey = Journey::create($validated);
-        $journey->users()->attach(auth()->id());
+        // Add the authenticated user to the journey with the role of 1 (journey guide)
+        $journey->users()->attach(auth()->id(), ['role' => 1]);
 
         return response()->json(
             [
