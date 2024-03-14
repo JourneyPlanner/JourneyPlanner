@@ -7,6 +7,12 @@ import * as yup from "yup";
 const { t } = useTranslate();
 const toast = useToast();
 
+const title = t.value("form.header.register");
+
+useHead({
+  title: `${title} | JourneyPlanner`,
+})
+
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
     email: yup
