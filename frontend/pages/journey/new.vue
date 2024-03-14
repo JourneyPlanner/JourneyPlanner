@@ -17,7 +17,8 @@ useHead({
 })
 
 definePageMeta({
-  middleware: ["sanctum:auth"],
+  //TODO
+  //middleware: ["sanctum:auth"],
 });
 
 
@@ -158,9 +159,9 @@ const onSubmit = handleSubmit(async (values) => {
       <div class="z-10">
         <div class="flex flex-row justify-between items-end">
           <SvgPeopleBackpackMap class="hidden lg:block" />
-          <div class="flex flex-row items-end justify-between w-full lg:w-auto">
+          <div class="flex flex-row items-end justify-between w-full lg:w-auto mt-2 sm:mt-0">
             <SvgWomanSuitcaseLeft class="" />
-            <SvgWomanSuitcaseRight class="" />
+            <SvgWomanSuitcaseRight class="ml-10" />
           </div>
         </div>
         <Divider type="solid" class="text-[#CCCCCC] border-b" :pt="{
