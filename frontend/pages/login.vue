@@ -4,13 +4,21 @@ import { useTranslate, T } from "@tolgee/vue";
 import Toast from "primevue/toast";
 import * as yup from "yup";
 
+const { t } = useTranslate();
+const toast = useToast();
+const { login } = useSanctumAuth();
+
+const title = t.value("form.header.login");
+
+useHead({
+  title: `${title} | JourneyPlanner`,
+})
+
 definePageMeta({
   middleware: ["sanctum:guest"],
 });
 
-const { t } = useTranslate();
-const toast = useToast();
-const { login } = useSanctumAuth();
+
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({

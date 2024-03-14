@@ -1,7 +1,8 @@
 <template>
     <div class="flex flex-col h-screen justify-between">
         <slot />
-        <footer class="text-footer text-xs md:text-sm font-nunito pb-3 flex items-center justify-center">
+        <footer
+            class="text-footer text-xs md:text-sm font-nunito pb-3 flex items-center justify-center overflow-hidden">
             <a href="mailto:contact@journeyplanner.io"
                 class="hover:font-bold hover:text-link">contact@journeyplanner.io</a>
             <span class="mx-2"> | </span>
