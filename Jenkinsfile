@@ -3,19 +3,15 @@ pipeline {
     stages {
         stage('Build frontend') {
             steps {
-                dir('${workspace}/frontend') {
-                    script {
-                        def frontend = docker.build("journeyplanner/frontend:latest")
-                    }
+                dir('frontend') {
+                    def frontend = docker.build("journeyplanner/frontend:latest")
                 }
             }
         }
         stage('Build backend') {
             steps {
-                dir('${workspace}/backend') {
-                    script {
-                        def backend = docker.build("journeyplanner/backend:latest")
-                    }
+                dir('../backend') {
+                    def backend = docker.build("journeyplanner/backend:latest")
                 }
             }
         }
