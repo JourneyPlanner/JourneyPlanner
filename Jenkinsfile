@@ -3,9 +3,8 @@ pipeline {
     stages {
         stage('Build frontend') {
             steps {
-                dir('frontend') {
+                dir('/frontend') {
                     script {
-                        checkout scm
                         def frontend = docker.build("journeyplanner/frontend:latest")
                     }
                 }
@@ -13,9 +12,8 @@ pipeline {
         }
         stage('Build backend') {
             steps {
-                dir('backend') {
+                dir('/backend') {
                     script {
-                        checkout scm
                         def backend = docker.build("journeyplanner/backend:latest")
                     }
                 }
