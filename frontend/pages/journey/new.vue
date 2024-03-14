@@ -6,6 +6,7 @@ import { useTranslate } from "@tolgee/vue";
 import { v4 as uuidv4 } from "uuid";
 
 definePageMeta({
+  //TODO
   middleware: ["sanctum:auth"],
 });
 

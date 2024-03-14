@@ -89,8 +89,8 @@ async function registerUser(userData: Object) {
 </script>
 
 <template>
-  <Toast />
   <div class="w-full flex justify-center items-center font-nunito dark:bg-background-dark">
+    <Toast />
     <div class="xl:w-1/3 md:w-1/4 sm:w-0 h-[90vh] dark:background-dark">
       <SvgAircraft class="xl:w-[230%] md:w-[350%] w-0 object-none -ml-[20vw] overflow-hidden mt-16 z-0" />
     </div>
