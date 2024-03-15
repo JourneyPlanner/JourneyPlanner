@@ -17,8 +17,7 @@ useHead({
 })
 
 definePageMeta({
-  //TODO
-  //middleware: ["sanctum:auth"],
+  middleware: ["sanctum:auth"],
 });
 
 
