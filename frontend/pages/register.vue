@@ -117,18 +117,21 @@ async function registerUser(userData: Object) {
             <FormInput
               id="email"
               name="email"
+              autocomplete="on"
               translationKey="form.input.email"
             />
 
             <FormInput
               id="firstName"
               name="firstName"
+              autocomplete="given-name"
               translationKey="form.input.first.name"
             />
 
             <FormInput
               id="lastName"
               name="lastName"
+              autocomplete="family-name"
               translationKey="form.input.last.name"
             />
 

@@ -7,6 +7,7 @@ const props = defineProps({
   name: { type: String, required: true },
   type: String,
   id: String,
+  autocomplete: String,
   translationKey: { type: String, required: true },
 });
 
@@ -20,6 +21,7 @@ const { value, errorMessage } = useField(() => props.name);
       :id="id"
       :name="name"
       v-model="value"
+      :autocomplete="autocomplete || 'off'"
       class="peer w-full rounded-lg placeholder:text-transparent px-2.5 pb-1 pt-4 text-md text-text dark:text-white font-bold bg-input border-2 border-border focus:outline-none focus:ring-1 dark:bg-input-dark"
       placeholder=" "
       @focus="isFocused = true"
