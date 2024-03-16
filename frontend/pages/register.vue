@@ -30,7 +30,6 @@ const { handleSubmit } = useForm({
 });
 
 const onSubmit = handleSubmit((values) => {
-  console.log(values);
   registerUser(values);
 });
 
@@ -52,7 +51,6 @@ async function registerUser(userData: Object) {
     method: "POST",
     body: userData,
     async onResponse({ response }) {
-      console.log(response);
       if (response.ok) {
         toast.add({
           severity: "success",
@@ -117,7 +115,7 @@ async function registerUser(userData: Object) {
             <FormInput
               id="email"
               name="email"
-              autocomplete="on"
+              autocomplete="email"
               translationKey="form.input.email"
             />
 
