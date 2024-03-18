@@ -53,11 +53,16 @@ class JourneyController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show the requested journey.
      */
     public function show(Journey $journey)
     {
-        //
+        // Check if the currently logged in user is a member of the requested journey
+        if (!$journey->users()->where('user_id', auth()->id())->exists()) {
+            return abort(404);
+        }
+
+        return response()->json($journey);
     }
 
     /**
