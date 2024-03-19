@@ -3,6 +3,7 @@ pipeline {
     environment {
         FRONTEND_IMAGE = 'journeyplanner/frontend:latest'
         BACKEND_IMAGE = 'journeyplanner/backend:latest'
+        I18N_IMAGE = 'journeyplanner/i18n:latest'
     }
     stages {
         stage('Build Frontend') {
@@ -27,6 +28,20 @@ pipeline {
                             docker.build(env.BACKEND_IMAGE)
                         } catch (Exception e) {
                             echo "Failed to build backend image: ${e.message}"
+                            currentBuild.result = 'FAILURE'
+                        }
+                    }
+                }
+            }
+        }
+        stage('Build i18n Image') {
+            steps {
+                dir('i18n') {
+                    script {
+                        try {
+                            docker.build(env.I18N_IMAGE)
+                        } catch (Exception e) {
+                            echo "Failed to build i18n image: ${e.message}"
                             currentBuild.result = 'FAILURE'
                         }
                     }

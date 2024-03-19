@@ -34,6 +34,6 @@ RUN chown -R www-data:www-data /app/storage
 
 EXPOSE 9000
 
-ENTRYPOINT [ "infisical", "run", "--env=prod", "--", "php", "artisan", "config:cache", "&&", "php", "artisan", "migrate", "--force"]
-
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+COPY ./start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+CMD ["/app/start.sh"]

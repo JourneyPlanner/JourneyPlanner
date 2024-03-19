@@ -18,6 +18,12 @@ services:
       - .env
     depends_on:
       - backend
+      - i18n
+  i18n:
+    build: ./i18n
+    restart: always
+    env_file:
+      - .env
   backend:
     build: ../backend
     restart: always
