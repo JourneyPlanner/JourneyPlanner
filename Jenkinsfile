@@ -36,7 +36,7 @@ pipeline {
         }
         stage('Build i18n Image') {
             steps {
-                dir('i18n') {
+                dir('docker/i18n') {
                     script {
                         try {
                             docker.build(env.I18N_IMAGE)
