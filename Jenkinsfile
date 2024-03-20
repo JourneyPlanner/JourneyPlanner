@@ -33,5 +33,16 @@ pipeline {
                 }
             }
         }
+        stage('Deploy') {
+            steps {
+                script {
+                    docker.withRegistry('http://host.docker.internal:5000') {
+                        docker.image(env.FRONTEND_IMAGE).push()
+                        docker.image(env.BACKEND_IMAGE).push()
+                        docker.image(env.I18N_IMAGE).push()
+                    }
+                }
+            }
+        }
     }
 }
