@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        FRONTEND_IMAGE = 'host.docker.internal:5000/journeyplanner/frontend:latest'
-        BACKEND_IMAGE = 'host.docker.internal:5000/journeyplanner/backend:latest'
-        I18N_IMAGE = 'host.docker.internal:5000/journeyplanner/i18n:latest'
+        FRONTEND_IMAGE = 'journeyplanner/frontend:latest'
+        BACKEND_IMAGE = 'journeyplanner/backend:latest'
+        I18N_IMAGE = 'journeyplanner/i18n:latest'
     }
     stages {
         stage('Build Frontend') {
