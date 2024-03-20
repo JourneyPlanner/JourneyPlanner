@@ -38,7 +38,7 @@ const { value, errorMessage } = useField(() => props.name);
       panelClass="dark:bg-background-dark dark:text-white"
       :id="id"
       :name="name"
-      v-model="value"
+      v-model="value as string"
       toggleMask
       class="w-full"
       :feedback="feedback"

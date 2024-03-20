@@ -28,7 +28,7 @@ const { value, errorMessage } = useField(() => props.name);
     <Calendar
       :id="id"
       :name="name"
-      v-model="value"
+      v-model="value as string"
       selectionMode="range"
       :manualInput="true"
       :showButtonBar="true"

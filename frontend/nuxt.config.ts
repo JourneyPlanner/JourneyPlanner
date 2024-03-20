@@ -1,13 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  typescript: {
+    typeCheck: true,
+  },
   modules: [
     "@nuxtjs/tailwindcss",
     "@nuxtjs/color-mode",
     "nuxt-primevue",
     "@vee-validate/nuxt",
     "nuxt-auth-sanctum",
-  ],
+],
   css: [
     "@/assets/css/fonts/fonts.css",
     "primevue/resources/themes/aura-light-blue/theme.css",
