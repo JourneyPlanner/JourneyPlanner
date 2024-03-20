@@ -14,7 +14,7 @@
     "@tolgee/vue": "^5.19.6",
     "@vee-validate/nuxt": "^4.12.5",
     "@vee-validate/yup": "^4.12.6",
-    "axios": "^1.6.8",
+    "date-fns": "^3.6.0",
     "nuxt": "^3.10.3",
     "primeicons": "^6.0.1",
     "primevue": "^3.49.1",

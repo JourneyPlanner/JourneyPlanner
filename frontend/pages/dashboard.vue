@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import axios from 'axios';
 import { useTranslate } from '@tolgee/vue';
 
 const title = "Dashboard";
@@ -18,6 +17,7 @@ interface Journey {
   destination: string;
   from: string;
   to: string;
+  role: Number;
 }
 
 const { t } = useTranslate();
@@ -97,9 +97,16 @@ const toggle = (event) => {
 };
 
 async function fetchJourneys() {
-  const response = await axios.get('testdata.json');
-  journeys.value = response.data;
-  currentJourneys.value = response.data;
+  const client = useSanctumClient();
+  await client("/api/journey", {
+    method: "GET",
+    async onResponse({ response }) {
+      console.log(response._data);
+      journeys.value = response._data;
+      currentJourneys.value = response._data;
+    }
+  });
+
 }
 
 async function searchJourneys() {
@@ -132,7 +139,7 @@ fetchJourneys();
 
 <template>
   <div class="font-nunito px-20 text-text">
-    <div id="header" class="border-b-2 border-border mt-10 pb-8 flex justify-between items-center">
+    <div id="header" class="border-b-2 border-border mt-10 pb-5 flex justify-between items-center">
       <div class="flex flex-row items-center">
         <SvgDashboardIcon class="w-9 h-9" />
         <h1 class="text-5xl font-medium">
@@ -161,7 +168,7 @@ fetchJourneys();
                   <Divider type="solid" class="text-[#CCCCCC] border-b mt-1 mb-1" />
                 </template>
                 <template #item="{ item, props, hasSubmenu }">
-                  <a v-ripple class="flex align-items-center hover:bg-cta-bg-light rounded-md text-text"
+                  <a v-ripple class="flex align-items-center hover:bg-cta-bg-light rounded-md text-text text-sm"
                     v-bind="props.action">
                     <span :class="item.icon"></span>
                     <span class="ml-2">{{ item.label }}</span>
@@ -186,12 +193,16 @@ fetchJourneys();
         </div>
       </div>
     </div>
-    <div id="journeys" class="grid grid-cols-4">
-      <DashboardItem v-for="journey in currentJourneys" :name="journey.name" :destination="journey.destination"
-        :from="journey.from" :to="journey.to" />
+    <div id="journeys" class="grid grid-cols-4  gap-y-10 mt-5">
+      <div v-for="journey in currentJourneys">
+        <DashboardItem class="" :name="journey.name" :destination="journey.destination" :from="journey.from"
+          :to="journey.to" :role="journey.pivot.role" />
+      </div>
+
       <NuxtLink to="/journey/new">
         <SvgCreateNewJourneyCard class="" />
       </NuxtLink>
+
     </div>
   </div>
 </template>
