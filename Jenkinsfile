@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        FRONTEND_IMAGE = 'journeyplanner/frontend:latest'
-        BACKEND_IMAGE = 'journeyplanner/backend:latest'
-        I18N_IMAGE = 'journeyplanner/i18n:latest'
+        FRONTEND_IMAGE = 'host.docker.internal:5000/journeyplanner/frontend:latest'
+        BACKEND_IMAGE = 'host.docker.internal:5000/journeyplanner/backend:latest'
+        I18N_IMAGE = 'host.docker.internal:5000/journeyplanner/i18n:latest'
     }
     stages {
         stage('Build Frontend') {
@@ -36,11 +36,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    docker.withRegistry('http://host.docker.internal:5000') {
-                        docker.image(env.FRONTEND_IMAGE).push()
-                        docker.image(env.BACKEND_IMAGE).push()
-                        docker.image(env.I18N_IMAGE).push()
-                    }
+                    sh("docker push ${env.FRONTEND_IMAGE}")
+                    sh("docker push ${env.BACKEND_IMAGE}")
+                    sh("docker push ${env.I18N_IMAGE}")
                 }
             }
         }
