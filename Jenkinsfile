@@ -36,9 +36,11 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh("docker push ${env.FRONTEND_IMAGE}")
-                    sh("docker push ${env.BACKEND_IMAGE}")
-                    sh("docker push ${env.I18N_IMAGE}")
+                    docker.withRegistry('https://registry.journeyplanner.io', 'docker-registry-credentials') {
+                        docker.image(env.FRONTEND_IMAGE).push()
+                        docker.image(env.BACKEND_IMAGE).push()
+                        docker.image(env.I18N_IMAGE).push()
+                    }
                 }
             }
         }
