@@ -1,5 +1,4 @@
 name: "journeyplanner"
-version: "3.8"
 
 services:
   web:
@@ -16,7 +15,7 @@ services:
     build: ../frontend
     restart: always
     env_file:
-      - .env
+      - stack.env
     depends_on:
       - backend
       - i18n
@@ -24,19 +23,19 @@ services:
     build: ./i18n
     restart: always
     env_file:
-      - .env
+      - stack.env
   backend:
     build: ../backend
     restart: always
     env_file:
-      - .env
+      - stack.env
   db:
     image: mariadb:latest
     restart: always
     volumes:
       - dbdata:/var/lib/mysql
     env_file:
-      - .env
+      - stack.env
 
 volumes:
   dbdata:
