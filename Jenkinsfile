@@ -10,12 +10,7 @@ pipeline {
             steps {
                 dir('frontend') {
                     script {
-                        try {
-                            docker.build(env.FRONTEND_IMAGE)
-                        } catch (Exception e) {
-                            echo "Failed to build frontend image: ${e.message}"
-                            currentBuild.result = 'FAILURE'
-                        }
+                        docker.build(env.FRONTEND_IMAGE)
                     }
                 }
             }
@@ -24,12 +19,7 @@ pipeline {
             steps {
                 dir('backend') {
                     script {
-                        try {
-                            docker.build(env.BACKEND_IMAGE)
-                        } catch (Exception e) {
-                            echo "Failed to build backend image: ${e.message}"
-                            currentBuild.result = 'FAILURE'
-                        }
+                        docker.build(env.BACKEND_IMAGE)
                     }
                 }
             }
@@ -38,12 +28,7 @@ pipeline {
             steps {
                 dir('docker/i18n') {
                     script {
-                        try {
-                            docker.build(env.I18N_IMAGE)
-                        } catch (Exception e) {
-                            echo "Failed to build i18n image: ${e.message}"
-                            currentBuild.result = 'FAILURE'
-                        }
+                        docker.build(env.I18N_IMAGE)
                     }
                 }
             }
