@@ -12,7 +12,7 @@ services:
     depends_on:
       - frontend
   frontend:
-    build: ../frontend
+    image: registry.journeyplanner.io/journeyplanner/frontend:latest
     restart: always
     env_file:
       - stack.env
@@ -20,12 +20,12 @@ services:
       - backend
       - i18n
   i18n:
-    build: ./i18n
+    image: registry.journeyplanner.io/journeyplanner/i18n:latest
     restart: always
     env_file:
       - stack.env
   backend:
-    build: ../backend
+    image: registry.journeyplanner.io/journeyplanner/backend:latest
     restart: always
     env_file:
       - stack.env
