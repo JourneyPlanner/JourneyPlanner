@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        FRONTEND_IMAGE = 'journeyplanner/frontend:$BUILD_NUMBER'
-        BACKEND_IMAGE = 'journeyplanner/backend:$BUILD_NUMBER'
-        I18N_IMAGE = 'journeyplanner/i18n:$BUILD_NUMBER'
+        FRONTEND_IMAGE = 'journeyplanner/frontend:${BUILD_NUMBER}'
+        BACKEND_IMAGE = 'journeyplanner/backend:${BUILD_NUMBER}'
+        I18N_IMAGE = 'journeyplanner/i18n:${BUILD_NUMBER}'
     }
     stages {
         stage('Build Frontend') {
