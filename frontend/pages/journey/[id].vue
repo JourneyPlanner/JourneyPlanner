@@ -79,12 +79,110 @@ if (days.value > 0) {
 } else {
   journeyEnded.value = true;
 }
+
+const isFlipped = ref(false);
+const flip = () => {
+  isFlipped.value = !isFlipped.value;
+};
 </script>
 
 <template>
   <div class="w-screen h-screen font-nunito text-text">
     <div class="flex flex-wrap h-fit mt-[12vh]">
-      <div class="ml-[10%] lg:w-1/3 md:h-2/5">
+      <div class="flex w-full items-center justify-center md:hidden">
+        <div class="group w-5/6 [perspective:1000px]" @click="flip">
+          <div
+            :class="isFlipped ? '[transform:rotateX(180deg)]' : ''"
+            class="relative h-full w-full rounded-xl shadow-xl transition-all duration-500 [transform-style:preserve-3d]"
+          >
+            <div class="lg:w-1/3 md:w-2/5">
+              <div
+                class="h-1/6 bg-border border-x-2 border-t-2 border-border-darker rounded-t-2xl flex items-center"
+              >
+                <div
+                  class="ml-10 rounded-full w-7 h-7 bg-border-gray inline-block self-center"
+                ></div>
+                <p class="ml-5 text-white font-bold text-xl">JourneyPlanner</p>
+                <div class="w-full flex justify-end">
+                  <SvgAirplaneIcon class="w-8 mr-5 pb-1" />
+                </div>
+              </div>
+              <div class="flex h-5/6">
+                <div
+                  class="h-fit w-full rounded-b-2xl bg-background border-border-gray border-l-2 border-b-2 text-sm"
+                >
+                  <div class="w-full grid grid-cols-5">
+                    <div
+                      class="w-full col-span-3 pl-5 flex flex-col h-full justify-center font-medium"
+                    >
+                      <T keyName="form.input.journey.name" />
+                      <input
+                        class="w-full rounded-md px-2.5 pb-1 mb-2 pt-1 text-md text-text dark:text-white font-bold bg-input-gray focus:outline-none focus:ring-1 dark:bg-input-dark"
+                        disabled
+                        :value="journeyData.name"
+                      />
+                      <T keyName="form.input.journey.destination" />
+                      <input
+                        class="w-full rounded-md px-2.5 pb-1 pt-1 mb-2 text-md text-text dark:text-white font-bold bg-input-gray focus:outline-none focus:ring-1 dark:bg-input-dark"
+                        disabled
+                        :value="journeyData.destination"
+                      />
+                      <T keyName="form.input.journey.date" />
+                      <input
+                        class="w-4/5 rounded-md px-2.5 pb-1 pt-1 mb-2 text-md text-text dark:text-white font-bold bg-input-gray focus:outline-none focus:ring-1 dark:bg-input-dark"
+                        disabled
+                        :value="
+                          format(fromDate, 'dd/MM/yyyy') +
+                          ' - ' +
+                          format(toDate, 'dd/MM/yyyy')
+                        "
+                      />
+                    </div>
+                    <div class="w-full h-[1/3] col-span-2">
+                      <SvgStripes class="h-fit" />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="h-[90%] w-0 rounded-b-r-3xl bg-background border-border-gray border-r-2 border-dashed"
+                ></div>
+              </div>
+            </div>
+            <div
+              class="text-text absolute inset-0 h-full w-full rounded-xl bg-white text-center [transform:rotateX(180deg)] [backface-visibility:hidden]"
+            >
+              <div
+                class="h-1/6 bg-border border-x-2 border-t-2 border-border-darker rounded-t-2xl flex items-center"
+              >
+                <div
+                  class="ml-10 rounded-full w-7 h-7 bg-border-gray inline-block self-center"
+                ></div>
+                <p class="ml-5 text-white font-bold text-xl">JourneyPlanner</p>
+                <div class="w-full flex justify-end">
+                  <SvgAirplaneIcon class="w-8 mr-5 pb-1" />
+                </div>
+              </div>
+              <div class="flex h-5/6">
+                <div
+                  class="h-full w-full rounded-b-2xl bg-background border-border-gray border-r-2 border-b-2 flex justify-center"
+                >
+                  <div class="h-full w-full flex flex-col items-end relative">
+                    <img
+                      class="absolute right-[50%] top-[25%] z-20 translate-x-[50%] -translate-y-[25%] w-2/5"
+                      :src="qrcode"
+                      alt="QR Code"
+                    />
+                    <SvgStripes class="z-0 lg:w-1/2 md:w-2/3" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="h-fit ml-[10%] lg:w-1/3 md:w-2/5 md:visible invisible w-0 max-md:h-0"
+      >
         <div
           class="h-1/6 bg-border border-x-2 border-t-2 border-border-darker rounded-t-2xl flex items-center"
         >
@@ -141,7 +239,9 @@ if (days.value > 0) {
           ></div>
         </div>
       </div>
-      <div class="lg:w-1/6 md:w-1/4 rounded-2xl bg-background border-solid">
+      <div
+        class="lg:w-1/6 md:w-1/4 rounded-2xl bg-background border-solid md:visible invisible w-0 max-md:h-0"
+      >
         <div
           class="h-1/6 bg-border border-x-2 border-t-2 border-border-darker rounded-t-2xl"
         >
@@ -158,13 +258,13 @@ if (days.value > 0) {
           >
             <div class="h-full w-full flex flex-col items-end relative">
               <img
-                class="absolute pr-12 pt-2 z-20"
+                class="absolute right-[50%] top-[25%] z-20 translate-x-[50%] -translate-y-[25%] w-1/2"
                 :src="qrcode"
                 alt="QR Code"
               />
               <SvgStripes class="z-0 lg:w-1/2 md:w-2/3" />
               <button
-                class="absolute mt-[20vh] mr-[4.5vw] font-bold border-2 border-cta-border h-1/6 w-2/5 rounded-xl hover:bg-cta-bg z-30 bg-background"
+                class="absolute right-[50%] top-[80%] translate-x-[50%] -translate-y-[25%] font-bold border-2 border-cta-border h-1/6 w-2/5 rounded-xl hover:bg-cta-bg z-30 bg-background"
               >
                 <T keyName="journey.button.invite" />
               </button>
@@ -177,7 +277,7 @@ if (days.value > 0) {
         class="lg:w-1/6 w-4/5 border-4 rounded-2xl bg-background border-solid border-border ml-20 mt-5"
       >
         <div
-          class="flex flex-wrap h-full lg:justify-center items-center bg-gradient-to-br from-indigo-500 to-indigo-800"
+          class="flex flex-col h-full lg:justify-center justify-start items-center bg-gradient-to-br from-indigo-500 to-indigo-800"
         >
           <!-- flip clock container -->
           <div
@@ -291,7 +391,9 @@ if (days.value > 0) {
               </div>
             </div>
           </div>
-          <div class="h-full text-center max-lg:flex">
+          <div
+            class="h-full text-center justify-end items-center lg:flex-col flex"
+          >
             <p><T keyName="journey.countdown.days" /></p>
             <p v-if="duringJourney" class="font-semibold">
               <T keyName="journey.countdown.ends" />
@@ -304,20 +406,20 @@ if (days.value > 0) {
             </p>
             <button
               v-if="duringJourney"
-              class="font-bold border-2 border-cta-border lg:h-1/6 lg:w-5/6 w-0 h-0 rounded-xl hover:bg-cta-bg"
+              class="font-bold border-2 border-cta-border lg:h-1/6 lg:w-5/6 max-lg:invisible rounded-xl hover:bg-cta-bg mb-10"
             >
               <T keyName="journey.button.countdown.calendar" />
             </button>
             <button
               v-else-if="journeyEnded"
-              class="font-bold border-2 border-cta-border lg:h-1/6 lg:w-5/6 w-0 h-0 rounded-xl hover:bg-cta-bg"
+              class="font-bold border-2 border-cta-border lg:h-1/6 lg:w-5/6 w-0 h-0 max-lg:invisible rounded-xl hover:bg-cta-bg mb-10"
               @click="jsConfetti.addConfetti()"
             >
               <T keyName="journey.button.countdown.celebrate" />
             </button>
             <button
               v-else
-              class="font-bold border-2 border-cta-border lg:h-1/6 lg:w-5/6 w-0 h-0 rounded-xl hover:bg-cta-bg"
+              class="font-bold border-2 border-cta-border lg:h-1/6 lg:w-5/6 w-0 h-0 max-lg:invisible rounded-xl hover:bg-cta-bg mb-10"
             >
               <T keyName="journey.button.countdown.planning" />
             </button>
