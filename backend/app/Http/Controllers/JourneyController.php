@@ -14,7 +14,7 @@ class JourneyController extends Controller
     public function index()
     {
         // Get all journeys of the authenticated user
-        $journeys = auth()->user()->journeys()->get();
+        $journeys = auth()->user()->journeys()->withPivot('role')->get();
 
         return response()->json($journeys);
     }
