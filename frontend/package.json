@@ -16,6 +16,7 @@
     "@vee-validate/yup": "^4.12.6",
     "axios": "^1.6.8",
     "nuxt": "^3.10.3",
+    "primeicons": "^6.0.1",
     "primevue": "^3.49.1",
     "uuid": "^9.0.1",
     "vue": "^3.4.19",

@@ -1,64 +1,197 @@
 <script setup lang="ts">
 import axios from 'axios';
+import { useTranslate } from '@tolgee/vue';
 
 const title = "Dashboard";
 useHead({
   title: `${title} | JourneyPlanner`,
 })
 
-/*
-TODO
+
 definePageMeta({
   middleware: ["sanctum:auth"],
 });
-*/
 
+interface Journey {
+  id: number;
+  name: string;
+  destination: string;
+  from: string;
+  to: string;
+}
 
+const { t } = useTranslate();
 
 const journeys = ref();
+const searchInput = ref();
 let search = ref('');
-let searchedJourneys = ref();
+let currentJourneys = ref();
+
+const menu = ref();
+const items = ref([
+  {
+    label: t.value('dashboard.sort.name'),
+    icon: 'pi pi-book',
+    items: [
+      {
+        label: t.value('dashboard.sort.ascending'),
+        icon: 'pi pi-sort-alpha-up',
+        command: () => {
+          sortJourneys('name-asc');
+        }
+      },
+      {
+        label: t.value('dashboard.sort.descending'),
+        icon: 'pi pi-sort-alpha-down',
+        command: () => {
+          sortJourneys('name-desc');
+        }
+      },
+    ]
+  },
+  {
+    label: t.value('dashboard.sort.startdate'),
+    icon: 'pi pi-calendar',
+    items: [
+      {
+        label: t.value('dashboard.sort.oldestToNewest'),
+        icon: 'pi pi-sort-amount-up',
+        command: () => {
+          sortJourneys('startdate-asc');
+        }
+      },
+      {
+        label: t.value('dashboard.sort.newestToOldest'),
+        icon: 'pi pi-sort-amount-down',
+        command: () => {
+          sortJourneys('startdate-desc');
+        }
+      },
+    ]
+  },
+  {
+    label: t.value('dashboard.sort.destination'),
+    icon: 'pi pi-map-marker',
+    items: [
+      {
+        label: t.value('dashboard.sort.ascending'),
+        icon: 'pi pi-sort-alpha-up',
+        command: () => {
+          sortJourneys('destination-asc');
+        }
+      },
+      {
+        label: t.value('dashboard.sort.descending'),
+        icon: 'pi pi-sort-alpha-down',
+        command: () => {
+          sortJourneys('destination-desc');
+        }
+      },
+    ]
+  },
+
+]);
+
+const toggle = (event) => {
+  menu.value.toggle(event);
+};
 
 async function fetchJourneys() {
   const response = await axios.get('testdata.json');
   journeys.value = response.data;
-  searchedJourneys.value = response.data;
+  currentJourneys.value = response.data;
 }
 
 async function searchJourneys() {
   const data = journeys.value;
+  //TODO typescript
   const results = data.filter(obj => {
     return Object.values(obj).some(value =>
       String(value).toLowerCase().includes(search.value.toLowerCase())
     );
   });
-  searchedJourneys.value = results;
+
+  currentJourneys.value = results;
+}
+
+function sortJourneys(sortKey: String) {
+  currentJourneys.value.sort((a: Journey, b: Journey) => {
+    if (sortKey === 'name-asc') return b.name.localeCompare(a.name);
+    if (sortKey === 'name-desc') return a.name.localeCompare(b.name);
+    if (sortKey === 'startdate-asc') return a.from.localeCompare(b.from);
+    if (sortKey === 'startdate-desc') return b.from.localeCompare(a.from);
+    if (sortKey === 'destination-asc') return b.destination.localeCompare(a.destination);
+    if (sortKey === 'destination-desc') return a.destination.localeCompare(b.destination);
+  });
 }
 
 fetchJourneys();
 
+
 </script>
 
 <template>
-  <div>
-    <div class="font-nunito bg-surface flex justify-between">
-      <h1 class="mt-10 ml-10 h-20 font-bold text-4xl">
-        <T keyName="common.dashboard" />
-      </h1>
-      <NuxtLink to="/journey/new" class="mt-10">
-        <button class="bg-cta-bg border-2 border-cta-border text-text min-w-44 py-2 rounded-lg font-bold mr-10">
-          <T keyName="form.header.journey.create" />
-        </button>
-      </NuxtLink>
-    </div>
-    <div>
-      <input type="text" class="w-1/3 h-10 mt-10 ml-10 rounded-lg border-2 border-border"
-        placeholder="Search for a journey" @input="searchJourneys" v-model="search">
-    </div>
-    <div class="flex flex-wrap">
-      <div v-for="journey in searchedJourneys" :key="journey.id">
-        <DashboardItem :name="journey.name" :destination="journey.destination" :from="journey.from" :to="journey.to" />
+  <div class="font-nunito px-20 text-text">
+    <div id="header" class="border-b-2 border-border mt-10 pb-8 flex justify-between items-center">
+      <div class="flex flex-row items-center">
+        <SvgDashboardIcon class="w-9 h-9" />
+        <h1 class="text-5xl font-medium">
+          <T keyName="common.dashboard" />
+        </h1>
       </div>
+      <div id="right-header" class="flex flex-row items-center">
+        <div id="search-and-filter" class="flex flex-row border-r-2  border-border-grey">
+          <div id="search" class="relative mr-2.5">
+            <input type="text" ref="searchInput" @input="searchJourneys" v-model="search"
+              class="rounded-3xl bg-input border px-3 py-1.5 border-border-grey focus:outline-none focus:ring-1 focus:ring-cta-border "
+              :placeholder="t('dashboard.search')">
+            <button @click="searchInput.focus()">
+              <SvgSearchIcon class="absolute top-1 right-1 w-7 h-7" />
+            </button>
+          </div>
+          <div id="filter" class="mr-4">
+            <SvgFilterIcon @click="toggle" aria-haspopup="true" aria-controls="overlay_tmenu"
+              class="w-9 h-9 hover:cursor-pointer" />
+            <div class="">
+              <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup class="rounded-xl">
+                <template #start>
+                  <h1 class="text-sm ml-2 text-input-placeholder">
+                    <T keyName="dashboard.sort.header" />
+                  </h1>
+                  <Divider type="solid" class="text-[#CCCCCC] border-b mt-1 mb-1" />
+                </template>
+                <template #item="{ item, props, hasSubmenu }">
+                  <a v-ripple class="flex align-items-center hover:bg-cta-bg-light rounded-md text-text"
+                    v-bind="props.action">
+                    <span :class="item.icon"></span>
+                    <span class="ml-2">{{ item.label }}</span>
+                    <i v-if="hasSubmenu" class="pi pi-angle-right ml-auto"></i>
+                  </a>
+                </template>
+              </TieredMenu>
+            </div>
+          </div>
+        </div>
+        <div id="create-and-settings" class="flex flex-row ml-4 items-center">
+          <NuxtLink to="/journey/new" class="mr-2.5 flex flex-row items-center">
+            <button
+              class="bg-cta-bg border-2 border-cta-border text-text py-1 px-4 rounded-xl font-semibold flex flex-row">
+              <SvgCreateNewJourneyIcon class="w-5 h-5 mr-2" />
+              <T keyName="dashboard.new" />
+            </button>
+          </NuxtLink>
+          <NuxtLink to="/settings">
+            <SvgSettingsIcon class="w-9 h-9" />
+          </NuxtLink>
+        </div>
+      </div>
+    </div>
+    <div id="journeys" class="grid grid-cols-4">
+      <DashboardItem v-for="journey in currentJourneys" :name="journey.name" :destination="journey.destination"
+        :from="journey.from" :to="journey.to" />
+      <NuxtLink to="/journey/new">
+        <SvgCreateNewJourneyCard class="" />
+      </NuxtLink>
     </div>
   </div>
 </template>
