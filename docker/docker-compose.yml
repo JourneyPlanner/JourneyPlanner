@@ -14,28 +14,32 @@ services:
   frontend:
     build: ../frontend
     restart: always
-    env_file:
-      - /home/ubuntu/jp/.env
     depends_on:
       - backend
       - i18n
   i18n:
     build: ./i18n
     restart: always
-    env_file:
-      - /home/ubuntu/jp/.env
+    env:
+      - TOLGEE_API_KEY=$TOLGEE_API_KEY
+      - TOLGEE_PROJECT_ID=$TOLGEE_PROJECT_ID
+      - TOLGEE_API_URL=$TOLGEE_API_URL
   backend:
     build: ../backend
     restart: always
-    env_file:
-      - /home/ubuntu/jp/.env
+    env:
+      - INFISICAL_API_URL=$INFISICAL_API_URL
+      - INFISICAL_TOKEN=$INFISICAL_TOKEN
   db:
     image: mariadb:latest
     restart: always
     volumes:
       - dbdata:/var/lib/mysql
-    env_file:
-      - /home/ubuntu/jp/.env
+    env:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+      - MYSQL_USER=$MYSQL_USER
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD
 
 volumes:
   dbdata:
