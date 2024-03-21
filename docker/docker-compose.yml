@@ -20,14 +20,14 @@ services:
   i18n:
     build: ./i18n
     restart: always
-    env:
+    environment:
       - TOLGEE_API_KEY=$TOLGEE_API_KEY
       - TOLGEE_PROJECT_ID=$TOLGEE_PROJECT_ID
       - TOLGEE_API_URL=$TOLGEE_API_URL
   backend:
     build: ../backend
     restart: always
-    env:
+    environment:
       - INFISICAL_API_URL=$INFISICAL_API_URL
       - INFISICAL_TOKEN=$INFISICAL_TOKEN
   db:
@@ -35,7 +35,7 @@ services:
     restart: always
     volumes:
       - dbdata:/var/lib/mysql
-    env:
+    environment:
       - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE=$MYSQL_DATABASE
       - MYSQL_USER=$MYSQL_USER
