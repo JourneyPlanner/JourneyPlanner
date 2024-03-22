@@ -35,7 +35,7 @@ const { value, errorMessage } = useField(() => props.name);
       <T :keyName="translationKey"
     /></label>
     <br v-if="errorMessage" />
-    <div class="h-1.5 text-left">
+    <div class="h-1.5 text-left w-full">
       <span
         class="ml-3 text-error dark:text-error-dark dark:font-bold text-xs"
         :class="{

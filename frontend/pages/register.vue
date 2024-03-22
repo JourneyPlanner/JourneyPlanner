@@ -98,7 +98,7 @@ async function registerUser(userData: Object) {
       />
     </div>
     <div
-      class="flex xl:w-1/3 md:w-2/4 sm:w-full items-center h-[90vh] justify-center w-full"
+      class="flex xl:w-2/5 md:w-2/4 sm:w-full items-center h-[90vh] justify-center w-full"
     >
       <div class="text-center sm:w-3/4 w-full -mt-20 h-3/4 z-20">
         <fieldset
@@ -132,7 +132,6 @@ async function registerUser(userData: Object) {
               autocomplete="family-name"
               translationKey="form.input.last.name"
             />
-
             <FormPassword
               id="password"
               name="password"
