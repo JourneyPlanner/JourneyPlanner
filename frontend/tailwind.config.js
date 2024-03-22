@@ -25,6 +25,7 @@ export default {
       "cta-bg-dark": "#a09671" /* cta fill dark */,
       "clouds-bg": "#f0f0f0" /* clouds background*/,
       "clouds-bg-dark": "#404040" /* clouds background dark */,
+      "countdown-bg": "rgba(228,234,244,0.4)" /* countdown background */,
       surface: "rgba(228, 239, 244, 0.8)" /* form surface with opacity */,
       "surface-dark":
         "rgba(228, 239, 244, 0.22)" /* dark form surface with opacity */,
