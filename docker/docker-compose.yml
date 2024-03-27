@@ -23,6 +23,8 @@ services:
     build: ./i18n
     pull_policy: build
     restart: unless-stopped
+    volumes:
+      - i18n:/app/i18n
     environment:
       - TOLGEE_API_KEY=$TOLGEE_API_KEY
       - TOLGEE_PROJECT_ID=$TOLGEE_PROJECT_ID
@@ -48,3 +50,4 @@ services:
 
 volumes:
   dbdata:
+  i18n:
