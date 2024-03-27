@@ -6,7 +6,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install
 RUN npm install -g @tolgee/cli
 
 RUN apt-get update && apt-get install -y cron
-RUN crontab -l | { cat; echo "*/5 * * * * . /app/project_env.sh; bash /app/pull_translations.sh >> /var/log/cron.log 2>&1"; } | crontab -
+RUN crontab -l | { cat; echo "*/5 * * * * . /app/project_env.sh; bash /app/pull_translations.sh >> /proc/1/fd/1 2>&1"; } | crontab -
 RUN touch /var/log/cron.log
 RUN chmod 0644 /var/log/cron.log
 
