@@ -11,7 +11,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@tolgee/vue": "^5.19.6",
+    "@tolgee/vue": "^5.22.0",
     "@vee-validate/nuxt": "^4.12.6",
     "@vee-validate/yup": "^4.12.6",
     "nuxt": "^3.11.1",
