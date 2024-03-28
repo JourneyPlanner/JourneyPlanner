@@ -92,6 +92,7 @@ const items = ref([
 
 ]);
 
+//TODO typescript
 const toggle = (event) => {
   menu.value.toggle(event);
 };
@@ -139,7 +140,7 @@ fetchJourneys();
 
 <template>
   <div class="font-nunito px-20 text-text">
-    <div id="header" class="border-b-2 border-border mt-10 pb-5 flex justify-between items-center">
+    <div id="header" class="border-b-2 border-border mt-5 pb-5 flex justify-between items-center">
       <div class="flex flex-row items-center">
         <SvgDashboardIcon class="w-9 h-9" />
         <h1 class="text-5xl font-medium">
@@ -160,7 +161,8 @@ fetchJourneys();
             <SvgFilterIcon @click="toggle" aria-haspopup="true" aria-controls="overlay_tmenu"
               class="w-9 h-9 hover:cursor-pointer" />
             <div class="">
-              <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup class="rounded-xl">
+              <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup class="rounded-xl"
+                :pt="{ menuitem: { class: 'hover:bg-cta-bg rounded-md' }, content: { class: 'hover:bg-cta-bg rounded-md' } }">
                 <template #start>
                   <h1 class="text-sm ml-2 text-input-placeholder">
                     <T keyName="dashboard.sort.header" />
@@ -193,16 +195,18 @@ fetchJourneys();
         </div>
       </div>
     </div>
-    <div id="journeys" class="grid grid-cols-4  gap-y-10 mt-5">
-      <div v-for="journey in currentJourneys">
-        <DashboardItem class="" :name="journey.name" :destination="journey.destination" :from="journey.from"
-          :to="journey.to" :role="journey.pivot.role" />
+    <div class="flex justify-center">
+      <div id="journeys" class="grid grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-6 mt-5">
+        <div v-for="journey in currentJourneys">
+          <DashboardItem class="" :name="journey.name" :destination="journey.destination" :from="journey.from"
+            :to="journey.to" :role="journey.pivot.role" />
+        </div>
+
+        <NuxtLink to="/journey/new">
+          <SvgCreateNewJourneyCard class="hidden" />
+        </NuxtLink>
+
       </div>
-
-      <NuxtLink to="/journey/new">
-        <SvgCreateNewJourneyCard class="" />
-      </NuxtLink>
-
     </div>
   </div>
 </template>

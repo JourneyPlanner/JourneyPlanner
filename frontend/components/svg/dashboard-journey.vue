@@ -1,5 +1,5 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-80" viewBox="0 0 225 119" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-72" viewBox="0 0 225 119" fill="none">
         <rect x="8.4707" y="0.942383" width="215.58" height="117.115" rx="10" fill="#C0DEEB" />
         <rect x="25" y="14.5" width="187" height="90" rx="7" fill="#F8F8F8" />
         <rect x="22.5" y="12" width="192" height="95" rx="7.5" stroke="#75929F" stroke-opacity="0.28"

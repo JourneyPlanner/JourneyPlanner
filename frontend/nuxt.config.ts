@@ -39,6 +39,7 @@ export default defineNuxtConfig({
         "Checkbox",
         "TieredMenu",
         "Tooltip",
+        "Menu",
       ],
     },
   },

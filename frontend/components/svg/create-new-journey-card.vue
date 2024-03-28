@@ -1,5 +1,5 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-80 group" viewBox="0 0 225 118" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-72 group" viewBox="0 0 225 118" fill="none">
         <rect x="8.47064" y="0.442383" width="215.58" height="117.115" rx="10" fill="#FEE384" />
         <rect x="25.3267" y="13.7729" width="184.18" height="90.4545" rx="7" fill="#F8F8F8"
             class="group-hover:fill-cta-bg-light" />
