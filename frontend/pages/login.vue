@@ -4,13 +4,21 @@ import { useTranslate, T } from "@tolgee/vue";
 import Toast from "primevue/toast";
 import * as yup from "yup";
 
+const { t } = useTranslate();
+const toast = useToast();
+const { login } = useSanctumAuth();
+
+const title = t.value("form.header.login");
+
+useHead({
+  title: `${title} | JourneyPlanner`,
+})
+
 definePageMeta({
   middleware: ["sanctum:guest"],
 });
 
-const { t } = useTranslate();
-const toast = useToast();
-const { login } = useSanctumAuth();
+
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
@@ -75,8 +83,8 @@ async function loginUser(userData: User) {
 </script>
 
 <template>
-  <Toast />
   <div class="w-full flex justify-center items-center font-nunito dark:bg-background-dark">
+    <Toast />
     <div class="xl:w-1/3 md:w-1/4 sm:w-0 w-0 h-[90vh] dark:background-dark">
       <SvgCloud
         class="xl:w-[50%] md:w-[80%] w-0 object-none overflow-hidden mt-[20vh] z-50 dark:fill-clouds-bg -ml-24" />
@@ -90,7 +98,7 @@ async function loginUser(userData: User) {
       </div>
     </div>
     <div
-      class="relative overflow-hidden flex xl:w-1/3 md:w-2/4 sm:w-full items-center h-[90vh] justify-center w-full z-20">
+      class="relative overflow-hidden flex xl:w-1/3 md:w-2/4 sm:w-full items-center h-[90vh] justify-center w-full z-40">
       <div
         class="xl:flex xl:items-center xl:justify-center md:flex md:items-center md:justify-center text-center mt-6 sm:w-3/4 w-full h-[75vh] z-20">
         <fieldset id="outerBlock"
