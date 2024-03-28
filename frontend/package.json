@@ -22,7 +22,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@nuxtjs/color-mode": "^3.3.2",
+    "@nuxtjs/color-mode": "^3.3.3",
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@types/uuid": "^9.0.8",
     "nuxt-auth-sanctum": "^0.1.2",
