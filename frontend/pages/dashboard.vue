@@ -1,4 +1,10 @@
 <script setup lang="ts">
+
+const title = "Dashboard";
+useHead({
+  title: `${title} | JourneyPlanner`,
+})
+
 definePageMeta({
   middleware: ["sanctum:auth"],
 });

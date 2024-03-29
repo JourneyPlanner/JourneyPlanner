@@ -11,18 +11,18 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@tolgee/vue": "^5.19.6",
-    "@vee-validate/nuxt": "^4.12.5",
+    "@tolgee/vue": "^5.22.0",
+    "@vee-validate/nuxt": "^4.12.6",
     "@vee-validate/yup": "^4.12.6",
-    "nuxt": "^3.10.3",
-    "primevue": "^3.49.1",
+    "nuxt": "^3.11.1",
+    "primevue": "^3.50.0",
     "uuid": "^9.0.1",
     "vue": "^3.4.19",
     "vue-router": "^4.3.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@nuxtjs/color-mode": "^3.3.2",
+    "@nuxtjs/color-mode": "^3.3.3",
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@types/uuid": "^9.0.8",
     "nuxt-auth-sanctum": "^0.1.2",

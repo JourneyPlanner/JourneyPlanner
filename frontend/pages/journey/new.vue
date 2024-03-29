@@ -5,15 +5,21 @@ import Toast from "primevue/toast";
 import { useTranslate } from "@tolgee/vue";
 import { v4 as uuidv4 } from "uuid";
 
-definePageMeta({
-  middleware: ["sanctum:auth"],
-});
-
 const { t } = useTranslate();
 const client = useSanctumClient();
 const toast = useToast();
 
 const journeyInvite = uuidv4();
+
+const title = t.value("title.journey.create");
+useHead({
+  title: `${title} | JourneyPlanner`,
+})
+
+definePageMeta({
+  middleware: ["sanctum:auth"],
+});
+
 
 /**
  * form validation
@@ -96,22 +102,23 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <Toast />
-  <div class="flex flex-col h-screen justify-between z-10">
-    <div class="flex justify-center items-center font-nunito mt-16">
-      <fieldset id="create-journey"
-        class="w-full sm:w-1/4 md:w-1/3 px-5 rounded-2xl border-2 border-border shadow-sm bg-surface dark:bg-surface-dark">
-        <legend for="create-journey"
-          class="text-2xl ml-4 text-center text-text dark:text-white lg:text-left lg:text-3xl px-2 font-bold">
-          <T keyName="form.header.journey.create" />
-        </legend>
-        <form @submit="onSubmit" class="px-1 lg:px-5">
-          <FormInput id="journey-name" name="journeyName" translationKey="form.input.journey.name" />
-          <FormInput id="journey-destination" name="journeyDestination"
-            translationKey="form.input.journey.destination" />
-          <FormCalendar id="journey-range-calendar" name="journeyRange" translationKey="form.input.journey.dates" />
+  <div class="overflow-hidden overflow-y-hidden">
+    <div class="flex flex-col justify-between z-10 h-[96vh]">
+      <Toast />
+      <div class="flex justify-center items-center font-nunito mt-16 z-50">
+        <fieldset id="create-journey"
+          class="w-full sm:w-1/4 md:w-1/3 px-5 rounded-2xl border-2 border-border shadow-sm bg-surface dark:bg-surface-dark">
+          <legend for="create-journey"
+            class="text-2xl ml-4 text-center text-text dark:text-white lg:text-left lg:text-3xl px-2 font-bold">
+            <T keyName="form.header.journey.create" />
+          </legend>
+          <form @submit="onSubmit" class="px-1 lg:px-5">
+            <FormInput id="journey-name" name="journeyName" translationKey="form.input.journey.name" />
+            <FormInput id="journey-destination" name="journeyDestination"
+              translationKey="form.input.journey.destination" />
+            <FormCalendar id="journey-range-calendar" name="journeyRange" translationKey="form.input.journey.dates" />
 
-          <!--
+            <!--
           <Divider type="solid" class="text-input-label border border-10" />
 
           <div class="relative my-2">
@@ -132,37 +139,38 @@ const onSubmit = handleSubmit(async (values) => {
           </div>
           -->
 
-          <div class="flex justify-between mt-6 mb-5 gap-5">
-            <NuxtLink to="/dashboard">
-              <button type="button"
-                class="px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl">
-                <T keyName="common.button.cancel" />
-              </button>
-            </NuxtLink>
+            <div class="flex justify-between mt-6 mb-5 gap-5">
+              <NuxtLink to="/dashboard">
+                <button type="button"
+                  class="px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl">
+                  <T keyName="common.button.cancel" />
+                </button>
+              </NuxtLink>
 
-            <button type="submit"
-              class="px-7 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-cta-bg dark:hover:bg-cta-bg-dark border-cta-border rounded-xl">
-              <T keyName="common.button.create" />
-            </button>
-          </div>
-        </form>
-      </fieldset>
-    </div>
-    <div class="pb-3">
-      <div class="flex flex-row justify-between h-full items-end">
-        <SvgPeopleBackpackMap class="hidden lg:block" />
-        <div class="flex flex-row items-end justify-between w-full lg:w-auto">
-          <SvgWomanSuitcaseLeft class="" />
-          <SvgWomanSuitcaseRight class="" />
-        </div>
+              <button type="submit"
+                class="px-7 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-cta-bg dark:hover:bg-cta-bg-dark border-cta-border rounded-xl">
+                <T keyName="common.button.create" />
+              </button>
+            </div>
+          </form>
+        </fieldset>
       </div>
-      <Divider type="solid" class="text-[#CCCCCC] border-b" :pt="{
-          root: { class: 'mt-0' },
-        }" />
+      <div class="z-10">
+        <div class="flex flex-row justify-between items-end">
+          <SvgPeopleBackpackMap class="hidden lg:block" />
+          <div class="flex flex-row items-end justify-between w-full lg:w-auto mt-2 sm:mt-0">
+            <SvgWomanSuitcaseLeft class="" />
+            <SvgWomanSuitcaseRight class="ml-10" />
+          </div>
+        </div>
+        <Divider type="solid" class="text-[#CCCCCC] border-b" :pt="{
+            root: { class: 'mt-0' },
+          }" />
+      </div>
     </div>
-  </div>
-  <div>
-    <SvgCloud class="invisible md:visible h-14 object-none overflow-hidden top-72 left-[28%] z-0 absolute" />
-    <SvgCloud class="invisible md:visible h-16 object-none overflow-hidden top-36 right-[20%] z-0 absolute" />
+    <div class="z-10">
+      <SvgCloud class="invisible md:visible h-14 object-none overflow-hidden top-72 left-[28%] z-0 absolute" />
+      <SvgCloud class="invisible md:visible h-16 object-none overflow-hidden top-36 right-[20%] z-0 absolute" />
+    </div>
   </div>
 </template>
