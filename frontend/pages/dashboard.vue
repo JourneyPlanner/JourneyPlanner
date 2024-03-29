@@ -12,7 +12,7 @@ definePageMeta({
 });
 
 interface Journey {
-  id: number;
+  id: String;
   name: string;
   destination: string;
   from: string;
@@ -24,7 +24,8 @@ const { t } = useTranslate();
 
 const journeys = ref();
 const searchInput = ref();
-let search = ref('');
+const searchInputMobile = ref();
+let searchValue = ref('');
 let currentJourneys = ref();
 
 const menu = ref();
@@ -92,8 +93,7 @@ const items = ref([
 
 ]);
 
-//TODO typescript
-const toggle = (event) => {
+const toggle = (event: Event) => {
   menu.value.toggle(event);
 };
 
@@ -102,7 +102,6 @@ async function fetchJourneys() {
   await client("/api/journey", {
     method: "GET",
     async onResponse({ response }) {
-      console.log(response._data);
       journeys.value = response._data;
       currentJourneys.value = response._data;
     }
@@ -111,12 +110,10 @@ async function fetchJourneys() {
 }
 
 async function searchJourneys() {
-  const data = journeys.value;
-  //TODO typescript
-  const results = data.filter(obj => {
-    return Object.values(obj).some(value =>
-      String(value).toLowerCase().includes(search.value.toLowerCase())
-    );
+  const data: Journey[] = journeys.value;
+  const results: Journey[] = data.filter((obj: Journey) => {
+    return obj.name.toLowerCase().includes(searchValue.value.toLowerCase()) ||
+      obj.destination.toLowerCase().includes(searchValue.value.toLowerCase());
   });
 
   currentJourneys.value = results;
@@ -139,18 +136,18 @@ fetchJourneys();
 </script>
 
 <template>
-  <div class="font-nunito px-20 text-text">
-    <div id="header" class="border-b-2 border-border mt-5 pb-5 flex justify-between items-center">
+  <div class="font-nunito px-2 md:px-10 lg:px-20 text-text">
+    <div id="header" class="border-b-2 border-border mt-5 pb-3 md:pb-5 flex justify-between items-center">
       <div class="flex flex-row items-center">
-        <SvgDashboardIcon class="w-9 h-9" />
-        <h1 class="text-5xl font-medium">
+        <SvgDashboardIcon class="md:w-9 md:h-9 mr-1" />
+        <h1 class="text-3xl md:text-5xl font-medium mt-1">
           <T keyName="common.dashboard" />
         </h1>
       </div>
       <div id="right-header" class="flex flex-row items-center">
-        <div id="search-and-filter" class="flex flex-row border-r-2  border-border-grey">
-          <div id="search" class="relative mr-2.5">
-            <input type="text" ref="searchInput" @input="searchJourneys" v-model="search"
+        <div id="search-and-filter" class="hidden lg:flex flex-row border-r-2 mr-4 border-border-grey">
+          <div id="search" class="relative mr-2.5" v-tooltip.top="t('dashboard.tooltip.search')">
+            <input type="text" ref="searchInput" @input="searchJourneys" v-model="searchValue"
               class="rounded-3xl bg-input border px-3 py-1.5 border-border-grey focus:outline-none focus:ring-1 focus:ring-cta-border "
               :placeholder="t('dashboard.search')">
             <button @click="searchInput.focus()">
@@ -181,29 +178,75 @@ fetchJourneys();
             </div>
           </div>
         </div>
-        <div id="create-and-settings" class="flex flex-row ml-4 items-center">
-          <NuxtLink to="/journey/new" class="mr-2.5 flex flex-row items-center">
-            <button
-              class="bg-cta-bg border-2 border-cta-border text-text py-1 px-4 rounded-xl font-semibold flex flex-row">
-              <SvgCreateNewJourneyIcon class="w-5 h-5 mr-2" />
-              <T keyName="dashboard.new" />
-            </button>
-          </NuxtLink>
-          <NuxtLink to="/settings">
-            <SvgSettingsIcon class="w-9 h-9" />
-          </NuxtLink>
-        </div>
+        <NuxtLink to="/journey/new" class="mr-2.5 hidden lg:flex flex-row items-center">
+          <button
+            class="bg-cta-bg border-2 border-cta-border text-text py-1 px-4 rounded-xl font-semibold flex flex-row">
+            <SvgCreateNewJourneyIcon class="w-5 h-5 mr-2" />
+            <T keyName="dashboard.new" />
+          </button>
+        </NuxtLink>
+        <NuxtLink to="/settings">
+          <SvgSettingsIcon class="w-9 h-9 -mt-1" />
+        </NuxtLink>
       </div>
     </div>
+    <div id="header-mobile-second-row" class="flex lg:hidden mt-3 justify-between">
+      <div id="search-and-filter" class="flex flex-row">
+        <div id="filter" class="mr-2">
+          <SvgFilterIcon @click="toggle" aria-haspopup="true" aria-controls="overlay_tmenu"
+            class="w-9 h-9 hover:cursor-pointer" />
+          <div class="">
+            <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup class="rounded-xl"
+              :pt="{ menuitem: { class: 'hover:bg-cta-bg rounded-md' }, content: { class: 'hover:bg-cta-bg rounded-md' } }">
+              <template #start>
+                <h1 class="text-sm ml-2 text-input-placeholder">
+                  <T keyName="dashboard.sort.header" />
+                </h1>
+                <Divider type="solid" class="text-[#CCCCCC] border-b mt-1 mb-1" />
+              </template>
+              <template #item="{ item, props, hasSubmenu }">
+                <a v-ripple class="flex align-items-center hover:bg-cta-bg-light rounded-md text-text text-sm"
+                  v-bind="props.action">
+                  <span :class="item.icon"></span>
+                  <span class="ml-2">{{ item.label }}</span>
+                  <i v-if="hasSubmenu" class="pi pi-angle-right ml-auto"></i>
+                </a>
+              </template>
+            </TieredMenu>
+          </div>
+        </div>
+        <div id="search" class="relative">
+          <input type="text" ref="searchInputMobile" @input="searchJourneys" v-model="searchValue"
+            class="rounded-3xl bg-input border px-3 py-1.5 border-border-grey focus:outline-none focus:ring-1 focus:ring-cta-border w-36 md:w-52"
+            :placeholder="t('dashboard.search')">
+          <button @click="searchInputMobile.focus()">
+            <SvgSearchIcon class="absolute top-1 right-1 w-7 h-7" />
+          </button>
+        </div>
+      </div>
+      <NuxtLink to="/journey/new" class="flex flex-row items-center justify-center">
+        <button
+          class="bg-cta-bg border-2 border-cta-border text-text py-1 px-2 md:px-4 rounded-xl font-semibold flex flex-row justify-center items-center">
+          <SvgCreateNewJourneyIcon class="w-5 h-5 mr-1" />
+          <T keyName="dashboard.new" />
+        </button>
+      </NuxtLink>
+    </div>
     <div class="flex justify-center">
-      <div id="journeys" class="grid grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-6 mt-5">
+      <div id="journeys"
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-y-2 lg:gap-y-6 gap-x-2 lg:gap-x-6 mt-5 h-96">
         <div v-for="journey in currentJourneys">
-          <DashboardItem class="" :name="journey.name" :destination="journey.destination" :from="journey.from"
-            :to="journey.to" :role="journey.pivot.role" />
+          <DashboardItem class="" :id="journey.id" :name="journey.name" :destination="journey.destination"
+            :from="journey.from" :to="journey.to" :role="journey.pivot.role" />
         </div>
 
-        <NuxtLink to="/journey/new">
-          <SvgCreateNewJourneyCard class="hidden" />
+        <!-- TODO bei page load bzw ohnne reisen hässlich -->
+        <NuxtLink to="/journey/new" class="h-full">
+          <SvgCreateNewJourneyCard class="hidden lg:block" />
+          <div
+            class="lg:hidden flex flex-grow justify-center items-center min-h-28 bg-cta-bg-light rounded-md border border-cta-border">
+            <SvgCreateNewJourneyIcon class="w-10 h-10" />
+          </div>
         </NuxtLink>
 
       </div>
