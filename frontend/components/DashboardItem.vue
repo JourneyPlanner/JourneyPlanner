@@ -88,7 +88,7 @@ const toggle = (event: Event) => {
                 </NuxtLink>
             </div>
         </div>
-        <div id="journey-mobile" class="lg:hidden bg-input border border-border rounded-md p-1 md:p-2">
+        <div id="journey-mobile" class="lg:hidden bg-input border border-border rounded-md p-1 md:p-2 min-w-36 h-32">
             <div class="flex justify-between">
                 <NuxtLink :to="link" class="overflow-hidden whitespace-nowrap overflow-ellipsis">
                     <h1 class="font-semibold text-xl overflow-hidden whitespace-nowrap overflow-ellipsis"

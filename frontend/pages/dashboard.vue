@@ -22,11 +22,11 @@ interface Journey {
 
 const { t } = useTranslate();
 
-const journeys = ref();
+const journeys = ref([]);
 const searchInput = ref();
 const searchInputMobile = ref();
 let searchValue = ref('');
-let currentJourneys = ref();
+let currentJourneys = ref([]);
 
 const menu = ref();
 const items = ref([
@@ -132,7 +132,7 @@ function sortJourneys(sortKey: String) {
 
 fetchJourneys();
 
-
+console.log(currentJourneys.value.length)
 </script>
 
 <template>
@@ -233,18 +233,15 @@ fetchJourneys();
       </NuxtLink>
     </div>
     <div class="flex justify-center">
-      <div id="journeys"
-        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-y-2 lg:gap-y-6 gap-x-2 lg:gap-x-6 mt-5 h-96">
-        <div v-for="journey in currentJourneys">
-          <DashboardItem class="" :id="journey.id" :name="journey.name" :destination="journey.destination"
-            :from="journey.from" :to="journey.to" :role="journey.pivot.role" />
-        </div>
+      <div id="journeys" class="grid gap-y-2 lg:gap-y-6 gap-x-2 lg:gap-x-6 mt-5"
+        :class="currentJourneys.length === 0 ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'">
+        <DashboardItem v-for="journey in currentJourneys" :id="journey.id" :name="journey.name"
+          :destination="journey.destination" :from="journey.from" :to="journey.to" :role="journey.pivot.role" />
 
-        <!-- TODO bei page load bzw ohnne reisen hässlich -->
-        <NuxtLink to="/journey/new" class="h-full">
+        <NuxtLink to="/journey/new">
           <SvgCreateNewJourneyCard class="hidden lg:block" />
           <div
-            class="lg:hidden flex flex-grow justify-center items-center min-h-28 bg-cta-bg-light rounded-md border border-cta-border">
+            class="lg:hidden flex flex-grow justify-center items-center min-w-36 h-32 bg-cta-bg-light rounded-md border border-cta-border">
             <SvgCreateNewJourneyIcon class="w-10 h-10" />
           </div>
         </NuxtLink>
