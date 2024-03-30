@@ -98,7 +98,8 @@ async function registerUser(userData: Object) {
     <Toast />
     <div class="w-full flex justify-center items-center font-nunito dark:bg-background-dark">
       <div class="xl:w-1/3 md:w-1/4 sm:w-0 h-[90vh] dark:background-dark">
-        <SvgAircraft class="xl:w-[230%] md:w-[350%] w-0 object-none -ml-[20vw] overflow-hidden mt-16 z-0" />
+        <SvgAircraft
+          class="xl:w-[230%] md:w-[350%] w-0 object-none -ml-[20vw] overflow-hidden mt-6 lg:mt-20 xl:mt-32 z-0" />
       </div>
       <div class="flex xl:w-2/5 md:w-2/4 sm:w-full items-center mt-32 justify-center w-full">
         <div class="text-center sm:w-3/4 w-full -mt-20 h-3/4 z-20">
@@ -122,7 +123,7 @@ async function registerUser(userData: Object) {
                 <FormPassword id="password_confirmation" name="password_confirmation" :feedback="false"
                   translationKey="form.input.password.repeat" />
               </div>
-              <div class="mt-5">
+              <div>
                 <FormCheckbox id="terms" name="terms" />
               </div>
 
