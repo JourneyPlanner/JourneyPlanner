@@ -55,7 +55,8 @@ const toggle = (event: Event) => {
 <template>
     <div>
         <div id="journey-desktop" class="hidden lg:block relative hover:cursor-pointer">
-            <SvgDashboardJourney :link="link" />
+            <SvgDashboardJourney :link="link" class="dark:hidden" />
+            <SvgDashboardJourneyDark :link="link" class="hidden dark:block" />
             <div class="absolute top-6 left-10">
                 <div class="flex justify-between w-56">
                     <NuxtLink :to="link" class="overflow-ellipsis overflow-hidden whitespace-nowrap">
@@ -74,21 +75,22 @@ const toggle = (event: Event) => {
                         <span class="text-border mr-1">
                             <T keyName="dashboard.date" />
                         </span>
-                        <span class="text-text">{{ format(from, "dd/MM/yyyy") }}-{{ format(to,
+                        <span class="text-text dark:text-white">{{ format(from, "dd/MM/yyyy") }}-{{ format(to,
                 "dd/MM/yyyy") }}</span>
                     </h3>
                     <h3 class="mt-1 border-b-2 border-dashed border-border-grey w-56 text-sm">
                         <span class="text-border mr-1">
                             <T keyName="dashboard.role" />
                         </span>
-                        <span class="text-text">
+                        <span class="text-text dark:text-white">
                             <T :keyName="roleType" />
                         </span>
                     </h3>
                 </NuxtLink>
             </div>
         </div>
-        <div id="journey-mobile" class="lg:hidden bg-input border border-border rounded-md p-1 md:p-2 min-w-36 h-32">
+        <div id="journey-mobile"
+            class="lg:hidden bg-card dark:bg-card-dark border border-border rounded-md p-1 md:p-2 min-w-36 h-32">
             <div class="flex justify-between">
                 <NuxtLink :to="link" class="overflow-hidden whitespace-nowrap overflow-ellipsis">
                     <h1 class="font-semibold text-xl overflow-hidden whitespace-nowrap overflow-ellipsis"
@@ -107,14 +109,15 @@ const toggle = (event: Event) => {
                         <T keyName="dashboard.date" />
                     </span>
                     <br class="sm:hidden">
-                    <span class="text-text whitespace-nowrap">{{ format(from, "dd/MM/yyyy") }} - {{ format(to,
-                "dd/MM/yyyy") }}</span>
+                    <span class="text-text dark:text-white whitespace-nowrap">{{ format(from, "dd/MM/yyyy") }} - {{
+                format(to,
+                    "dd/MM/yyyy") }}</span>
                 </h3>
                 <h3 class="mt-1 border-b-2 border-dashed border-border-grey text-xs md:text-sm">
                     <span class="text-border mr-0.5">
                         <T keyName="dashboard.role" />
                     </span>
-                    <span class="text-text">
+                    <span class="text-text dark:text-white">
                         <T :keyName="roleType" />
                     </span>
                 </h3>

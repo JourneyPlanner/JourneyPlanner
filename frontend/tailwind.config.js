@@ -24,13 +24,18 @@ export default {
       "cta-bg": "#fee384" /* cta fill */,
       "cta-bg-dark": "#7A7052" /* cta fill dark */,
       "cta-bg-light": "#fff1c3" /* lighter cta */,
+      "cta-bg-fill": "#E3C454" /* fill for e.g. new journey button dashboard */,
       "clouds-bg": "#f0f0f0" /* clouds background*/,
       "clouds-bg-dark": "#404040" /* clouds background dark */,
       surface: "rgba(228, 239, 244, 0.8)" /* form surface with opacity */,
       "surface-dark":
         "rgba(228, 239, 244, 0.22)" /* dark form surface with opacity */,
+      card: "#rgba(228, 239, 244, 0.2)" /* card background */,
+      "card-dark": "#353F44",
       text: "#333333" /* grey text */,
       "text-disabled": "#686868" /* disabled text */,
+      "text-light-dark":
+        "#DEDEDE" /* light dark text e.g. search text dashboard */,
       input: "#f8f8f8" /* input background */,
       "input-dark": "#454849" /* input background dark */,
       "input-label": "#5ba5c5" /* input label */,

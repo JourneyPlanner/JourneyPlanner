@@ -136,7 +136,7 @@ fetchJourneys();
 </script>
 
 <template>
-  <div class="font-nunito px-2 md:px-10 lg:px-20 text-text">
+  <div class="font-nunito px-2 md:px-8 lg:px-20 text-text dark:text-white">
     <div id="header" class="border-b-2 border-border mt-5 pb-3 md:pb-5 flex justify-between items-center">
       <div class="flex flex-row items-center">
         <SvgDashboardIcon class="md:w-9 md:h-9 mr-1" />
@@ -148,7 +148,7 @@ fetchJourneys();
         <div id="search-and-filter" class="hidden lg:flex flex-row border-r-2 mr-4 border-border-grey">
           <div id="search" class="relative mr-2.5" v-tooltip.top="t('dashboard.tooltip.search')">
             <input type="text" ref="searchInput" @input="searchJourneys" v-model="searchValue"
-              class="rounded-3xl bg-input border px-3 py-1.5 border-border-grey focus:outline-none focus:ring-1 focus:ring-cta-border "
+              class="rounded-3xl bg-input dark:bg-input-dark placeholder-input-placeholder dark:placeholder-text-light-dark border px-3 py-1.5 border-border-grey dark:border-input-dark focus:outline-none focus:ring-1 focus:ring-cta-border "
               :placeholder="t('dashboard.search')">
             <button @click="searchInput.focus()">
               <SvgSearchIcon class="absolute top-1 right-1 w-7 h-7" />
@@ -180,8 +180,8 @@ fetchJourneys();
         </div>
         <NuxtLink to="/journey/new" class="mr-2.5 hidden lg:flex flex-row items-center">
           <button
-            class="bg-cta-bg border-2 border-cta-border text-text py-1 px-4 rounded-xl font-semibold flex flex-row">
-            <SvgCreateNewJourneyIcon class="w-5 h-5 mr-2" />
+            class="bg-cta-bg dark:bg-cta-bg-fill border-2 border-cta-border dark:border-cta-bg-fill text-text py-1 px-4 rounded-xl font-semibold flex flex-row">
+            <SvgCreateNewJourneyIcon class="w-5 h-5 mr-2 fill-text" />
             <T keyName="dashboard.new" />
           </button>
         </NuxtLink>
@@ -217,7 +217,7 @@ fetchJourneys();
         </div>
         <div id="search" class="relative">
           <input type="text" ref="searchInputMobile" @input="searchJourneys" v-model="searchValue"
-            class="rounded-3xl bg-input border px-3 py-1.5 border-border-grey focus:outline-none focus:ring-1 focus:ring-cta-border w-36 md:w-52"
+            class="rounded-3xl bg-input dark:bg-input-dark placeholder-input-placeholder dark:placeholder-text-light-dark border px-3 py-1.5 border-border-grey dark:border-input-dark focus:outline-none focus:ring-1 focus:ring-cta-border w-36 md:w-52"
             :placeholder="t('dashboard.search')">
           <button @click="searchInputMobile.focus()">
             <SvgSearchIcon class="absolute top-1 right-1 w-7 h-7" />
@@ -226,24 +226,25 @@ fetchJourneys();
       </div>
       <NuxtLink to="/journey/new" class="flex flex-row items-center justify-center">
         <button
-          class="bg-cta-bg border-2 border-cta-border text-text py-1 px-2 md:px-4 rounded-xl font-semibold flex flex-row justify-center items-center">
-          <SvgCreateNewJourneyIcon class="w-5 h-5 mr-1" />
+          class="bg-cta-bg border-2 border-cta-border dark:bg-cta-bg-fill dark:border-cta-bg-fill text-text py-1 px-2 md:px-4 rounded-xl font-semibold flex flex-row justify-center items-center">
+          <SvgCreateNewJourneyIcon class="w-5 h-5 mr-1 fill-text" />
           <T keyName="dashboard.new" />
         </button>
       </NuxtLink>
     </div>
     <div class="flex justify-center">
-      <div id="journeys" class="grid gap-y-2 lg:gap-y-6 gap-x-2 lg:gap-x-6 mt-5"
+      <div id="journeys" class="grid gap-y-2 md:gap-y-4 lg:gap-y-6 gap-x-2 md:gap-x-4 lg:gap-x-6 mt-5"
         :class="currentJourneys.length === 0 ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'">
         <DashboardItem v-for="journey in currentJourneys" :id="new String(journey.id).valueOf()" :name="journey.name"
           :destination="journey.destination" :from="journey.from" :to="journey.to"
           :role="new Number(journey.pivot.role).valueOf()" />
 
         <NuxtLink to="/journey/new">
-          <SvgCreateNewJourneyCard class="hidden lg:block" />
+          <SvgCreateNewJourneyCard class="hidden lg:block dark:hidden" />
+          <SvgCreateNewJourneyCardDark class="hidden dark:lg:block" />
           <div
-            class="lg:hidden flex flex-grow justify-center items-center min-w-36 h-32 bg-cta-bg-light rounded-md border border-cta-border">
-            <SvgCreateNewJourneyIcon class="w-10 h-10" />
+            class="lg:hidden flex flex-grow justify-center items-center min-w-36 h-32 bg-cta-bg-light dark:bg-cta-bg-dark rounded-md border border-cta-border">
+            <SvgCreateNewJourneyIcon class="w-10 h-10 fill-text dark:fill-white" />
           </div>
         </NuxtLink>
 
