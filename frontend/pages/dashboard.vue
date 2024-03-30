@@ -17,16 +17,16 @@ interface Journey {
   destination: string;
   from: string;
   to: string;
-  role: Number;
+  pivot: { role: Number };
 }
 
 const { t } = useTranslate();
 
-const journeys = ref([]);
+const journeys = ref<Journey[]>([]);
 const searchInput = ref();
 const searchInputMobile = ref();
-let searchValue = ref('');
-let currentJourneys = ref([]);
+let searchValue = ref<String>('');
+let currentJourneys = ref<Journey[]>([]);
 
 const menu = ref();
 const items = ref([
@@ -127,12 +127,12 @@ function sortJourneys(sortKey: String) {
     if (sortKey === 'startdate-desc') return b.from.localeCompare(a.from);
     if (sortKey === 'destination-asc') return b.destination.localeCompare(a.destination);
     if (sortKey === 'destination-desc') return a.destination.localeCompare(b.destination);
+    return 0;
   });
 }
 
 fetchJourneys();
 
-console.log(currentJourneys.value.length)
 </script>
 
 <template>
@@ -235,8 +235,9 @@ console.log(currentJourneys.value.length)
     <div class="flex justify-center">
       <div id="journeys" class="grid gap-y-2 lg:gap-y-6 gap-x-2 lg:gap-x-6 mt-5"
         :class="currentJourneys.length === 0 ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'">
-        <DashboardItem v-for="journey in currentJourneys" :id="journey.id" :name="journey.name"
-          :destination="journey.destination" :from="journey.from" :to="journey.to" :role="journey.pivot.role" />
+        <DashboardItem v-for="journey in currentJourneys" :id="new String(journey.id).valueOf()" :name="journey.name"
+          :destination="journey.destination" :from="journey.from" :to="journey.to"
+          :role="new Number(journey.pivot.role).valueOf()" />
 
         <NuxtLink to="/journey/new">
           <SvgCreateNewJourneyCard class="hidden lg:block" />

@@ -22,7 +22,7 @@ export default {
       "background-dark": "#2c2c2c" /* dark background color */,
       "cta-border": "#f8d351" /* yellow banana */,
       "cta-bg": "#fee384" /* cta fill */,
-      "cta-bg-dark": "#a09671" /* cta fill dark */,
+      "cta-bg-dark": "#7A7052" /* cta fill dark */,
       "cta-bg-light": "#fff1c3" /* lighter cta */,
       "clouds-bg": "#f0f0f0" /* clouds background*/,
       "clouds-bg-dark": "#404040" /* clouds background dark */,
