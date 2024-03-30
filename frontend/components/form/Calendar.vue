@@ -25,7 +25,7 @@ const { value, errorMessage } = useField(() => props.name);
 <template>
   <div class="relative">
     <!-- TODO: language (de/en)-->
-    <Calendar :id="id" :name="name" v-model="value as Date[]" selectionMode="range" :manualInput="true"
+    <Calendar :id="id" :name="name" v-model="value as Array<Date>" selectionMode="range" :manualInput="true"
       :showButtonBar="true" :numberOfMonths="1" dateFormat="dd/mm/yy"
       panelClass="bg-input dark:bg-background-dark dark:text-white"
       inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-white font-bold bg-input dark:bg-input-dark border-2 border-border focus:outline-none focus:ring-1"
