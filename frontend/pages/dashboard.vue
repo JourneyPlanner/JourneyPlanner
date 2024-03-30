@@ -163,31 +163,12 @@ fetchJourneys();
           <div id="filter" class="mr-4">
             <SvgFilterIcon @click="toggle" aria-haspopup="true" aria-controls="overlay_tmenu"
               class="w-9 h-9 hover:cursor-pointer" />
-            <div class="">
-              <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup class="rounded-xl"
-                :pt="{ menuitem: { class: 'hover:bg-cta-bg rounded-md' }, content: { class: 'hover:bg-cta-bg rounded-md' } }">
-                <template #start>
-                  <h1 class="text-sm ml-2 text-input-placeholder">
-                    <T keyName="dashboard.sort.header" />
-                  </h1>
-                  <Divider type="solid" class="text-[#CCCCCC] border-b mt-1 mb-1" />
-                </template>
-                <template #item="{ item, props, hasSubmenu }">
-                  <a v-ripple class="flex align-items-center hover:bg-cta-bg-light rounded-md text-text text-sm"
-                    v-bind="props.action">
-                    <span :class="item.icon"></span>
-                    <span class="ml-2">{{ item.label }}</span>
-                    <i v-if="hasSubmenu" class="pi pi-angle-right ml-auto"></i>
-                  </a>
-                </template>
-              </TieredMenu>
-            </div>
           </div>
         </div>
         <NuxtLink to="/journey/new" class="mr-2.5 hidden lg:flex flex-row items-center">
           <button
             class="bg-cta-bg dark:bg-cta-bg-fill border-2 border-cta-border dark:border-cta-bg-fill text-text py-1 px-4 rounded-xl font-semibold flex flex-row">
-            <SvgCreateNewJourneyIcon class="w-5 h-5 mr-2 fill-text" />
+            <SvgCreateNewJourneyIcon class="w-5 h-5 mr-1 fill-text" />
             <T keyName="dashboard.new" />
           </button>
         </NuxtLink>
@@ -201,25 +182,6 @@ fetchJourneys();
         <div id="filter" class="mr-2">
           <SvgFilterIcon @click="toggle" aria-haspopup="true" aria-controls="overlay_tmenu"
             class="w-9 h-9 hover:cursor-pointer" />
-          <div class="">
-            <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup class="rounded-xl"
-              :pt="{ menuitem: { class: 'hover:bg-cta-bg rounded-md' }, content: { class: 'hover:bg-cta-bg rounded-md' } }">
-              <template #start>
-                <h1 class="text-sm ml-2 text-input-placeholder">
-                  <T keyName="dashboard.sort.header" />
-                </h1>
-                <Divider type="solid" class="text-[#CCCCCC] border-b mt-1 mb-1" />
-              </template>
-              <template #item="{ item, props, hasSubmenu }">
-                <a v-ripple class="flex align-items-center hover:bg-cta-bg-light rounded-md text-text text-sm"
-                  v-bind="props.action">
-                  <span :class="item.icon"></span>
-                  <span class="ml-2">{{ item.label }}</span>
-                  <i v-if="hasSubmenu" class="pi pi-angle-right ml-auto"></i>
-                </a>
-              </template>
-            </TieredMenu>
-          </div>
         </div>
         <div id="search" class="relative">
           <input type="text" ref="searchInputMobile" @input="searchJourneys" v-model="searchValue"
@@ -244,7 +206,6 @@ fetchJourneys();
         <DashboardItem v-for="journey in currentJourneys" :id="new String(journey.id).valueOf()" :name="journey.name"
           :destination="journey.destination" :from="journey.from" :to="journey.to"
           :role="new Number(journey.pivot.role).valueOf()" />
-
         <NuxtLink to="/journey/new">
           <SvgCreateNewJourneyCard class="hidden lg:block dark:hidden" />
           <SvgCreateNewJourneyCardDark class="hidden dark:lg:block" />
@@ -253,8 +214,25 @@ fetchJourneys();
             <SvgCreateNewJourneyIcon class="w-10 h-10 fill-text dark:fill-white" />
           </div>
         </NuxtLink>
-
       </div>
     </div>
+    <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup class="rounded-xl bg-input dark:bg-input-dark"
+      :pt="{ menuitem: { class: 'bg-input dark:bg-input-dark hover:bg-cta-bg rounded-md' }, content: { class: 'hover:bg-cta-bg rounded-md' }, submenu: { class: 'bg-input dark:bg-input-dark' } }">
+      <template #start>
+        <h1 class="text-sm ml-2 text-input-placeholder dark:text-text-light-dark">
+          <T keyName="dashboard.sort.header" />
+        </h1>
+        <Divider type="solid" class="text-[#CCCCCC] border-b mt-1 mb-1" />
+      </template>
+      <template #item="{ item, props, hasSubmenu }">
+        <a v-ripple
+          class="flex align-items-center bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white text-sm"
+          v-bind="props.action">
+          <span :class="item.icon"></span>
+          <span class="ml-2 ">{{ item.label }}</span>
+          <i v-if="hasSubmenu" class="pi pi-angle-right ml-auto"></i>
+        </a>
+      </template>
+    </TieredMenu>
   </div>
 </template>

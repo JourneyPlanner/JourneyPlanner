@@ -103,7 +103,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 <template>
   <div class="overflow-hidden overflow-y-hidden">
-    <div class="flex flex-col justify-between z-10 h-[96vh]">
+    <div class="flex flex-col justify-between z-10 h-[94vh]">
       <Toast />
       <div class="flex justify-center items-center font-nunito mt-16 z-50">
         <fieldset id="create-journey"
@@ -156,16 +156,14 @@ const onSubmit = handleSubmit(async (values) => {
         </fieldset>
       </div>
       <div class="z-10">
-        <div class="flex flex-row justify-between items-end">
-          <SvgPeopleBackpackMap class="hidden lg:block" />
-          <div class="flex flex-row items-end justify-between w-full lg:w-auto mt-2 sm:mt-0">
-            <SvgWomanSuitcaseLeft class="" />
-            <SvgWomanSuitcaseRight class="ml-10" />
+        <div class="flex flex-row relative justify-between items-end border-b border-border-grey">
+          <SvgPeopleBackpackMap class="hidden h-full lg:flex" />
+          <div
+            class="lg:absolute lg:inset-0 flex flex-row justify-between lg:justify-end items-end w-full h-full mt-2 sm:mt-0">
+            <SvgWomanSuitcaseLeft />
+            <SvgWomanSuitcaseRight class="ml-10 mr-5" />
           </div>
         </div>
-        <Divider type="solid" class="text-[#CCCCCC] border-b" :pt="{
-            root: { class: 'mt-0' },
-          }" />
       </div>
     </div>
     <div class="z-10">

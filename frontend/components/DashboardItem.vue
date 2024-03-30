@@ -24,7 +24,8 @@ const itemsJourneyGuide = ref([
         items: [
             {
                 label: t.value('dashboard.options.edit'),
-                icon: 'pi pi-pencil'
+                icon: 'pi pi-pencil',
+                className: 'text-cta-border'
             },
             {
                 label: t.value('dashboard.options.delete'),
@@ -59,26 +60,29 @@ const toggle = (event: Event) => {
             <SvgDashboardJourneyDark :link="link" class="hidden dark:block" />
             <div class="absolute top-6 left-10">
                 <div class="flex justify-between w-56">
-                    <NuxtLink :to="link" class="overflow-ellipsis overflow-hidden whitespace-nowrap">
+                    <NuxtLink :to="link" class="overflow-ellipsis overflow-hidden whitespace-nowrap w-full">
                         <h1 class="font-semibold text-2xl overflow-hidden whitespace-nowrap overflow-ellipsis"
                             v-tooltip.top="name">{{
                 name }}</h1>
                     </NuxtLink>
-                    <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true"
-                        aria-controls="overlay_menu" class="justify-end" />
+                    <button class="pi pi-ellipsis-v justify-end" @click="toggle" aria-haspopup="true"
+                        aria-controls="overlay_menu">
+                    </button>
                 </div>
                 <NuxtLink :to="link">
                     <h2 class="text-xl font-medium -mt-1.5 w-56 overflow-ellipsis overflow-hidden whitespace-nowrap"
                         v-tooltip.bottom="destination">{{ destination
                         }}</h2>
-                    <h3 class="border-b-2 border-dashed border-border-grey w-56 text-sm mt-1.5">
+                    <div
+                        class="border-b-2 border-dashed border-border-grey dark:border-input-placeholder w-56 text-sm mt-1.5">
                         <span class="text-border mr-1">
                             <T keyName="dashboard.date" />
                         </span>
-                        <span class="text-text dark:text-white">{{ format(from, "dd/MM/yyyy") }}-{{ format(to,
+                        <span class="text-text dark:text-white -mb-1">{{ format(from, "dd/MM/yyyy") }}-{{ format(to,
                 "dd/MM/yyyy") }}</span>
-                    </h3>
-                    <h3 class="mt-1 border-b-2 border-dashed border-border-grey w-56 text-sm">
+                    </div>
+                    <h3
+                        class="mt-1 border-b-2 border-dashed border-border-grey dark:border-input-placeholder w-56 text-sm">
                         <span class="text-border mr-1">
                             <T keyName="dashboard.role" />
                         </span>
@@ -104,7 +108,8 @@ const toggle = (event: Event) => {
             <NuxtLink :to="link">
                 <h2 class="text-lg font-medium -mt-1.5 overflow-ellipsis overflow-hidden whitespace-nowrap"
                     v-tooltip.bottom="destination">{{ destination }}</h2>
-                <h3 class="border-b-2 border-dashed border-border-grey text-xs md:text-sm mt-1.5">
+                <h3
+                    class="border-b-2 border-dashed border-border-grey dark:border-input-placeholder text-xs md:text-sm mt-1.5">
                     <span class="text-border mr-0.5">
                         <T keyName="dashboard.date" />
                     </span>
@@ -113,7 +118,8 @@ const toggle = (event: Event) => {
                 format(to,
                     "dd/MM/yyyy") }}</span>
                 </h3>
-                <h3 class="mt-1 border-b-2 border-dashed border-border-grey text-xs md:text-sm">
+                <h3
+                    class="mt-1 border-b-2 border-dashed border-border-grey dark:border-input-placeholder text-xs md:text-sm">
                     <span class="text-border mr-0.5">
                         <T keyName="dashboard.role" />
                     </span>
@@ -124,7 +130,7 @@ const toggle = (event: Event) => {
             </NuxtLink>
         </div>
         <Menu ref="menu" id="overlay_menu" :model="props.role === 1 ? itemsJourneyGuide : itemsJourneyMember"
-            :popup="true"
-            :pt="{ root: { class: 'font-nunito' }, menuitem: { class: 'hover:bg-cta-bg-light rounded-md' }, content: { class: 'hover:bg-cta-bg-light rounded-md' } }" />
+            class="bg-input dark:bg-input-dark" :popup="true"
+            :pt="{ root: { class: 'font-nunito bg-input dark:bg-input-dark' }, menuitem: { class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white' }, content: { class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white' }, submenuHeader: { class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark' }, label: { class: 'text-text dark:text-white' }, icon: { class: 'text-text dark:text-white' } }" />
     </div>
 </template>
