@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     "nuxt-primevue",
     "@vee-validate/nuxt",
     "nuxt-auth-sanctum",
+    "@pinia/nuxt",
   ],
   css: [
     "@/assets/css/fonts/fonts.css",

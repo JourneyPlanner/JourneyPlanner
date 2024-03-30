@@ -11,11 +11,13 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.5.1",
     "@tolgee/vue": "^5.22.0",
     "@vee-validate/nuxt": "^4.12.6",
     "@vee-validate/yup": "^4.12.6",
     "date-fns": "^3.6.0",
     "nuxt": "^3.11.1",
+    "pinia": "^2.1.7",
     "primeicons": "^6.0.1",
     "primevue": "^3.50.0",
     "uuid": "^9.0.1",

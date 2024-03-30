@@ -22,11 +22,14 @@ interface Journey {
 
 const { t } = useTranslate();
 
+const store = useDashboardStore();
 const journeys = ref<Journey[]>([]);
 const searchInput = ref();
 const searchInputMobile = ref();
 let searchValue = ref<String>('');
 let currentJourneys = ref<Journey[]>([]);
+
+currentJourneys.value = store.journeys;
 
 const menu = ref();
 const items = ref([
@@ -97,6 +100,7 @@ const toggle = (event: Event) => {
   menu.value.toggle(event);
 };
 
+
 async function fetchJourneys() {
   const client = useSanctumClient();
   await client("/api/journey", {
@@ -104,10 +108,12 @@ async function fetchJourneys() {
     async onResponse({ response }) {
       journeys.value = response._data;
       currentJourneys.value = response._data;
+      store.setJourneys(response._data);
     }
   });
 
 }
+
 
 async function searchJourneys() {
   const data: Journey[] = journeys.value;
