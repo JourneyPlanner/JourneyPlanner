@@ -123,7 +123,7 @@ async function registerUser(userData: Object) {
                 <FormPassword id="password_confirmation" name="password_confirmation" :feedback="false"
                   translationKey="form.input.password.repeat" />
               </div>
-              <div>
+              <div class="mt-3">
                 <FormCheckbox id="terms" name="terms" />
               </div>
 
