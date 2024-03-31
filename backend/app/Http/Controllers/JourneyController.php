@@ -9,11 +9,14 @@ use Illuminate\Http\Request;
 class JourneyController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display all journeys of the authenticated user.
      */
     public function index()
     {
-        //
+        // Get all journeys of the authenticated user
+        $journeys = auth()->user()->journeys()->withPivot('role')->get();
+
+        return response()->json($journeys);
     }
 
     /**

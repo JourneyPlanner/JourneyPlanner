@@ -11,10 +11,12 @@ export default defineNuxtConfig({
     "nuxt-primevue",
     "@vee-validate/nuxt",
     "nuxt-auth-sanctum",
+    "@pinia/nuxt",
   ],
   css: [
     "@/assets/css/fonts/fonts.css",
     "primevue/resources/themes/aura-light-blue/theme.css",
+    "primeicons/primeicons.css",
   ],
   colorMode: {
     classSuffix: "",
@@ -34,7 +36,16 @@ export default defineNuxtConfig({
       unstyled: false,
     },
     components: {
-      include: ["Password", "Calendar", "Divider", "Button", "Checkbox"],
+      include: [
+        "Password",
+        "Calendar",
+        "Divider",
+        "Button",
+        "Checkbox",
+        "TieredMenu",
+        "Tooltip",
+        "Menu",
+      ],
     },
   },
   veeValidate: {
