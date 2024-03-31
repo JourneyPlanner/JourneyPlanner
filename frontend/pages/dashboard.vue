@@ -165,7 +165,7 @@ fetchJourneys();
   <div class="font-nunito px-2 md:px-8 lg:px-20 text-text dark:text-white">
     <div id="header" class="border-b-2 border-border mt-5 pb-3 md:pb-5 flex justify-between items-center">
       <div class="flex flex-row items-center">
-        <SvgDashboardIcon class="md:w-9 md:h-9 mr-1" />
+        <SvgDashboardIcon class="mt-0.5 md:w-9 md:h-9 mr-1" />
         <h1 class="text-3xl md:text-5xl font-medium mt-1">
           <T keyName="common.dashboard" />
         </h1>
@@ -205,7 +205,7 @@ fetchJourneys();
         </div>
         <div id="search" class="relative">
           <input type="text" ref="searchInputMobile" @input="searchJourneys" v-model="searchValue"
-            class="rounded-3xl bg-input dark:bg-input-dark placeholder-input-placeholder dark:placeholder-text-light-dark border px-3 py-1.5 border-border-grey dark:border-input-dark focus:outline-none focus:ring-1 focus:ring-cta-border w-36 md:w-52"
+            class="rounded-3xl bg-input dark:bg-input-dark placeholder-input-placeholder dark:placeholder-text-light-dark border px-3 py-1.5 border-border-grey dark:border-input-dark focus:outline-none focus:ring-1 focus:ring-cta-border w-40 md:w-52"
             :placeholder="t('dashboard.search')">
           <button @click="searchInputMobile.focus()">
             <SvgSearchIcon class="absolute top-1 right-1 w-7 h-7" />
