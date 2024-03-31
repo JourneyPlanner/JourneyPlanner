@@ -44,7 +44,8 @@ const { value, errorMessage } = useField(() => props.name);
       <span v-if="language === 'de'"> gelesen und akzeptiere sie.</span>
     </label>
   </div>
-  <div class="h-3 text-left">
-    <span class="ml-4 text-error dark:text-error-dark dark:font-bold text-left text-xs">{{ errorMessage }}</span>
+  <div class="h-3 text-left mb-2">
+    <p class="ml-9 text-error dark:text-error-dark dark:font-bold text-left text-xs">{{
+          errorMessage }}</p>
   </div>
 </template>
