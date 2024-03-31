@@ -221,7 +221,7 @@ fetchJourneys();
       </NuxtLink>
     </div>
     <div class="flex justify-center">
-      <div id="journeys" class="grid gap-y-2 md:gap-y-4 lg:gap-y-6 gap-x-2 md:gap-x-4 lg:gap-x-6 mt-5"
+      <div id="journeys" class="grid gap-y-5 md:gap-y-4 lg:gap-y-6 gap-x-5 md:gap-x-4 lg:gap-x-6 mt-5"
         :class="currentJourneys.length === 0 ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'">
         <DashboardItem v-for="journey in currentJourneys" :id="new String(journey.id).valueOf()" :name="journey.name"
           :destination="journey.destination" :from="journey.from" :to="journey.to"
@@ -231,7 +231,7 @@ fetchJourneys();
           <SvgCreateNewJourneyCardDark class="hidden dark:lg:block" />
           <div
             class="lg:hidden flex flex-grow justify-center items-center min-w-36 h-32 bg-cta-bg-light dark:bg-cta-bg-dark rounded-md border border-cta-border">
-            <SvgCreateNewJourneyIcon class="w-10 h-10 fill-text dark:fill-white" />
+            <SvgCreateNewJourneyIcon class="w-14 h-14 fill-text dark:fill-white" />
           </div>
         </NuxtLink>
       </div>
