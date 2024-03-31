@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useTranslate } from '@tolgee/vue';
+import { useDashboardStore } from '@/stores/dashboard';
 
 const title = "Dashboard";
 useHead({
@@ -100,7 +101,11 @@ const toggle = (event: Event) => {
   menu.value.toggle(event);
 };
 
-
+/**
+ * Fetches all journeys from the backend
+ * stores response in journeys and currentJourneys
+ * also sets journeys in the store
+ */
 async function fetchJourneys() {
   const client = useSanctumClient();
   await client("/api/journey", {
@@ -114,26 +119,41 @@ async function fetchJourneys() {
 
 }
 
-
+/**
+ * Searches for journeys based on the searchValue
+ * sets the currentJourneys to the results
+ */
 async function searchJourneys() {
   const data: Journey[] = journeys.value;
   const results: Journey[] = data.filter((obj: Journey) => {
     return obj.name.toLowerCase().includes(searchValue.value.toLowerCase()) ||
       obj.destination.toLowerCase().includes(searchValue.value.toLowerCase());
   });
-
   currentJourneys.value = results;
 }
 
+/**
+ * Sorts the journeys based on the sortKey
+ * @param sortKey the key to sort the journeys by
+ */
 function sortJourneys(sortKey: String) {
   currentJourneys.value.sort((a: Journey, b: Journey) => {
-    if (sortKey === 'name-asc') return b.name.localeCompare(a.name);
-    if (sortKey === 'name-desc') return a.name.localeCompare(b.name);
-    if (sortKey === 'startdate-asc') return a.from.localeCompare(b.from);
-    if (sortKey === 'startdate-desc') return b.from.localeCompare(a.from);
-    if (sortKey === 'destination-asc') return b.destination.localeCompare(a.destination);
-    if (sortKey === 'destination-desc') return a.destination.localeCompare(b.destination);
-    return 0;
+    switch (sortKey) {
+      case 'name-asc':
+        return b.name.localeCompare(a.name);
+      case 'name-desc':
+        return a.name.localeCompare(b.name);
+      case 'startdate-asc':
+        return a.from.localeCompare(b.from);
+      case 'startdate-desc':
+        return b.from.localeCompare(a.from);
+      case 'destination-asc':
+        return b.destination.localeCompare(a.destination);
+      case 'destination-desc':
+        return a.destination.localeCompare(b.destination);
+      default:
+        return 0;
+    }
   });
 }
 
