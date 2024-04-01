@@ -34,8 +34,8 @@ const { value, errorMessage } = useField<string>(() => props.name);
 
 <template>
   <div class="relative">
-    <Password panelClass="dark:bg-background-dark dark:text-white" :id="id" :name="name" v-model="value as string"
-      toggleMask class="w-full" :feedback="feedback"
+    <Password panelClass="dark:bg-background-dark dark:text-white" :id="id" :name="name" v-model="value" toggleMask
+      class="w-full" :feedback="feedback"
       inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-white bg-input border-2 border-border focus:outline-none focus:ring-1 dark:bg-input-dark"
       :prompt-label="$t('form.input.password.label.prompt')" :weak-label="$t('form.input.password.label.weak')"
       :medium-label="$t('form.input.password.label.medium')" :strong-label="$t('form.input.password.label.strong')"
