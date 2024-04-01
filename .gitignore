@@ -1,1 +1,5 @@
+# Ignore VSCode settings
 .vscode/settings.json
+
+# Exclude deployment variables
+docker/.env
