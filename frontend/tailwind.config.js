@@ -52,6 +52,7 @@ export default {
       "cancel-bg-dark": "#7c6464" /* cancel button dark */,
       cancel: "#BB7474" /* cancel button */,
       white: "#ffffff" /* white*/,
+      "border-green-save": "#96D446",
     },
   },
   plugins: [],

@@ -45,6 +45,8 @@ export default defineNuxtConfig({
         "TieredMenu",
         "Tooltip",
         "Menu",
+        "Dialog",
+        "ConfirmPopup",
       ],
     },
   },

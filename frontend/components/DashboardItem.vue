@@ -2,6 +2,8 @@
 import { useTranslate } from '@tolgee/vue';
 import { format } from 'date-fns';
 import { ref } from "vue";
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
 
 const props = defineProps({
     id: { type: String, required: true },
@@ -13,9 +15,13 @@ const props = defineProps({
 });
 
 const { t } = useTranslate();
+const confirm = useConfirm();
+const toast = useToast();
+
 const roleType = computed(() => { return props.role === 1 ? "dashboard.role.guide" : "dashboard.role.member" });
 const link = computed(() => { return "/journey/" + props.id });
 
+const isEditMenuVisible = ref(false);
 const menu = ref();
 
 const itemsJourneyGuide = ref([
@@ -25,11 +31,17 @@ const itemsJourneyGuide = ref([
             {
                 label: t.value('dashboard.options.edit'),
                 icon: 'pi pi-pencil',
-                className: 'text-cta-border'
+                className: 'text-cta-border',
+                command: () => {
+                    isEditMenuVisible.value = true;
+                }
             },
             {
                 label: t.value('dashboard.options.delete'),
-                icon: 'pi pi-trash'
+                icon: 'pi pi-trash',
+                command: () => {
+                    console.log('delete');
+                }
             }
         ]
     }
@@ -50,6 +62,24 @@ const itemsJourneyMember = ref([
 
 const toggle = (event: Event) => {
     menu.value.toggle(event);
+};
+
+const confirmDelete = (event: Event) => {
+    confirm.require({
+        target: event.currentTarget as HTMLElement,
+        message: 'Are you sure you want to proceed?',
+        icon: 'pi pi-exclamation-triangle',
+        rejectClass: 'p-button-secondary p-button-outlined p-button-sm',
+        acceptClass: 'p-button-sm',
+        rejectLabel: 'Cancel',
+        acceptLabel: 'Save',
+        accept: () => {
+            toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+        },
+        reject: () => {
+            toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
+    });
 };
 </script>
 
@@ -132,5 +162,44 @@ const toggle = (event: Event) => {
         <Menu ref="menu" id="overlay_menu" :model="props.role === 1 ? itemsJourneyGuide : itemsJourneyMember"
             class="bg-input dark:bg-input-dark" :popup="true"
             :pt="{ root: { class: 'font-nunito bg-input dark:bg-input-dark' }, menuitem: { class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white' }, content: { class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white' }, submenuHeader: { class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark' }, label: { class: 'text-text dark:text-white' }, icon: { class: 'text-text dark:text-white' } }" />
+
+        <Dialog v-model:visible="isEditMenuVisible" modal :header="t('dashboard.edit.header')"
+            :style="{ width: '30rem' }"
+            :pt="{ root: { class: 'font-nunito text-text' }, title: { class: 'text-2xl' } }">
+            <div class="flex flex-col justify-between">
+                <div class="flex flex-row items-center justify-between">
+                    <label for="journey-name" class="font-bold text-xl">
+                        <T keyName="form.input.journey.name" />
+                    </label>
+                    <FormInput id="journey-name" name="journeyName" translationKey="form.input.journey.name"
+                        class="w-2/3" />
+                </div>
+                <div class="flex flex-row items-center justify-between">
+                    <label for="journey-destination" class="font-bold text-xl">
+                        <T keyName="form.input.journey.destination" />
+                    </label>
+                    <FormInput id="journey-destination" name="journeyDestination"
+                        translationKey="form.input.journey.destination" class="w-2/3" />
+                </div>
+                <div class="flex flex-row items-center justify-between">
+                    <label for="journey-range-calendar" class="font-bold text-xl">
+                        <T keyName="dashboard.edit.dates" />
+                    </label>
+                    <FormCalendar id="journey-range-calendar" name="journeyRange"
+                        translationKey="form.input.journey.dates" />
+                </div>
+            </div>
+            <div class="flex justify-between mt-10">
+                <button @click="confirmDelete($event)"
+                    class="px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl">
+                    <T keyName="common.delete" />
+                </button>
+                <button @click="isEditMenuVisible = false"
+                    class="px-12 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-cta-bg dark:hover:bg-cta-bg-dark border-border-green-save rounded-xl">
+                    <T keyName="common.save" />
+                </button>
+            </div>
+        </Dialog>
+        <ConfirmPopup></ConfirmPopup>
     </div>
 </template>
