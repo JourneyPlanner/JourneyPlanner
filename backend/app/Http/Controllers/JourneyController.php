@@ -66,14 +66,14 @@ class JourneyController extends Controller
         }
 
         // Validate the request
-        $validated = $request->validate(
+        $validated = $request->safe()->validate(
             [
                 'name' => 'required|string',
                 'destination' => 'required|string',
                 'from' => 'required|date',
                 'to' => 'required|date',
             ]
-        );
+        )->all();
 
         $journey->update($validated);
     }
