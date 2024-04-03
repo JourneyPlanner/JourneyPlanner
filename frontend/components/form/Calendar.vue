@@ -17,17 +17,20 @@ const props = defineProps({
   type: String,
   id: String,
   translationKey: { type: String, required: true },
+  prefill: Array,
 });
 
-const { value, errorMessage } = useField(() => props.name);
+const { value, errorMessage } = useField<Date[]>(() => props.name);
+if (props.prefill) {
+  value.value = props.prefill as Date[];
+}
 </script>
 
 <template>
   <div class="relative">
     <!-- TODO: language (de/en)-->
-    <Calendar :id="id" :name="name" v-model="value" selectionMode="range" :manualInput="true"
-      :showButtonBar="true" :numberOfMonths="1" dateFormat="dd/mm/yy"
-      panelClass="bg-input dark:bg-background-dark dark:text-white"
+    <Calendar :id="id" :name="name" v-model="value" selectionMode="range" :manualInput="true" :showButtonBar="true"
+      :numberOfMonths="1" dateFormat="dd/mm/yy" panelClass="bg-input dark:bg-background-dark dark:text-white"
       inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-white font-bold bg-input dark:bg-input-dark border-2 border-border focus:outline-none focus:ring-1"
       @focus="handleFocus" @hide="handleBlur" @input="handleFocus" @date-select="$emit('input', $event), handleFocus"
       :pt="{

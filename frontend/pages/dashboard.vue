@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTranslate } from '@tolgee/vue';
 import { useDashboardStore } from '@/stores/dashboard';
+import { compareAsc, compareDesc } from 'date-fns';
 
 const title = "Dashboard";
 useHead({
@@ -16,8 +17,8 @@ interface Journey {
   id: String;
   name: string;
   destination: string;
-  from: string;
-  to: string;
+  from: Date;
+  to: Date;
   pivot: { role: Number };
 }
 
@@ -119,6 +120,8 @@ async function fetchJourneys() {
 
 }
 
+provide('refreshJourneys', fetchJourneys);
+
 /**
  * Searches for journeys based on the searchValue
  * sets the currentJourneys to the results
@@ -144,9 +147,9 @@ function sortJourneys(sortKey: String) {
       case 'name-desc':
         return a.name.localeCompare(b.name);
       case 'startdate-asc':
-        return a.from.localeCompare(b.from);
+        return compareAsc(new Date(a.from), new Date(b.from));
       case 'startdate-desc':
-        return b.from.localeCompare(a.from);
+        return compareDesc(new Date(a.from), new Date(b.from));
       case 'destination-asc':
         return b.destination.localeCompare(a.destination);
       case 'destination-desc':
@@ -224,7 +227,7 @@ fetchJourneys();
       <div id="journeys" class="grid gap-y-5 md:gap-y-4 lg:gap-y-6 gap-x-5 md:gap-x-4 lg:gap-x-6 mt-5"
         :class="currentJourneys.length === 0 ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'">
         <DashboardItem v-for="journey in currentJourneys" :id="new String(journey.id).valueOf()" :name="journey.name"
-          :destination="journey.destination" :from="journey.from" :to="journey.to"
+          :destination="journey.destination" :from="new Date(journey.from)" :to="new Date(journey.to)"
           :role="new Number(journey.pivot.role).valueOf()" />
         <NuxtLink to="/journey/new">
           <SvgCreateNewJourneyCard class="hidden lg:block dark:hidden" />

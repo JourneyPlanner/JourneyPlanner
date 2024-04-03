@@ -53,6 +53,7 @@ export default {
       cancel: "#BB7474" /* cancel button */,
       white: "#ffffff" /* white*/,
       "border-green-save": "#96D446",
+      "fill-green-save": "#DEF9BD",
     },
   },
   plugins: [],

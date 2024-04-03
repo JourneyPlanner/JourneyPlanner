@@ -4,25 +4,77 @@ import { format } from 'date-fns';
 import { ref } from "vue";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
+import type { MenuItemCommandEvent } from 'primevue/menuitem';
+import { useForm } from "vee-validate";
+import * as yup from "yup";
 
 const props = defineProps({
     id: { type: String, required: true },
     name: { type: String, required: true },
     destination: { type: String, required: true },
-    from: { type: String, required: true },
-    to: { type: String, required: true },
+    from: { type: Date, required: true },
+    to: { type: Date, required: true },
     role: { type: Number, required: true }
 });
 
 const { t } = useTranslate();
 const confirm = useConfirm();
 const toast = useToast();
+const client = useSanctumClient();
+
+const refreshJourneys = inject("refreshJourneys") as () => void;
 
 const roleType = computed(() => { return props.role === 1 ? "dashboard.role.guide" : "dashboard.role.member" });
 const link = computed(() => { return "/journey/" + props.id });
 
 const isEditMenuVisible = ref(false);
 const menu = ref();
+
+const toggle = (event: Event) => {
+    menu.value.toggle(event);
+};
+
+const confirmDelete = (event: Event) => {
+    confirm.require({
+        target: event.currentTarget as HTMLElement,
+        message: t.value('dashboard.delete.confirm'),
+        icon: 'pi pi-exclamation-triangle',
+        rejectClass: 'p-button-secondary p-button-outlined p-button-sm',
+        acceptClass: 'p-button-sm text-error',
+        rejectLabel: t.value('common.button.cancel'),
+        acceptLabel: t.value('common.delete'),
+        accept: () => {
+            toast.add({ severity: 'info', summary: t.value('common.toast.info.heading'), detail: t.value('delete.journey.toast.message'), life: 3000 });
+            isEditMenuVisible.value = false;
+            deleteJourney();
+        },
+    });
+};
+
+async function deleteJourney() {
+    await client(`/api/journey/${props.id}`, {
+        method: "DELETE",
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("delete.journey.toast.success.heading"),
+                    detail: t.value("delete.journey.toast.success"),
+                    life: 6000,
+                });
+                refreshJourneys();
+            }
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
 
 const itemsJourneyGuide = ref([
     {
@@ -39,52 +91,125 @@ const itemsJourneyGuide = ref([
             {
                 label: t.value('dashboard.options.delete'),
                 icon: 'pi pi-trash',
-                command: () => {
-                    console.log('delete');
+                command: ($event: MenuItemCommandEvent) => {
+                    confirmDelete($event.originalEvent);
                 }
-            }
+            },
+            /*
+            {
+                label: t.value('dashboard.options.leave'),
+                icon: 'pi pi-sign-out',
+                command: ($event: MenuItemCommandEvent) => {
+                    confirmLeave($event.originalEvent);
+                }
+            },
+            */
         ]
     }
 ]);
 
 const itemsJourneyMember = ref([
     {
+
         label: t.value('dashboard.options.header'),
+
         items: [
+            { label: 'No options available yet' }
+            //TODO: test with member
+            /*
             {
                 label: t.value('dashboard.options.leave'),
                 icon: 'pi pi-sign-out'
-            },
+            },*/
         ]
+
     }
 ]);
 
+/**
+ * form validation
+ * when submitting form, fields are checked for validation
+ */
+const { handleSubmit } = useForm({
+    validationSchema: yup.object({
+        journeyName: yup
+            .string()
+            .required(t.value("form.error.journey.name"))
+            .label(t.value("form.input.journey.name")),
+        journeyDestination: yup
+            .string()
+            .required(t.value("form.error.journey.destination"))
+            .label(t.value("form.input.journey.destination")),
+        journeyRange: yup
+            .array()
+            .of(
+                yup
+                    .date()
+                    .required(t.value("form.error.journey.dates"))
+                    .label(t.value("form.input.journey.dates"))
+            )
+            .required(t.value("form.error.journey.dates"))
+            .label(t.value("form.input.journey.dates")),
+    }),
+});
 
-const toggle = (event: Event) => {
-    menu.value.toggle(event);
-};
-
-const confirmDelete = (event: Event) => {
-    confirm.require({
-        target: event.currentTarget as HTMLElement,
-        message: 'Are you sure you want to proceed?',
-        icon: 'pi pi-exclamation-triangle',
-        rejectClass: 'p-button-secondary p-button-outlined p-button-sm',
-        acceptClass: 'p-button-sm',
-        rejectLabel: 'Cancel',
-        acceptLabel: 'Save',
-        accept: () => {
-            toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
-        },
-        reject: () => {
-            toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-        }
+/**
+ * form save
+ * when saving the edit form, values are checked for validation with handleSubmit
+ * and then a journey object is created and sent to the backend
+ */
+const onSave = handleSubmit(async (values) => {
+    toast.add({
+        severity: "info",
+        summary: t.value("common.toast.info.heading"),
+        detail: t.value("common.toast.info.save"),
+        life: 6000,
     });
-};
+
+    let name = values.journeyName;
+    let destination = values.journeyDestination;
+    let from = values.journeyRange[0];
+    let to = values.journeyRange[1];
+
+    const journey = {
+        name,
+        destination,
+        from,
+        to
+    };
+
+    await client(`/api/journey/${props.id}`, {
+        method: "PUT",
+        body: journey,
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("edit.journey.toast.success.heading"),
+                    detail: t.value("edit.journey.toast.success"),
+                    life: 6000,
+                });
+
+                isEditMenuVisible.value = false
+            }
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+
+});
+
 </script>
 
 <template>
     <div>
+        <Toast />
         <div id="journey-desktop" class="hidden lg:block relative hover:cursor-pointer">
             <SvgDashboardJourney :link="link" class="dark:hidden" />
             <SvgDashboardJourneyDark :link="link" class="hidden dark:block" />
@@ -164,42 +289,50 @@ const confirmDelete = (event: Event) => {
             :pt="{ root: { class: 'font-nunito bg-input dark:bg-input-dark' }, menuitem: { class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white' }, content: { class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white' }, submenuHeader: { class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark' }, label: { class: 'text-text dark:text-white' }, icon: { class: 'text-text dark:text-white' } }" />
 
         <Dialog v-model:visible="isEditMenuVisible" modal :header="t('dashboard.edit.header')"
-            :style="{ width: '30rem' }"
-            :pt="{ root: { class: 'font-nunito text-text' }, title: { class: 'text-2xl' } }">
-            <div class="flex flex-col justify-between">
-                <div class="flex flex-row items-center justify-between">
-                    <label for="journey-name" class="font-bold text-xl">
-                        <T keyName="form.input.journey.name" />
-                    </label>
-                    <FormInput id="journey-name" name="journeyName" translationKey="form.input.journey.name"
-                        class="w-2/3" />
+            :style="{ width: '30rem' }" class="bg-input dark:bg-input-dark"
+            :pt="{ root: { class: 'font-nunito text-text bg-input dark:bg-input-dark' }, header: { class: 'bg-input dark:bg-input-dark text-text dark:text-white' }, title: { class: 'text-2xl' }, content: { class: 'bg-input dark:bg-input-dark text-text dark:text-white' } }">
+            <form @submit.prevent="onSave()">
+                <!-- TODO: schaut noch scuffed aus -->
+                <div class="flex flex-col justify-between">
+                    <div class="flex flex-row items-center justify-between">
+                        <label for="journey-name" class="font-bold text-xl">
+                            <T keyName="form.input.journey.name" />
+                        </label>
+                        <FormInput id="journey-name" name="journeyName" translationKey="form.input.journey.name"
+                            :prefill="props.name" class="w-2/3" />
+                    </div>
+                    <div class="flex flex-row items-center justify-between">
+                        <label for="journey-destination" class="font-bold text-xl">
+                            <T keyName="form.input.journey.destination" />
+                        </label>
+                        <FormInput id="journey-destination" name="journeyDestination"
+                            translationKey="form.input.journey.destination" class="w-2/3"
+                            :prefill="props.destination" />
+                    </div>
+                    <div class="flex flex-row items-center justify-between">
+                        <label for="journey-range-calendar" class="font-bold text-xl">
+                            <T keyName="dashboard.edit.dates" />
+                        </label>
+                        <FormCalendar id="journey-range-calendar" name="journeyRange"
+                            translationKey="form.input.journey.dates"
+                            :prefill="[new Date(props.from), new Date(props.to)]" />
+                    </div>
                 </div>
-                <div class="flex flex-row items-center justify-between">
-                    <label for="journey-destination" class="font-bold text-xl">
-                        <T keyName="form.input.journey.destination" />
-                    </label>
-                    <FormInput id="journey-destination" name="journeyDestination"
-                        translationKey="form.input.journey.destination" class="w-2/3" />
+                <div class="flex justify-between mt-10">
+                    <button @click="confirmDelete($event)" type="button"
+                        class="px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl">
+                        <T keyName="common.delete" />
+                    </button>
+                    <!--TODO: dark hover fill-->
+                    <!-- TODO: anderes grün bei darkmode? -->
+                    <button type="submit"
+                        class="px-12 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-fill-green-save border-border-green-save rounded-xl">
+                        <T keyName="common.save" />
+                    </button>
                 </div>
-                <div class="flex flex-row items-center justify-between">
-                    <label for="journey-range-calendar" class="font-bold text-xl">
-                        <T keyName="dashboard.edit.dates" />
-                    </label>
-                    <FormCalendar id="journey-range-calendar" name="journeyRange"
-                        translationKey="form.input.journey.dates" />
-                </div>
-            </div>
-            <div class="flex justify-between mt-10">
-                <button @click="confirmDelete($event)"
-                    class="px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl">
-                    <T keyName="common.delete" />
-                </button>
-                <button @click="isEditMenuVisible = false"
-                    class="px-12 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-cta-bg dark:hover:bg-cta-bg-dark border-border-green-save rounded-xl">
-                    <T keyName="common.save" />
-                </button>
-            </div>
+            </form>
         </Dialog>
-        <ConfirmPopup></ConfirmPopup>
+        <ConfirmPopup :pt="{ root: { class: 'font-nunito text-text' }, footer: { class: 'flex justify-end gap-3' } }">
+        </ConfirmPopup>
     </div>
 </template>
