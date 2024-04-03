@@ -61,7 +61,7 @@ class JourneyController extends Controller
     public function update(Request $request, Journey $journey)
     {
         // Check if the authenticated user is a journey guide
-        if ($journey->users()->where('user_id', auth()->id())->withPivot('role')->get() != 1) {
+        if ($journey->users()->where('user_id', auth()->id())->withPivot('role')->first()->pivot->role != 1) {
             return abort(404);
         }
 
@@ -84,7 +84,7 @@ class JourneyController extends Controller
     public function destroy(Journey $journey)
     {
         // Check if the authenticated user is a journey guide
-        if ($journey->users()->where('user_id', auth()->id())->withPivot('role')->get() != 1) {
+        if ($journey->users()->where('user_id', auth()->id())->withPivot('role')->first()->pivot->role != 1) {
             return abort(404);
         }
 
