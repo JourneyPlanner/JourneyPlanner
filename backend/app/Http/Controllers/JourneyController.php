@@ -20,14 +20,6 @@ class JourneyController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store the new journey and add the authenticated user to it
      */
     public function store(Request $request): JsonResponse
@@ -64,26 +56,38 @@ class JourneyController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Journey $journey)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Update the specified journey.
      */
     public function update(Request $request, Journey $journey)
     {
-        //
+        // Check if the authenticated user is a journey guide
+        if ($journey->users()->where('user_id', auth()->id())->withPivot('role')->get() != 1) {
+            return abort(404);
+        }
+
+        // Validate the request
+        $validated = $request->validate(
+            [
+                'name' => 'required|string',
+                'destination' => 'required|string',
+                'from' => 'required|date',
+                'to' => 'required|date',
+            ]
+        );
+
+        $journey->update($validated);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified journey from the database.
      */
     public function destroy(Journey $journey)
     {
-        //
+        // Check if the authenticated user is a journey guide
+        if ($journey->users()->where('user_id', auth()->id())->withPivot('role')->get() != 1) {
+            return abort(404);
+        }
+
+        $journey->delete();
     }
 }
