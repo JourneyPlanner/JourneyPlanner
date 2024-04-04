@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\JourneyRequest;
 use App\Models\Journey;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,8 +12,12 @@ class JourneyController extends Controller
     /**
      * Display all journeys of the authenticated user.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->user()->cannot('viewAny', Journey::class)) {
+            abort(403);
+        }
+
         // Get all journeys of the authenticated user
         $journeys = auth()->user()->journeys()->withPivot('role')->get();
 
@@ -24,6 +29,10 @@ class JourneyController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        if ($request->user()->cannot('create', Journey::class)) {
+            abort(403);
+        }
+
         $validated = $request->validate(
             [
                 'name' => 'required|string',
@@ -48,21 +57,26 @@ class JourneyController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show the requested journey.
      */
-    public function show(Journey $journey)
+    public function show(Request $request, Journey $journey)
     {
-        //
+        // Check if the authenticated user is a member of the requested journey
+        if ($request->user()->cannot('view', $journey)) {
+            abort(403);
+        }
+
+        return response()->json($journey);
     }
 
     /**
      * Update the specified journey.
      */
-    public function update(Request $request, Journey $journey)
+    public function update(JourneyRequest $request, Journey $journey)
     {
-        // Check if the authenticated user is a journey guide
-        if ($journey->users()->where('user_id', auth()->id())->withPivot('role')->first()->pivot->role != 1) {
-            return abort(404);
+        // Check if the authenticated user can update the journey
+        if ($request->user()->cannot('update', $journey)) {
+            abort(403);
         }
 
         // Validate the request
@@ -74,11 +88,11 @@ class JourneyController extends Controller
     /**
      * Remove the specified journey from the database.
      */
-    public function destroy(Journey $journey)
+    public function destroy(Request $request, Journey $journey)
     {
-        // Check if the authenticated user is a journey guide
-        if ($journey->users()->where('user_id', auth()->id())->withPivot('role')->first()->pivot->role != 1) {
-            return abort(404);
+        // Check if the authenticated user can delete the journey
+        if ($request->user()->cannot('delete', $journey)) {
+            abort(403);
         }
 
         $journey->delete();
