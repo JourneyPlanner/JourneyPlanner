@@ -30,8 +30,6 @@ interface Journey {
 
 const journeyData = ref({} as Journey);
 
-console.log(route.params.id);
-
 const client = useSanctumClient();
 await client(`/api/journey/${journeyId}`, {
   method: "Get",
@@ -49,34 +47,25 @@ QRCode.toDataURL(journeyData.value.invite, function (err, url) {
   qrcode.value = url;
 });
 
-console.log(journeyData.value);
 const fromDate = new Date(journeyData.value.from);
 const toDate = new Date(journeyData.value.to);
 const currentDate = new Date();
 const days = ref(differenceInDays(fromDate, currentDate));
 const daystoEnd = ref(differenceInDays(toDate, currentDate));
-console.log(daystoEnd.value);
-console.log(days);
 if (days.value > 0) {
   day.value = Math.floor(days.value % 10);
   days.value = days.value / 10;
   tensDays.value = Math.floor(days.value % 10);
   days.value = days.value / 10;
   hundredsDays.value = Math.floor(days.value % 10);
-  console.log(day.value);
-  console.log(tensDays.value);
-  console.log(hundredsDays.value);
 } else if (days.value <= 0 && daystoEnd.value > 0) {
   duringJourney.value = true;
   const journeyEnds = ref(differenceInDays(toDate, currentDate));
-  console.log(journeyEnds);
   day.value = Math.floor(journeyEnds.value % 10);
-  console.log(day.value);
   journeyEnds.value = journeyEnds.value / 10;
   tensDays.value = Math.floor(journeyEnds.value % 10);
   journeyEnds.value = journeyEnds.value / 10;
   hundredsDays.value = Math.floor(journeyEnds.value % 10);
-  console.log(journeyEnds);
 } else {
   journeyEnded.value = true;
 }
