@@ -295,34 +295,34 @@ const onSave = handleSubmit(async (values) => {
             <form @submit.prevent="onSave()">
                 <div class="flex flex-col">
                     <div class="flex flex-row items-center justify-between">
-                        <label for="journey-name" class="font-bold text-xl">
+                        <label for="journey-name" class="font-bold text-base sm:text-xl">
                             <T keyName="form.input.journey.name" />
                         </label>
                         <FormInput id="journey-name" name="name" translationKey="form.input.journey.name"
-                            :prefill="props.name" class="w-2/3 my-0 mb-5" />
+                            :prefill="props.name" class="w-2/3 my-0 mb-3" />
                     </div>
                     <div class="flex flex-row items-center justify-between">
-                        <label for="journey-destination" class="font-bold text-xl">
+                        <label for="journey-destination" class="font-bold text-base sm:text-xl">
                             <T keyName="form.input.journey.destination" />
                         </label>
                         <FormInput id="journey-destination" name="destination"
-                            translationKey="form.input.journey.destination" class="w-2/3 my-0 mb-5"
+                            translationKey="form.input.journey.destination" class="w-2/3 my-0 mb-3"
                             :prefill="props.destination" />
                     </div>
                     <div class="flex flex-row items-center justify-between">
-                        <label for="journey-range-calendar" class="font-bold text-xl">
+                        <label for="journey-range-calendar" class="font-bold text-base sm:text-xl">
                             <T keyName="dashboard.edit.dates" />
                         </label>
-                        <FormCalendar id="journey-range-calendar" name="range" class="my-0 mb-5"
+                        <FormCalendar id="journey-range-calendar" name="range" class="my-0 mb-3 mt-5 w-2/3 mr-0"
                             translationKey="form.input.journey.dates"
                             :prefill="[new Date(props.from), new Date(props.to)]" />
                     </div>
                 </div>
                 <div class="flex justify-between mt-10">
                     <Button @click="confirmDelete($event)" type="button" :label="t('common.delete')" icon="pi pi-trash"
-                        class="px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl" />
+                        class="px-2 sm:px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl" />
                     <Button type="submit" :label="t('common.save')" icon="pi pi-check" :loading="loadingEdit"
-                        class="px-12 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-fill-green-save dark:hover:bg-fill-green-save-dark border-border-green-save dark:border-border-green-save-dark rounded-xl" />
+                        class="px-2 sm:px-12 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-fill-green-save dark:hover:bg-fill-green-save-dark border-border-green-save dark:border-border-green-save-dark rounded-xl" />
 
                 </div>
             </form>
