@@ -17,7 +17,7 @@ export default {
         "nunito-sans": "Nunito Sans",
       },
       screens: {
-        xs: "400px",
+        xs: "350px",
       },
     },
     colors: {
@@ -31,6 +31,7 @@ export default {
       "clouds-bg": "#f0f0f0" /* clouds background*/,
       "clouds-bg-dark": "#404040" /* clouds background dark */,
       "countdown-bg": "rgba(228,234,244,0.4)" /* countdown background */,
+      "countdown-stroke-dark": "#497c93" /* countdown stroke dark */,
       "ticket-top-dark-bg": "#80A2B1" /* ticket top dark background */,
       surface: "rgba(228, 239, 244, 0.8)" /* form surface with opacity */,
       "surface-dark":
@@ -48,6 +49,7 @@ export default {
       "input-gray": "#eaeaea" /* gray input */,
       "input-placeholder": "#7b7b7b" /* input placeholder */,
       "input-disabled": "#f1f1f1",
+      "input-disabled-dark": "#636667" /* disabled input dark */,
       border: "#69aecd" /* border */,
       "border-darker": "#61A0BD" /* darker border */,
       "border-blue-dark": "#58869B" /* dark blue border */,
