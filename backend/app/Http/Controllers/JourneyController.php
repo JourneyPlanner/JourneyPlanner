@@ -6,6 +6,7 @@ use App\Http\Requests\JourneyRequest;
 use App\Models\Journey;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class JourneyController extends Controller
 {
@@ -14,9 +15,7 @@ class JourneyController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->user()->cannot('viewAny', Journey::class)) {
-            abort(403);
-        }
+        Gate::authorize('viewAny', Journey::class);
 
         // Get all journeys of the authenticated user
         $journeys = auth()->user()->journeys()->withPivot('role')->get();
@@ -29,9 +28,7 @@ class JourneyController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        if ($request->user()->cannot('create', Journey::class)) {
-            abort(403);
-        }
+        Gate::authorize('create', Journey::class);
 
         $validated = $request->validate(
             [
@@ -62,9 +59,7 @@ class JourneyController extends Controller
     public function show(Request $request, Journey $journey)
     {
         // Check if the authenticated user is a member of the requested journey
-        if ($request->user()->cannot('view', $journey)) {
-            abort(403);
-        }
+        Gate::authorize('view', $journey);
 
         return response()->json($journey);
     }
@@ -74,10 +69,7 @@ class JourneyController extends Controller
      */
     public function update(JourneyRequest $request, Journey $journey)
     {
-        // Check if the authenticated user can update the journey
-        if ($request->user()->cannot('update', $journey)) {
-            abort(403);
-        }
+        Gate::authorize('journeyGuide', $journey);
 
         // Validate the request
         $validated = $request->safe()->all();
@@ -90,10 +82,7 @@ class JourneyController extends Controller
      */
     public function destroy(Request $request, Journey $journey)
     {
-        // Check if the authenticated user can delete the journey
-        if ($request->user()->cannot('delete', $journey)) {
-            abort(403);
-        }
+        Gate::authorize('journeyGuide', $journey);
 
         $journey->delete();
     }
