@@ -160,6 +160,19 @@ function sortJourneys(sortKey: String) {
   });
 }
 
+function deleteJourney(id: String) {
+  journeys.value.splice(journeys.value.findIndex(journey => journey.id === id), 1);
+  currentJourneys.value = journeys.value;
+}
+
+function editJourney(journey: Journey, id: String) {
+  const index = journeys.value.findIndex(j => j.id === id);
+  journeys.value[index].destination = journey.destination;
+  journeys.value[index].from = journey.from;
+  journeys.value[index].to = journey.to;
+  journeys.value[index].name = journey.name;
+}
+
 fetchJourneys();
 
 </script>
@@ -228,7 +241,8 @@ fetchJourneys();
         :class="currentJourneys.length === 0 ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'">
         <DashboardItem v-for="journey in currentJourneys" :id="new String(journey.id).valueOf()" :name="journey.name"
           :destination="journey.destination" :from="new Date(journey.from)" :to="new Date(journey.to)"
-          :role="new Number(journey.pivot.role).valueOf()" />
+          :role="new Number(journey.pivot.role).valueOf()" @journey-deleted="deleteJourney"
+          @journey-edited="editJourney" />
         <NuxtLink to="/journey/new">
           <SvgCreateNewJourneyCard class="hidden lg:block dark:hidden" />
           <SvgCreateNewJourneyCardDark class="hidden dark:lg:block" />

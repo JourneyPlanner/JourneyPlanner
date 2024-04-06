@@ -17,6 +17,8 @@ const props = defineProps({
     role: { type: Number, required: true }
 });
 
+const emit = defineEmits(['journeyDeleted', 'journeyEdited']);
+
 const { t } = useTranslate();
 const confirm = useConfirm();
 const toast = useToast();
@@ -29,6 +31,7 @@ const link = computed(() => { return "/journey/" + props.id });
 
 const isEditMenuVisible = ref(false);
 const menu = ref();
+const loadingEdit = ref(false);
 
 const toggle = (event: Event) => {
     menu.value.toggle(event);
@@ -62,7 +65,7 @@ async function deleteJourney() {
                     detail: t.value("delete.journey.toast.success"),
                     life: 6000,
                 });
-                refreshJourneys();
+                emit("journeyDeleted", props.id);
             }
         },
         async onResponseError() {
@@ -95,7 +98,7 @@ const itemsJourneyGuide = ref([
                     confirmDelete($event.originalEvent);
                 }
             },
-            /*
+            /* leave for JP-34
             {
                 label: t.value('dashboard.options.leave'),
                 icon: 'pi pi-sign-out',
@@ -115,8 +118,7 @@ const itemsJourneyMember = ref([
 
         items: [
             { label: 'No options available yet' }
-            //TODO: test with member
-            /*
+            /* leave for JP-34
             {
                 label: t.value('dashboard.options.leave'),
                 icon: 'pi pi-sign-out'
@@ -159,6 +161,7 @@ const { handleSubmit } = useForm({
  * and then a journey object is created and sent to the backend
  */
 const onSave = handleSubmit(async (values) => {
+    loadingEdit.value = true;
     toast.add({
         severity: "info",
         summary: t.value("common.toast.info.heading"),
@@ -189,8 +192,8 @@ const onSave = handleSubmit(async (values) => {
                     detail: t.value("edit.journey.toast.success"),
                     life: 6000,
                 });
-
-                isEditMenuVisible.value = false
+                emit("journeyEdited", journey, props.id);
+                isEditMenuVisible.value = false;
             }
         },
         async onResponseError() {
@@ -202,7 +205,7 @@ const onSave = handleSubmit(async (values) => {
             });
         },
     });
-
+    loadingEdit.value = false;
 });
 
 </script>
@@ -319,20 +322,19 @@ const onSave = handleSubmit(async (values) => {
                     </div>
                 </div>
                 <div class="flex justify-between mt-10">
-                    <button @click="confirmDelete($event)" type="button"
-                        class="px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl">
-                        <T keyName="common.delete" />
-                    </button>
+                    <Button @click="confirmDelete($event)" type="button" :label="t('common.delete')" icon="pi pi-trash"
+                        class="px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl" />
+
                     <!--TODO: dark hover fill-->
                     <!-- TODO: anderes grün bei darkmode? -->
-                    <button type="submit"
-                        class="px-12 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-fill-green-save border-border-green-save rounded-xl">
-                        <T keyName="common.save" />
-                    </button>
+                    <Button type="submit" :label="t('common.save')" icon="pi pi-check" :loading="loadingEdit"
+                        class="px-12 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-fill-green-save border-border-green-save rounded-xl" />
+
                 </div>
             </form>
         </Dialog>
-        <ConfirmPopup :pt="{ root: { class: 'font-nunito text-text' }, footer: { class: 'flex justify-end gap-3' } }">
+        <ConfirmPopup
+            :pt="{ root: { class: 'font-nunito text-text bg-input' }, footer: { class: 'flex justify-end gap-3' } }">
         </ConfirmPopup>
     </div>
 </template>
