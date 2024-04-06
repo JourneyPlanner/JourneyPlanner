@@ -25,26 +25,19 @@ interface Journey {
 
 const journeyData = ref({} as Journey);
 
-try {
-  const client = useSanctumClient();
-  await client(`/api/journey/${journeyId}`, {
-    method: "Get",
-    async onResponse({ response }) {
-      journeyData.value = response._data;
-    },
-    async onRequestError() {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "Page Not Found",
-      });
-    },
-  });
-} catch (error: any) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: "Page Not Found",
-  });
-}
+const client = useSanctumClient();
+await client(`/api/journey/${journeyId}`, {
+  method: "Get",
+  async onResponse({ response }) {
+    journeyData.value = response._data;
+  },
+  async onResponseError() {
+    throw showError({
+      statusCode: 404,
+      statusMessage: "Page Not Found",
+    });
+  },
+});
 
 const title = journeyData.value.name;
 useHead({
