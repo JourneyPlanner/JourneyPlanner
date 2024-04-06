@@ -120,8 +120,6 @@ async function fetchJourneys() {
 
 }
 
-provide('refreshJourneys', fetchJourneys);
-
 /**
  * Searches for journeys based on the searchValue
  * sets the currentJourneys to the results

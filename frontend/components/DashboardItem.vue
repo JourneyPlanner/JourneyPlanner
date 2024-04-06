@@ -24,8 +24,6 @@ const confirm = useConfirm();
 const toast = useToast();
 const client = useSanctumClient();
 
-const refreshJourneys = inject("refreshJourneys") as () => void;
-
 const roleType = computed(() => { return props.role === 1 ? "dashboard.role.guide" : "dashboard.role.member" });
 const link = computed(() => { return "/journey/" + props.id });
 
@@ -134,15 +132,15 @@ const itemsJourneyMember = ref([
  */
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
-        journeyName: yup
+        name: yup
             .string()
             .required(t.value("form.error.journey.name"))
             .label(t.value("form.input.journey.name")),
-        journeyDestination: yup
+        destination: yup
             .string()
             .required(t.value("form.error.journey.destination"))
             .label(t.value("form.input.journey.destination")),
-        journeyRange: yup
+        range: yup
             .array()
             .of(
                 yup
@@ -161,6 +159,11 @@ const { handleSubmit } = useForm({
  * and then a journey object is created and sent to the backend
  */
 const onSave = handleSubmit(async (values) => {
+    let name = values.name;
+    let destination = values.destination;
+    let from = values.range[0];
+    let to = values.range[1];
+
     loadingEdit.value = true;
     toast.add({
         severity: "info",
@@ -168,11 +171,6 @@ const onSave = handleSubmit(async (values) => {
         detail: t.value("common.toast.info.save"),
         life: 6000,
     });
-
-    let name = values.journeyName;
-    let destination = values.journeyDestination;
-    let from = values.journeyRange[0];
-    let to = values.journeyRange[1];
 
     const journey = {
         name,
@@ -221,7 +219,7 @@ const onSave = handleSubmit(async (values) => {
                     <NuxtLink :to="link" class="overflow-ellipsis overflow-hidden whitespace-nowrap w-full">
                         <h1 class="font-semibold text-2xl overflow-hidden whitespace-nowrap overflow-ellipsis"
                             v-tooltip.top="name">{{
-                name }}</h1>
+                                name }}</h1>
                     </NuxtLink>
                     <button class="pi pi-ellipsis-v justify-end" @click="toggle" aria-haspopup="true"
                         aria-controls="overlay_menu">
@@ -237,7 +235,7 @@ const onSave = handleSubmit(async (values) => {
                             <T keyName="dashboard.date" />
                         </span>
                         <span class="text-text dark:text-white -mb-1">{{ format(from, "dd/MM/yyyy") }}-{{ format(to,
-                "dd/MM/yyyy") }}</span>
+                            "dd/MM/yyyy") }}</span>
                     </div>
                     <h3
                         class="mt-1 border-b-2 border-dashed border-border-grey dark:border-input-placeholder w-56 text-sm">
@@ -258,7 +256,7 @@ const onSave = handleSubmit(async (values) => {
                     <h1 class="font-semibold text-xl overflow-hidden whitespace-nowrap overflow-ellipsis"
                         v-tooltip.top="name">
                         {{
-                name }}</h1>
+                            name }}</h1>
                 </NuxtLink>
                 <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true"
                     aria-controls="overlay_menu" class="justify-end" />
@@ -273,8 +271,8 @@ const onSave = handleSubmit(async (values) => {
                     </span>
                     <br class="sm:hidden">
                     <span class="text-text dark:text-white whitespace-nowrap">{{ format(from, "dd/MM/yyyy") }} - {{
-                format(to,
-                    "dd/MM/yyyy") }}</span>
+                        format(to,
+                            "dd/MM/yyyy") }}</span>
                 </h3>
                 <h3
                     class="mt-1 border-b-2 border-dashed border-border-grey dark:border-input-placeholder text-xs md:text-sm">
@@ -295,28 +293,27 @@ const onSave = handleSubmit(async (values) => {
             :style="{ width: '30rem' }" class="bg-input dark:bg-input-dark"
             :pt="{ root: { class: 'font-nunito text-text bg-input dark:bg-input-dark' }, header: { class: 'bg-input dark:bg-input-dark text-text dark:text-white' }, title: { class: 'text-2xl' }, content: { class: 'bg-input dark:bg-input-dark text-text dark:text-white' } }">
             <form @submit.prevent="onSave()">
-                <!-- TODO: schaut noch scuffed aus -->
-                <div class="flex flex-col justify-between">
+                <div class="flex flex-col">
                     <div class="flex flex-row items-center justify-between">
                         <label for="journey-name" class="font-bold text-xl">
                             <T keyName="form.input.journey.name" />
                         </label>
-                        <FormInput id="journey-name" name="journeyName" translationKey="form.input.journey.name"
-                            :prefill="props.name" class="w-2/3" />
+                        <FormInput id="journey-name" name="name" translationKey="form.input.journey.name"
+                            :prefill="props.name" class="w-2/3 my-0 mb-5" />
                     </div>
                     <div class="flex flex-row items-center justify-between">
                         <label for="journey-destination" class="font-bold text-xl">
                             <T keyName="form.input.journey.destination" />
                         </label>
-                        <FormInput id="journey-destination" name="journeyDestination"
-                            translationKey="form.input.journey.destination" class="w-2/3"
+                        <FormInput id="journey-destination" name="destination"
+                            translationKey="form.input.journey.destination" class="w-2/3 my-0 mb-5"
                             :prefill="props.destination" />
                     </div>
                     <div class="flex flex-row items-center justify-between">
                         <label for="journey-range-calendar" class="font-bold text-xl">
                             <T keyName="dashboard.edit.dates" />
                         </label>
-                        <FormCalendar id="journey-range-calendar" name="journeyRange"
+                        <FormCalendar id="journey-range-calendar" name="range" class="my-0 mb-5"
                             translationKey="form.input.journey.dates"
                             :prefill="[new Date(props.from), new Date(props.to)]" />
                     </div>
@@ -324,11 +321,8 @@ const onSave = handleSubmit(async (values) => {
                 <div class="flex justify-between mt-10">
                     <Button @click="confirmDelete($event)" type="button" :label="t('common.delete')" icon="pi pi-trash"
                         class="px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl" />
-
-                    <!--TODO: dark hover fill-->
-                    <!-- TODO: anderes grün bei darkmode? -->
                     <Button type="submit" :label="t('common.save')" icon="pi pi-check" :loading="loadingEdit"
-                        class="px-12 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-fill-green-save border-border-green-save rounded-xl" />
+                        class="px-12 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-fill-green-save dark:hover:bg-fill-green-save-dark border-border-green-save dark:border-border-green-save-dark rounded-xl" />
 
                 </div>
             </form>

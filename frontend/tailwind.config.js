@@ -53,6 +53,8 @@ export default {
       cancel: "#BB7474" /* cancel button */,
       white: "#ffffff" /* white*/,
       "border-green-save": "#96D446",
+      "border-green-save-dark": "#79AC38",
+      "fill-green-save-dark": "rgba(131, 165, 119, 0.6)",
       "fill-green-save": "#DEF9BD",
     },
   },
