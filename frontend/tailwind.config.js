@@ -50,6 +50,8 @@ export default {
       "input-placeholder": "#7b7b7b" /* input placeholder */,
       "input-disabled": "#f1f1f1",
       "input-disabled-dark": "#636667" /* disabled input dark */,
+      "input-disabled-dark-gray": "#BBBBBB" /* disabled input dark gray */,
+      "input-disabled-dark-grey": "#5a5a5a" /* disabled input gray */,
       border: "#69aecd" /* border */,
       "border-darker": "#61A0BD" /* darker border */,
       "border-blue-dark": "#58869B" /* dark blue border */,
@@ -63,6 +65,7 @@ export default {
       "cancel-border": "#BB7474" /* cancel button */,
       "cancel-bg": "#d98f8f" /* cancel button */,
       "cancel-bg-dark": "#7c6464" /* cancel button dark */,
+
       cancel: "#BB7474" /* cancel button */,
       white: "#ffffff" /* white*/,
       "gradient-start": "#E3F1F6" /* gradient start */,

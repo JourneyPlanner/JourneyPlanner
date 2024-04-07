@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { differenceInDays, format } from "date-fns";
 import QRCode from "qrcode";
+import { useTranslate, T } from "@tolgee/vue";
 import JSConfetti from "js-confetti";
+import Toast from "primevue/toast";
+
+const currentUrl = window.location.href.split("/")[2];
+console.log(currentUrl);
 const route = useRoute();
 const journeyId = route.params.id;
 const qrcode = ref("");
@@ -11,6 +16,13 @@ const day = ref(0);
 const tensDays = ref(0);
 const hundredsDays = ref(0);
 const jsConfetti = new JSConfetti();
+const visibleSidebar = ref(false);
+const toast = useToast();
+const { t } = useTranslate();
+const op = ref();
+const toggle = (event: any) => {
+  op.value.toggle(event);
+};
 
 definePageMeta({
   middleware: ["sanctum:auth"],
@@ -82,10 +94,51 @@ const isFlipped = ref(false);
 const flip = () => {
   isFlipped.value = !isFlipped.value;
 };
+
+function copyToClipboard() {
+  navigator.clipboard.writeText(journeyData.value.invite);
+  toast.add({
+    severity: "info",
+    summary: t.value("common.toast.info.heading"),
+    detail: t.value("common.invite.toast.info"),
+    life: 2000,
+  });
+}
 </script>
 
 <template>
   <div class="flex flex-col font-nunito text-text dark:text-white">
+    <Toast />
+    <Sidebar
+      v-model:visible="visibleSidebar"
+      position="right"
+      :pt="{
+        closeButton: { class: 'w-9 h-9 dark:fill-white' },
+        closeIcon: { class: 'w-9 h-9 text-text-disabled dark:text-white' },
+        header: { class: 'p-2' },
+        content: { class: 'pl-2 py-2 pr-0' },
+        root: { class: 'dark:bg-background-dark' },
+      }"
+    >
+      <div class="text-2xl text-text dark:text-input">
+        <T keyName="sidebar.invite.link" />
+      </div>
+      <div class="flex items-center">
+        <input
+          class="w-4/5 rounded-md px-1 pb-1 pt-1 text-md text-text dark:text-white bg-input-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark overflow-ellipsis"
+          disabled
+          :value="journeyData.invite"
+        />
+        <div class="w-fit flex justify-center">
+          <button
+            class="w-9 h-9 border-2 mx-3 border-cta-border rounded-full hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark flex items-center justify-center"
+            @click="copyToClipboard"
+          >
+            <SvgCopy class="w-4" />
+          </button>
+        </div>
+      </div>
+    </Sidebar>
     <div
       class="absolute right-0 lg:w-1/3 w-full h-10 flex justify-end items-center font-semibold mt-5"
     >
@@ -93,7 +146,10 @@ const flip = () => {
         <SvgDashboardIcon class="w-6 h-6" />
         <p class="text-2xl hover:underline">Dashboard</p>
       </NuxtLink>
-      <SvgMenu class="md:w-10 md:h-10 md:mx-10 mx-5 w-8 h-8" />
+      <SvgMenu
+        class="md:w-10 md:h-10 md:mx-10 mx-5 w-8 h-8"
+        @click="visibleSidebar = true"
+      />
     </div>
     <div class="flex flex-wrap h-fit mt-[12vh]">
       <div class="flex w-full items-center justify-center md:hidden">
@@ -283,11 +339,44 @@ const flip = () => {
                 class="absolute lg:w-[10.15rem] md:w-[8.8rem] right-0"
               />
               <button
-                class="absolute items-center justify-center flex right-[50%] top-[80%] translate-x-[50%] lg:-translate-y-[2%] md:-translate-y-[30%] font-bold border-2 border-cta-border h-1/6 w-1/2 rounded-xl hover:bg-cta-bg z-30 bg-background dark:bg-input-dark dark:hover:bg-cta-bg-dark"
+                class="absolute items-center justify-center flex right-[50%] top-[80%] translate-x-[50%] lg:-translate-y-[2%] md:-translate-y-[30%] font-bold border-2 border-cta-border h-1/6 w-2/5 rounded-xl hover:bg-cta-bg z-30 bg-background dark:bg-input-dark dark:hover:bg-cta-bg-dark"
+                @click="toggle"
               >
                 <T keyName="journey.button.invite" />
                 <SvgShare class="w-3 ml-2" />
               </button>
+              <OverlayPanel ref="op">
+                <div class="flex flex-column gap-3 w-25rem">
+                  <div>
+                    <span class="font-medium text-900 block mb-2"
+                      >Share this document</span
+                    >
+                    <div class="flex">
+                      <input
+                        class="w-full shadow-sm rounded-l-md pl-2.5 pb-1 pt-1 text-md text-text dark:text-white font-bold border-2 border-border-gray focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
+                        disabled
+                        :value="journeyData.invite"
+                      />
+                      <button
+                        class="w-9 h-9 shadow-sm border-border-gray rounded-r-md border-y-2 border-r-2 hover:bg-input-gray dark:bg-input-dark dark:hover:bg-cta-bg-dark flex items-center justify-center"
+                        @click="copyToClipboard"
+                      >
+                        <SvgCopy class="w-4" />
+                      </button>
+                    </div>
+                    <!-- <InputGroup>
+                      <InputText
+                        :value="journeyData.invite"
+                        readonly
+
+                      ></InputText>
+                      <InputGroupAddon>
+                        <i class="pi pi-copy"></i>
+                      </InputGroupAddon>
+                    </InputGroup> -->
+                  </div>
+                </div>
+              </OverlayPanel>
             </div>
           </div>
         </div>
