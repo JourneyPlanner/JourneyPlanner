@@ -17,7 +17,9 @@ class JourneyUserController extends Controller
     {
         // get the journey by id and authorize the user
         $journey = Journey::findOrFail($id);
-        Gate::authorize('view', $journey);
+        if ($journey->users()->where('user_id', auth()->id())->doesntExist()) {
+            abort(403, 'Unauthorized');
+        }
 
         // return the users of the journey in json format
         return response()->json($journey->users()->get(['id', 'firstName', 'lastName', 'role']));
