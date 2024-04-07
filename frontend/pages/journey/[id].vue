@@ -94,7 +94,7 @@ const flip = () => {
         <SvgDashboardIcon class="w-6 h-6" />
         <p class="text-2xl hover:underline">Dashboard</p>
       </NuxtLink>
-      <SvgMenu class="w-10 h-10 md:mx-10 mx-5" />
+      <SvgMenu class="md:w-10 md:h-10 md:mx-10 mx-5 w-8 h-8" />
     </div>
     <div class="flex flex-wrap h-fit mt-[12vh]">
       <div class="flex w-full items-center justify-center md:hidden">
@@ -181,12 +181,12 @@ const flip = () => {
                 >
                   <div class="h-full w-full flex flex-col items-end relative">
                     <img
-                      class="absolute right-[50%] top-[25%] z-20 translate-x-[50%] -translate-y-[25%] w-2/5"
+                      class="absolute right-[50%] top-[25%] z-20 translate-x-[50%] -translate-y-[25%] w-40 max-sm:mt-1"
                       :src="qrcode"
                       alt="QR Code"
                     />
                     <div
-                      class="absolute ml-10 rounded-full border-input-placeholder text-input-placeholder w-16 h-16 self-center border-dashed border-2 right-2 bottom-2 flex text-center justify-center text-xs pl-1.5 pr-1.5 pt-1 z-40 dark:border-white dark:text-white"
+                      class="absolute items-center justify-center flex ml-10 rounded-full border-input-placeholder text-input-placeholder w-16 h-16 self-center border-dashed border-2 right-2 bottom-2 text-xs pl-1.5 pr-1.5 z-40 dark:border-white dark:text-white"
                     >
                       <T keyName="journey.turn" />
                     </div>
@@ -205,9 +205,9 @@ const flip = () => {
           class="h-10 bg-border border-x-2 border-t-2 border-border-darker rounded-t-3xl flex items-center relative dark:bg-ticket-top-dark-bg dark:border-border-blue-dark"
         >
           <div
-            class="absolute ml-10 rounded-full w-7 h-7 bg-border-gray inline-block self-center"
+            class="ml-5 absolute rounded-full w-7 h-7 bg-border-gray inline-block self-center"
           ></div>
-          <p class="ml-20 text-white font-bold text-xl">JourneyPlanner</p>
+          <p class="ml-14 text-white font-bold text-xl">JourneyPlanner</p>
           <div class="w-full flex justify-end h-full items-center">
             <SvgAirplaneIcon class="w-7 mr-5" />
           </div>
@@ -234,7 +234,7 @@ const flip = () => {
                 />
                 <T keyName="form.input.journey.date" />
                 <input
-                  class="w-2/3 rounded-md px-2.5 pb-1 pt-1 mb-2 text-md text-text dark:text-white font-bold bg-input-gray focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
+                  class="lg:w-2/3 md:w-5/6 rounded-md px-2.5 pb-1 pt-1 mb-2 text-md text-text dark:text-white font-bold bg-input-gray focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
                   disabled
                   :value="
                     format(fromDate, 'dd/MM/yyyy') +
@@ -284,7 +284,7 @@ const flip = () => {
                 class="absolute lg:w-[10.15rem] md:w-[8.8rem] right-0"
               />
               <button
-                class="absolute items-center justify-center flex right-[50%] top-[80%] translate-x-[50%] lg:-translate-y-[2%] md:-translate-y-[30%] font-bold border-2 border-cta-border h-1/6 w-2/5 rounded-xl hover:bg-cta-bg z-30 bg-background dark:bg-input-dark dark:hover:bg-cta-bg-dark"
+                class="absolute items-center justify-center flex right-[50%] top-[80%] translate-x-[50%] lg:-translate-y-[2%] md:-translate-y-[30%] font-bold border-2 border-cta-border h-1/6 w-1/2 rounded-xl hover:bg-cta-bg z-30 bg-background dark:bg-input-dark dark:hover:bg-cta-bg-dark"
               >
                 <T keyName="journey.button.invite" />
                 <SvgShare class="w-3 ml-2" />
@@ -425,22 +425,22 @@ const flip = () => {
             <div
               class="text-center justify-start items-center lg:flex-col flex"
             >
-              <p class="font-bold text-xs lg:text-base">
+              <p class="font-bold text-base">
                 <T keyName="journey.countdown.days" />
               </p>
               <p
                 v-if="duringJourney"
-                class="font-bold w-full pl-1 lg:text-lg text-xs"
+                class="font-bold w-full pl-1 lg:text-lg text-base"
               >
                 <T keyName="journey.countdown.ends" />
               </p>
               <p
                 v-else-if="journeyEnded"
-                class="font-bold w-full lg:text-lg pl-1 text-xs"
+                class="font-bold w-full lg:text-lg pl-1 text-base"
               >
                 <T keyName="journey.countdown.finished" />
               </p>
-              <p v-else class="font-bold w-full lg:text-lg pl-1 text-xs">
+              <p v-else class="font-bold w-full lg:text-lg pl-1 text-base">
                 <T keyName="journey.countdown.until" />
               </p>
               <button
