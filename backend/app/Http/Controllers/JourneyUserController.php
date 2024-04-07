@@ -4,25 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Journey;
 use App\Models\JourneyUser;
-use Eloquent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class JourneyUserController extends Controller
 {
     /**
-     * Get the users of the journey
+     * Get the users of the journey.
      */
     public function index($id): JsonResponse
     {
-        // check if the journey exists and if the user is a part of it
-        $journey = Journey::find($id);
-        if (!$journey | !$journey->users()->where('user_id', auth()->id())->exists()) {
-            return abort(404);
-        }
+        // get the journey by id and authorize the user
+        $journey = Journey::firstOrFail($id);
+        Gate::authorize('view', $journey);
 
         // return the users of the journey in json format
-        return response()->json($journey->users()->get());
+        return response()->json($journey->users()->withPivot('role')->get(['id', 'firstName', 'lastName', 'role']));
     }
 
     /**
