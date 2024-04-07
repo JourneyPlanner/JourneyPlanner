@@ -15,6 +15,7 @@ const jsConfetti = new JSConfetti();
 definePageMeta({
   middleware: ["sanctum:auth"],
 });
+
 interface Journey {
   name: string;
   invite: string;
@@ -68,6 +69,7 @@ const toDate = new Date(journeyData.value.to);
 const currentDate = new Date();
 const days = ref(differenceInDays(fromDate, currentDate));
 const daystoEnd = ref(differenceInDays(toDate, currentDate));
+
 if (days.value > 0) {
   day.value = Math.floor(days.value % 10);
   days.value = days.value / 10;
@@ -118,7 +120,7 @@ const flip = () => {
               <div class="flex h-5/6">
                 <div
                   class="h-fit w-full rounded-b-2xl bg-background border-border-gray border-x-2 border-b-2 text-sm dark:bg-border-dark dark:border-form-input-dark -mr-1">
-                  <div class="w-full grid grid-cols-4">
+                  <div class="w-full grid grid-cols-4 mt-1 mb-2">
                     <div class="w-full col-span-3 pl-5 flex flex-col h-full justify-center font-semibold">
                       <T keyName="form.input.journey.name" />
                       <input
@@ -136,8 +138,8 @@ const flip = () => {
                           format(toDate, 'dd/MM/yyyy')
                           " />
                     </div>
-                    <div class="w-full h-[1/3] relative">
-                      <SvgStripes class="absolute w-[6.9rem] right-0 z-0" />
+                    <div class="w-full -mt-1 relative">
+                      <SvgStripes class="absolute w-[7.4rem] right-0 z-0" />
                       <div
                         class="absolute ml-10 rounded-full border-input-placeholder text-input-placeholder w-16 h-16 self-center border-dashed border-2 right-2 bottom-2 flex text-center justify-center items-center text-xs pl-1.5 pr-1.5 dark:border-white dark:text-white">
                         <T keyName="journey.turn" />
