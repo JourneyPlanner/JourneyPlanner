@@ -26,6 +26,13 @@ interface Journey {
   to: string;
 }
 
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  role: number;
+}
+
 const client = useSanctumClient();
 const { data, pending, error, refresh } = await useAsyncData("journey", () =>
   client(`/api/journey/${journeyId}`)
@@ -98,9 +105,6 @@ const flip = () => {
 const { data: users, pending: usersPending, error: usersError, refresh: usersRefresh } = await useAsyncData("users", () =>
   client(`/api/journey/${journeyId}/user`)
 );
-
-console.log(users);
-
 </script>
 
 <template>
@@ -401,11 +405,11 @@ console.log(users);
         <h1 class="text-xl text-footer">
           <T keyName="journey.sidebar.list.header" />
         </h1>
-        <SvgEdit class="w-8" />
+        <!-- <SvgEdit class="w-8" /> -->
       </div>
-      <div id="list">
-        <MemberItem v-for="user in users" :key="user.id" :id="user.id" :firstName="user.firstName"
-          :lastName="user.lastName" :role="1" />
+      <div id="list" class="mt-3 flex flex-col gap-3">
+        <MemberItem v-for="user in users.sort(function (a: User, b: User) { return a.role - b.role })" :key="user.id"
+          :id="user.id" :firstName="user.firstName" :lastName="user.lastName" :role="user.role" />
       </div>
     </Sidebar>
   </div>

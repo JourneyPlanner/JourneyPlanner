@@ -70,6 +70,8 @@ export default {
       "gradient-start-light": "#F2FCFF" /* light gradient start */,
       "gradient-start-dark": "#95c0d2" /* dark gradient start */,
       "gradient-end-dark": "#699fb4" /* dark gradient end */,
+      "chip-blue": "#B0D9EC" /* blue chip */,
+      "chip-grey": "#E8E8E8" /* grey chip */,
     },
   },
   plugins: [],
