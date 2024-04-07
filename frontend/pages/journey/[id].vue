@@ -11,6 +11,8 @@ const day = ref(0);
 const tensDays = ref(0);
 const hundredsDays = ref(0);
 const jsConfetti = new JSConfetti();
+const visible = ref(false);
+
 
 definePageMeta({
   middleware: ["sanctum:auth"],
@@ -92,6 +94,13 @@ const isFlipped = ref(false);
 const flip = () => {
   isFlipped.value = !isFlipped.value;
 };
+
+const { data: users, pending: usersPending, error: usersError, refresh: usersRefresh } = await useAsyncData("users", () =>
+  client(`/api/journey/${journeyId}/user`)
+);
+
+console.log(users);
+
 </script>
 
 <template>
@@ -101,7 +110,9 @@ const flip = () => {
         <SvgDashboardIcon class="w-6 h-6" />
         <p class="text-2xl hover:underline">Dashboard</p>
       </NuxtLink>
-      <SvgMenu class="md:w-10 md:h-10 md:mx-10 mx-5 w-8 h-8" />
+      <button @click="visible = true">
+        <SvgMenu class="md:w-10 md:h-10 md:mx-10 mx-5 w-8 h-8 hover:cursor-pointer" />
+      </button>
     </div>
     <div class="flex flex-wrap h-fit mt-[12vh]">
       <div class="flex w-full items-center justify-center md:hidden">
@@ -385,5 +396,17 @@ const flip = () => {
         </div>
       </div>
     </div>
+    <Sidebar v-model:visible="visible" position="right" :pt="{ root: { class: 'font-nunito' } }">
+      <div class="flex flex-row justify-between items-center border-b pb-3 border-border-grey">
+        <h1 class="text-xl text-footer">
+          <T keyName="journey.sidebar.list.header" />
+        </h1>
+        <SvgEdit class="w-8" />
+      </div>
+      <div id="list">
+        <MemberItem v-for="user in users" :key="user.id" :id="user.id" :firstName="user.firstName"
+          :lastName="user.lastName" :role="1" />
+      </div>
+    </Sidebar>
   </div>
 </template>

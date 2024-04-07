@@ -48,6 +48,7 @@ export default defineNuxtConfig({
         "TieredMenu",
         "Tooltip",
         "Menu",
+        "Sidebar",
       ],
     },
   },
