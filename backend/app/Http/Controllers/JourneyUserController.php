@@ -16,11 +16,11 @@ class JourneyUserController extends Controller
     public function index($id): JsonResponse
     {
         // get the journey by id and authorize the user
-        $journey = Journey::firstOrFail($id);
+        $journey = Journey::findOrFail($id);
         Gate::authorize('view', $journey);
 
         // return the users of the journey in json format
-        return response()->json($journey->users()->withPivot('role')->get(['id', 'firstName', 'lastName', 'role']));
+        return response()->json($journey->users()->get(['id', 'firstName', 'lastName', 'role']));
     }
 
     /**

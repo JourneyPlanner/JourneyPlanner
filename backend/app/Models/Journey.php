@@ -36,6 +36,13 @@ class Journey extends Model
     ];
 
     /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = ['pivot'];
+
+    /**
      * The users that are a part of the journey.
      */
     public function users(): BelongsToMany
