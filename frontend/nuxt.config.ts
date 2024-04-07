@@ -46,7 +46,7 @@ export default defineNuxtConfig({
         "Tooltip",
         "Menu",
         "Dialog",
-        "ConfirmPopup",
+        "ConfirmDialog",
         "Toast",
       ],
     },

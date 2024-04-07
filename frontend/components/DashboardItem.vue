@@ -38,10 +38,11 @@ const toggle = (event: Event) => {
 const confirmDelete = (event: Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
+        header: t.value('dashboard.delete.header'),
         message: t.value('dashboard.delete.confirm'),
         icon: 'pi pi-exclamation-triangle',
-        rejectClass: 'p-button-secondary p-button-outlined p-button-sm',
-        acceptClass: 'p-button-sm text-error',
+        rejectClass: 'hover:underline',
+        acceptClass: 'text-error hover:underline font-bold',
         rejectLabel: t.value('common.button.cancel'),
         acceptLabel: t.value('common.delete'),
         accept: () => {
@@ -299,21 +300,21 @@ const onSave = handleSubmit(async (values) => {
                             <T keyName="form.input.journey.name" />
                         </label>
                         <FormInput id="journey-name" name="name" translationKey="form.input.journey.name"
-                            :prefill="props.name" class="w-2/3 my-0 mb-3" />
+                            :prefill="props.name" class="w-2/3 my-0 mb-1" />
                     </div>
                     <div class="flex flex-row items-center justify-between">
                         <label for="journey-destination" class="font-bold text-base sm:text-xl">
                             <T keyName="form.input.journey.destination" />
                         </label>
                         <FormInput id="journey-destination" name="destination"
-                            translationKey="form.input.journey.destination" class="w-2/3 my-0 mb-3"
+                            translationKey="form.input.journey.destination" class="w-2/3 my-0 mb-1"
                             :prefill="props.destination" />
                     </div>
                     <div class="flex flex-row items-center justify-between">
                         <label for="journey-range-calendar" class="font-bold text-base sm:text-xl">
                             <T keyName="dashboard.edit.dates" />
                         </label>
-                        <FormCalendar id="journey-range-calendar" name="range" class="my-0 mb-3 mt-5 w-2/3 mr-0"
+                        <FormCalendar id="journey-range-calendar" name="range" class="my-0 mt-5 w-2/3 mr-0"
                             translationKey="form.input.journey.dates"
                             :prefill="[new Date(props.from), new Date(props.to)]" />
                     </div>
@@ -327,8 +328,8 @@ const onSave = handleSubmit(async (values) => {
                 </div>
             </form>
         </Dialog>
-        <ConfirmPopup
-            :pt="{ root: { class: 'font-nunito text-text bg-input' }, footer: { class: 'flex justify-end gap-3' } }">
-        </ConfirmPopup>
+        <ConfirmDialog :draggable="false"
+            :pt="{ header: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' }, content: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' }, footer: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' } }">
+        </ConfirmDialog>
     </div>
 </template>
