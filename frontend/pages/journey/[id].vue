@@ -23,21 +23,20 @@ interface Journey {
   to: string;
 }
 
-const journeyData = ref({} as Journey);
-
 const client = useSanctumClient();
-await client(`/api/journey/${journeyId}`, {
-  method: "Get",
-  async onResponse({ response }) {
-    journeyData.value = response._data;
-  },
-  async onResponseError() {
-    throw showError({
-      statusCode: 404,
-      statusMessage: "Page Not Found",
-    });
-  },
-});
+const { data, pending, error, refresh } = await useAsyncData("journey", () =>
+  client(`/api/journey/${journeyId}`)
+);
+
+if (error.value) {
+  throw showError({
+    statusCode: 404,
+    statusMessage: "Page Not Found",
+    fatal: true,
+  });
+}
+
+const journeyData = data as Ref<Journey>;
 
 const title = journeyData.value.name;
 useHead({
