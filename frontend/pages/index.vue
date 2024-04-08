@@ -7,8 +7,8 @@ useHead({
 })
 
 const tolgee = useTolgee(["language"]);
-const changeLanguage = (e) => {
-  tolgee.value.changeLanguage(e.target.value);
+const changeLanguage = (e: Event) => {
+  tolgee.value.changeLanguage((e?.target as HTMLInputElement)?.value);
 };
 const { logout } = useSanctumAuth();
 
