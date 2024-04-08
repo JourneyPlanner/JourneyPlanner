@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { useTranslate } from "@tolgee/vue";
-import { useDashboardStore } from "@/stores/dashboard";
+import { useTranslate } from '@tolgee/vue';
+import { useDashboardStore } from '@/stores/dashboard';
+import { compareAsc, compareDesc } from 'date-fns';
 
 const title = "Dashboard";
 useHead({
@@ -15,9 +16,9 @@ interface Journey {
   id: String;
   name: string;
   destination: string;
-  from: string;
-  to: string;
-  role: Number;
+  from: Date;
+  to: Date;
+  pivot: { role: Number };
 }
 
 const { t } = useTranslate();
@@ -136,11 +137,11 @@ function sortJourneys(sortKey: String) {
         return b.name.localeCompare(a.name);
       case "name-desc":
         return a.name.localeCompare(b.name);
-      case "startdate-asc":
-        return a.from.localeCompare(b.from);
-      case "startdate-desc":
-        return b.from.localeCompare(a.from);
-      case "destination-asc":
+      case 'startdate-asc':
+        return compareAsc(new Date(a.from), new Date(b.from));
+      case 'startdate-desc':
+        return compareDesc(new Date(a.from), new Date(b.from));
+      case 'destination-asc':
         return b.destination.localeCompare(a.destination);
       case "destination-desc":
         return a.destination.localeCompare(b.destination);
@@ -149,6 +150,22 @@ function sortJourneys(sortKey: String) {
     }
   });
 }
+
+function deleteJourney(id: String) {
+  journeys.value.splice(journeys.value.findIndex(journey => journey.id === id), 1);
+  currentJourneys.value = journeys.value;
+}
+
+function editJourney(journey: Journey, id: String) {
+  const index = journeys.value.findIndex(j => j.id === id);
+  journeys.value[index].destination = journey.destination;
+  journeys.value[index].from = journey.from;
+  journeys.value[index].to = journey.to;
+  journeys.value[index].name = journey.name;
+}
+
+fetchJourneys();
+
 </script>
 
 <template>
@@ -250,24 +267,12 @@ function sortJourneys(sortKey: String) {
       </NuxtLink>
     </div>
     <div class="flex justify-center">
-      <div
-        id="journeys"
-        class="grid gap-y-5 md:gap-y-4 lg:gap-y-6 gap-x-5 md:gap-x-4 lg:gap-x-6 mt-5"
-        :class="
-          currentJourneys.length === 0
-            ? 'grid-cols-1'
-            : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'
-        "
-      >
-        <DashboardItem
-          v-for="journey in currentJourneys"
-          :id="new String(journey.id).valueOf()"
-          :name="journey.name"
-          :destination="journey.destination"
-          :from="journey.from"
-          :to="journey.to"
-          :role="new Number(journey.role).valueOf()"
-        />
+      <div id="journeys" class="grid gap-y-5 md:gap-y-4 lg:gap-y-6 gap-x-5 md:gap-x-4 lg:gap-x-6 mt-5"
+        :class="currentJourneys.length === 0 ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'">
+        <DashboardItem v-for="journey in currentJourneys" :id="new String(journey.id).valueOf()" :name="journey.name"
+          :destination="journey.destination" :from="new Date(journey.from)" :to="new Date(journey.to)"
+          :role="new Number(journey.pivot.role).valueOf()" @journey-deleted="deleteJourney"
+          @journey-edited="editJourney" />
         <NuxtLink to="/journey/new">
           <SvgCreateNewJourneyCard class="hidden lg:block dark:hidden" />
           <SvgCreateNewJourneyCardDark class="hidden dark:lg:block" />
@@ -315,5 +320,8 @@ function sortJourneys(sortKey: String) {
         </a>
       </template>
     </TieredMenu>
+    <ConfirmDialog :draggable="false" group="delete"
+      :pt="{ header: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' }, content: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' }, footer: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' } }">
+    </ConfirmDialog>
   </div>
 </template>

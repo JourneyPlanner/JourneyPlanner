@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Journey;
 use App\Models\JourneyUser;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -26,33 +27,31 @@ class JourneyUserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Join a journey with an invite code.
      */
-    public function create()
+    public function store(Request $request, $invite): JsonResponse
     {
-        //
-    }
+        $journey = Journey::where('invite', $invite)->firstOrFail(['id']);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+        if ($journey->users()->where('user_id', auth()->id())->exists()) {
+            return response()->json([
+                'message' => 'You are already a member of this journey',
+                'journey' => $journey
+            ], 200);
+        }
+
+        $journey->users()->attach(auth()->id(), ['role' => 0]);
+
+        return response()->json([
+            'message' => 'You have successfully joined the journey',
+            'journey' => $journey
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
     public function show(JourneyUser $journeyUser)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(JourneyUser $journeyUser)
     {
         //
     }

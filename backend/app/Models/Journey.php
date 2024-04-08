@@ -49,4 +49,19 @@ class Journey extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    /**
+     * Validation rules for creating a new journey.
+     * TODO: Add validation rules for the invite field
+     * This is because the invite is only required when creating a new journey.
+     */
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string',
+            'destination' => 'required|string',
+            'from' => 'required|date',
+            'to' => 'required|date',
+        ];
+    }
 }

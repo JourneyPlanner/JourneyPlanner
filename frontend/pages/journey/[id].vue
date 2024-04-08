@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { differenceInDays, format } from "date-fns";
 import QRCode from "qrcode";
+import { useTranslate, T } from "@tolgee/vue";
 import JSConfetti from "js-confetti";
+import Toast from "primevue/toast";
+
 const route = useRoute();
 const journeyId = route.params.id;
 const qrcode = ref("");
@@ -11,8 +14,13 @@ const day = ref(0);
 const tensDays = ref(0);
 const hundredsDays = ref(0);
 const jsConfetti = new JSConfetti();
-const visible = ref(false);
-
+const visibleSidebar = ref(false);
+const toast = useToast();
+const { t } = useTranslate();
+const op = ref();
+const toggle = (event: Event) => {
+  op.value.toggle(event);
+};
 
 definePageMeta({
   middleware: ["sanctum:auth"],
@@ -49,6 +57,8 @@ if (error.value) {
 const journeyData = data as Ref<Journey>;
 
 const title = journeyData.value.name;
+journeyData.value.invite =
+  window.location.origin + "/invite/" + journeyData.value.invite;
 useHead({
   title: `${title} | JourneyPlanner`,
 });
@@ -102,21 +112,49 @@ const flip = () => {
   isFlipped.value = !isFlipped.value;
 };
 
-const { data: users, pending: usersPending, error: usersError, refresh: usersRefresh } = await useAsyncData("users", () =>
-  client(`/api/journey/${journeyId}/user`)
-);
+function copyToClipboard() {
+  navigator.clipboard.writeText(journeyData.value.invite);
+  toast.add({
+    severity: "info",
+    summary: t.value("common.toast.info.heading"),
+    detail: t.value("common.invite.toast.info"),
+    life: 2000,
+  });
+}
 </script>
 
 <template>
   <div class="flex flex-col font-nunito text-text dark:text-white">
+    <Toast class="w-3/4 sm:w-auto" />
+    <Sidebar v-model:visible="visibleSidebar" position="right" :pt="{
+      closeButton: { class: 'w-9 h-9 dark:fill-white' },
+      closeIcon: { class: 'w-7 h-7 text-text-disabled dark:text-white' },
+      header: { class: 'p-2' },
+      content: { class: 'pl-2 py-2 pr-0' },
+      root: { class: 'dark:bg-background-dark font-nunito' },
+    }">
+      <div class="text-xl text-text font-medium dark:text-white">
+        <T keyName="sidebar.invite.link" />
+      </div>
+      <div class="flex items-center">
+        <input
+          class="w-4/5 rounded-md px-1 pb-1 pt-1 text-base text-text dark:text-white bg-input-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
+          disabled :value="journeyData.invite" />
+        <div class="w-fit flex justify-center">
+          <button
+            class="w-9 h-9 border-2 mx-3 border-cta-border rounded-full hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark flex items-center justify-center"
+            @click="copyToClipboard">
+            <SvgCopy class="w-4" />
+          </button>
+        </div>
+      </div>
+    </Sidebar>
     <div class="absolute right-0 lg:w-1/3 w-full h-10 flex justify-end items-center font-semibold mt-5">
       <NuxtLink to="/dashboard" class="flex items-center">
         <SvgDashboardIcon class="w-6 h-6" />
         <p class="text-2xl hover:underline">Dashboard</p>
       </NuxtLink>
-      <button @click="visible = true">
-        <SvgMenu class="md:w-10 md:h-10 md:mx-10 mx-5 w-8 h-8 hover:cursor-pointer" />
-      </button>
+      <SvgMenu class="md:w-10 md:h-10 md:mx-10 mx-5 w-8 h-8 hover:cursor-pointer" @click="visibleSidebar = true" />
     </div>
     <div class="flex flex-wrap h-fit mt-[12vh]">
       <div class="flex w-full items-center justify-center md:hidden">
@@ -183,7 +221,7 @@ const { data: users, pending: usersPending, error: usersError, refresh: usersRef
                       class="absolute right-[50%] top-[25%] z-20 translate-x-[50%] -translate-y-[25%] w-40 max-sm:mt-1"
                       :src="qrcode" alt="QR Code" />
                     <div
-                      class="absolute items-center justify-center flex ml-10 rounded-full border-input-placeholder text-input-placeholder w-16 h-16 self-center border-dashed border-2 right-2 bottom-2 text-xs pl-1.5 pr-1.5 z-40 dark:border-white dark:text-white">
+                      class="absolute items-center justify-center flex ml-10 rounded-full border-input-placeholder text-input-placeholder w-16 h-16 self-center border-dashed border-2 right-2 bottom-4 text-xs pl-1.5 pr-1.5 z-40 dark:border-white dark:text-white">
                       <T keyName="journey.turn" />
                     </div>
                     <SvgStripes class="z-0 lg:w-1/2 md:w-2/3" />
@@ -250,10 +288,31 @@ const { data: users, pending: usersPending, error: usersError, refresh: usersRef
                 :src="qrcode" alt="QR Code" />
               <SvgStripes class="absolute lg:w-[10.15rem] md:w-[8.8rem] right-0" />
               <button
-                class="absolute items-center justify-center flex right-[50%] top-[80%] translate-x-[50%] lg:-translate-y-[2%] md:-translate-y-[30%] font-bold border-2 border-cta-border h-1/6 w-1/2 rounded-xl hover:bg-cta-bg z-30 bg-background dark:bg-input-dark dark:hover:bg-cta-bg-dark">
+                class="absolute items-center justify-center flex right-[50%] top-[80%] translate-x-[50%] lg:-translate-y-[2%] md:-translate-y-[30%] font-bold border-2 border-cta-border h-1/6 w-2/5 rounded-xl hover:bg-cta-bg z-30 bg-background dark:bg-input-dark dark:hover:bg-cta-bg-dark"
+                @click="toggle">
                 <T keyName="journey.button.invite" />
                 <SvgShare class="w-3 ml-2" />
               </button>
+              <OverlayPanel ref="op"
+                class="bg-input dark:bg-input-dark text-text dark:text-white font-nunito rounded-lg">
+                <div class="flex flex-column gap-3 w-25rem">
+                  <div>
+                    <span class="font-medium text-lg block mb-1">
+                      <T keyName="sidebar.invite.link" />
+                    </span>
+                    <div class="flex">
+                      <input
+                        class="w-full shadow-sm rounded-l-md pl-2.5 pb-1 pt-1 text-base text-text dark:text-white font-medium border-2 border-border-gray dark:border-input-disabled-dark-grey focus:outline-none focus:ring-1 bg-input-disabled dark:bg-color-gray-200"
+                        disabled :value="journeyData.invite" />
+                      <button
+                        class="w-9 h-9 shadow-sm rounded-r-md border-y-2 border-r-2 bg-input-disabled dark:bg-input-dark hover:bg-cta-bg dark:hover:bg-cta-bg-dark flex items-center justify-center border-2 border-cta-border"
+                        @click="copyToClipboard">
+                        <SvgCopy class="w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </OverlayPanel>
             </div>
           </div>
         </div>
@@ -261,7 +320,7 @@ const { data: users, pending: usersPending, error: usersError, refresh: usersRef
       <div class="lg:basis-0 md:basis-full basis-0"></div>
       <div class="lg:w-72 w-full flex md:justify-start justify-center xl:ml-32 lg:ml-10">
         <div
-          class="lg:ml-0 md:ml-[10%] lg:w-full md:w-[calc(50%+16rem)] sm:w-5/6 w-[90%] border-2 rounded-2xl bg-countdown-bg border-solid border-border max-lg:mt-5 dark:bg-surface-dark">
+          class="lg:ml-0 md:ml-[10%] lg:w-full md:w-[calc(50%+16rem)] sm:w-5/6 w-[90%] border-2 lg:rounded-3xl rounded-2xl bg-countdown-bg border-solid border-border max-lg:mt-5 dark:bg-surface-dark">
           <div
             class="flex flex-wrap lg:flex-col h-full lg:justify-center xs:justify-start justify-center items-center bg-gradient-to-br from-indigo-500 to-indigo-800">
             <!-- flip clock container -->
