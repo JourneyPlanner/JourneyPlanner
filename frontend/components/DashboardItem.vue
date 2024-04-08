@@ -37,6 +37,7 @@ const toggle = (event: Event) => {
 
 const confirmDelete = (event: Event) => {
     confirm.require({
+        group: 'delete',
         target: event.currentTarget as HTMLElement,
         header: t.value('dashboard.delete.header'),
         message: t.value('dashboard.delete.confirm'),
@@ -162,8 +163,8 @@ const { handleSubmit } = useForm({
 const onSave = handleSubmit(async (values) => {
     let name = values.name;
     let destination = values.destination;
-    let from = values.range[0];
-    let to = values.range[1];
+    let from = format(values.range[0], "yyyy-MM-dd");
+    let to = format(values.range[1], "yyyy-MM-dd");
 
     loadingEdit.value = true;
     toast.add({
@@ -321,15 +322,13 @@ const onSave = handleSubmit(async (values) => {
                 </div>
                 <div class="flex justify-between mt-10">
                     <Button @click="confirmDelete($event)" type="button" :label="t('common.delete')" icon="pi pi-trash"
-                        class="px-2 sm:px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl" />
+                        class="w-36 h-9 px-2 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl" />
                     <Button type="submit" :label="t('common.save')" icon="pi pi-check" :loading="loadingEdit"
-                        class="px-2 sm:px-12 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-fill-green-save dark:hover:bg-fill-green-save-dark border-border-green-save dark:border-border-green-save-dark rounded-xl" />
+                        :pt="{ root: { class: 'flex items-center justify-center' } }"
+                        class="w-36 h-9 px-2 flex flex-row justify-center text-center font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-fill-green-save dark:hover:bg-fill-green-save-dark border-border-green-save dark:border-border-green-save-dark rounded-xl" />
 
                 </div>
             </form>
         </Dialog>
-        <ConfirmDialog :draggable="false"
-            :pt="{ header: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' }, content: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' }, footer: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' } }">
-        </ConfirmDialog>
     </div>
 </template>

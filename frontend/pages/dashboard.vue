@@ -269,5 +269,8 @@ fetchJourneys();
         </a>
       </template>
     </TieredMenu>
+    <ConfirmDialog :draggable="false" group="delete"
+      :pt="{ header: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' }, content: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' }, footer: { class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito' } }">
+    </ConfirmDialog>
   </div>
 </template>
