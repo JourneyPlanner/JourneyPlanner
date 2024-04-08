@@ -47,7 +47,6 @@ interface User {
  * @param {User} userData
  */
 async function loginUser(userData: User) {
-  console.log(userData);
   const userCredentials = {
     password: userData.password,
     email: userData.email,
