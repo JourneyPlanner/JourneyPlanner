@@ -8,8 +8,6 @@ import { v4 as uuidv4 } from "uuid";
 const { t } = useTranslate();
 const client = useSanctumClient();
 const toast = useToast();
-const currentUrl = window.location.href.split("/")[2];
-console.log(currentUrl);
 
 const journeyInvite = uuidv4();
 const journeyInviteLink = window.location.origin + "/invite/" + journeyInvite;
