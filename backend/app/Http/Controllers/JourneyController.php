@@ -15,8 +15,6 @@ class JourneyController extends Controller
      */
     public function index(Request $request)
     {
-        Gate::authorize('viewAny', Journey::class);
-
         // Get all journeys of the authenticated user
         $journeys = auth()->user()->journeys()->withPivot('role')->get();
 
@@ -28,8 +26,6 @@ class JourneyController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        Gate::authorize('create', Journey::class);
-
         $validated = $request->validate(
             [
                 'name' => 'required|string',
@@ -56,10 +52,10 @@ class JourneyController extends Controller
     /**
      * Show the requested journey.
      */
-    public function show(Request $request, Journey $journey)
+    public function show(Journey $journey)
     {
         // Check if the authenticated user is a member of the requested journey
-        Gate::authorize('view', $journey);
+        Gate::authorize('journeyMember', $journey);
 
         return response()->json($journey);
     }
