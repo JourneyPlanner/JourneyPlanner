@@ -20,7 +20,7 @@ const name = computed(() => {
 <template>
     <div class="flex flex-row justify-between items-center text-text dark:text-input">
         <h2 class="font-medium text-xl  whitespace-nowrap overflow-hidden overflow-ellipsis w-2/3 pr-4 cursor-default"
-            v-tooltip.left="name">{{ name }}</h2>
+            v-tooltip.left="{ value: name, pt: { root: 'font-nunito' } }">{{ name }}</h2>
         <div class="rounded-md p-0.5 px-1 w-1/4 text-center"
             :class="role === 1 ? 'bg-chip-blue dark:bg-chip-blue-dark' : 'bg-chip-grey dark:bg-chip-grey-dark'">
             <h3 class="text-base text-text dark:text-input">

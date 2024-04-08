@@ -177,7 +177,8 @@ function editJourney(journey: Journey, id: String) {
       </div>
       <div id="right-header" class="flex flex-row items-center">
         <div id="search-and-filter" class="hidden lg:flex flex-row border-r-2 mr-4 border-border-grey">
-          <div id="search" class="relative mr-2.5" v-tooltip.top="t('dashboard.tooltip.search')">
+          <div id="search" class="relative mr-2.5"
+            v-tooltip.top="{ value: t('dashboard.tooltip.search'), pt: { root: 'font-nunito' } }">
             <input type="text" ref="searchInput" @input="searchJourneys" v-model="searchValue"
               class="rounded-3xl bg-input dark:bg-input-dark placeholder-input-placeholder dark:placeholder-text-light-dark border px-3 py-1.5 border-border-grey dark:border-input-dark focus:outline-none focus:ring-1 focus:ring-cta-border"
               :placeholder="t('dashboard.search')" />
