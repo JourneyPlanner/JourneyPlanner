@@ -165,12 +165,9 @@ function copyToClipboard() {
               </div>
               <div class="flex h-5/6">
                 <div
-                  class="h-fit w-full rounded-b-2xl bg-background border-border-gray border-x-2 border-b-2 text-sm dark:bg-border-dark dark:border-form-input-dark -mr-1"
-                >
+                  class="h-fit w-full rounded-b-2xl bg-background border-border-gray border-x-2 border-b-2 text-sm dark:bg-border-dark dark:border-form-input-dark -mr-1">
                   <div class="w-full grid grid-cols-4 mt-1 mb-2">
-                    <div
-                      class="w-full col-span-3 pl-5 flex flex-col h-full justify-center font-semibold"
-                    >
+                    <div class="w-full col-span-3 pl-5 flex flex-col h-full justify-center font-semibold">
                       <T keyName="form.input.journey.name" />
                       <input
                         class="w-full rounded-md px-2.5 pb-1 mb-2 pt-1 text-md text-text dark:text-white font-bold bg-input-gray focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
@@ -217,8 +214,7 @@ function copyToClipboard() {
                       class="absolute right-[50%] top-[25%] z-20 translate-x-[50%] -translate-y-[25%] w-40 max-sm:mt-1"
                       :src="qrcode" alt="QR Code" />
                     <div
-                      class="absolute items-center justify-center flex ml-10 rounded-full border-input-placeholder text-input-placeholder w-16 h-16 self-center border-dashed border-2 right-2 bottom-4 text-xs pl-1.5 pr-1.5 z-40 dark:border-white dark:text-white"
-                    >
+                      class="absolute items-center justify-center flex ml-10 rounded-full border-input-placeholder text-input-placeholder w-16 h-16 self-center border-dashed border-2 right-2 bottom-4 text-xs pl-1.5 pr-1.5 z-40 dark:border-white dark:text-white">
                       <T keyName="journey.turn" />
                     </div>
                     <SvgStripes class="z-0 lg:w-1/2 md:w-2/3" />
@@ -294,12 +290,12 @@ function copyToClipboard() {
                 class="bg-input dark:bg-input-dark text-text dark:text-white font-nunito rounded-lg">
                 <div class="flex flex-column gap-3 w-25rem">
                   <div>
-                    <span class="font-medium text-base block mb-2">
+                    <span class="font-medium text-lg block mb-1">
                       <T keyName="sidebar.invite.link" />
                     </span>
                     <div class="flex">
                       <input
-                        class="w-full shadow-sm rounded-l-md pl-2.5 pb-1 pt-1 text-sm text-text dark:text-white font-bold border-2 border-border-gray dark:border-input-disabled-dark-grey focus:outline-none focus:ring-1 bg-input-disabled dark:bg-color-gray-200"
+                        class="w-full shadow-sm rounded-l-md pl-2.5 pb-1 pt-1 text-base text-text dark:text-white font-medium border-2 border-border-gray dark:border-input-disabled-dark-grey focus:outline-none focus:ring-1 bg-input-disabled dark:bg-color-gray-200"
                         disabled :value="journeyData.invite" />
                       <button
                         class="w-9 h-9 shadow-sm rounded-r-md border-y-2 border-r-2 bg-input-disabled dark:bg-input-dark hover:bg-cta-bg dark:hover:bg-cta-bg-dark flex items-center justify-center border-2 border-cta-border"
@@ -317,8 +313,7 @@ function copyToClipboard() {
       <div class="lg:basis-0 md:basis-full basis-0"></div>
       <div class="lg:w-72 w-full flex md:justify-start justify-center xl:ml-32 lg:ml-10">
         <div
-          class="lg:ml-0 md:ml-[10%] lg:w-full md:w-[calc(50%+16rem)] sm:w-5/6 w-[90%] border-2 lg:rounded-3xl rounded-2xl bg-countdown-bg border-solid border-border max-lg:mt-5 dark:bg-surface-dark"
-        >
+          class="lg:ml-0 md:ml-[10%] lg:w-full md:w-[calc(50%+16rem)] sm:w-5/6 w-[90%] border-2 lg:rounded-3xl rounded-2xl bg-countdown-bg border-solid border-border max-lg:mt-5 dark:bg-surface-dark">
           <div
             class="flex flex-wrap lg:flex-col h-full lg:justify-center xs:justify-start justify-center items-center bg-gradient-to-br from-indigo-500 to-indigo-800">
             <!-- flip clock container -->
