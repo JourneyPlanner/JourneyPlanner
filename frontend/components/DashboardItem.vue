@@ -218,7 +218,7 @@ const onSave = handleSubmit(async (values) => {
 
 <template>
   <div>
-    <Toast />
+    <Toast class="w-3/4 sm:w-auto" />
     <div id="journey-desktop" class="hidden lg:block relative hover:cursor-pointer">
       <SvgDashboardJourney :link="link" class="dark:hidden" />
       <SvgDashboardJourneyDark :link="link" class="hidden dark:block" />
