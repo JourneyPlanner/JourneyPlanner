@@ -19,7 +19,7 @@
     "js-confetti": "^0.12.0",
     "nuxt": "^3.11.1",
     "pinia": "^2.1.7",
-    "primeicons": "^6.0.1",
+    "primeicons": "^7.0.0",
     "primevue": "^3.50.0",
     "qrcode": "^1.5.3",
     "uuid": "^9.0.1",
