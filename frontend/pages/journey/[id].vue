@@ -25,6 +25,7 @@ const toggle = (event: Event) => {
 definePageMeta({
   middleware: ["sanctum:auth"],
 });
+
 interface Journey {
   name: string;
   invite: string;
@@ -55,14 +56,22 @@ useHead({
   title: `${title} | JourneyPlanner`,
 });
 
+const colorMode = useColorMode();
+let darkColor = "#333333";
+let lightColor = "#fcfcfc";
+
+if (colorMode.preference === "dark") {
+  darkColor = "#ffffff";
+  lightColor = "#353f44";
+}
+
 var opts = {
-  margin: 1,
+  margin: 0,
   color: {
-    dark: "#000000",
-    light: "#FFFFFF",
+    dark: darkColor,
+    light: lightColor,
   },
 };
-
 QRCode.toDataURL(journeyData.value.invite, opts, function (error, url) {
   qrcode.value = url;
 });
@@ -72,6 +81,7 @@ const toDate = new Date(journeyData.value.to);
 const currentDate = new Date();
 const days = ref(differenceInDays(fromDate, currentDate));
 const daystoEnd = ref(differenceInDays(toDate, currentDate));
+
 if (days.value > 0) {
   day.value = Math.floor(days.value % 10);
   days.value = days.value / 10;
@@ -155,9 +165,12 @@ function copyToClipboard() {
               </div>
               <div class="flex h-5/6">
                 <div
-                  class="h-fit w-full rounded-b-2xl bg-background border-border-gray border-x-2 border-b-2 text-sm dark:bg-border-dark dark:border-form-input-dark -mr-1">
-                  <div class="w-full grid grid-cols-4">
-                    <div class="w-full col-span-3 pl-5 flex flex-col h-full justify-center font-semibold">
+                  class="h-fit w-full rounded-b-2xl bg-background border-border-gray border-x-2 border-b-2 text-sm dark:bg-border-dark dark:border-form-input-dark -mr-1"
+                >
+                  <div class="w-full grid grid-cols-4 mt-1 mb-2">
+                    <div
+                      class="w-full col-span-3 pl-5 flex flex-col h-full justify-center font-semibold"
+                    >
                       <T keyName="form.input.journey.name" />
                       <input
                         class="w-full rounded-md px-2.5 pb-1 mb-2 pt-1 text-md text-text dark:text-white font-bold bg-input-gray focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
@@ -174,8 +187,8 @@ function copyToClipboard() {
                           format(toDate, 'dd/MM/yyyy')
                           " />
                     </div>
-                    <div class="w-full h-[1/3] relative">
-                      <SvgStripes class="absolute w-[6.9rem] right-0 z-0" />
+                    <div class="w-full -mt-1 relative">
+                      <SvgStripes class="absolute w-[7.4rem] right-0 z-0" />
                       <div
                         class="absolute ml-10 rounded-full border-input-placeholder text-input-placeholder w-16 h-16 self-center border-dashed border-2 right-2 bottom-2 flex text-center justify-center items-center text-xs pl-1.5 pr-1.5 dark:border-white dark:text-white">
                         <T keyName="journey.turn" />
@@ -204,7 +217,8 @@ function copyToClipboard() {
                       class="absolute right-[50%] top-[25%] z-20 translate-x-[50%] -translate-y-[25%] w-40 max-sm:mt-1"
                       :src="qrcode" alt="QR Code" />
                     <div
-                      class="absolute items-center justify-center flex ml-10 rounded-full border-input-placeholder text-input-placeholder w-16 h-16 self-center border-dashed border-2 right-2 bottom-2 text-xs pl-1.5 pr-1.5 z-40 dark:border-white dark:text-white">
+                      class="absolute items-center justify-center flex ml-10 rounded-full border-input-placeholder text-input-placeholder w-16 h-16 self-center border-dashed border-2 right-2 bottom-4 text-xs pl-1.5 pr-1.5 z-40 dark:border-white dark:text-white"
+                    >
                       <T keyName="journey.turn" />
                     </div>
                     <SvgStripes class="z-0 lg:w-1/2 md:w-2/3" />
@@ -303,7 +317,8 @@ function copyToClipboard() {
       <div class="lg:basis-0 md:basis-full basis-0"></div>
       <div class="lg:w-72 w-full flex md:justify-start justify-center xl:ml-32 lg:ml-10">
         <div
-          class="lg:ml-0 md:ml-[10%] lg:w-full md:w-[calc(50%+16rem)] sm:w-5/6 w-[90%] border-2 rounded-2xl bg-countdown-bg border-solid border-border max-lg:mt-5 dark:bg-surface-dark">
+          class="lg:ml-0 md:ml-[10%] lg:w-full md:w-[calc(50%+16rem)] sm:w-5/6 w-[90%] border-2 lg:rounded-3xl rounded-2xl bg-countdown-bg border-solid border-border max-lg:mt-5 dark:bg-surface-dark"
+        >
           <div
             class="flex flex-wrap lg:flex-col h-full lg:justify-center xs:justify-start justify-center items-center bg-gradient-to-br from-indigo-500 to-indigo-800">
             <!-- flip clock container -->
