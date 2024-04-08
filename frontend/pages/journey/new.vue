@@ -154,7 +154,7 @@ function copyToClipboard() {
                 name="journey-invite"
                 v-model="journeyInviteLink"
                 disabled
-                class="peer w-[90%] rounded-lg placeholder:text-transparent px-2.5 pb-1 pt-4 text-md text-text-disabled dark:text-input-disabled-dark-gray font-bold bg-input-disabled dark:bg-input-disabled-dark-grey border-2 border-border focus:outline-none focus:ring-1 overflow-ellipsis"
+                class="peer w-[90%] rounded-lg placeholder:text-transparent px-2.5 pb-1 pt-4 text-md text-text-disabled dark:text-input-disabled-dark-gray font-bold bg-input-disabled dark:bg-input-disabled-dark-grey border-2 border-border focus:outline-none focus:ring-1"
                 placeholder=" "
               />
               <label
