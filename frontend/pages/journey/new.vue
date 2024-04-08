@@ -4,6 +4,7 @@ import * as yup from "yup";
 import Toast from "primevue/toast";
 import { useTranslate } from "@tolgee/vue";
 import { v4 as uuidv4 } from "uuid";
+import { format } from 'date-fns';
 
 const { t } = useTranslate();
 const client = useSanctumClient();
@@ -63,8 +64,8 @@ const onSubmit = handleSubmit(async (values) => {
 
   let name = values.journeyName;
   let destination = values.journeyDestination;
-  let from = values.journeyRange[0];
-  let to = values.journeyRange[1];
+  let from = format(values.journeyRange[0], "yyyy-MM-dd");
+  let to = format(values.journeyRange[1], "yyyy-MM-dd");
   let invite = journeyInvite;
 
   const journey = {
@@ -74,6 +75,8 @@ const onSubmit = handleSubmit(async (values) => {
     to,
     invite,
   };
+
+  console.log(journey);
 
   await client("/api/journey", {
     method: "POST",
