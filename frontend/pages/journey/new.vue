@@ -117,7 +117,7 @@ function copyToClipboard() {
 <template>
   <div>
     <div class="flex flex-col justify-between min-h-screen z-10">
-      <Toast />
+      <Toast class="w-3/4 sm:w-auto" />
       <div class="flex justify-center items-center font-nunito mt-16 z-50">
         <fieldset id="create-journey"
           class="w-full sm:w-1/4 md:w-1/3 px-5 rounded-2xl border-2 border-border shadow-sm bg-surface dark:bg-surface-dark">
@@ -134,20 +134,13 @@ function copyToClipboard() {
             <Divider type="solid" class="text-input-label border border-10" />
 
             <div class="relative my-2 flex">
-              <input
-                type="text"
-                id="journey-invite"
-                name="journey-invite"
-                v-model="journeyInviteLink"
-                disabled
+              <input type="text" id="journey-invite" name="journey-invite" v-model="journeyInviteLink" disabled
                 class="peer w-[90%] rounded-lg placeholder:text-transparent px-2.5 pb-1 pt-4 text-md text-text-disabled dark:text-input-disabled-dark-gray font-bold bg-input-disabled dark:bg-input-disabled-dark-grey border-2 border-border focus:outline-none focus:ring-1"
-                placeholder=" "
-              />
-              <label
-                for="journey-invite"
-                class="absolute text-link dark:text-border left-0 ml-1.5 mt-1 transition-transform -translate-y-0.5 px-1 text-xs duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-focus:text-input-label peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs"
-                ><T keyName="form.input.journey.invite"
-              /></label>
+                placeholder=" " />
+              <label for="journey-invite"
+                class="absolute text-link dark:text-border left-0 ml-1.5 mt-1 transition-transform -translate-y-0.5 px-1 text-xs duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-focus:text-input-label peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs">
+                <T keyName="form.input.journey.invite" />
+              </label>
               <div class="flex items-center justify-center">
                 <button type="button"
                   class="w-10 h-10 border-2 ml-2 border-cta-border bg-white rounded-full hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark flex items-center justify-center"

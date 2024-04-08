@@ -79,6 +79,8 @@ export default {
       "color-gray-200": "#373737",
       "chip-blue": "#B0D9EC" /* blue chip */,
       "chip-grey": "#E8E8E8" /* grey chip */,
+      "chip-blue-dark": "#506D7B" /* dark blue chip */,
+      "chip-grey-dark": "#717171" /* dark grey chip */,
     },
   },
   plugins: [],

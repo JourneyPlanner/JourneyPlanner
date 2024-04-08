@@ -54,6 +54,12 @@ if (error.value) {
   });
 }
 
+const { data: users, pending: usersPending, error: usersError, refresh: usersRefresh } = await useAsyncData("users", () =>
+  client(`/api/journey/${journeyId}/user`)
+);
+
+console.log(users)
+
 const journeyData = data as Ref<Journey>;
 
 const title = journeyData.value.name;
@@ -130,13 +136,13 @@ function copyToClipboard() {
       closeButton: { class: 'w-9 h-9 dark:fill-white' },
       closeIcon: { class: 'w-7 h-7 text-text-disabled dark:text-white' },
       header: { class: 'p-2' },
-      content: { class: 'pl-2 py-2 pr-0' },
-      root: { class: 'dark:bg-background-dark font-nunito' },
+      content: { class: 'pl-3 pr-2 py-2' },
+      root: { class: ' dark:bg-background-dark font-nunito' },
     }">
       <div class="text-xl text-text font-medium dark:text-white">
         <T keyName="sidebar.invite.link" />
       </div>
-      <div class="flex items-center">
+      <div class="flex items-center border-b-2 border-border-grey dark:border-text-disabled pb-4">
         <input
           class="w-4/5 rounded-md px-1 pb-1 pt-1 text-base text-text dark:text-white bg-input-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
           disabled :value="journeyData.invite" />
@@ -147,6 +153,17 @@ function copyToClipboard() {
             <SvgCopy class="w-4" />
           </button>
         </div>
+      </div>
+      <div
+        class="flex flex-row justify-between items-center border-b pb-3 border-border-grey dark:border-input-placeholder">
+        <h1 class="text-xl text-footer dark:text-border-grey mt-2 -mb-2">
+          <T keyName="journey.sidebar.list.header" />
+        </h1>
+        <!-- <SvgEdit class="w-8" /> -->
+      </div>
+      <div id="list" class="mt-3 flex flex-col gap-3">
+        <MemberItem v-for="user in users.sort(function (a: User, b: User) { return b.role - a.role })" :key="user.id"
+          :id="user.id" :firstName="user.firstName" :lastName="user.lastName" :role="user.role" />
       </div>
     </Sidebar>
     <div class="absolute right-0 lg:w-1/3 w-full h-10 flex justify-end items-center font-semibold mt-5">
@@ -459,17 +476,5 @@ function copyToClipboard() {
         </div>
       </div>
     </div>
-    <Sidebar v-model:visible="visible" position="right" :pt="{ root: { class: 'font-nunito' } }">
-      <div class="flex flex-row justify-between items-center border-b pb-3 border-border-grey">
-        <h1 class="text-xl text-footer">
-          <T keyName="journey.sidebar.list.header" />
-        </h1>
-        <!-- <SvgEdit class="w-8" /> -->
-      </div>
-      <div id="list" class="mt-3 flex flex-col gap-3">
-        <MemberItem v-for="user in users.sort(function (a: User, b: User) { return a.role - b.role })" :key="user.id"
-          :id="user.id" :firstName="user.firstName" :lastName="user.lastName" :role="user.role" />
-      </div>
-    </Sidebar>
   </div>
 </template>

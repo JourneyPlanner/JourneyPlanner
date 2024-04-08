@@ -95,7 +95,7 @@ async function registerUser(userData: Object) {
 
 <template>
   <div>
-    <Toast />
+    <Toast class="w-3/4 sm:w-auto" />
     <div class="w-full flex justify-center items-center font-nunito dark:bg-background-dark">
       <div class="xl:w-1/3 md:w-1/4 sm:w-0 h-[90vh] dark:background-dark">
         <SvgAircraft
