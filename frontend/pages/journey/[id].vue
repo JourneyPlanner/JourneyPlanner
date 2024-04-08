@@ -307,7 +307,7 @@ const flip = () => {
         class="lg:w-72 w-full flex md:justify-start justify-center xl:ml-32 lg:ml-10"
       >
         <div
-          class="lg:ml-0 md:ml-[10%] lg:w-full md:w-[calc(50%+16rem)] sm:w-5/6 w-[90%] border-2 rounded-2xl bg-countdown-bg border-solid border-border max-lg:mt-5 dark:bg-surface-dark"
+          class="lg:ml-0 md:ml-[10%] lg:w-full md:w-[calc(50%+16rem)] sm:w-5/6 w-[90%] border-2 lg:rounded-3xl rounded-2xl bg-countdown-bg border-solid border-border max-lg:mt-5 dark:bg-surface-dark"
         >
           <div
             class="flex flex-wrap lg:flex-col h-full lg:justify-center xs:justify-start justify-center items-center bg-gradient-to-br from-indigo-500 to-indigo-800"
