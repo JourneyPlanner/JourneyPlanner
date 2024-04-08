@@ -23,3 +23,5 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::apiResource('journey', JourneyController::class)->middleware('auth:sanctum');
 
 Route::resource('journey/{id}/user', JourneyUserController::class)->only('index')->middleware('auth:sanctum');
+
+Route::post('invite/{id}', [JourneyUserController::class, 'store'])->middleware('auth:sanctum');

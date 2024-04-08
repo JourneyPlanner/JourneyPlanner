@@ -51,6 +51,8 @@ export default defineNuxtConfig({
         "Dialog",
         "ConfirmDialog",
         "Toast",
+        "Sidebar",
+        "OverlayPanel",
       ],
     },
   },
