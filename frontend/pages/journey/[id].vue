@@ -51,6 +51,8 @@ if (error.value) {
 const journeyData = data as Ref<Journey>;
 
 const title = journeyData.value.name;
+journeyData.value.invite =
+  window.location.origin + "/invite/" + journeyData.value.invite;
 useHead({
   title: `${title} | JourneyPlanner`,
 });
@@ -349,8 +351,8 @@ function copyToClipboard() {
                 <div class="flex flex-column gap-3 w-25rem">
                   <div>
                     <span class="font-medium text-900 block mb-2"
-                      >Share this document</span
-                    >
+                      ><T keyName="sidebar.invite.link"
+                    /></span>
                     <div class="flex">
                       <input
                         class="w-full shadow-sm rounded-l-md pl-2.5 pb-1 pt-1 text-md text-text dark:text-white font-bold border-2 border-border-gray focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"

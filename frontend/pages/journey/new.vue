@@ -11,7 +11,8 @@ const toast = useToast();
 const currentUrl = window.location.href.split("/")[2];
 console.log(currentUrl);
 
-const journeyInvite = "https://" + currentUrl + "/invite/" + uuidv4();
+const journeyInvite = uuidv4();
+const journeyInviteLink = window.location.origin + "/invite/" + journeyInvite;
 
 const title = t.value("title.journey.create");
 useHead({
@@ -102,7 +103,7 @@ const onSubmit = handleSubmit(async (values) => {
 });
 
 function copyToClipboard() {
-  navigator.clipboard.writeText(journeyInvite);
+  navigator.clipboard.writeText(journeyInviteLink);
   toast.add({
     severity: "info",
     summary: t.value("common.toast.info.heading"),
@@ -151,7 +152,7 @@ function copyToClipboard() {
                 type="text"
                 id="journey-invite"
                 name="journey-invite"
-                v-model="journeyInvite"
+                v-model="journeyInviteLink"
                 disabled
                 class="peer w-[90%] rounded-lg placeholder:text-transparent px-2.5 pb-1 pt-4 text-md text-text-disabled dark:text-input-disabled-dark-gray font-bold bg-input-disabled dark:bg-input-disabled-dark-grey border-2 border-border focus:outline-none focus:ring-1 overflow-ellipsis"
                 placeholder=" "
@@ -163,6 +164,7 @@ function copyToClipboard() {
               /></label>
               <div class="flex items-center justify-center">
                 <button
+                  type="button"
                   class="w-10 h-10 border-2 ml-2 border-cta-border bg-white rounded-full hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark flex items-center justify-center"
                   @click="copyToClipboard"
                 >
