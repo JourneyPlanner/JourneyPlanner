@@ -5,8 +5,6 @@ import { useTranslate, T } from "@tolgee/vue";
 import JSConfetti from "js-confetti";
 import Toast from "primevue/toast";
 
-const currentUrl = window.location.href.split("/")[2];
-console.log(currentUrl);
 const route = useRoute();
 const journeyId = route.params.id;
 const qrcode = ref("");
@@ -20,7 +18,7 @@ const visibleSidebar = ref(false);
 const toast = useToast();
 const { t } = useTranslate();
 const op = ref();
-const toggle = (event: any) => {
+const toggle = (event: Event) => {
   op.value.toggle(event);
 };
 
@@ -127,7 +125,7 @@ function copyToClipboard() {
       </div>
       <div class="flex items-center">
         <input
-          class="w-4/5 rounded-md px-1 pb-1 pt-1 text-md text-text dark:text-white bg-input-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark overflow-ellipsis"
+          class="w-4/5 rounded-md px-1 pb-1 pt-1 text-md text-text dark:text-white bg-input-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
           disabled
           :value="journeyData.invite"
         />
