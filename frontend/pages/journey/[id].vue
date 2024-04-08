@@ -108,7 +108,7 @@ function copyToClipboard() {
 
 <template>
   <div class="flex flex-col font-nunito text-text dark:text-white">
-    <Toast />
+    <Toast class="w-3/4 sm:w-auto" />
     <Sidebar v-model:visible="visibleSidebar" position="right" :pt="{
       closeButton: { class: 'w-9 h-9 dark:fill-white' },
       closeIcon: { class: 'w-7 h-7 text-text-disabled dark:text-white' },
@@ -116,12 +116,12 @@ function copyToClipboard() {
       content: { class: 'pl-2 py-2 pr-0' },
       root: { class: 'dark:bg-background-dark font-nunito' },
     }">
-      <div class="text-2xl text-text dark:text-white">
+      <div class="text-xl text-text font-medium dark:text-white">
         <T keyName="sidebar.invite.link" />
       </div>
       <div class="flex items-center">
         <input
-          class="w-4/5 rounded-md px-1 pb-1 pt-1 text-md text-text dark:text-white bg-input-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
+          class="w-4/5 rounded-md px-1 pb-1 pt-1 text-base text-text dark:text-white bg-input-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
           disabled :value="journeyData.invite" />
         <div class="w-fit flex justify-center">
           <button
@@ -280,12 +280,12 @@ function copyToClipboard() {
                 class="bg-input dark:bg-input-dark text-text dark:text-white font-nunito rounded-lg">
                 <div class="flex flex-column gap-3 w-25rem">
                   <div>
-                    <span class="font-medium text-900 block mb-2">
+                    <span class="font-medium text-base block mb-2">
                       <T keyName="sidebar.invite.link" />
                     </span>
                     <div class="flex">
                       <input
-                        class="w-full shadow-sm rounded-l-md pl-2.5 pb-1 pt-1 text-md text-text dark:text-white font-bold border-2 border-border-gray dark:border-input-disabled-dark-grey focus:outline-none focus:ring-1 bg-input-disabled dark:bg-color-gray-200"
+                        class="w-full shadow-sm rounded-l-md pl-2.5 pb-1 pt-1 text-sm text-text dark:text-white font-bold border-2 border-border-gray dark:border-input-disabled-dark-grey focus:outline-none focus:ring-1 bg-input-disabled dark:bg-color-gray-200"
                         disabled :value="journeyData.invite" />
                       <button
                         class="w-9 h-9 shadow-sm rounded-r-md border-y-2 border-r-2 bg-input-disabled dark:bg-input-dark hover:bg-cta-bg dark:hover:bg-cta-bg-dark flex items-center justify-center border-2 border-cta-border"
