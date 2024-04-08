@@ -2,29 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\JourneyRequest;
 use App\Models\Journey;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class JourneyController extends Controller
 {
     /**
      * Display all journeys of the authenticated user.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Get all journeys of the authenticated user
         $journeys = auth()->user()->journeys()->withPivot('role')->get();
 
         return response()->json($journeys);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -60,35 +54,32 @@ class JourneyController extends Controller
      */
     public function show(Journey $journey)
     {
-        // Check if the currently logged in user is a member of the requested journey
-        if (!$journey->users()->where('user_id', auth()->id())->exists()) {
-            return abort(404);
-        }
+        // Check if the authenticated user is a member of the requested journey
+        Gate::authorize('journeyMember', $journey);
 
         return response()->json($journey);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified journey.
      */
-    public function edit(Journey $journey)
+    public function update(JourneyRequest $request, Journey $journey)
     {
-        //
+        Gate::authorize('journeyGuide', $journey);
+
+        // Validate the request
+        $validated = $request->safe()->all();
+
+        $journey->update($validated);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified journey from the database.
      */
-    public function update(Request $request, Journey $journey)
+    public function destroy(Request $request, Journey $journey)
     {
-        //
-    }
+        Gate::authorize('journeyGuide', $journey);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Journey $journey)
-    {
-        //
+        $journey->delete();
     }
 }
