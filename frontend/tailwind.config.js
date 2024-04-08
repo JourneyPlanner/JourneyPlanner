@@ -65,7 +65,6 @@ export default {
       "cancel-border": "#BB7474" /* cancel button */,
       "cancel-bg": "#d98f8f" /* cancel button */,
       "cancel-bg-dark": "#7c6464" /* cancel button dark */,
-
       cancel: "#BB7474" /* cancel button */,
       white: "#ffffff" /* white*/,
       "gradient-start": "#E3F1F6" /* gradient start */,
@@ -73,6 +72,7 @@ export default {
       "gradient-start-light": "#F2FCFF" /* light gradient start */,
       "gradient-start-dark": "#95c0d2" /* dark gradient start */,
       "gradient-end-dark": "#699fb4" /* dark gradient end */,
+      "color-gray-200": "#373737",
     },
   },
   plugins: [],
