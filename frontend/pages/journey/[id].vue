@@ -21,6 +21,7 @@ const op = ref();
 const toggle = (event: Event) => {
   op.value.toggle(event);
 };
+const editEnabled = ref(false);
 
 definePageMeta({
   middleware: ["sanctum:auth"],
@@ -56,6 +57,10 @@ if (error.value) {
 
 const { data: users, pending: usersPending, error: usersError, refresh: usersRefresh } = await useAsyncData("users", () =>
   client(`/api/journey/${journeyId}/user`)
+);
+
+const { data: currUser, pending: currUserPending, error: currUserError, refresh: currUserRefresh } = await useAsyncData("userRole", () =>
+  client(`/api/journey/${journeyId}/user/me`)
 );
 
 const journeyData = data as Ref<Journey>;
@@ -125,6 +130,25 @@ function copyToClipboard() {
     life: 2000,
   });
 }
+
+async function changeRole(userid: String, selectedRole: Number) {
+  await client(`/api/journey/${journeyId}/user/${userid}`, {
+    method: "PATCH",
+    body: {
+      role: selectedRole,
+      random: 1
+    },
+    async onResponseError() {
+      toast.add({
+        severity: "error",
+        summary: t.value("common.toast.error.heading"),
+        detail: t.value("common.error.unknown"),
+        life: 6000,
+      });
+    },
+  });
+
+}
 </script>
 
 <template>
@@ -140,28 +164,35 @@ function copyToClipboard() {
       <div class="text-xl text-text font-medium dark:text-white">
         <T keyName="sidebar.invite.link" />
       </div>
-      <div class="flex items-center border-b-2 border-border-grey dark:border-text-disabled pb-4">
+      <div class="flex items-center border-b-2 border-border-grey dark:border-text-disabled pb-2">
         <input
           class="w-4/5 rounded-md px-1 pb-1 pt-1 text-base text-text dark:text-white bg-input-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
           disabled :value="journeyData.invite" />
-        <div class="w-fit flex justify-center">
+        <div class="w-1/5 flex justify-end">
           <button
-            class="w-9 h-9 border-2 mx-3 border-cta-border rounded-full hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark flex items-center justify-center"
+            class="w-9 h-9 border-2 ml-3 border-cta-border rounded-full hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark flex items-center justify-center"
             @click="copyToClipboard">
             <SvgCopy class="w-4" />
           </button>
         </div>
       </div>
       <div
-        class="flex flex-row justify-between items-center border-b pb-3 border-border-grey dark:border-input-placeholder">
-        <h1 class="text-xl text-footer dark:text-border-grey mt-2 -mb-2">
+        class="flex flex-row items-center justify-center border-b border-border-grey h-11 dark:border-input-placeholder pt-2 pb-2">
+        <h1 class="text-xl text-footer dark:text-border-grey w-4/5">
           <T keyName="journey.sidebar.list.header" />
         </h1>
-        <!-- <SvgEdit class="w-8" /> -->
+        <div class="w-1/5 flex justify-end items-center mb-1 mt-1">
+          <button @click="editEnabled = !editEnabled"
+            class="w-9 h-9 border-2 ml-3 border-cta-border rounded-full hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark flex items-center justify-center">
+            <SvgEdit class="w-4" v-if="currUser.role === 1 && !editEnabled" />
+            <SvgEditOff class="w-4" v-if="editEnabled" />
+          </button>
+        </div>
       </div>
       <div id="list" class="mt-3 flex flex-col gap-3">
         <MemberItem v-for="user in users.sort(function (a: User, b: User) { return b.role - a.role })" :key="user.id"
-          :id="user.id" :firstName="user.firstName" :lastName="user.lastName" :role="user.role" />
+          :id="user.id" :firstName="user.firstName" :lastName="user.lastName" :role="user.role" :edit="editEnabled"
+          :currentID="currUser.user_id" @changeRole="changeRole" />
       </div>
     </Sidebar>
     <div class="absolute right-0 lg:w-1/3 w-full h-10 flex justify-end items-center font-semibold mt-5">
