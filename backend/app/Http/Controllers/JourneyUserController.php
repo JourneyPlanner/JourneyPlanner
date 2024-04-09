@@ -78,11 +78,11 @@ class JourneyUserController extends Controller
 
         $journeyUser = JourneyUser::where('journey_id', $journey)->where('user_id', $user)->firstOrFail();
 
-        $request->validate([
-            'role' => 'required|integer|between:0,1'
+        $validated = $request->validate([
+            'role' => 'required|integer|numeric|between:0,1'
         ]);
 
-        $journeyUser->update($request->role);
+        $journeyUser->update(['role' => $validated['role']]);
 
         return response()->json([
             'message' => 'User role updated successfully',
