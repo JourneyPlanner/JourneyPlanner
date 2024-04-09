@@ -177,7 +177,7 @@ async function changeRole(userid: String, selectedRole: Number) {
         </div>
       </div>
       <div
-        class="flex flex-row items-center justify-center border-b border-border-grey dark:border-input-placeholder pt-1 pb-1gi">
+        class="flex flex-row items-center justify-center border-b border-border-grey dark:border-input-placeholder pt-1 pb-1">
         <h1 class="text-xl text-footer dark:text-border-grey w-4/5">
           <T keyName="journey.sidebar.list.header" />
         </h1>
