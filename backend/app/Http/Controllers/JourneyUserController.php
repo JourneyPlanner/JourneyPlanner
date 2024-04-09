@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Journey;
 use App\Models\JourneyUser;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -55,11 +54,39 @@ class JourneyUserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Get the role of the current user in the journey.
      */
-    public function update(Request $request, JourneyUser $journeyUser)
+    public function currentUserDetails(Journey $journey): JsonResponse
     {
-        //
+        $journeyUser = $journey->users()->where('user_id', auth()->id())->firstOrFail(['user_id', 'role']);
+
+        return response()->json($journeyUser);
+    }
+
+    /**
+     * Update the role of the specified user in the journey.
+     */
+    public function update(Request $request, $journey, $user): JsonResponse
+    {
+        $journey = Journey::findOrFail($journey);
+        Gate::authorize('journeyGuide', $journey);
+
+        if (auth()->user()->id == $user) {
+            return response()->json([
+                'message' => 'You cannot update your own role',
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'role' => 'required|integer|numeric|between:0,1'
+        ]);
+
+        $journeyUser = $journey->users()->updateExistingPivot($user, ['role' => $validated['role']]);
+
+        return response()->json([
+            'message' => 'User role updated successfully',
+            'user' => $journeyUser
+        ], 200);
     }
 
     /**
