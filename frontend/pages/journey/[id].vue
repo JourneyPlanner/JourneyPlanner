@@ -39,7 +39,7 @@ interface User {
   id: string;
   firstName: string;
   lastName: string;
-  role: number;
+  role: Number;
 }
 
 const client = useSanctumClient();
@@ -138,6 +138,14 @@ async function changeRole(userid: String, selectedRole: Number) {
       role: selectedRole,
       random: 1
     },
+    async onResponse() {
+      users.value = users.value.map((user: User) => {
+        if (user.id === userid) {
+          user.role = selectedRole;
+        }
+        return user;
+      });
+    },
     async onResponseError() {
       toast.add({
         severity: "error",
@@ -166,7 +174,7 @@ async function changeRole(userid: String, selectedRole: Number) {
       </div>
       <div class="flex items-center border-b-2 border-border-grey dark:border-text-disabled pb-4">
         <input
-          class="w-4/5 rounded-md px-1 pb-1 pt-1 text-base text-text dark:text-white bg-input-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
+          class="w-5/6 rounded-md px-1 pb-1 pt-1 text-base text-text dark:text-white bg-input-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
           disabled :value="journeyData.invite" />
         <div class="w-1/5 flex justify-end">
           <button
@@ -190,9 +198,9 @@ async function changeRole(userid: String, selectedRole: Number) {
         </div>
       </div>
       <div id="list" class="mt-3 flex flex-col gap-3">
-        <MemberItem v-for="user in users.sort(function (a: User, b: User) { return b.role - a.role })" :key="user.id"
-          :id="user.id" :firstName="user.firstName" :lastName="user.lastName" :role="user.role" :edit="editEnabled"
-          :currentID="currUser.user_id" @changeRole="changeRole" />
+        <MemberItem v-for="user in users" :key="user.id" :id="user.id" :firstName="user.firstName"
+          :lastName="user.lastName" :role="user.role" :edit="editEnabled" :currentID="currUser.user_id"
+          @changeRole="changeRole" />
       </div>
     </Sidebar>
     <div class="absolute right-0 lg:w-1/3 w-full h-10 flex justify-end items-center font-semibold mt-5">
