@@ -68,7 +68,8 @@ class JourneyUserController extends Controller
      */
     public function update(Request $request, $journey, $user): JsonResponse
     {
-        Gate::authorize('journeyGuide', Journey::findOrFail($journey));
+        $journey = Journey::findOrFail($journey);
+        Gate::authorize('journeyGuide', $journey);
 
         if (auth()->user()->id == $user) {
             return response()->json([
@@ -76,14 +77,11 @@ class JourneyUserController extends Controller
             ], 403);
         }
 
-        $journeyUser = JourneyUser::where('journey_id', $journey)->where('user_id', $user)->firstOrFail();
-
         $validated = $request->validate([
             'role' => 'required|integer|numeric|between:0,1'
         ]);
 
-        $journeyUser->role = $validated['role'];
-        $journeyUser->save();
+        $journeyUser = $journey->users()->updateExistingPivot($user, ['role' => $validated['role']]);
 
         return response()->json([
             'message' => 'User role updated successfully',
