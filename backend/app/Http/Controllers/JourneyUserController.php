@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Journey;
 use App\Models\JourneyUser;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -65,11 +64,30 @@ class JourneyUserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the role of the specified user in the journey.
      */
-    public function update(Request $request, JourneyUser $journeyUser)
+    public function update(Request $request, $journey, $user): JsonResponse
     {
-        //
+        Gate::authorize('journeyGuide', Journey::findOrFail($journey));
+
+        if (auth()->user()->id == $user) {
+            return response()->json([
+                'message' => 'You cannot update your own role',
+            ], 403);
+        }
+
+        $journeyUser = JourneyUser::where('journey_id', $journey)->where('user_id', $user)->firstOrFail();
+
+        $request->validate([
+            'role' => 'required|integer|between:0,1'
+        ]);
+
+        $journeyUser->update($request->role);
+
+        return response()->json([
+            'message' => 'User role updated successfully',
+            'user' => $journeyUser
+        ], 200);
     }
 
     /**
