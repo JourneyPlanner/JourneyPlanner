@@ -182,9 +182,9 @@ async function changeRole(userid: String, selectedRole: Number) {
           <T keyName="journey.sidebar.list.header" />
         </h1>
         <div class="w-1/5 flex justify-end items-center mb-1 mt-1">
-          <button @click="editEnabled = !editEnabled"
+          <button @click="editEnabled = !editEnabled" v-if="currUser.role === 1"
             class="w-9 h-9 border-2 ml-3 border-cta-border rounded-full hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark flex items-center justify-center">
-            <SvgEdit class="w-4" v-if="currUser.role === 1 && !editEnabled" />
+            <SvgEdit class="w-4" v-if="!editEnabled" />
             <SvgEditOff class="w-4" v-if="editEnabled" />
           </button>
         </div>
