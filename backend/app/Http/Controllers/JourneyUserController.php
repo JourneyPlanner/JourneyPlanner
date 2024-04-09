@@ -55,6 +55,16 @@ class JourneyUserController extends Controller
     }
 
     /**
+     * Get the role of the current user in the journey.
+     */
+    public function currentUserDetails(Journey $journey): JsonResponse
+    {
+        $journeyUser = $journey->users()->where('user_id', auth()->id())->firstOrFail(['user_id', 'role']);
+
+        return response()->json($journeyUser);
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, JourneyUser $journeyUser)
