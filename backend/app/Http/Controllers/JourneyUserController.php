@@ -18,9 +18,7 @@ class JourneyUserController extends Controller
     {
         // get the journey by id and authorize the user
         $journey = Journey::findOrFail($id);
-        if ($journey->users()->where('user_id', auth()->id())->doesntExist()) {
-            abort(403, 'Unauthorized');
-        }
+        Gate::authorize('journeyMember', $journey);
 
         // return the users of the journey in json format
         return response()->json($journey->users()->get(['id', 'firstName', 'lastName', 'role']));
@@ -33,7 +31,7 @@ class JourneyUserController extends Controller
     {
         $journey = Journey::where('invite', $invite)->firstOrFail(['id']);
 
-        if ($journey->users()->where('user_id', auth()->id())->exists()) {
+        if ($request->user()->can('journeyMember', $journey)) {
             return response()->json([
                 'message' => 'You are already a member of this journey',
                 'journey' => $journey
