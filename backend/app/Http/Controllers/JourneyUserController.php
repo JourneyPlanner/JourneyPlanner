@@ -82,7 +82,8 @@ class JourneyUserController extends Controller
             'role' => 'required|integer|numeric|between:0,1'
         ]);
 
-        $journeyUser->update(['role' => $validated['role']]);
+        $journeyUser->role = $validated['role'];
+        $journeyUser->save();
 
         return response()->json([
             'message' => 'User role updated successfully',
