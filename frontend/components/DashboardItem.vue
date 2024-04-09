@@ -225,7 +225,8 @@ const onSave = handleSubmit(async (values) => {
       <div class="absolute top-6 left-10">
         <div class="flex justify-between w-56">
           <NuxtLink :to="link" class="overflow-ellipsis overflow-hidden whitespace-nowrap w-full">
-            <h1 class="font-semibold text-2xl overflow-hidden whitespace-nowrap overflow-ellipsis" v-tooltip.top="name">
+            <h1 class="font-semibold text-2xl overflow-hidden whitespace-nowrap overflow-ellipsis"
+              v-tooltip.top="{ value: name, pt: { root: 'font-nunito' } }">
               {{ name }}
             </h1>
           </NuxtLink>
@@ -234,7 +235,7 @@ const onSave = handleSubmit(async (values) => {
         </div>
         <NuxtLink :to="link">
           <h2 class="text-xl font-medium -mt-1.5 w-56 overflow-ellipsis overflow-hidden whitespace-nowrap"
-            v-tooltip.bottom="destination">
+            v-tooltip.bottom="{ value: destination, pt: { root: 'font-nunito' } }">
             {{ destination }}
           </h2>
           <div class="border-b-2 border-dashed border-border-grey dark:border-input-placeholder w-56 text-sm mt-1.5">
@@ -260,7 +261,8 @@ const onSave = handleSubmit(async (values) => {
       class="lg:hidden bg-card dark:bg-card-dark border border-border rounded-md p-1 md:p-2 min-w-36 h-32">
       <div class="flex justify-between">
         <NuxtLink :to="link" class="overflow-hidden whitespace-nowrap overflow-ellipsis">
-          <h1 class="font-semibold text-xl overflow-hidden whitespace-nowrap overflow-ellipsis" v-tooltip.top="name">
+          <h1 class="font-semibold text-xl overflow-hidden whitespace-nowrap overflow-ellipsis"
+            v-tooltip.top="{ value: name, pt: { root: 'font-nunito' } }">
             {{ name }}
           </h1>
         </NuxtLink>
@@ -269,7 +271,7 @@ const onSave = handleSubmit(async (values) => {
       </div>
       <NuxtLink :to="link">
         <h2 class="text-lg font-medium -mt-1.5 overflow-ellipsis overflow-hidden whitespace-nowrap"
-          v-tooltip.bottom="destination">
+          v-tooltip.bottom="{ value: destination, pt: { root: 'font-nunito' } }">
           {{ destination }}
         </h2>
         <h3 class="border-b-2 border-dashed border-border-grey dark:border-input-placeholder text-xs md:text-sm mt-1.5">

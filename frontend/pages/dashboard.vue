@@ -6,8 +6,7 @@ import { compareAsc, compareDesc } from 'date-fns';
 const title = "Dashboard";
 useHead({
   title: `${title} | JourneyPlanner`,
-})
-
+});
 
 definePageMeta({
   middleware: ["sanctum:auth"],
@@ -19,7 +18,7 @@ interface Journey {
   destination: string;
   from: Date;
   to: Date;
-  pivot: { role: Number };
+  role: Number;
 }
 
 const { t } = useTranslate();
@@ -28,7 +27,7 @@ const store = useDashboardStore();
 const journeys = ref<Journey[]>([]);
 const searchInput = ref();
 const searchInputMobile = ref();
-let searchValue = ref<String>('');
+let searchValue = ref<String>("");
 let currentJourneys = ref<Journey[]>([]);
 
 currentJourneys.value = store.journeys;
@@ -36,89 +35,81 @@ currentJourneys.value = store.journeys;
 const menu = ref();
 const items = ref([
   {
-    label: t.value('dashboard.sort.name'),
-    icon: 'pi pi-book',
+    label: t.value("dashboard.sort.name"),
+    icon: "pi pi-book",
     items: [
       {
-        label: t.value('dashboard.sort.ascending'),
-        icon: 'pi pi-sort-alpha-up',
+        label: t.value("dashboard.sort.ascending"),
+        icon: "pi pi-sort-alpha-up",
         command: () => {
-          sortJourneys('name-asc');
-        }
+          sortJourneys("name-asc");
+        },
       },
       {
-        label: t.value('dashboard.sort.descending'),
-        icon: 'pi pi-sort-alpha-down',
+        label: t.value("dashboard.sort.descending"),
+        icon: "pi pi-sort-alpha-down",
         command: () => {
-          sortJourneys('name-desc');
-        }
+          sortJourneys("name-desc");
+        },
       },
-    ]
+    ],
   },
   {
-    label: t.value('dashboard.sort.startdate'),
-    icon: 'pi pi-calendar',
+    label: t.value("dashboard.sort.startdate"),
+    icon: "pi pi-calendar",
     items: [
       {
-        label: t.value('dashboard.sort.oldestToNewest'),
-        icon: 'pi pi-sort-amount-up',
+        label: t.value("dashboard.sort.oldestToNewest"),
+        icon: "pi pi-sort-amount-up",
         command: () => {
-          sortJourneys('startdate-asc');
-        }
+          sortJourneys("startdate-asc");
+        },
       },
       {
-        label: t.value('dashboard.sort.newestToOldest'),
-        icon: 'pi pi-sort-amount-down',
+        label: t.value("dashboard.sort.newestToOldest"),
+        icon: "pi pi-sort-amount-down",
         command: () => {
-          sortJourneys('startdate-desc');
-        }
+          sortJourneys("startdate-desc");
+        },
       },
-    ]
+    ],
   },
   {
-    label: t.value('dashboard.sort.destination'),
-    icon: 'pi pi-map-marker',
+    label: t.value("dashboard.sort.destination"),
+    icon: "pi pi-map-marker",
     items: [
       {
-        label: t.value('dashboard.sort.ascending'),
-        icon: 'pi pi-sort-alpha-up',
+        label: t.value("dashboard.sort.ascending"),
+        icon: "pi pi-sort-alpha-up",
         command: () => {
-          sortJourneys('destination-asc');
-        }
+          sortJourneys("destination-asc");
+        },
       },
       {
-        label: t.value('dashboard.sort.descending'),
-        icon: 'pi pi-sort-alpha-down',
+        label: t.value("dashboard.sort.descending"),
+        icon: "pi pi-sort-alpha-down",
         command: () => {
-          sortJourneys('destination-desc');
-        }
+          sortJourneys("destination-desc");
+        },
       },
-    ]
+    ],
   },
-
 ]);
 
 const toggle = (event: Event) => {
   menu.value.toggle(event);
 };
 
-/**
- * Fetches all journeys from the backend
- * stores response in journeys and currentJourneys
- * also sets journeys in the store
- */
-async function fetchJourneys() {
-  const client = useSanctumClient();
-  await client("/api/journey", {
-    method: "GET",
-    async onResponse({ response }) {
-      journeys.value = response._data;
-      currentJourneys.value = response._data;
-      store.setJourneys(response._data);
-    }
-  });
-
-}
+/*
+Fetches all journeys from the backend
+stores response in journeys and currentJourneys
+also sets journeys in the store
+*/
+const client = useSanctumClient();
+const { data } = await useAsyncData("journeys", () => client("/api/journey"));
+journeys.value = data.value;
+currentJourneys.value = data.value;
+store.setJourneys(data.value);
 
 /**
  * Searches for journeys based on the searchValue
@@ -127,8 +118,10 @@ async function fetchJourneys() {
 async function searchJourneys() {
   const data: Journey[] = journeys.value;
   const results: Journey[] = data.filter((obj: Journey) => {
-    return obj.name.toLowerCase().includes(searchValue.value.toLowerCase()) ||
-      obj.destination.toLowerCase().includes(searchValue.value.toLowerCase());
+    return (
+      obj.name.toLowerCase().includes(searchValue.value.toLowerCase()) ||
+      obj.destination.toLowerCase().includes(searchValue.value.toLowerCase())
+    );
   });
   currentJourneys.value = results;
 }
@@ -140,9 +133,9 @@ async function searchJourneys() {
 function sortJourneys(sortKey: String) {
   currentJourneys.value.sort((a: Journey, b: Journey) => {
     switch (sortKey) {
-      case 'name-asc':
+      case "name-asc":
         return b.name.localeCompare(a.name);
-      case 'name-desc':
+      case "name-desc":
         return a.name.localeCompare(b.name);
       case 'startdate-asc':
         return compareAsc(new Date(a.from), new Date(b.from));
@@ -150,7 +143,7 @@ function sortJourneys(sortKey: String) {
         return compareDesc(new Date(a.from), new Date(b.from));
       case 'destination-asc':
         return b.destination.localeCompare(a.destination);
-      case 'destination-desc':
+      case "destination-desc":
         return a.destination.localeCompare(b.destination);
       default:
         return 0;
@@ -171,8 +164,6 @@ function editJourney(journey: Journey, id: String) {
   journeys.value[index].name = journey.name;
 }
 
-fetchJourneys();
-
 </script>
 
 <template>
@@ -186,10 +177,11 @@ fetchJourneys();
       </div>
       <div id="right-header" class="flex flex-row items-center">
         <div id="search-and-filter" class="hidden lg:flex flex-row border-r-2 mr-4 border-border-grey">
-          <div id="search" class="relative mr-2.5" v-tooltip.top="t('dashboard.tooltip.search')">
+          <div id="search" class="relative mr-2.5"
+            v-tooltip.top="{ value: t('dashboard.tooltip.search'), pt: { root: 'font-nunito' } }">
             <input type="text" ref="searchInput" @input="searchJourneys" v-model="searchValue"
-              class="rounded-3xl bg-input dark:bg-input-dark placeholder-input-placeholder dark:placeholder-text-light-dark border px-3 py-1.5 border-border-grey dark:border-input-dark focus:outline-none focus:ring-1 focus:ring-cta-border "
-              :placeholder="t('dashboard.search')">
+              class="rounded-3xl bg-input dark:bg-input-dark placeholder-input-placeholder dark:placeholder-text-light-dark border px-3 py-1.5 border-border-grey dark:border-input-dark focus:outline-none focus:ring-1 focus:ring-cta-border"
+              :placeholder="t('dashboard.search')" />
             <button @click="searchInput.focus()">
               <SvgSearchIcon class="absolute top-1 right-1 w-7 h-7" />
             </button>
@@ -220,7 +212,7 @@ fetchJourneys();
         <div id="search" class="relative">
           <input type="text" ref="searchInputMobile" @input="searchJourneys" v-model="searchValue"
             class="rounded-3xl bg-input dark:bg-input-dark placeholder-input-placeholder dark:placeholder-text-light-dark border px-3 py-1.5 border-border-grey dark:border-input-dark focus:outline-none focus:ring-1 focus:ring-cta-border w-40 md:w-52"
-            :placeholder="t('dashboard.search')">
+            :placeholder="t('dashboard.search')" />
           <button @click="searchInputMobile.focus()">
             <SvgSearchIcon class="absolute top-1 right-1 w-7 h-7" />
           </button>
@@ -239,8 +231,7 @@ fetchJourneys();
         :class="currentJourneys.length === 0 ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'">
         <DashboardItem v-for="journey in currentJourneys" :id="new String(journey.id).valueOf()" :name="journey.name"
           :destination="journey.destination" :from="new Date(journey.from)" :to="new Date(journey.to)"
-          :role="new Number(journey.pivot.role).valueOf()" @journey-deleted="deleteJourney"
-          @journey-edited="editJourney" />
+          :role="new Number(journey.role).valueOf()" @journey-deleted="deleteJourney" @journey-edited="editJourney" />
         <NuxtLink to="/journey/new">
           <SvgCreateNewJourneyCard class="hidden lg:block dark:hidden" />
           <SvgCreateNewJourneyCardDark class="hidden dark:lg:block" />
@@ -251,8 +242,13 @@ fetchJourneys();
         </NuxtLink>
       </div>
     </div>
-    <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup class="rounded-xl bg-input dark:bg-input-dark"
-      :pt="{ menuitem: { class: 'bg-input dark:bg-input-dark hover:bg-cta-bg rounded-md' }, content: { class: 'hover:bg-cta-bg rounded-md' }, submenu: { class: 'bg-input dark:bg-input-dark' } }">
+    <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup class="rounded-xl bg-input dark:bg-input-dark" :pt="{
+      menuitem: {
+        class: 'bg-input dark:bg-input-dark hover:bg-cta-bg rounded-md',
+      },
+      content: { class: 'hover:bg-cta-bg rounded-md' },
+      submenu: { class: 'bg-input dark:bg-input-dark' },
+    }">
       <template #start>
         <h1 class="text-sm ml-2 text-input-placeholder dark:text-text-light-dark">
           <T keyName="dashboard.sort.header" />
@@ -264,7 +260,7 @@ fetchJourneys();
           class="flex align-items-center bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white text-sm"
           v-bind="props.action">
           <span :class="item.icon"></span>
-          <span class="ml-2 ">{{ item.label }}</span>
+          <span class="ml-2">{{ item.label }}</span>
           <i v-if="hasSubmenu" class="pi pi-angle-right ml-auto"></i>
         </a>
       </template>

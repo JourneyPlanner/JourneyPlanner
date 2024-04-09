@@ -7,22 +7,21 @@ use App\Models\JourneyUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class JourneyUserController extends Controller
 {
     /**
-     * Get the users of the journey
+     * Get the users of the journey.
      */
     public function index($id): JsonResponse
     {
-        // check if the journey exists and if the user is a part of it
-        $journey = Journey::find($id);
-        if (!$journey | !$journey->users()->where('user_id', auth()->id())->exists()) {
-            return abort(404);
-        }
+        // get the journey by id and authorize the user
+        $journey = Journey::findOrFail($id);
+        Gate::authorize('journeyMember', $journey);
 
         // return the users of the journey in json format
-        return response()->json($journey->users()->get());
+        return response()->json($journey->users()->get(['id', 'firstName', 'lastName', 'role']));
     }
 
     /**
@@ -32,7 +31,7 @@ class JourneyUserController extends Controller
     {
         $journey = Journey::where('invite', $invite)->firstOrFail(['id']);
 
-        if ($journey->users()->where('user_id', auth()->id())->exists()) {
+        if ($request->user()->can('journeyMember', $journey)) {
             return response()->json([
                 'message' => 'You are already a member of this journey',
                 'journey' => $journey

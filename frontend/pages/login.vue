@@ -83,7 +83,7 @@ async function loginUser(userData: User) {
 
 <template>
   <div class="w-full flex justify-center items-center font-nunito dark:bg-background-dark">
-    <Toast />
+    <Toast class="w-3/4 sm:w-auto" />
     <div class="xl:w-1/3 md:w-1/4 sm:w-0 w-0 h-[90vh] dark:background-dark">
       <SvgCloud
         class="xl:w-[50%] md:w-[80%] w-0 object-none overflow-hidden mt-[20vh] z-50 dark:fill-clouds-bg -ml-24" />
