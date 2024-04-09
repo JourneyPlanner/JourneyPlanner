@@ -164,7 +164,7 @@ async function changeRole(userid: String, selectedRole: Number) {
       <div class="text-xl text-text font-medium dark:text-white">
         <T keyName="sidebar.invite.link" />
       </div>
-      <div class="flex items-center border-b-2 border-border-grey dark:border-text-disabled pb-2">
+      <div class="flex items-center border-b-2 border-border-grey dark:border-text-disabled pb-4">
         <input
           class="w-4/5 rounded-md px-1 pb-1 pt-1 text-base text-text dark:text-white bg-input-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark"
           disabled :value="journeyData.invite" />
@@ -177,7 +177,7 @@ async function changeRole(userid: String, selectedRole: Number) {
         </div>
       </div>
       <div
-        class="flex flex-row items-center justify-center border-b border-border-grey h-11 dark:border-input-placeholder pt-2 pb-2">
+        class="flex flex-row items-center justify-center border-b border-border-grey dark:border-input-placeholder pt-1 pb-1gi">
         <h1 class="text-xl text-footer dark:text-border-grey w-4/5">
           <T keyName="journey.sidebar.list.header" />
         </h1>
