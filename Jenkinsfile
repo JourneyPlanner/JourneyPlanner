@@ -25,6 +25,16 @@ pipeline {
                 }
             }
         }
+        stage('Check Backend Code') {
+            steps {
+                dir('backend') {
+                    script {
+                        sh 'npm install'
+                        sh 'npx prettier . --check'
+                    }
+                }
+            }
+        }
         stage('Build Backend') {
             steps {
                 dir('backend') {
