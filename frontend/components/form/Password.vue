@@ -1,109 +1,118 @@
 <script setup lang="ts">
-import { useField } from "vee-validate";
-import Password from "primevue/password";
 import { useTolgee } from "@tolgee/vue";
+import Password from "primevue/password";
+import { useField } from "vee-validate";
 
 const tolgee = useTolgee();
 const language = tolgee.value.getLanguage();
 
 const german = computed(() => {
-  return language === "de";
+    return language === "de";
 });
 
 let isFocused = ref(false);
 
 const handleFocus = () => {
-  isFocused.value = true;
+    isFocused.value = true;
 };
 
 const handleBlur = () => {
-  isFocused.value = false;
+    isFocused.value = false;
 };
 
 const props = defineProps({
-  name: { type: String, required: true },
-  type: String,
-  id: String,
-  feedback: Boolean,
-  feedbackStyle: Boolean,
-  translationKey: { type: String, required: true },
+    name: { type: String, required: true },
+    type: String,
+    id: String,
+    feedback: Boolean,
+    feedbackStyle: Boolean,
+    translationKey: { type: String, required: true },
 });
 
 const { value, errorMessage } = useField<string>(() => props.name);
 </script>
 
 <template>
-  <div class="relative">
-    <Password
-      panelClass="dark:bg-background-dark dark:text-white"
-      :id="id"
-      :name="name"
-      v-model="value"
-      toggleMask
-      class="w-full"
-      :feedback="feedback"
-      inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-white bg-input border-2 border-border focus:outline-none focus:ring-1 dark:bg-input-dark"
-      :prompt-label="$t('form.input.password.label.prompt')"
-      :weak-label="$t('form.input.password.label.weak')"
-      :medium-label="$t('form.input.password.label.medium')"
-      :strong-label="$t('form.input.password.label.strong')"
-      @focus="handleFocus"
-      @focusout="handleBlur"
-      @input="handleFocus"
-      @date-select="handleFocus"
-      @clear-click="handleBlur"
-      @hide="handleBlur"
-      :pt="{
-        input: { class: 'font-medium' },
-      }"
-    >
-      <template #footer>
-        <Divider type="solid" class="border-10 border text-input-placeholder" />
-        <p class="mt-2">
-          <T keyName="form.input.password.prompt.suggestion" />
-        </p>
-        <ul class="ml-2 mt-0 list-disc pl-2" style="line-height: 1.5">
-          <li>
-            <T keyName="form.input.password.prompt.suggestion.lowercase" />
-          </li>
-          <li>
-            <T keyName="form.input.password.prompt.suggestion.uppercase" />
-          </li>
-          <li>
-            <T keyName="form.input.password.prompt.suggestion.numeric" />
-          </li>
-          <li>
-            <T
-              keyName="form.input.password.prompt.suggestion.minimum.characters"
-            />
-          </li>
-        </ul>
-      </template>
-    </Password>
-    <div class="h-3 text-left">
-      <span
-        class="ml-3 text-left text-xs text-error dark:font-bold dark:text-error-dark"
-        >{{ errorMessage }}</span
-      >
+    <div class="relative">
+        <Password
+            panelClass="dark:bg-background-dark dark:text-white"
+            :id="id"
+            :name="name"
+            v-model="value"
+            toggleMask
+            class="w-full"
+            :feedback="feedback"
+            inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-white bg-input border-2 border-border focus:outline-none focus:ring-1 dark:bg-input-dark"
+            :prompt-label="$t('form.input.password.label.prompt')"
+            :weak-label="$t('form.input.password.label.weak')"
+            :medium-label="$t('form.input.password.label.medium')"
+            :strong-label="$t('form.input.password.label.strong')"
+            @focus="handleFocus"
+            @focusout="handleBlur"
+            @input="handleFocus"
+            @date-select="handleFocus"
+            @clear-click="handleBlur"
+            @hide="handleBlur"
+            :pt="{
+                input: { class: 'font-medium' },
+            }"
+        >
+            <template #footer>
+                <Divider
+                    type="solid"
+                    class="border-10 border text-input-placeholder"
+                />
+                <p class="mt-2">
+                    <T keyName="form.input.password.prompt.suggestion" />
+                </p>
+                <ul class="ml-2 mt-0 list-disc pl-2" style="line-height: 1.5">
+                    <li>
+                        <T
+                            keyName="form.input.password.prompt.suggestion.lowercase"
+                        />
+                    </li>
+                    <li>
+                        <T
+                            keyName="form.input.password.prompt.suggestion.uppercase"
+                        />
+                    </li>
+                    <li>
+                        <T
+                            keyName="form.input.password.prompt.suggestion.numeric"
+                        />
+                    </li>
+                    <li>
+                        <T
+                            keyName="form.input.password.prompt.suggestion.minimum.characters"
+                        />
+                    </li>
+                </ul>
+            </template>
+        </Password>
+        <div class="h-3 text-left">
+            <span
+                class="ml-3 text-left text-xs text-error dark:font-bold dark:text-error-dark"
+                >{{ errorMessage }}</span
+            >
+        </div>
+        <label
+            :for="id"
+            class="pointer-events-none absolute left-0 top-0 py-4 pl-3 text-sm transition-all duration-300"
+            :class="{
+                'text-input-placeholder': !isFocused,
+                'text-input-label': isFocused,
+                '-translate-y-4  scale-75': isFocused || value,
+                'translate-y-0 scale-100': !isFocused && !value,
+                '-translate-x-2':
+                    (feedbackStyle && isFocused) || (feedbackStyle && value),
+                '-translate-x-3.5':
+                    (!feedbackStyle && isFocused) || (!feedbackStyle && value),
+                'pl-1.5':
+                    (!feedbackStyle && isFocused && german) ||
+                    (!feedbackStyle && value && german),
+            }"
+        >
+            <T :keyName="translationKey" />
+        </label>
     </div>
-    <label
-      :for="id"
-      class="pointer-events-none absolute left-0 top-0 py-4 pl-3 text-sm transition-all duration-300"
-      :class="{
-        'text-input-placeholder': !isFocused,
-        'text-input-label': isFocused,
-        '-translate-y-4  scale-75': isFocused || value,
-        'translate-y-0 scale-100': !isFocused && !value,
-        '-translate-x-2':
-          (feedbackStyle && isFocused) || (feedbackStyle && value),
-        '-translate-x-3.5':
-          (!feedbackStyle && isFocused) || (!feedbackStyle && value),
-        'pl-1.5':
-          (!feedbackStyle && isFocused && german) ||
-          (!feedbackStyle && value && german),
-      }"
-    >
-      <T :keyName="translationKey" />
-    </label>
-  </div>
 </template>

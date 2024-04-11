@@ -1,77 +1,76 @@
 <script setup lang="ts">
-import { useField } from "vee-validate";
 import Calendar from "primevue/calendar";
+import { useField } from "vee-validate";
 
 let isFocused = ref(false);
 
 const handleFocus = () => {
-  isFocused.value = true;
+    isFocused.value = true;
 };
 
 const handleBlur = () => {
-  isFocused.value = false;
+    isFocused.value = false;
 };
 
 const props = defineProps({
-  name: { type: String, required: true },
-  type: String,
-  id: String,
-  translationKey: { type: String, required: true },
-  prefill: Array,
+    name: { type: String, required: true },
+    type: String,
+    id: String,
+    translationKey: { type: String, required: true },
+    prefill: Array,
 });
 
 const { value, errorMessage } = useField<Date[]>(() => props.name);
 if (props.prefill) {
-  value.value = props.prefill as Date[];
+    value.value = props.prefill as Date[];
 }
 </script>
 
 <template>
-  <div class="relative">
-    <!-- TODO: language (de/en)-->
-    <Calendar
-      :id="id"
-      :name="name"
-      v-model="value"
-      selectionMode="range"
-      :manualInput="true"
-      :showButtonBar="true"
-      :numberOfMonths="1"
-      dateFormat="dd/mm/yy"
-      panelClass="bg-input dark:bg-background-dark dark:text-white"
-      inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-white font-bold bg-input dark:bg-input-dark border-2 border-border focus:outline-none focus:ring-1"
-      @focus="handleFocus"
-      @hide="handleBlur"
-      @input="handleFocus"
-      @date-select="$emit('input', $event), handleFocus"
-      :pt="{
-        panel: { class: 'text-text font-nunito' },
-        header: {
-          class:
-            'flex border-b bg-input dark:bg-background-dark dark:text-white',
-        },
-        dayLabel: { class: 'text-border' },
-        datepickerMask: { class: 'text-text bg-background-dark' },
-      }"
-    />
-    <br />
-    <div class="h-3">
-      <span
-        class="ml-2.5 text-xs text-error dark:font-bold dark:text-error-dark"
-        >{{ errorMessage }}</span
-      >
+    <div class="relative">
+        <!-- TODO: language (de/en)-->
+        <Calendar
+            :id="id"
+            :name="name"
+            v-model="value"
+            selectionMode="range"
+            :manualInput="true"
+            :showButtonBar="true"
+            :numberOfMonths="1"
+            dateFormat="dd/mm/yy"
+            panelClass="bg-input dark:bg-background-dark dark:text-white"
+            inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-white font-bold bg-input dark:bg-input-dark border-2 border-border focus:outline-none focus:ring-1"
+            @focus="handleFocus"
+            @hide="handleBlur"
+            @input="handleFocus"
+            @date-select="$emit('input', $event), handleFocus"
+            :pt="{
+                panel: { class: 'text-text font-nunito' },
+                header: {
+                    class: 'flex border-b bg-input dark:bg-background-dark dark:text-white',
+                },
+                dayLabel: { class: 'text-border' },
+                datepickerMask: { class: 'text-text bg-background-dark' },
+            }"
+        />
+        <br />
+        <div class="h-3">
+            <span
+                class="ml-2.5 text-xs text-error dark:font-bold dark:text-error-dark"
+                >{{ errorMessage }}</span
+            >
+        </div>
+        <label
+            for="journey-range-calendar"
+            class="pointer-events-none absolute left-0 top-0 overflow-hidden whitespace-nowrap py-4 pl-2.5 text-sm transition-all duration-300"
+            :class="{
+                'text-input-placeholder': !isFocused,
+                'text-input-label': isFocused,
+                '-translate-x-6 -translate-y-4 scale-75': isFocused || value,
+                'translate-y-0 scale-100': !isFocused && !value,
+            }"
+        >
+            <T :keyName="translationKey" />
+        </label>
     </div>
-    <label
-      for="journey-range-calendar"
-      class="pointer-events-none absolute left-0 top-0 overflow-hidden whitespace-nowrap py-4 pl-2.5 text-sm transition-all duration-300"
-      :class="{
-        'text-input-placeholder': !isFocused,
-        'text-input-label': isFocused,
-        '-translate-x-6 -translate-y-4 scale-75': isFocused || value,
-        'translate-y-0 scale-100': !isFocused && !value,
-      }"
-    >
-      <T :keyName="translationKey" />
-    </label>
-  </div>
 </template>
