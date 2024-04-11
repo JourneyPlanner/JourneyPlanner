@@ -10,9 +10,7 @@ pipeline {
             steps {
                 dir('frontend') {
                     script {
-                        withChecks(name: 'Build Frontend', includeStage: true) {
-                            docker.build(env.FRONTEND_IMAGE)
-                        }
+                        docker.build(env.FRONTEND_IMAGE)
                     }
                 }
             }
@@ -21,9 +19,7 @@ pipeline {
             steps {
                 dir('backend') {
                     script {
-                        withChecks(name: 'Build Backend', includeStage: true) {
-                                docker.build(env.BACKEND_IMAGE)
-                        }
+                        docker.build(env.BACKEND_IMAGE)
                     }
                 }
             }
