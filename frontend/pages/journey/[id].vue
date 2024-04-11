@@ -6,6 +6,7 @@ import Toast from "primevue/toast";
 import QRCode from "qrcode";
 
 const route = useRoute();
+const store = useJourneyStore();
 const journeyId = route.params.id;
 const qrcode = ref("");
 const duringJourney = ref(false);
@@ -22,6 +23,7 @@ const toggle = (event: Event) => {
     op.value.toggle(event);
 };
 const editEnabled = ref(false);
+const isActivityDialogVisible = ref(false);
 
 definePageMeta({
     middleware: ["sanctum:auth"],
@@ -64,6 +66,7 @@ const { data: currUser } = await useAsyncData("userRole", () =>
 );
 
 const journeyData = data as Ref<Journey>;
+store.setJourney(journeyData);
 
 const title = journeyData.value.name;
 journeyData.value.invite =
@@ -689,6 +692,9 @@ async function changeRole(userid: string, selectedRole: number) {
                 </div>
             </div>
         </div>
-    </div>
+      <button @click="isActivityDialogVisible = !isActivityDialogVisible">Create
+      activity</button>
+    <ActivityDialog :visible="isActivityDialogVisible" @close="isActivityDialogVisible = false" />
+  </div>
 </template>
 ()()()()()()

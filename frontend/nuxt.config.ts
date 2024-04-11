@@ -54,7 +54,12 @@ export default defineNuxtConfig({
                 "Toast",
                 "Sidebar",
                 "OverlayPanel",
-            ],
+              "TabView",
+        "TabPanel",
+        "InputGroup",
+        "InputGroupAddon",
+        "InputIcon",
+      ],
         },
     },
     veeValidate: {
