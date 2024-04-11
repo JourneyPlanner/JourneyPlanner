@@ -6,16 +6,6 @@ pipeline {
         I18N_IMAGE = 'journeyplanner/i18n:latest'
     }
     stages {
-        stage('Check Frontend Code') {
-            steps {
-                dir('frontend') {
-                    script {
-                        sh 'npm install'
-                        sh 'npx prettier . --check'
-                    }
-                }
-            }
-        }
         stage('Build Frontend') {
             steps {
                 dir('frontend') {
@@ -25,9 +15,9 @@ pipeline {
                 }
             }
         }
-        stage('Check Backend Code') {
+        stage('Check Frontend Code') {
             steps {
-                dir('backend') {
+                dir('frontend') {
                     script {
                         sh 'npm install'
                         sh 'npx prettier . --check'
@@ -40,6 +30,16 @@ pipeline {
                 dir('backend') {
                     script {
                         docker.build(env.BACKEND_IMAGE)
+                    }
+                }
+            }
+        }
+        stage('Check Backend Code') {
+            steps {
+                dir('backend') {
+                    script {
+                        sh 'npm install'
+                        sh 'npx prettier . --check'
                     }
                 }
             }
