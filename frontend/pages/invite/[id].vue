@@ -14,7 +14,7 @@ const client = useSanctumClient();
 const { data, error } = await useAsyncData("journey", () =>
   client(`/api/invite/${invite}`, {
     method: "POST",
-  })
+  }),
 );
 
 if (error.value) {
