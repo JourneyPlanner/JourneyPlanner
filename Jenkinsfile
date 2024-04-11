@@ -6,6 +6,16 @@ pipeline {
         I18N_IMAGE = 'journeyplanner/i18n:latest'
     }
     stages {
+        stage('Check Frontend Code') {
+            steps {
+                dir('frontend') {
+                    script {
+                        sh 'npm install'
+                        sh 'npx prettier . --check'
+                    }
+                }
+            }
+        }
         stage('Build Frontend') {
             steps {
                 dir('frontend') {
