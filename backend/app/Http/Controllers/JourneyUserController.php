@@ -17,10 +17,12 @@ class JourneyUserController extends Controller
     {
         // get the journey by id and authorize the user
         $journey = Journey::findOrFail($id);
-        Gate::authorize('journeyMember', $journey);
+        Gate::authorize("journeyMember", $journey);
 
         // return the users of the journey in json format
-        return response()->json($journey->users()->get(['id', 'firstName', 'lastName', 'role']));
+        return response()->json(
+            $journey->users()->get(["id", "firstName", "lastName", "role"])
+        );
     }
 
     /**
@@ -28,21 +30,27 @@ class JourneyUserController extends Controller
      */
     public function store(Request $request, $invite): JsonResponse
     {
-        $journey = Journey::where('invite', $invite)->firstOrFail(['id']);
+        $journey = Journey::where("invite", $invite)->firstOrFail(["id"]);
 
-        if ($request->user()->can('journeyMember', $journey)) {
-            return response()->json([
-                'message' => 'You are already a member of this journey',
-                'journey' => $journey
-            ], 200);
+        if ($request->user()->can("journeyMember", $journey)) {
+            return response()->json(
+                [
+                    "message" => "You are already a member of this journey",
+                    "journey" => $journey,
+                ],
+                200
+            );
         }
 
-        $journey->users()->attach(auth()->id(), ['role' => 0]);
+        $journey->users()->attach(auth()->id(), ["role" => 0]);
 
-        return response()->json([
-            'message' => 'You have successfully joined the journey',
-            'journey' => $journey
-        ], 201);
+        return response()->json(
+            [
+                "message" => "You have successfully joined the journey",
+                "journey" => $journey,
+            ],
+            201
+        );
     }
 
     /**
@@ -58,7 +66,10 @@ class JourneyUserController extends Controller
      */
     public function currentUserDetails(Journey $journey): JsonResponse
     {
-        $journeyUser = $journey->users()->where('user_id', auth()->id())->firstOrFail(['user_id', 'role']);
+        $journeyUser = $journey
+            ->users()
+            ->where("user_id", auth()->id())
+            ->firstOrFail(["user_id", "role"]);
 
         return response()->json($journeyUser);
     }
@@ -69,24 +80,32 @@ class JourneyUserController extends Controller
     public function update(Request $request, $journey, $user): JsonResponse
     {
         $journey = Journey::findOrFail($journey);
-        Gate::authorize('journeyGuide', $journey);
+        Gate::authorize("journeyGuide", $journey);
 
         if (auth()->user()->id == $user) {
-            return response()->json([
-                'message' => 'You cannot update your own role',
-            ], 403);
+            return response()->json(
+                [
+                    "message" => "You cannot update your own role",
+                ],
+                403
+            );
         }
 
         $validated = $request->validate([
-            'role' => 'required|integer|numeric|between:0,1'
+            "role" => "required|integer|numeric|between:0,1",
         ]);
 
-        $journeyUser = $journey->users()->updateExistingPivot($user, ['role' => $validated['role']]);
+        $journeyUser = $journey
+            ->users()
+            ->updateExistingPivot($user, ["role" => $validated["role"]]);
 
-        return response()->json([
-            'message' => 'User role updated successfully',
-            'user' => $journeyUser
-        ], 200);
+        return response()->json(
+            [
+                "message" => "User role updated successfully",
+                "user" => $journeyUser,
+            ],
+            200
+        );
     }
 
     /**
