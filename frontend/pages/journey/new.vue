@@ -116,16 +116,16 @@ function copyToClipboard() {
 
 <template>
   <div>
-    <div class="flex flex-col justify-between min-h-screen z-10">
+    <div class="z-10 flex min-h-screen flex-col justify-between">
       <Toast class="w-3/4 sm:w-auto" />
-      <div class="flex justify-center items-center font-nunito mt-16 z-50">
+      <div class="z-50 mt-16 flex items-center justify-center font-nunito">
         <fieldset
           id="create-journey"
-          class="w-full sm:w-1/4 md:w-1/3 px-5 rounded-2xl border-2 border-border shadow-sm bg-surface dark:bg-surface-dark"
+          class="w-full rounded-2xl border-2 border-border bg-surface px-5 shadow-sm dark:bg-surface-dark sm:w-1/4 md:w-1/3"
         >
           <legend
             for="create-journey"
-            class="text-2xl ml-4 text-center text-text dark:text-white lg:text-left lg:text-3xl px-2 font-bold"
+            class="ml-4 px-2 text-center text-2xl font-bold text-text dark:text-white lg:text-left lg:text-3xl"
           >
             <T keyName="form.header.journey.create" />
           </legend>
@@ -146,7 +146,7 @@ function copyToClipboard() {
               translationKey="form.input.journey.dates"
             />
 
-            <Divider type="solid" class="text-input-label border border-10" />
+            <Divider type="solid" class="border-10 border text-input-label" />
 
             <div class="relative my-2 flex">
               <input
@@ -155,19 +155,19 @@ function copyToClipboard() {
                 name="journey-invite"
                 v-model="journeyInviteLink"
                 disabled
-                class="peer w-[90%] rounded-lg placeholder:text-transparent px-2.5 pb-1 pt-4 text-md text-text-disabled dark:text-input-disabled-dark-gray font-bold bg-input-disabled dark:bg-input-disabled-dark-grey border-2 border-border focus:outline-none focus:ring-1"
+                class="placeholder:text-transparent text-md peer w-[90%] rounded-lg border-2 border-border bg-input-disabled px-2.5 pb-1 pt-4 font-bold text-text-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark-grey dark:text-input-disabled-dark-gray"
                 placeholder=" "
               />
               <label
                 for="journey-invite"
-                class="absolute text-link dark:text-border left-0 ml-1.5 mt-1 transition-transform -translate-y-0.5 px-1 text-xs duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-focus:text-input-label peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs"
+                class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-link transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-input-label dark:text-border"
               >
                 <T keyName="form.input.journey.invite" />
               </label>
               <div class="flex items-center justify-center">
                 <button
                   type="button"
-                  class="w-10 h-10 border-2 ml-2 border-cta-border bg-white rounded-full hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark flex items-center justify-center"
+                  class="ml-2 flex h-10 w-10 items-center justify-center rounded-full border-2 border-cta-border bg-white hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark"
                   @click="copyToClipboard"
                 >
                   <SvgCopy class="w-4" />
@@ -175,11 +175,11 @@ function copyToClipboard() {
               </div>
             </div>
 
-            <div class="flex justify-between mt-6 mb-5 gap-5">
+            <div class="mb-5 mt-6 flex justify-between gap-5">
               <NuxtLink to="/dashboard">
                 <button
                   type="button"
-                  class="px-7 py-1 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl"
+                  class="rounded-xl border-2 border-cancel-border bg-input px-7 py-1 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-white dark:hover:bg-cancel-bg-dark"
                 >
                   <T keyName="common.button.cancel" />
                 </button>
@@ -187,7 +187,7 @@ function copyToClipboard() {
 
               <button
                 type="submit"
-                class="px-7 py-1 font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-cta-bg dark:hover:bg-cta-bg-dark border-cta-border rounded-xl"
+                class="rounded-xl border-2 border-cta-border bg-input px-7 py-1 font-bold text-text hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
               >
                 <T keyName="common.button.create" />
               </button>
@@ -197,11 +197,11 @@ function copyToClipboard() {
       </div>
       <div class="z-10">
         <div
-          class="flex flex-row relative justify-between items-end border-b border-border-grey"
+          class="relative flex flex-row items-end justify-between border-b border-border-grey"
         >
           <SvgPeopleBackpackMap class="hidden h-full lg:flex" />
           <div
-            class="lg:absolute lg:inset-0 flex flex-row justify-between lg:justify-end items-end w-full h-full mt-2 sm:mt-0"
+            class="mt-2 flex h-full w-full flex-row items-end justify-between sm:mt-0 lg:absolute lg:inset-0 lg:justify-end"
           >
             <SvgWomanSuitcaseLeft />
             <SvgWomanSuitcaseRight class="ml-10 mr-5" />
@@ -211,10 +211,10 @@ function copyToClipboard() {
     </div>
     <div class="z-10">
       <SvgCloud
-        class="invisible md:visible h-14 object-none overflow-hidden top-72 left-[28%] z-0 absolute"
+        class="invisible absolute left-[28%] top-72 z-0 h-14 overflow-hidden object-none md:visible"
       />
       <SvgCloud
-        class="invisible md:visible h-16 object-none overflow-hidden top-36 right-[20%] z-0 absolute"
+        class="invisible absolute right-[20%] top-36 z-0 h-16 overflow-hidden object-none md:visible"
       />
     </div>
   </div>

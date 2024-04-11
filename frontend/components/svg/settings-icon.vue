@@ -11,7 +11,7 @@
       cx="14"
       cy="14"
       r="13.25"
-      class="fill-input dark:fill-input-dark group-hover:fill-cta-bg dark:group-hover:fill-cta-bg-dark stroke-cta-border"
+      class="fill-input stroke-cta-border group-hover:fill-cta-bg dark:fill-input-dark dark:group-hover:fill-cta-bg-dark"
       stroke-width="1.5"
     />
     <path

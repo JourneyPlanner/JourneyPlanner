@@ -1,6 +1,6 @@
 <template>
-  <div class="font-nunito bg-surface flex justify-between">
-    <h1 class="mt-10 ml-10 h-20 font-bold text-4xl">
+  <div class="flex justify-between bg-surface font-nunito">
+    <h1 class="ml-10 mt-10 h-20 text-4xl font-bold">
       <T keyName="common.privacypolicy" />
     </h1>
   </div>

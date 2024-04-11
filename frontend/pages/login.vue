@@ -81,41 +81,41 @@ async function loginUser(userData: User) {
 
 <template>
   <div
-    class="w-full flex justify-center items-center font-nunito dark:bg-background-dark"
+    class="flex w-full items-center justify-center font-nunito dark:bg-background-dark"
   >
     <Toast class="w-3/4 sm:w-auto" />
-    <div class="xl:w-1/3 md:w-1/4 sm:w-0 w-0 h-[90vh] dark:background-dark">
+    <div class="dark:background-dark h-[90vh] w-0 sm:w-0 md:w-1/4 xl:w-1/3">
       <SvgCloud
-        class="xl:w-[50%] md:w-[80%] w-0 object-none overflow-hidden mt-[20vh] z-50 dark:fill-clouds-bg -ml-24"
+        class="z-50 -ml-24 mt-[20vh] w-0 overflow-hidden object-none dark:fill-clouds-bg md:w-[80%] xl:w-[50%]"
       />
       <SvgCloud
-        class="absolute xl:w-[20%] md:w-[25%] md:left-[18vh] left-[35vh] w-0 object-none overflow-hidden top-[49vh] z-30"
+        class="absolute left-[35vh] top-[49vh] z-30 w-0 overflow-hidden object-none md:left-[18vh] md:w-[25%] xl:w-[20%]"
       />
       <div class="overflow-hidden">
         <SvgCloudReversed
-          class="xl:w-[45%] md:w-[70%] w-0 object-none overflow-hidden mt-[55vh] z-50 dark:fill-clouds-bg"
+          class="z-50 mt-[55vh] w-0 overflow-hidden object-none dark:fill-clouds-bg md:w-[70%] xl:w-[45%]"
         />
         <SvgBalloon
-          class="absolute xl:w-[4%] md:w-[5%] md:left-[28vh] w-0 top-[45vh] left-[45vh] z-0"
+          class="absolute left-[45vh] top-[45vh] z-0 w-0 md:left-[28vh] md:w-[5%] xl:w-[4%]"
         />
         <SvgBalloon
-          class="absolute xl:w-[7%] md:w-[8%] left-[68vh] w-0 top-12"
+          class="absolute left-[68vh] top-12 w-0 md:w-[8%] xl:w-[7%]"
         />
       </div>
     </div>
     <div
-      class="relative overflow-hidden flex xl:w-1/3 md:w-2/4 sm:w-full items-center h-[90vh] justify-center w-full z-40"
+      class="relative z-40 flex h-[90vh] w-full items-center justify-center overflow-hidden sm:w-full md:w-2/4 xl:w-1/3"
     >
       <div
-        class="xl:flex xl:items-center xl:justify-center md:flex md:items-center md:justify-center text-center mt-6 sm:w-3/4 w-full h-[75vh] z-20"
+        class="z-20 mt-6 h-[75vh] w-full text-center sm:w-3/4 md:flex md:items-center md:justify-center xl:flex xl:items-center xl:justify-center"
       >
         <fieldset
           id="outerBlock"
-          class="w-full h-auto px-3 py-2 pl-2 bg-surface dark:bg-surface-dark rounded-3xl border-border border-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 flex flex-col items-center"
+          class="focus:ring-indigo-500 focus:border-indigo-500 flex h-auto w-full flex-col items-center rounded-3xl border-2 border-border bg-surface px-3 py-2 pl-2 shadow-sm focus:outline-none dark:bg-surface-dark"
         >
           <legend
             for="outerBlock"
-            class="text-3xl text-center lg:text-left lg:ml-7 px-2 font-bold text-text dark:text-white"
+            class="px-2 text-center text-3xl font-bold text-text dark:text-white lg:ml-7 lg:text-left"
           >
             <T keyName="form.header.login" />
           </legend>
@@ -134,28 +134,28 @@ async function loginUser(userData: User) {
             />
 
             <button
-              class="rounded-2xl my-5 mt-4 bg-input border-cta-border border-2 py-2.5 px-6 font-nunito font-bold text-md hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
+              class="text-md my-5 mt-4 rounded-2xl border-2 border-cta-border bg-input px-6 py-2.5 font-nunito font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
             >
               <T keyName="form.button.login" />
             </button>
           </form>
           <NuxtLink
             to="/register"
-            class="dark:text-white underline mt-auto font-nunito font-semibold my-1"
+            class="my-1 mt-auto font-nunito font-semibold underline dark:text-white"
           >
             <T keyName="form.text.no_account" />
           </NuxtLink>
         </fieldset>
       </div>
       <SvgCloudReversed
-        class="xl:w-0 md:w-0 sm:w-[30vh] w-[30vh] z-0 absolute top-[50vh] overflow-hidden -left-4"
+        class="absolute -left-4 top-[50vh] z-0 w-[30vh] overflow-hidden sm:w-[30vh] md:w-0 xl:w-0"
       />
       <SvgBalloonWithPeople
-        class="xl:w-0 md:w-0 sm:w-[30vh] w-[30vh] z-0 absolute sm:-right-12 -right-24 top-[30vh] overflow-hidden"
+        class="absolute -right-24 top-[30vh] z-0 w-[30vh] overflow-hidden sm:-right-12 sm:w-[30vh] md:w-0 xl:w-0"
       />
     </div>
     <div
-      class="xl:w-1/3 md:w-1/4 sm:w-0 w-0 h-[90vh] flex justify-center items-center"
+      class="flex h-[90vh] w-0 items-center justify-center sm:w-0 md:w-1/4 xl:w-1/3"
     >
       <SvgBalloonWithPeople class="w-[60%]" />
     </div>

@@ -221,18 +221,18 @@ const onSave = handleSubmit(async (values) => {
     <Toast class="w-3/4 sm:w-auto" />
     <div
       id="journey-desktop"
-      class="hidden lg:block relative hover:cursor-pointer"
+      class="relative hidden hover:cursor-pointer lg:block"
     >
       <SvgDashboardJourney :link="link" class="dark:hidden" />
       <SvgDashboardJourneyDark :link="link" class="hidden dark:block" />
-      <div class="absolute top-6 left-10">
-        <div class="flex justify-between w-56">
+      <div class="absolute left-10 top-6">
+        <div class="flex w-56 justify-between">
           <NuxtLink
             :to="link"
-            class="overflow-ellipsis overflow-hidden whitespace-nowrap w-full"
+            class="w-full overflow-hidden overflow-ellipsis whitespace-nowrap"
           >
             <h1
-              class="font-semibold text-2xl overflow-hidden whitespace-nowrap overflow-ellipsis"
+              class="overflow-hidden overflow-ellipsis whitespace-nowrap text-2xl font-semibold"
               v-tooltip.top="{ value: name, pt: { root: 'font-nunito' } }"
             >
               {{ name }}
@@ -247,7 +247,7 @@ const onSave = handleSubmit(async (values) => {
         </div>
         <NuxtLink :to="link">
           <h2
-            class="text-xl font-medium -mt-1.5 w-56 overflow-ellipsis overflow-hidden whitespace-nowrap"
+            class="-mt-1.5 w-56 overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-medium"
             v-tooltip.bottom="{
               value: destination,
               pt: { root: 'font-nunito' },
@@ -256,21 +256,21 @@ const onSave = handleSubmit(async (values) => {
             {{ destination }}
           </h2>
           <div
-            class="border-b-2 border-dashed border-border-grey dark:border-input-placeholder w-56 text-sm mt-1.5"
+            class="mt-1.5 w-56 border-b-2 border-dashed border-border-grey text-sm dark:border-input-placeholder"
           >
-            <span class="text-border mr-1">
+            <span class="mr-1 text-border">
               <T keyName="dashboard.date" />
             </span>
-            <span class="text-text dark:text-white -mb-1"
+            <span class="-mb-1 text-text dark:text-white"
               >{{ format(from, "dd/MM/yyyy") }}-{{
                 format(to, "dd/MM/yyyy")
               }}</span
             >
           </div>
           <h3
-            class="mt-1 border-b-2 border-dashed border-border-grey dark:border-input-placeholder w-56 text-sm"
+            class="mt-1 w-56 border-b-2 border-dashed border-border-grey text-sm dark:border-input-placeholder"
           >
-            <span class="text-border mr-1">
+            <span class="mr-1 text-border">
               <T keyName="dashboard.role" />
             </span>
             <span class="text-text dark:text-white">
@@ -282,15 +282,15 @@ const onSave = handleSubmit(async (values) => {
     </div>
     <div
       id="journey-mobile"
-      class="lg:hidden bg-card dark:bg-card-dark border border-border rounded-md p-1 md:p-2 min-w-36 h-32"
+      class="h-32 min-w-36 rounded-md border border-border bg-card p-1 dark:bg-card-dark md:p-2 lg:hidden"
     >
       <div class="flex justify-between">
         <NuxtLink
           :to="link"
-          class="overflow-hidden whitespace-nowrap overflow-ellipsis"
+          class="overflow-hidden overflow-ellipsis whitespace-nowrap"
         >
           <h1
-            class="font-semibold text-xl overflow-hidden whitespace-nowrap overflow-ellipsis"
+            class="overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-semibold"
             v-tooltip.top="{ value: name, pt: { root: 'font-nunito' } }"
           >
             {{ name }}
@@ -307,27 +307,27 @@ const onSave = handleSubmit(async (values) => {
       </div>
       <NuxtLink :to="link">
         <h2
-          class="text-lg font-medium -mt-1.5 overflow-ellipsis overflow-hidden whitespace-nowrap"
+          class="-mt-1.5 overflow-hidden overflow-ellipsis whitespace-nowrap text-lg font-medium"
           v-tooltip.bottom="{ value: destination, pt: { root: 'font-nunito' } }"
         >
           {{ destination }}
         </h2>
         <h3
-          class="border-b-2 border-dashed border-border-grey dark:border-input-placeholder text-xs md:text-sm mt-1.5"
+          class="mt-1.5 border-b-2 border-dashed border-border-grey text-xs dark:border-input-placeholder md:text-sm"
         >
-          <span class="text-border mr-0.5">
+          <span class="mr-0.5 text-border">
             <T keyName="dashboard.date" />
           </span>
           <br class="sm:hidden" />
-          <span class="text-text dark:text-white whitespace-nowrap"
+          <span class="whitespace-nowrap text-text dark:text-white"
             >{{ format(from, "dd/MM/yyyy") }} -
             {{ format(to, "dd/MM/yyyy") }}</span
           >
         </h3>
         <h3
-          class="mt-1 border-b-2 border-dashed border-border-grey dark:border-input-placeholder text-xs md:text-sm"
+          class="mt-1 border-b-2 border-dashed border-border-grey text-xs dark:border-input-placeholder md:text-sm"
         >
-          <span class="text-border mr-0.5">
+          <span class="mr-0.5 text-border">
             <T keyName="dashboard.role" />
           </span>
           <span class="text-text dark:text-white">
@@ -381,7 +381,7 @@ const onSave = handleSubmit(async (values) => {
       <form @submit.prevent="onSave()">
         <div class="flex flex-col">
           <div class="flex flex-row items-center justify-between">
-            <label for="journey-name" class="font-bold text-base sm:text-xl">
+            <label for="journey-name" class="text-base font-bold sm:text-xl">
               <T keyName="form.input.journey.name" />
             </label>
             <FormInput
@@ -389,13 +389,13 @@ const onSave = handleSubmit(async (values) => {
               name="name"
               translationKey="form.input.journey.name"
               :prefill="props.name"
-              class="w-2/3 my-0 mb-1"
+              class="my-0 mb-1 w-2/3"
             />
           </div>
           <div class="flex flex-row items-center justify-between">
             <label
               for="journey-destination"
-              class="font-bold text-base sm:text-xl"
+              class="text-base font-bold sm:text-xl"
             >
               <T keyName="form.input.journey.destination" />
             </label>
@@ -403,33 +403,33 @@ const onSave = handleSubmit(async (values) => {
               id="journey-destination"
               name="destination"
               translationKey="form.input.journey.destination"
-              class="w-2/3 my-0 mb-1"
+              class="my-0 mb-1 w-2/3"
               :prefill="props.destination"
             />
           </div>
           <div class="flex flex-row items-center justify-between">
             <label
               for="journey-range-calendar"
-              class="font-bold text-base sm:text-xl"
+              class="text-base font-bold sm:text-xl"
             >
               <T keyName="dashboard.edit.dates" />
             </label>
             <FormCalendar
               id="journey-range-calendar"
               name="range"
-              class="my-0 mt-5 w-2/3 mr-0"
+              class="my-0 mr-0 mt-5 w-2/3"
               translationKey="form.input.journey.dates"
               :prefill="[new Date(props.from), new Date(props.to)]"
             />
           </div>
         </div>
-        <div class="flex justify-between mt-10 gap-2">
+        <div class="mt-10 flex justify-between gap-2">
           <Button
             @click="confirmDelete($event)"
             type="button"
             :label="t('common.delete')"
             icon="pi pi-trash"
-            class="w-40 h-9 px-2 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl"
+            class="h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-white dark:hover:bg-cancel-bg-dark"
             :pt="{
               root: { class: 'flex items-center justify-center' },
               label: { class: 'display-block flex-none' },
@@ -444,7 +444,7 @@ const onSave = handleSubmit(async (values) => {
               root: { class: 'flex items-center justify-center' },
               label: { class: 'display-block flex-none' },
             }"
-            class="w-40 h-9 flex flex-row justify-center text-center font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-fill-green-save dark:hover:bg-fill-green-save-dark border-border-green-save dark:border-border-green-save-dark rounded-xl"
+            class="flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-border-green-save bg-input text-center font-bold text-text hover:bg-fill-green-save dark:border-border-green-save-dark dark:bg-input-dark dark:text-white dark:hover:bg-fill-green-save-dark"
           />
         </div>
       </form>

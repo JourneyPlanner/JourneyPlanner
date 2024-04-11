@@ -169,21 +169,21 @@ function editJourney(journey: Journey, id: String) {
 </script>
 
 <template>
-  <div class="font-nunito px-2 md:px-8 lg:px-20 text-text dark:text-white">
+  <div class="px-2 font-nunito text-text dark:text-white md:px-8 lg:px-20">
     <div
       id="header"
-      class="border-b-2 border-border mt-5 pb-3 md:pb-5 flex justify-between items-center"
+      class="mt-5 flex items-center justify-between border-b-2 border-border pb-3 md:pb-5"
     >
       <div class="flex flex-row items-center">
-        <SvgDashboardIcon class="mt-0.5 md:w-9 md:h-9 mr-1" />
-        <h1 class="text-3xl md:text-5xl font-medium mt-1">
+        <SvgDashboardIcon class="mr-1 mt-0.5 md:h-9 md:w-9" />
+        <h1 class="mt-1 text-3xl font-medium md:text-5xl">
           <T keyName="common.dashboard" />
         </h1>
       </div>
       <div id="right-header" class="flex flex-row items-center">
         <div
           id="search-and-filter"
-          class="hidden lg:flex flex-row border-r-2 mr-4 border-border-grey"
+          class="mr-4 hidden flex-row border-r-2 border-border-grey lg:flex"
         >
           <div
             id="search"
@@ -198,11 +198,11 @@ function editJourney(journey: Journey, id: String) {
               ref="searchInput"
               @input="searchJourneys"
               v-model="searchValue"
-              class="rounded-3xl bg-input dark:bg-input-dark placeholder-input-placeholder dark:placeholder-text-light-dark border px-3 py-1.5 border-border-grey dark:border-input-dark focus:outline-none focus:ring-1 focus:ring-cta-border"
+              class="rounded-3xl border border-border-grey bg-input px-3 py-1.5 placeholder-input-placeholder focus:outline-none focus:ring-1 focus:ring-cta-border dark:border-input-dark dark:bg-input-dark dark:placeholder-text-light-dark"
               :placeholder="t('dashboard.search')"
             />
             <button @click="searchInput.focus()">
-              <SvgSearchIcon class="absolute top-1 right-1 w-7 h-7" />
+              <SvgSearchIcon class="absolute right-1 top-1 h-7 w-7" />
             </button>
           </div>
           <div id="filter" class="mr-4">
@@ -210,29 +210,29 @@ function editJourney(journey: Journey, id: String) {
               @click="toggle"
               aria-haspopup="true"
               aria-controls="overlay_tmenu"
-              class="w-9 h-9 hover:cursor-pointer"
+              class="h-9 w-9 hover:cursor-pointer"
             />
           </div>
         </div>
         <NuxtLink
           to="/journey/new"
-          class="mr-2.5 hidden lg:flex flex-row items-center"
+          class="mr-2.5 hidden flex-row items-center lg:flex"
         >
           <button
-            class="bg-cta-bg dark:bg-cta-bg-fill border-2 border-cta-border dark:border-cta-bg-fill text-text py-1 px-4 rounded-xl font-semibold flex flex-row"
+            class="flex flex-row rounded-xl border-2 border-cta-border bg-cta-bg px-4 py-1 font-semibold text-text dark:border-cta-bg-fill dark:bg-cta-bg-fill"
           >
-            <SvgCreateNewJourneyIcon class="w-5 h-5 mr-1 fill-text" />
+            <SvgCreateNewJourneyIcon class="mr-1 h-5 w-5 fill-text" />
             <T keyName="dashboard.new" />
           </button>
         </NuxtLink>
         <NuxtLink to="/settings">
-          <SvgSettingsIcon class="w-9 h-9 -mt-1" />
+          <SvgSettingsIcon class="-mt-1 h-9 w-9" />
         </NuxtLink>
       </div>
     </div>
     <div
       id="header-mobile-second-row"
-      class="flex lg:hidden mt-3 justify-between"
+      class="mt-3 flex justify-between lg:hidden"
     >
       <div id="search-and-filter" class="flex flex-row">
         <div id="filter" class="mr-2">
@@ -240,7 +240,7 @@ function editJourney(journey: Journey, id: String) {
             @click="toggle"
             aria-haspopup="true"
             aria-controls="overlay_tmenu"
-            class="w-9 h-9 hover:cursor-pointer"
+            class="h-9 w-9 hover:cursor-pointer"
           />
         </div>
         <div id="search" class="relative">
@@ -249,11 +249,11 @@ function editJourney(journey: Journey, id: String) {
             ref="searchInputMobile"
             @input="searchJourneys"
             v-model="searchValue"
-            class="rounded-3xl bg-input dark:bg-input-dark placeholder-input-placeholder dark:placeholder-text-light-dark border px-3 py-1.5 border-border-grey dark:border-input-dark focus:outline-none focus:ring-1 focus:ring-cta-border w-40 md:w-52"
+            class="w-40 rounded-3xl border border-border-grey bg-input px-3 py-1.5 placeholder-input-placeholder focus:outline-none focus:ring-1 focus:ring-cta-border dark:border-input-dark dark:bg-input-dark dark:placeholder-text-light-dark md:w-52"
             :placeholder="t('dashboard.search')"
           />
           <button @click="searchInputMobile.focus()">
-            <SvgSearchIcon class="absolute top-1 right-1 w-7 h-7" />
+            <SvgSearchIcon class="absolute right-1 top-1 h-7 w-7" />
           </button>
         </div>
       </div>
@@ -262,9 +262,9 @@ function editJourney(journey: Journey, id: String) {
         class="flex flex-row items-center justify-center"
       >
         <button
-          class="bg-cta-bg border-2 border-cta-border dark:bg-cta-bg-fill dark:border-cta-bg-fill text-text py-1 px-2 md:px-4 rounded-xl font-semibold flex flex-row justify-center items-center"
+          class="flex flex-row items-center justify-center rounded-xl border-2 border-cta-border bg-cta-bg px-2 py-1 font-semibold text-text dark:border-cta-bg-fill dark:bg-cta-bg-fill md:px-4"
         >
-          <SvgCreateNewJourneyIcon class="w-5 h-5 mr-1 fill-text" />
+          <SvgCreateNewJourneyIcon class="mr-1 h-5 w-5 fill-text" />
           <T keyName="dashboard.new" />
         </button>
       </NuxtLink>
@@ -272,7 +272,7 @@ function editJourney(journey: Journey, id: String) {
     <div class="flex justify-center">
       <div
         id="journeys"
-        class="grid gap-y-5 md:gap-y-4 lg:gap-y-6 gap-x-5 md:gap-x-4 lg:gap-x-6 mt-5"
+        class="mt-5 grid gap-x-5 gap-y-5 md:gap-x-4 md:gap-y-4 lg:gap-x-6 lg:gap-y-6"
         :class="
           currentJourneys.length === 0
             ? 'grid-cols-1'
@@ -291,13 +291,13 @@ function editJourney(journey: Journey, id: String) {
           @journey-edited="editJourney"
         />
         <NuxtLink to="/journey/new">
-          <SvgCreateNewJourneyCard class="hidden lg:block dark:hidden" />
+          <SvgCreateNewJourneyCard class="hidden dark:hidden lg:block" />
           <SvgCreateNewJourneyCardDark class="hidden dark:lg:block" />
           <div
-            class="lg:hidden flex flex-grow justify-center items-center min-w-36 h-32 bg-cta-bg-light dark:bg-cta-bg-dark rounded-md border border-cta-border"
+            class="flex h-32 min-w-36 flex-grow items-center justify-center rounded-md border border-cta-border bg-cta-bg-light dark:bg-cta-bg-dark lg:hidden"
           >
             <SvgCreateNewJourneyIcon
-              class="w-14 h-14 fill-text dark:fill-white"
+              class="h-14 w-14 fill-text dark:fill-white"
             />
           </div>
         </NuxtLink>
@@ -319,16 +319,16 @@ function editJourney(journey: Journey, id: String) {
     >
       <template #start>
         <h1
-          class="text-sm ml-2 text-input-placeholder dark:text-text-light-dark"
+          class="ml-2 text-sm text-input-placeholder dark:text-text-light-dark"
         >
           <T keyName="dashboard.sort.header" />
         </h1>
-        <Divider type="solid" class="text-[#CCCCCC] border-b mt-1 mb-1" />
+        <Divider type="solid" class="mb-1 mt-1 border-b text-[#CCCCCC]" />
       </template>
       <template #item="{ item, props, hasSubmenu }">
         <a
           v-ripple
-          class="flex align-items-center bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white text-sm"
+          class="align-items-center flex rounded-md bg-input text-sm text-text hover:bg-cta-bg-light dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
           v-bind="props.action"
         >
           <span :class="item.icon"></span>

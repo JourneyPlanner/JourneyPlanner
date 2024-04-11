@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-col min-h-screen">
+  <div class="flex min-h-screen flex-col">
     <main class="flex-grow">
       <slot class="" />
     </main>
     <footer
-      class="text-footer text-xs md:text-sm font-nunito w-full flex justify-center mt-auto mb-auto py-2"
+      class="mb-auto mt-auto flex w-full justify-center py-2 font-nunito text-xs text-footer md:text-sm"
     >
       <a
         href="mailto:contact@journeyplanner.io"

@@ -33,15 +33,15 @@ const name = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-row justify-between items-center">
+  <div class="flex flex-row items-center justify-between">
     <h2
-      class="font-medium text-xl text-text dark:text-input whitespace-nowrap overflow-hidden overflow-ellipsis w-2/3 pr-4 cursor-default"
+      class="w-2/3 cursor-default overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-input"
       v-tooltip.left="{ value: name, pt: { root: 'font-nunito' } }"
     >
       {{ name }}
     </h2>
     <div
-      class="rounded-md p-0.5 px-1 w-1/4 text-center"
+      class="w-1/4 rounded-md p-0.5 px-1 text-center"
       :class="
         currentRole === 1
           ? 'bg-chip-blue dark:bg-chip-blue-dark'
@@ -60,20 +60,20 @@ const name = computed(() => {
     <h4
       :class="
         currentRole === 1
-          ? 'text-blue-text dark:text-blue-text-dark font-semibold'
-          : 'text-text dark:text-input hover:text-blue-text dark:hover:text-blue-text-dark hover:font-semibold'
+          ? 'font-semibold text-blue-text dark:text-blue-text-dark'
+          : 'text-text hover:font-semibold hover:text-blue-text dark:text-input dark:hover:text-blue-text-dark'
       "
       class="hover:cursor-pointer"
       @click="changeRole(1)"
     >
       <T keyName="journey.sidebar.list.guide" />
     </h4>
-    <div class="w-4 flex justify-center">|</div>
+    <div class="flex w-4 justify-center">|</div>
     <h4
       :class="
         currentRole === 0
-          ? 'text-grey-text dark:text-grey-text-dark font-semibold'
-          : 'text-text dark:text-input hover:text-grey-text dark:hover:text-grey-text-dark hover:font-semibold'
+          ? 'font-semibold text-grey-text dark:text-grey-text-dark'
+          : 'text-text hover:font-semibold hover:text-grey-text dark:text-input dark:hover:text-grey-text-dark'
       "
       class="hover:cursor-pointer"
       @click="changeRole(0)"

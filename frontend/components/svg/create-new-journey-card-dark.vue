@@ -1,7 +1,7 @@
 <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    class="w-72 group"
+    class="group w-72"
     viewBox="0 0 225 118"
     fill="none"
   >

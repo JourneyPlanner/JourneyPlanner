@@ -57,17 +57,17 @@ if (props.prefill) {
     <br />
     <div class="h-3">
       <span
-        class="ml-2.5 text-error dark:font-bold dark:text-error-dark text-xs"
+        class="ml-2.5 text-xs text-error dark:font-bold dark:text-error-dark"
         >{{ errorMessage }}</span
       >
     </div>
     <label
       for="journey-range-calendar"
-      class="absolute text-sm top-0 left-0 pl-2.5 py-4 pointer-events-none transition-all duration-300 overflow-hidden whitespace-nowrap"
+      class="pointer-events-none absolute left-0 top-0 overflow-hidden whitespace-nowrap py-4 pl-2.5 text-sm transition-all duration-300"
       :class="{
         'text-input-placeholder': !isFocused,
         'text-input-label': isFocused,
-        '-translate-y-4 -translate-x-6 scale-75': isFocused || value,
+        '-translate-x-6 -translate-y-4 scale-75': isFocused || value,
         'translate-y-0 scale-100': !isFocused && !value,
       }"
     >

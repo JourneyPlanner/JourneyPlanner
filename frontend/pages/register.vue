@@ -97,24 +97,24 @@ async function registerUser(userData: Object) {
   <div>
     <Toast class="w-3/4 sm:w-auto" />
     <div
-      class="w-full flex justify-center items-center font-nunito dark:bg-background-dark"
+      class="flex w-full items-center justify-center font-nunito dark:bg-background-dark"
     >
-      <div class="xl:w-1/3 md:w-1/4 sm:w-0 h-[90vh] dark:background-dark">
+      <div class="dark:background-dark h-[90vh] sm:w-0 md:w-1/4 xl:w-1/3">
         <SvgAircraft
-          class="xl:w-[230%] md:w-[350%] w-0 object-none -ml-[20vw] overflow-hidden mt-6 lg:mt-20 xl:mt-32 z-0"
+          class="z-0 -ml-[20vw] mt-6 w-0 overflow-hidden object-none md:w-[350%] lg:mt-20 xl:mt-32 xl:w-[230%]"
         />
       </div>
       <div
-        class="flex xl:w-2/5 md:w-2/4 sm:w-full items-center mt-32 justify-center w-full"
+        class="mt-32 flex w-full items-center justify-center sm:w-full md:w-2/4 xl:w-2/5"
       >
-        <div class="text-center sm:w-3/4 w-full -mt-20 h-3/4 z-20">
+        <div class="z-20 -mt-20 h-3/4 w-full text-center sm:w-3/4">
           <fieldset
             id="outerBlock"
-            class="h-auto px-3 py-2 bg-surface dark:bg-surface-dark rounded-3xl border-border border-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 flex flex-col items-center"
+            class="focus:ring-indigo-500 focus:border-indigo-500 flex h-auto flex-col items-center rounded-3xl border-2 border-border bg-surface px-3 py-2 shadow-sm focus:outline-none dark:bg-surface-dark"
           >
             <legend
               for="outerBlock"
-              class="text-3xl text-center lg:text-left lg:ml-7 px-2 font-bold text-text dark:text-white"
+              class="px-2 text-center text-3xl font-bold text-text dark:text-white lg:ml-7 lg:text-left"
             >
               <T keyName="form.header.register" />
             </legend>
@@ -159,30 +159,30 @@ async function registerUser(userData: Object) {
               </div>
 
               <button
-                class="rounded-2xl my-4 mt-4 bg-input border-cta-border border-2 py-2.5 px-6 font-nunito font-bold text-md hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
+                class="text-md my-4 mt-4 rounded-2xl border-2 border-cta-border bg-input px-6 py-2.5 font-nunito font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
               >
                 <T keyName="form.button.register" />
               </button>
             </form>
             <NuxtLink
               to="/login"
-              class="dark:text-white underline mt-auto font-nunito font-semibold my-1"
+              class="my-1 mt-auto font-nunito font-semibold underline dark:text-white"
             >
               <T keyName="form.text.already_account" />
             </NuxtLink>
           </fieldset>
         </div>
       </div>
-      <div class="xl:w-1/3 md:w-1/4 sm:w-0 w-0 h-[90vh]">
+      <div class="h-[90vh] w-0 sm:w-0 md:w-1/4 xl:w-1/3">
         <SvgCloud
-          class="xl:w-[60%] md:w-[90%] w-0 object-none overflow-hidden mt-52 z-0 dark:fill-clouds-bg"
+          class="z-0 mt-52 w-0 overflow-hidden object-none dark:fill-clouds-bg md:w-[90%] xl:w-[60%]"
         />
         <SvgCloud
-          class="xl:w-[50%] md:w-[80%] w-0 object-none overflow-hidden mt-32 z-0 -ml-[12vw]"
+          class="z-0 -ml-[12vw] mt-32 w-0 overflow-hidden object-none md:w-[80%] xl:w-[50%]"
         />
         <div class="overflow-hidden">
           <SvgCloud
-            class="xl:w-[60%] md:w-[90%] w-0 object-none overflow-hidden mt-16 z-0 ml-[20vw] overflow-x-hidden"
+            class="z-0 ml-[20vw] mt-16 w-0 overflow-hidden overflow-x-hidden object-none md:w-[90%] xl:w-[60%]"
           />
         </div>
       </div>

@@ -18,18 +18,18 @@ const { value, errorMessage } = useField(() => props.name);
 </script>
 
 <template>
-  <div class="flex w-full items-center text-left mt-2">
+  <div class="mt-2 flex w-full items-center text-left">
     <div class="">
-      <label class="relative flex cursor-pointer items-center p-1 rounded-md">
+      <label class="relative flex cursor-pointer items-center rounded-md p-1">
         <input
           type="checkbox"
           :id="id"
           :name="name"
           v-model="value"
-          class="peer cursor-pointer appearance-none relative h-5 w-5 bg-input dark:bg-input-dark border-2 border-border transition-all checked:border-border checked:bg-border checked:dark:bg-border rounded-md"
+          class="peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-border bg-input transition-all checked:border-border checked:bg-border dark:bg-input-dark checked:dark:bg-border"
         />
         <div
-          class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+          class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +49,7 @@ const { value, errorMessage } = useField(() => props.name);
 
     <label
       :for="id"
-      class="ms-2 text-sm text-gray-900 dark:text-gray-300 select-none dark:text-white font-nunito font-light"
+      class="text-gray-900 dark:text-gray-300 ms-2 select-none font-nunito text-sm font-light dark:text-white"
     >
       <T keyName="form.input.text.privacypolicy" />
       <NuxtLink
@@ -61,9 +61,9 @@ const { value, errorMessage } = useField(() => props.name);
       <span v-if="language === 'de'"> gelesen und akzeptiere sie.</span>
     </label>
   </div>
-  <div class="h-3 text-left mb-2">
+  <div class="mb-2 h-3 text-left">
     <p
-      class="ml-9 text-error dark:text-error-dark dark:font-bold text-left text-xs"
+      class="ml-9 text-left text-xs text-error dark:font-bold dark:text-error-dark"
     >
       {{ errorMessage }}
     </p>

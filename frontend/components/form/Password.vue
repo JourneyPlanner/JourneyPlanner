@@ -58,11 +58,11 @@ const { value, errorMessage } = useField<string>(() => props.name);
       }"
     >
       <template #footer>
-        <Divider type="solid" class="text-input-placeholder border border-10" />
+        <Divider type="solid" class="border-10 border text-input-placeholder" />
         <p class="mt-2">
           <T keyName="form.input.password.prompt.suggestion" />
         </p>
-        <ul class="pl-2 ml-2 mt-0 list-disc" style="line-height: 1.5">
+        <ul class="ml-2 mt-0 list-disc pl-2" style="line-height: 1.5">
           <li>
             <T keyName="form.input.password.prompt.suggestion.lowercase" />
           </li>
@@ -82,13 +82,13 @@ const { value, errorMessage } = useField<string>(() => props.name);
     </Password>
     <div class="h-3 text-left">
       <span
-        class="ml-3 text-error dark:text-error-dark dark:font-bold text-left text-xs"
+        class="ml-3 text-left text-xs text-error dark:font-bold dark:text-error-dark"
         >{{ errorMessage }}</span
       >
     </div>
     <label
       :for="id"
-      class="absolute text-sm top-0 left-0 pl-3 py-4 pointer-events-none transition-all duration-300"
+      class="pointer-events-none absolute left-0 top-0 py-4 pl-3 text-sm transition-all duration-300"
       :class="{
         'text-input-placeholder': !isFocused,
         'text-input-label': isFocused,
