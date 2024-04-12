@@ -39,11 +39,11 @@ interface User {
     id: string;
     firstName: string;
     lastName: string;
-    role: Number;
+    role: number;
 }
 
 const client = useSanctumClient();
-const { data, pending, error, refresh } = await useAsyncData("journey", () =>
+const { data, error } = await useAsyncData("journey", () =>
     client(`/api/journey/${journeyId}`),
 );
 
@@ -55,19 +55,11 @@ if (error.value) {
     });
 }
 
-const {
-    data: users,
-    pending: usersPending,
-    error: usersError,
-    refresh: usersRefresh,
-} = await useAsyncData("users", () => client(`/api/journey/${journeyId}/user`));
+const { data: users } = await useAsyncData("users", () =>
+    client(`/api/journey/${journeyId}/user`),
+);
 
-const {
-    data: currUser,
-    pending: currUserPending,
-    error: currUserError,
-    refresh: currUserRefresh,
-} = await useAsyncData("userRole", () =>
+const { data: currUser } = await useAsyncData("userRole", () =>
     client(`/api/journey/${journeyId}/user/me`),
 );
 
@@ -89,7 +81,7 @@ if (colorMode.preference === "dark") {
     lightColor = "#353f44";
 }
 
-var opts = {
+const opts = {
     margin: 0,
     color: {
         dark: darkColor,
@@ -139,7 +131,7 @@ function copyToClipboard() {
     });
 }
 
-async function changeRole(userid: String, selectedRole: Number) {
+async function changeRole(userid: string, selectedRole: number) {
     await client(`/api/journey/${journeyId}/user/${userid}`, {
         method: "PATCH",
         body: {
@@ -183,7 +175,7 @@ async function changeRole(userid: String, selectedRole: Number) {
             }"
         >
             <div class="text-xl font-medium text-text dark:text-white">
-                <T keyName="sidebar.invite.link" />
+                <T key-name="sidebar.invite.link" />
             </div>
             <div
                 class="flex items-center border-b-2 border-border-grey pb-4 dark:border-text-disabled"
@@ -192,7 +184,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                     class="w-5/6 rounded-md bg-input-disabled px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
                     disabled
                     :value="journeyData.invite"
-                />
+                >
                 <div class="flex w-1/5 justify-end">
                     <button
                         class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-cta-border hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark"
@@ -206,30 +198,30 @@ async function changeRole(userid: String, selectedRole: Number) {
                 class="flex flex-row items-center justify-center border-b border-border-grey pb-1 pt-1 dark:border-input-placeholder"
             >
                 <h1 class="w-4/5 text-xl text-footer dark:text-border-grey">
-                    <T keyName="journey.sidebar.list.header" />
+                    <T key-name="journey.sidebar.list.header" />
                 </h1>
                 <div class="mb-1 mt-1 flex w-1/5 items-center justify-end">
                     <button
-                        @click="editEnabled = !editEnabled"
                         v-if="currUser.role === 1"
                         class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-cta-border hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark"
+                        @click="editEnabled = !editEnabled"
                     >
-                        <SvgEdit class="w-4" v-if="!editEnabled" />
-                        <SvgEditOff class="w-4" v-if="editEnabled" />
+                        <SvgEdit v-if="!editEnabled" class="w-4" />
+                        <SvgEditOff v-if="editEnabled" class="w-4" />
                     </button>
                 </div>
             </div>
             <div id="list" class="mt-3 flex flex-col gap-3">
                 <MemberItem
                     v-for="user in users"
-                    :key="user.id"
                     :id="user.id"
-                    :firstName="user.firstName"
-                    :lastName="user.lastName"
+                    :key="user.id"
+                    :first-name="user.firstName"
+                    :last-name="user.lastName"
                     :role="user.role"
                     :edit="editEnabled"
-                    :currentID="currUser.user_id"
-                    @changeRole="changeRole"
+                    :current-i-d="currUser.user_id"
+                    @change-role="changeRole"
                 />
             </div>
         </Sidebar>
@@ -261,7 +253,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                             >
                                 <div
                                     class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-border-gray"
-                                ></div>
+                                />
                                 <p class="ml-16 text-xl font-bold text-white">
                                     JourneyPlanner
                                 </p>
@@ -282,23 +274,23 @@ async function changeRole(userid: String, selectedRole: Number) {
                                             class="col-span-3 flex h-full w-full flex-col justify-center pl-5 font-semibold"
                                         >
                                             <T
-                                                keyName="form.input.journey.name"
+                                                key-name="form.input.journey.name"
                                             />
                                             <input
                                                 class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
                                                 disabled
                                                 :value="journeyData.name"
-                                            />
+                                            >
                                             <T
-                                                keyName="form.input.journey.destination"
+                                                key-name="form.input.journey.destination"
                                             />
                                             <input
                                                 class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
                                                 disabled
                                                 :value="journeyData.destination"
-                                            />
+                                            >
                                             <T
-                                                keyName="form.input.journey.date"
+                                                key-name="form.input.journey.date"
                                             />
                                             <input
                                                 class="text-md mb-2 w-5/6 rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white md:w-4/5"
@@ -311,7 +303,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                                                     ' - ' +
                                                     format(toDate, 'dd/MM/yyyy')
                                                 "
-                                            />
+                                            >
                                         </div>
                                         <div class="relative -mt-1 w-full">
                                             <SvgStripes
@@ -320,14 +312,14 @@ async function changeRole(userid: String, selectedRole: Number) {
                                             <div
                                                 class="absolute bottom-2 right-2 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-input-placeholder pl-1.5 pr-1.5 text-center text-xs text-input-placeholder dark:border-white dark:text-white"
                                             >
-                                                <T keyName="journey.turn" />
+                                                <T key-name="journey.turn" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div
                                     class="rounded-b-r-3xl h-[90%] w-0 border-r-2 border-dashed border-border-gray"
-                                ></div>
+                                />
                             </div>
                         </div>
                         <div
@@ -338,7 +330,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                             >
                                 <div
                                     class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-border-gray"
-                                ></div>
+                                />
                                 <p class="ml-16 text-xl font-bold text-white">
                                     JourneyPlanner
                                 </p>
@@ -359,11 +351,11 @@ async function changeRole(userid: String, selectedRole: Number) {
                                             class="absolute right-[50%] top-[25%] z-20 w-40 -translate-y-[25%] translate-x-[50%] max-sm:mt-1"
                                             :src="qrcode"
                                             alt="QR Code"
-                                        />
+                                        >
                                         <div
                                             class="absolute bottom-4 right-2 z-40 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-input-placeholder pl-1.5 pr-1.5 text-xs text-input-placeholder dark:border-white dark:text-white"
                                         >
-                                            <T keyName="journey.turn" />
+                                            <T key-name="journey.turn" />
                                         </div>
                                         <SvgStripes
                                             class="z-0 md:w-2/3 lg:w-1/2"
@@ -383,7 +375,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                 >
                     <div
                         class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-border-gray"
-                    ></div>
+                    />
                     <p class="ml-14 text-xl font-bold text-white">
                         JourneyPlanner
                     </p>
@@ -399,19 +391,19 @@ async function changeRole(userid: String, selectedRole: Number) {
                             <div
                                 class="col-span-3 flex h-[120%] w-full flex-col justify-center pl-10 font-semibold"
                             >
-                                <T keyName="form.input.journey.name" />
+                                <T key-name="form.input.journey.name" />
                                 <input
                                     class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
                                     disabled
                                     :value="journeyData.name"
-                                />
-                                <T keyName="form.input.journey.destination" />
+                                >
+                                <T key-name="form.input.journey.destination" />
                                 <input
                                     class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
                                     disabled
                                     :value="journeyData.destination"
-                                />
-                                <T keyName="form.input.journey.date" />
+                                >
+                                <T key-name="form.input.journey.date" />
                                 <input
                                     class="text-md mb-2 rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white md:w-5/6 lg:w-2/3"
                                     disabled
@@ -420,7 +412,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                                         ' - ' +
                                         format(toDate, 'dd/MM/yyyy')
                                     "
-                                />
+                                >
                             </div>
                             <div
                                 class="absolute w-full md:col-span-2 lg:col-span-2 xl:col-span-1 2xl:col-span-1"
@@ -433,7 +425,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                     </div>
                     <div
                         class="rounded-b-r-3xl h-[90%] w-0 border-r-2 border-dashed border-border-gray"
-                    ></div>
+                    />
                 </div>
             </div>
             <div
@@ -449,7 +441,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                 <div class="flex h-[13.5rem] lg:h-[15.5rem]">
                     <div
                         class="rounded-b-l-3xl h-[90%] w-0 border-l-2 border-dashed border-border-gray"
-                    ></div>
+                    />
                     <div
                         class="flex h-full w-full justify-center rounded-b-3xl border-b-2 border-r-2 border-border-gray dark:border-form-input-dark"
                     >
@@ -460,7 +452,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 class="absolute right-[50%] top-[25%] z-20 -translate-y-[25%] translate-x-[50%] md:w-[8rem] lg:w-[10rem]"
                                 :src="qrcode"
                                 alt="QR Code"
-                            />
+                            >
                             <SvgStripes
                                 class="absolute right-0 md:w-[8.8rem] lg:w-[10.15rem]"
                             />
@@ -468,7 +460,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 class="absolute right-[50%] top-[80%] z-30 flex h-1/6 w-2/5 translate-x-[50%] items-center justify-center rounded-xl border-2 border-cta-border bg-background font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark md:-translate-y-[30%] lg:-translate-y-[2%]"
                                 @click="toggle"
                             >
-                                <T keyName="journey.button.invite" />
+                                <T key-name="journey.button.invite" />
                                 <SvgShare class="ml-2 w-3" />
                             </button>
                             <OverlayPanel
@@ -480,14 +472,14 @@ async function changeRole(userid: String, selectedRole: Number) {
                                         <span
                                             class="mb-1 block text-lg font-medium"
                                         >
-                                            <T keyName="sidebar.invite.link" />
+                                            <T key-name="sidebar.invite.link" />
                                         </span>
                                         <div class="flex">
                                             <input
                                                 class="w-full rounded-l-md border-2 border-border-gray bg-input-disabled pb-1 pl-2.5 pt-1 text-base font-medium text-text shadow-sm focus:outline-none focus:ring-1 dark:border-input-disabled-dark-grey dark:bg-color-gray-200 dark:text-white"
                                                 disabled
                                                 :value="journeyData.invite"
-                                            />
+                                            >
                                             <button
                                                 class="flex h-9 w-9 items-center justify-center rounded-r-md border-2 border-y-2 border-r-2 border-cta-border bg-input-disabled shadow-sm hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark"
                                                 @click="copyToClipboard"
@@ -502,7 +494,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                     </div>
                 </div>
             </div>
-            <div class="basis-0 md:basis-full lg:basis-0"></div>
+            <div class="basis-0 md:basis-full lg:basis-0" />
             <div
                 class="flex w-full justify-center md:justify-start lg:ml-10 lg:w-72 xl:ml-32"
             >
@@ -522,10 +514,10 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 <div class="absolute inset-0 grid grid-rows-2">
                                     <div
                                         class="rounded-t-md bg-gradient-to-br from-gradient-start to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    ></div>
+                                    />
                                     <div
                                         class="rounded-b-md bg-gradient-to-br from-gradient-start-light to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    ></div>
+                                    />
                                 </div>
 
                                 <!-- time numbers -->
@@ -537,7 +529,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 <div class="absolute inset-0 flex items-center">
                                     <div
                                         class="h-px w-full bg-border dark:bg-countdown-stroke-dark"
-                                    ></div>
+                                    />
                                 </div>
                             </div>
                             <div class="bg-black relative rounded-xl p-1 py-2">
@@ -545,10 +537,10 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 <div class="absolute inset-0 grid grid-rows-2">
                                     <div
                                         class="rounded-t-md bg-gradient-to-br from-gradient-start to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    ></div>
+                                    />
                                     <div
                                         class="rounded-b-md bg-gradient-to-br from-gradient-start-light to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    ></div>
+                                    />
                                 </div>
 
                                 <!-- time numbers -->
@@ -558,7 +550,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 <div class="absolute inset-0 flex items-center">
                                     <div
                                         class="h-px w-full bg-border dark:bg-countdown-stroke-dark"
-                                    ></div>
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -575,10 +567,10 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 <div class="absolute inset-0 grid grid-rows-2">
                                     <div
                                         class="rounded-t-md bg-gradient-to-br from-gradient-start to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    ></div>
+                                    />
                                     <div
                                         class="rounded-b-md bg-gradient-to-br from-gradient-start-light to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    ></div>
+                                    />
                                 </div>
 
                                 <!-- time numbers -->
@@ -590,7 +582,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 <div class="absolute inset-0 flex items-center">
                                     <div
                                         class="h-px w-full bg-border dark:bg-countdown-stroke-dark"
-                                    ></div>
+                                    />
                                 </div>
                             </div>
 
@@ -601,10 +593,10 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 <div class="absolute inset-0 grid grid-rows-2">
                                     <div
                                         class="rounded-t-md bg-gradient-to-br from-gradient-start to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    ></div>
+                                    />
                                     <div
                                         class="rounded-b-md bg-gradient-to-br from-gradient-start-light to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    ></div>
+                                    />
                                 </div>
 
                                 <!-- time numbers -->
@@ -616,7 +608,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 <div class="absolute inset-0 flex items-center">
                                     <div
                                         class="h-px w-full bg-border dark:bg-countdown-stroke-dark"
-                                    ></div>
+                                    />
                                 </div>
                             </div>
                             <div
@@ -626,10 +618,10 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 <div class="absolute inset-0 grid grid-rows-2">
                                     <div
                                         class="rounded-t-md bg-gradient-to-br from-gradient-start to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    ></div>
+                                    />
                                     <div
                                         class="rounded-b-md bg-gradient-to-br from-gradient-start-light to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    ></div>
+                                    />
                                 </div>
 
                                 <!-- time numbers -->
@@ -639,7 +631,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 <div class="absolute inset-0 flex items-center">
                                     <div
                                         class="h-px w-full bg-border dark:bg-countdown-stroke-dark"
-                                    ></div>
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -647,32 +639,32 @@ async function changeRole(userid: String, selectedRole: Number) {
                             class="flex items-center justify-start text-center lg:flex-col"
                         >
                             <p class="text-base font-bold">
-                                <T keyName="journey.countdown.days" />
+                                <T key-name="journey.countdown.days" />
                             </p>
                             <p
                                 v-if="duringJourney"
                                 class="w-full pl-1 text-base font-bold lg:text-lg"
                             >
-                                <T keyName="journey.countdown.ends" />
+                                <T key-name="journey.countdown.ends" />
                             </p>
                             <p
                                 v-else-if="journeyEnded"
                                 class="w-full pl-1 text-base font-bold lg:text-lg"
                             >
-                                <T keyName="journey.countdown.finished" />
+                                <T key-name="journey.countdown.finished" />
                             </p>
                             <p
                                 v-else
                                 class="w-full pl-1 text-base font-bold lg:text-lg"
                             >
-                                <T keyName="journey.countdown.until" />
+                                <T key-name="journey.countdown.until" />
                             </p>
                             <button
                                 v-if="duringJourney"
                                 class="mt-6 h-0 w-0 rounded-xl border-2 border-cta-border bg-background py-2 font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
                             >
                                 <T
-                                    keyName="journey.button.countdown.calendar"
+                                    key-name="journey.button.countdown.calendar"
                                 />
                             </button>
                             <button
@@ -681,7 +673,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 @click="jsConfetti.addConfetti()"
                             >
                                 <T
-                                    keyName="journey.button.countdown.celebrate"
+                                    key-name="journey.button.countdown.celebrate"
                                 />
                             </button>
                             <button
@@ -689,7 +681,7 @@ async function changeRole(userid: String, selectedRole: Number) {
                                 class="mt-6 h-0 w-0 rounded-xl border-2 border-cta-border bg-background py-2 font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
                             >
                                 <T
-                                    keyName="journey.button.countdown.planning"
+                                    key-name="journey.button.countdown.planning"
                                 />
                             </button>
                         </div>
@@ -699,3 +691,4 @@ async function changeRole(userid: String, selectedRole: Number) {
         </div>
     </div>
 </template>
+()()()()()()

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { NuxtError } from "#app";
 
-const props = defineProps({
-    error: Object as () => NuxtError,
+defineProps({
+    error: { type: Object as () => NuxtError, required: true },
 });
 </script>
 

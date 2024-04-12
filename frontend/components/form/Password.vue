@@ -10,7 +10,7 @@ const german = computed(() => {
     return language === "de";
 });
 
-let isFocused = ref(false);
+const isFocused = ref(false);
 
 const handleFocus = () => {
     isFocused.value = true;
@@ -22,8 +22,7 @@ const handleBlur = () => {
 
 const props = defineProps({
     name: { type: String, required: true },
-    type: String,
-    id: String,
+    id: { type: String, required: true },
     feedback: Boolean,
     feedbackStyle: Boolean,
     translationKey: { type: String, required: true },
@@ -35,27 +34,27 @@ const { value, errorMessage } = useField<string>(() => props.name);
 <template>
     <div class="relative">
         <Password
-            panelClass="dark:bg-background-dark dark:text-white"
             :id="id"
-            :name="name"
             v-model="value"
-            toggleMask
+            panel-class="dark:bg-background-dark dark:text-white"
+            :name="name"
+            toggle-mask
             class="w-full"
             :feedback="feedback"
-            inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-white bg-input border-2 border-border focus:outline-none focus:ring-1 dark:bg-input-dark"
+            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-white bg-input border-2 border-border focus:outline-none focus:ring-1 dark:bg-input-dark"
             :prompt-label="$t('form.input.password.label.prompt')"
             :weak-label="$t('form.input.password.label.weak')"
             :medium-label="$t('form.input.password.label.medium')"
             :strong-label="$t('form.input.password.label.strong')"
+            :pt="{
+                input: { class: 'font-medium' },
+            }"
             @focus="handleFocus"
             @focusout="handleBlur"
             @input="handleFocus"
             @date-select="handleFocus"
             @clear-click="handleBlur"
             @hide="handleBlur"
-            :pt="{
-                input: { class: 'font-medium' },
-            }"
         >
             <template #footer>
                 <Divider
@@ -63,27 +62,27 @@ const { value, errorMessage } = useField<string>(() => props.name);
                     class="border-10 border text-input-placeholder"
                 />
                 <p class="mt-2">
-                    <T keyName="form.input.password.prompt.suggestion" />
+                    <T key-name="form.input.password.prompt.suggestion" />
                 </p>
                 <ul class="ml-2 mt-0 list-disc pl-2" style="line-height: 1.5">
                     <li>
                         <T
-                            keyName="form.input.password.prompt.suggestion.lowercase"
+                            key-name="form.input.password.prompt.suggestion.lowercase"
                         />
                     </li>
                     <li>
                         <T
-                            keyName="form.input.password.prompt.suggestion.uppercase"
+                            key-name="form.input.password.prompt.suggestion.uppercase"
                         />
                     </li>
                     <li>
                         <T
-                            keyName="form.input.password.prompt.suggestion.numeric"
+                            key-name="form.input.password.prompt.suggestion.numeric"
                         />
                     </li>
                     <li>
                         <T
-                            keyName="form.input.password.prompt.suggestion.minimum.characters"
+                            key-name="form.input.password.prompt.suggestion.minimum.characters"
                         />
                     </li>
                 </ul>
@@ -112,7 +111,7 @@ const { value, errorMessage } = useField<string>(() => props.name);
                     (!feedbackStyle && value && german),
             }"
         >
-            <T :keyName="translationKey" />
+            <T :key-name="translationKey" />
         </label>
     </div>
 </template>

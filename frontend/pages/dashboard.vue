@@ -13,12 +13,12 @@ definePageMeta({
 });
 
 interface Journey {
-    id: String;
+    id: string;
     name: string;
     destination: string;
     from: Date;
     to: Date;
-    role: Number;
+    role: number;
 }
 
 const { t } = useTranslate();
@@ -27,8 +27,8 @@ const store = useDashboardStore();
 const journeys = ref<Journey[]>([]);
 const searchInput = ref();
 const searchInputMobile = ref();
-let searchValue = ref<String>("");
-let currentJourneys = ref<Journey[]>([]);
+const searchValue = ref<string>("");
+const currentJourneys = ref<Journey[]>([]);
 
 currentJourneys.value = store.journeys;
 
@@ -132,7 +132,7 @@ async function searchJourneys() {
  * Sorts the journeys based on the sortKey
  * @param sortKey the key to sort the journeys by
  */
-function sortJourneys(sortKey: String) {
+function sortJourneys(sortKey: string) {
     currentJourneys.value.sort((a: Journey, b: Journey) => {
         switch (sortKey) {
             case "name-asc":
@@ -153,7 +153,7 @@ function sortJourneys(sortKey: String) {
     });
 }
 
-function deleteJourney(id: String) {
+function deleteJourney(id: string) {
     journeys.value.splice(
         journeys.value.findIndex((journey) => journey.id === id),
         1,
@@ -161,7 +161,7 @@ function deleteJourney(id: String) {
     currentJourneys.value = journeys.value;
 }
 
-function editJourney(journey: Journey, id: String) {
+function editJourney(journey: Journey, id: string) {
     const index = journeys.value.findIndex((j) => j.id === id);
     journeys.value[index].destination = journey.destination;
     journeys.value[index].from = journey.from;
@@ -179,7 +179,7 @@ function editJourney(journey: Journey, id: String) {
             <div class="flex flex-row items-center">
                 <SvgDashboardIcon class="mr-1 mt-0.5 md:h-9 md:w-9" />
                 <h1 class="mt-1 text-3xl font-medium md:text-5xl">
-                    <T keyName="common.dashboard" />
+                    <T key-name="common.dashboard" />
                 </h1>
             </div>
             <div id="right-header" class="flex flex-row items-center">
@@ -189,20 +189,20 @@ function editJourney(journey: Journey, id: String) {
                 >
                     <div
                         id="search"
-                        class="relative mr-2.5"
                         v-tooltip.top="{
                             value: t('dashboard.tooltip.search'),
                             pt: { root: 'font-nunito' },
                         }"
+                        class="relative mr-2.5"
                     >
                         <input
-                            type="text"
                             ref="searchInput"
-                            @input="searchJourneys"
                             v-model="searchValue"
+                            type="text"
                             class="rounded-3xl border border-border-grey bg-input px-3 py-1.5 placeholder-input-placeholder focus:outline-none focus:ring-1 focus:ring-cta-border dark:border-input-dark dark:bg-input-dark dark:placeholder-text-light-dark"
                             :placeholder="t('dashboard.search')"
-                        />
+                            @input="searchJourneys"
+                        >
                         <button @click="searchInput.focus()">
                             <SvgSearchIcon
                                 class="absolute right-1 top-1 h-7 w-7"
@@ -211,10 +211,10 @@ function editJourney(journey: Journey, id: String) {
                     </div>
                     <div id="filter" class="mr-4">
                         <SvgFilterIcon
-                            @click="toggle"
                             aria-haspopup="true"
                             aria-controls="overlay_tmenu"
                             class="h-9 w-9 hover:cursor-pointer"
+                            @click="toggle"
                         />
                     </div>
                 </div>
@@ -228,7 +228,7 @@ function editJourney(journey: Journey, id: String) {
                         <SvgCreateNewJourneyIcon
                             class="mr-1 h-5 w-5 fill-text"
                         />
-                        <T keyName="dashboard.new" />
+                        <T key-name="dashboard.new" />
                     </button>
                 </NuxtLink>
                 <NuxtLink to="/settings">
@@ -243,21 +243,21 @@ function editJourney(journey: Journey, id: String) {
             <div id="search-and-filter" class="flex flex-row">
                 <div id="filter" class="mr-2">
                     <SvgFilterIcon
-                        @click="toggle"
                         aria-haspopup="true"
                         aria-controls="overlay_tmenu"
                         class="h-9 w-9 hover:cursor-pointer"
+                        @click="toggle"
                     />
                 </div>
                 <div id="search" class="relative">
                     <input
-                        type="text"
                         ref="searchInputMobile"
-                        @input="searchJourneys"
                         v-model="searchValue"
+                        type="text"
                         class="w-40 rounded-3xl border border-border-grey bg-input px-3 py-1.5 placeholder-input-placeholder focus:outline-none focus:ring-1 focus:ring-cta-border dark:border-input-dark dark:bg-input-dark dark:placeholder-text-light-dark md:w-52"
                         :placeholder="t('dashboard.search')"
-                    />
+                        @input="searchJourneys"
+                    >
                     <button @click="searchInputMobile.focus()">
                         <SvgSearchIcon class="absolute right-1 top-1 h-7 w-7" />
                     </button>
@@ -271,7 +271,7 @@ function editJourney(journey: Journey, id: String) {
                     class="flex flex-row items-center justify-center rounded-xl border-2 border-cta-border bg-cta-bg px-2 py-1 font-semibold text-text dark:border-cta-bg-fill dark:bg-cta-bg-fill md:px-4"
                 >
                     <SvgCreateNewJourneyIcon class="mr-1 h-5 w-5 fill-text" />
-                    <T keyName="dashboard.new" />
+                    <T key-name="dashboard.new" />
                 </button>
             </NuxtLink>
         </div>
@@ -287,12 +287,13 @@ function editJourney(journey: Journey, id: String) {
             >
                 <DashboardItem
                     v-for="journey in currentJourneys"
-                    :id="new String(journey.id).valueOf()"
+                    :id="String(journey.id)"
+                    :key="journey.id"
                     :name="journey.name"
                     :destination="journey.destination"
                     :from="new Date(journey.from)"
                     :to="new Date(journey.to)"
-                    :role="new Number(journey.role).valueOf()"
+                    :role="Number(journey.role)"
                     @journey-deleted="deleteJourney"
                     @journey-edited="editJourney"
                 />
@@ -312,8 +313,8 @@ function editJourney(journey: Journey, id: String) {
             </div>
         </div>
         <TieredMenu
-            ref="menu"
             id="overlay_tmenu"
+            ref="menu"
             :model="items"
             popup
             class="rounded-xl bg-input dark:bg-input-dark"
@@ -329,7 +330,7 @@ function editJourney(journey: Journey, id: String) {
                 <h1
                     class="ml-2 text-sm text-input-placeholder dark:text-text-light-dark"
                 >
-                    <T keyName="dashboard.sort.header" />
+                    <T key-name="dashboard.sort.header" />
                 </h1>
                 <Divider
                     type="solid"
@@ -342,9 +343,9 @@ function editJourney(journey: Journey, id: String) {
                     class="align-items-center flex rounded-md bg-input text-sm text-text hover:bg-cta-bg-light dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
                     v-bind="props.action"
                 >
-                    <span :class="item.icon"></span>
+                    <span :class="item.icon" />
                     <span class="ml-2">{{ item.label }}</span>
-                    <i v-if="hasSubmenu" class="pi pi-angle-right ml-auto"></i>
+                    <i v-if="hasSubmenu" class="pi pi-angle-right ml-auto" />
                 </a>
             </template>
         </TieredMenu>
@@ -362,7 +363,6 @@ function editJourney(journey: Journey, id: String) {
                     class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
                 },
             }"
-        >
-        </ConfirmDialog>
+        />
     </div>
 </template>

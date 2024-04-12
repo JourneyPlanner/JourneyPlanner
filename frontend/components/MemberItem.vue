@@ -2,7 +2,7 @@
 const props = defineProps({
     id: { type: String, required: true },
     firstName: { type: String, required: true },
-    lastName: { type: String },
+    lastName: { type: String, default: "" },
     role: { type: Number, required: true },
     edit: { type: Boolean, required: true },
     currentID: { type: String, required: true },
@@ -35,8 +35,8 @@ const name = computed(() => {
 <template>
     <div class="flex flex-row items-center justify-between">
         <h2
-            class="w-2/3 cursor-default overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-input"
             v-tooltip.left="{ value: name, pt: { root: 'font-nunito' } }"
+            class="w-2/3 cursor-default overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-input"
         >
             {{ name }}
         </h2>
@@ -49,7 +49,7 @@ const name = computed(() => {
             "
         >
             <h3 class="text-base text-text dark:text-input">
-                <T :keyName="roleType" />
+                <T :key-name="roleType" />
             </h3>
         </div>
     </div>
@@ -66,7 +66,7 @@ const name = computed(() => {
             class="hover:cursor-pointer"
             @click="changeRole(1)"
         >
-            <T keyName="journey.sidebar.list.guide" />
+            <T key-name="journey.sidebar.list.guide" />
         </h4>
         <div class="flex w-4 justify-center">|</div>
         <h4
@@ -78,7 +78,7 @@ const name = computed(() => {
             class="hover:cursor-pointer"
             @click="changeRole(0)"
         >
-            <T keyName="journey.sidebar.list.member" />
+            <T key-name="journey.sidebar.list.member" />
         </h4>
     </form>
 </template>

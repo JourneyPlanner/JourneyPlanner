@@ -5,7 +5,7 @@
                 <NuxtPage />
             </div>
         </NuxtLayout>
-        <template v-slot:fallback>
+        <template #fallback>
             <div class="flex justify-center">Loading...</div>
         </template>
     </TolgeeProvider>

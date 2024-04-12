@@ -1,5 +1,5 @@
 <script setup>
-const props = defineProps({
+defineProps({
     link: { type: String, required: true },
 });
 </script>

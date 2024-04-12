@@ -2,7 +2,7 @@
 import Calendar from "primevue/calendar";
 import { useField } from "vee-validate";
 
-let isFocused = ref(false);
+const isFocused = ref(false);
 
 const handleFocus = () => {
     isFocused.value = true;
@@ -14,16 +14,17 @@ const handleBlur = () => {
 
 const props = defineProps({
     name: { type: String, required: true },
-    type: String,
-    id: String,
+    id: { type: String, required: true },
     translationKey: { type: String, required: true },
-    prefill: Array,
+    prefill: { type: Array, default: undefined as unknown as Date[] },
 });
 
 const { value, errorMessage } = useField<Date[]>(() => props.name);
 if (props.prefill) {
     value.value = props.prefill as Date[];
 }
+
+defineEmits(["input"]);
 </script>
 
 <template>
@@ -31,19 +32,15 @@ if (props.prefill) {
         <!-- TODO: language (de/en)-->
         <Calendar
             :id="id"
-            :name="name"
             v-model="value"
-            selectionMode="range"
-            :manualInput="true"
-            :showButtonBar="true"
-            :numberOfMonths="1"
-            dateFormat="dd/mm/yy"
-            panelClass="bg-input dark:bg-background-dark dark:text-white"
-            inputClass="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-white font-bold bg-input dark:bg-input-dark border-2 border-border focus:outline-none focus:ring-1"
-            @focus="handleFocus"
-            @hide="handleBlur"
-            @input="handleFocus"
-            @date-select="$emit('input', $event), handleFocus"
+            :name="name"
+            selection-mode="range"
+            :manual-input="true"
+            :show-button-bar="true"
+            :number-of-months="1"
+            date-format="dd/mm/yy"
+            panel-class="bg-input dark:bg-background-dark dark:text-white"
+            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-white font-bold bg-input dark:bg-input-dark border-2 border-border focus:outline-none focus:ring-1"
             :pt="{
                 panel: { class: 'text-text font-nunito' },
                 header: {
@@ -52,8 +49,12 @@ if (props.prefill) {
                 dayLabel: { class: 'text-border' },
                 datepickerMask: { class: 'text-text bg-background-dark' },
             }"
+            @focus="handleFocus"
+            @hide="handleBlur"
+            @input="handleFocus"
+            @date-select="$emit('input', $event), handleFocus"
         />
-        <br />
+        <br >
         <div class="h-3">
             <span
                 class="ml-2.5 text-xs text-error dark:font-bold dark:text-error-dark"
@@ -70,7 +71,7 @@ if (props.prefill) {
                 'translate-y-0 scale-100': !isFocused && !value,
             }"
         >
-            <T :keyName="translationKey" />
+            <T :key-name="translationKey" />
         </label>
     </div>
 </template>

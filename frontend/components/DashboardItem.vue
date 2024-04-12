@@ -169,10 +169,10 @@ const { handleSubmit } = useForm({
  * and then a journey object is created and sent to the backend
  */
 const onSave = handleSubmit(async (values) => {
-    let name = values.name;
-    let destination = values.destination;
-    let from = format(values.range[0], "yyyy-MM-dd");
-    let to = format(values.range[1], "yyyy-MM-dd");
+    const name = values.name;
+    const destination = values.destination;
+    const from = format(values.range[0], "yyyy-MM-dd");
+    const to = format(values.range[1], "yyyy-MM-dd");
 
     loadingEdit.value = true;
     toast.add({
@@ -233,29 +233,29 @@ const onSave = handleSubmit(async (values) => {
                         class="w-full overflow-hidden overflow-ellipsis whitespace-nowrap"
                     >
                         <h1
-                            class="overflow-hidden overflow-ellipsis whitespace-nowrap text-2xl font-semibold"
                             v-tooltip.top="{
                                 value: name,
                                 pt: { root: 'font-nunito' },
                             }"
+                            class="overflow-hidden overflow-ellipsis whitespace-nowrap text-2xl font-semibold"
                         >
                             {{ name }}
                         </h1>
                     </NuxtLink>
                     <button
                         class="pi pi-ellipsis-v justify-end"
-                        @click="toggle"
                         aria-haspopup="true"
                         aria-controls="overlay_menu"
-                    ></button>
+                        @click="toggle"
+                    />
                 </div>
                 <NuxtLink :to="link">
                     <h2
-                        class="-mt-1.5 w-56 overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-medium"
                         v-tooltip.bottom="{
                             value: destination,
                             pt: { root: 'font-nunito' },
                         }"
+                        class="-mt-1.5 w-56 overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-medium"
                     >
                         {{ destination }}
                     </h2>
@@ -263,7 +263,7 @@ const onSave = handleSubmit(async (values) => {
                         class="mt-1.5 w-56 border-b-2 border-dashed border-border-grey text-sm dark:border-input-placeholder"
                     >
                         <span class="mr-1 text-border">
-                            <T keyName="dashboard.date" />
+                            <T key-name="dashboard.date" />
                         </span>
                         <span class="-mb-1 text-text dark:text-white"
                             >{{ format(from, "dd/MM/yyyy") }}-{{
@@ -275,10 +275,10 @@ const onSave = handleSubmit(async (values) => {
                         class="mt-1 w-56 border-b-2 border-dashed border-border-grey text-sm dark:border-input-placeholder"
                     >
                         <span class="mr-1 text-border">
-                            <T keyName="dashboard.role" />
+                            <T key-name="dashboard.role" />
                         </span>
                         <span class="text-text dark:text-white">
-                            <T :keyName="roleType" />
+                            <T :key-name="roleType" />
                         </span>
                     </h3>
                 </NuxtLink>
@@ -294,11 +294,11 @@ const onSave = handleSubmit(async (values) => {
                     class="overflow-hidden overflow-ellipsis whitespace-nowrap"
                 >
                     <h1
-                        class="overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-semibold"
                         v-tooltip.top="{
                             value: name,
                             pt: { root: 'font-nunito' },
                         }"
+                        class="overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-semibold"
                     >
                         {{ name }}
                     </h1>
@@ -306,19 +306,19 @@ const onSave = handleSubmit(async (values) => {
                 <Button
                     type="button"
                     icon="pi pi-ellipsis-v"
-                    @click="toggle"
                     aria-haspopup="true"
                     aria-controls="overlay_menu"
                     class="justify-end"
+                    @click="toggle"
                 />
             </div>
             <NuxtLink :to="link">
                 <h2
-                    class="-mt-1.5 overflow-hidden overflow-ellipsis whitespace-nowrap text-lg font-medium"
                     v-tooltip.bottom="{
                         value: destination,
                         pt: { root: 'font-nunito' },
                     }"
+                    class="-mt-1.5 overflow-hidden overflow-ellipsis whitespace-nowrap text-lg font-medium"
                 >
                     {{ destination }}
                 </h2>
@@ -326,9 +326,9 @@ const onSave = handleSubmit(async (values) => {
                     class="mt-1.5 border-b-2 border-dashed border-border-grey text-xs dark:border-input-placeholder md:text-sm"
                 >
                     <span class="mr-0.5 text-border">
-                        <T keyName="dashboard.date" />
+                        <T key-name="dashboard.date" />
                     </span>
-                    <br class="sm:hidden" />
+                    <br class="sm:hidden" >
                     <span class="whitespace-nowrap text-text dark:text-white"
                         >{{ format(from, "dd/MM/yyyy") }} -
                         {{ format(to, "dd/MM/yyyy") }}</span
@@ -338,17 +338,17 @@ const onSave = handleSubmit(async (values) => {
                     class="mt-1 border-b-2 border-dashed border-border-grey text-xs dark:border-input-placeholder md:text-sm"
                 >
                     <span class="mr-0.5 text-border">
-                        <T keyName="dashboard.role" />
+                        <T key-name="dashboard.role" />
                     </span>
                     <span class="text-text dark:text-white">
-                        <T :keyName="roleType" />
+                        <T :key-name="roleType" />
                     </span>
                 </h3>
             </NuxtLink>
         </div>
         <Menu
-            ref="menu"
             id="overlay_menu"
+            ref="menu"
             :model="props.role === 1 ? itemsJourneyGuide : itemsJourneyMember"
             class="bg-input dark:bg-input-dark"
             :popup="true"
@@ -394,12 +394,12 @@ const onSave = handleSubmit(async (values) => {
                             for="journey-name"
                             class="text-base font-bold sm:text-xl"
                         >
-                            <T keyName="form.input.journey.name" />
+                            <T key-name="form.input.journey.name" />
                         </label>
                         <FormInput
                             id="journey-name"
                             name="name"
-                            translationKey="form.input.journey.name"
+                            translation-key="form.input.journey.name"
                             :prefill="props.name"
                             class="my-0 mb-1 w-2/3"
                         />
@@ -409,12 +409,12 @@ const onSave = handleSubmit(async (values) => {
                             for="journey-destination"
                             class="text-base font-bold sm:text-xl"
                         >
-                            <T keyName="form.input.journey.destination" />
+                            <T key-name="form.input.journey.destination" />
                         </label>
                         <FormInput
                             id="journey-destination"
                             name="destination"
-                            translationKey="form.input.journey.destination"
+                            translation-key="form.input.journey.destination"
                             class="my-0 mb-1 w-2/3"
                             :prefill="props.destination"
                         />
@@ -424,13 +424,13 @@ const onSave = handleSubmit(async (values) => {
                             for="journey-range-calendar"
                             class="text-base font-bold sm:text-xl"
                         >
-                            <T keyName="dashboard.edit.dates" />
+                            <T key-name="dashboard.edit.dates" />
                         </label>
                         <FormCalendar
                             id="journey-range-calendar"
                             name="range"
                             class="my-0 mr-0 mt-5 w-2/3"
-                            translationKey="form.input.journey.dates"
+                            translation-key="form.input.journey.dates"
                             :prefill="[
                                 new Date(props.from),
                                 new Date(props.to),
@@ -440,7 +440,6 @@ const onSave = handleSubmit(async (values) => {
                 </div>
                 <div class="mt-10 flex justify-between gap-2">
                     <Button
-                        @click="confirmDelete($event)"
                         type="button"
                         :label="t('common.delete')"
                         icon="pi pi-trash"
@@ -449,6 +448,7 @@ const onSave = handleSubmit(async (values) => {
                             root: { class: 'flex items-center justify-center' },
                             label: { class: 'display-block flex-none' },
                         }"
+                        @click="confirmDelete($event)"
                     />
                     <Button
                         type="submit"

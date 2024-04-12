@@ -65,8 +65,11 @@ async function loginUser(userData: User) {
             life: 3000,
         });
         await navigateTo("/dashboard");
-    } catch (error: any) {
-        if (error.response?.status === 422) {
+    } catch (error: unknown) {
+        if (
+            (error as Error & { response?: { status?: number } }).response
+                ?.status === 422
+        ) {
             toast.add({
                 severity: "error",
                 summary: t.value("common.toast.error.heading"),
@@ -75,6 +78,7 @@ async function loginUser(userData: User) {
             });
             return;
         }
+        throw error;
     }
 }
 </script>
@@ -117,33 +121,33 @@ async function loginUser(userData: User) {
                         for="outerBlock"
                         class="px-2 text-center text-3xl font-bold text-text dark:text-white lg:ml-7 lg:text-left"
                     >
-                        <T keyName="form.header.login" />
+                        <T key-name="form.header.login" />
                     </legend>
-                    <form @submit="onSubmit" class="w-5/6">
+                    <form class="w-5/6" @submit="onSubmit">
                         <FormInput
                             id="email"
                             name="email"
-                            translationKey="form.input.email"
+                            translation-key="form.input.email"
                         />
 
                         <FormPassword
                             id="password"
                             name="password"
-                            :feedbackStyle="true"
-                            translationKey="form.input.password"
+                            :feedback-style="true"
+                            translation-key="form.input.password"
                         />
 
                         <button
                             class="text-md my-5 mt-4 rounded-2xl border-2 border-cta-border bg-input px-6 py-2.5 font-nunito font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
                         >
-                            <T keyName="form.button.login" />
+                            <T key-name="form.button.login" />
                         </button>
                     </form>
                     <NuxtLink
                         to="/register"
                         class="my-1 mt-auto font-nunito font-semibold underline dark:text-white"
                     >
-                        <T keyName="form.text.no_account" />
+                        <T key-name="form.text.no_account" />
                     </NuxtLink>
                 </fieldset>
             </div>

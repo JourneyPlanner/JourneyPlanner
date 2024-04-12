@@ -30,20 +30,20 @@ async function logoutUser() {
         <div class="mt-5 flex flex-row gap-5">
             <select v-model="colorMode.preference" class="h-8 w-28 border">
                 <option value="system">
-                    <T keyName="common.system" />
+                    <T key-name="common.system" />
                 </option>
                 <option value="light">
-                    <T keyName="common.light" />
+                    <T key-name="common.light" />
                 </option>
                 <option value="dark">
-                    <T keyName="common.dark" />
+                    <T key-name="common.dark" />
                 </option>
             </select>
 
             <select
                 :value="tolgee.getLanguage()"
-                v-on:change="changeLanguage"
                 class="h-8 w-28 border"
+                @change="changeLanguage"
             >
                 <option value="en">English</option>
                 <option value="de">Deutsch</option>
@@ -54,14 +54,14 @@ async function logoutUser() {
                 <button
                     class="min-w-28 rounded-lg border-2 border-cta-border py-2 font-bold text-text hover:bg-cta-bg dark:hover:bg-cta-bg-dark"
                 >
-                    <T keyName="form.button.register" />
+                    <T key-name="form.button.register" />
                 </button>
             </NuxtLink>
             <button
                 class="min-w-28 rounded-lg border-2 border-cta-border py-2 font-bold text-text hover:bg-cta-bg dark:hover:bg-cta-bg-dark"
                 @click="logoutUser"
             >
-                <T keyName="form.button.logout" />
+                <T key-name="form.button.logout" />
             </button>
         </div>
     </div>

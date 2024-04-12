@@ -62,11 +62,11 @@ const onSubmit = handleSubmit(async (values) => {
         life: 6000,
     });
 
-    let name = values.journeyName;
-    let destination = values.journeyDestination;
-    let from = format(values.journeyRange[0], "yyyy-MM-dd");
-    let to = format(values.journeyRange[1], "yyyy-MM-dd");
-    let invite = journeyInvite;
+    const name = values.journeyName;
+    const destination = values.journeyDestination;
+    const from = format(values.journeyRange[0], "yyyy-MM-dd");
+    const to = format(values.journeyRange[1], "yyyy-MM-dd");
+    const invite = journeyInvite;
 
     const journey = {
         name,
@@ -129,23 +129,23 @@ function copyToClipboard() {
                         for="create-journey"
                         class="ml-4 px-2 text-center text-2xl font-bold text-text dark:text-white lg:text-left lg:text-3xl"
                     >
-                        <T keyName="form.header.journey.create" />
+                        <T key-name="form.header.journey.create" />
                     </legend>
-                    <form @submit="onSubmit" class="px-1 lg:px-5">
+                    <form class="px-1 lg:px-5" @submit="onSubmit">
                         <FormInput
                             id="journey-name"
                             name="journeyName"
-                            translationKey="form.input.journey.name"
+                            translation-key="form.input.journey.name"
                         />
                         <FormInput
                             id="journey-destination"
                             name="journeyDestination"
-                            translationKey="form.input.journey.destination"
+                            translation-key="form.input.journey.destination"
                         />
                         <FormCalendar
                             id="journey-range-calendar"
                             name="journeyRange"
-                            translationKey="form.input.journey.dates"
+                            translation-key="form.input.journey.dates"
                         />
 
                         <Divider
@@ -155,19 +155,19 @@ function copyToClipboard() {
 
                         <div class="relative my-2 flex">
                             <input
-                                type="text"
                                 id="journey-invite"
-                                name="journey-invite"
                                 v-model="journeyInviteLink"
+                                type="text"
+                                name="journey-invite"
                                 disabled
                                 class="placeholder:text-transparent text-md peer w-[90%] rounded-lg border-2 border-border bg-input-disabled px-2.5 pb-1 pt-4 font-bold text-text-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark-grey dark:text-input-disabled-dark-gray"
                                 placeholder=" "
-                            />
+                            >
                             <label
                                 for="journey-invite"
                                 class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-link transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-input-label dark:text-border"
                             >
-                                <T keyName="form.input.journey.invite" />
+                                <T key-name="form.input.journey.invite" />
                             </label>
                             <div class="flex items-center justify-center">
                                 <button
@@ -186,7 +186,7 @@ function copyToClipboard() {
                                     type="button"
                                     class="rounded-xl border-2 border-cancel-border bg-input px-7 py-1 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-white dark:hover:bg-cancel-bg-dark"
                                 >
-                                    <T keyName="common.button.cancel" />
+                                    <T key-name="common.button.cancel" />
                                 </button>
                             </NuxtLink>
 
@@ -194,7 +194,7 @@ function copyToClipboard() {
                                 type="submit"
                                 class="rounded-xl border-2 border-cta-border bg-input px-7 py-1 font-bold text-text hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
                             >
-                                <T keyName="common.button.create" />
+                                <T key-name="common.button.create" />
                             </button>
                         </div>
                     </form>

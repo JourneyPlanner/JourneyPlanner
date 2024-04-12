@@ -45,9 +45,9 @@ const onSubmit = handleSubmit((values) => {
 /**
  * use the sanctum client to register a user
  * shows toast messages if success/error
- * @param {Object} userData
+ * @param {object} userData
  */
-async function registerUser(userData: Object) {
+async function registerUser(userData: object) {
     toast.add({
         severity: "info",
         summary: t.value("common.toast.info.heading"),
@@ -119,42 +119,42 @@ async function registerUser(userData: Object) {
                             for="outerBlock"
                             class="px-2 text-center text-3xl font-bold text-text dark:text-white lg:ml-7 lg:text-left"
                         >
-                            <T keyName="form.header.register" />
+                            <T key-name="form.header.register" />
                         </legend>
-                        <form @submit="onSubmit" class="w-4/5">
+                        <form class="w-4/5" @submit="onSubmit">
                             <FormInput
                                 id="email"
                                 name="email"
                                 autocomplete="email"
-                                translationKey="form.input.email"
+                                translation-key="form.input.email"
                             />
 
                             <FormInput
                                 id="firstName"
                                 name="firstName"
                                 autocomplete="given-name"
-                                translationKey="form.input.first.name"
+                                translation-key="form.input.first.name"
                             />
 
                             <FormInput
                                 id="lastName"
                                 name="lastName"
                                 autocomplete="family-name"
-                                translationKey="form.input.last.name"
+                                translation-key="form.input.last.name"
                             />
                             <FormPassword
                                 id="password"
                                 name="password"
                                 :feedback="true"
-                                :feedbackStyle="true"
-                                translationKey="form.input.password"
+                                :feedback-style="true"
+                                translation-key="form.input.password"
                             />
                             <div class="mt-4">
                                 <FormPassword
                                     id="password_confirmation"
                                     name="password_confirmation"
                                     :feedback="false"
-                                    translationKey="form.input.password.repeat"
+                                    translation-key="form.input.password.repeat"
                                 />
                             </div>
                             <div class="mt-3">
@@ -164,14 +164,14 @@ async function registerUser(userData: Object) {
                             <button
                                 class="text-md my-4 mt-4 rounded-2xl border-2 border-cta-border bg-input px-6 py-2.5 font-nunito font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
                             >
-                                <T keyName="form.button.register" />
+                                <T key-name="form.button.register" />
                             </button>
                         </form>
                         <NuxtLink
                             to="/login"
                             class="my-1 mt-auto font-nunito font-semibold underline dark:text-white"
                         >
-                            <T keyName="form.text.already_account" />
+                            <T key-name="form.text.already_account" />
                         </NuxtLink>
                     </fieldset>
                 </div>
