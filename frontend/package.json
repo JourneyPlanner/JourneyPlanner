@@ -9,7 +9,7 @@
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
-        "prepare": "cd .. && husky install frontend/.husky"
+        "prepare": "cd .. && husky frontend/.husky"
     },
     "dependencies": {
         "@nuxt/eslint": "^0.3.6",
@@ -45,7 +45,7 @@
         "vue-tsc": "^1.8.27"
     },
     "lint-staged": {
-        "*": [
+        "*.*": [
             "eslint --fix",
             "prettier --write"
         ]
