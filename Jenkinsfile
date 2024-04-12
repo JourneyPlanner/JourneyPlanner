@@ -21,6 +21,7 @@ pipeline {
                     script {
                         sh 'npm install'
                         sh 'npx prettier . --check'
+                        sh 'npx eslint .'
                     }
                 }
             }
