@@ -184,7 +184,7 @@ async function changeRole(userid: string, selectedRole: number) {
                     class="w-5/6 rounded-md bg-input-disabled px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
                     disabled
                     :value="journeyData.invite"
-                >
+                />
                 <div class="flex w-1/5 justify-end">
                     <button
                         class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-cta-border hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark"
@@ -280,7 +280,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                                 class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
                                                 disabled
                                                 :value="journeyData.name"
-                                            >
+                                            />
                                             <T
                                                 key-name="form.input.journey.destination"
                                             />
@@ -288,7 +288,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                                 class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
                                                 disabled
                                                 :value="journeyData.destination"
-                                            >
+                                            />
                                             <T
                                                 key-name="form.input.journey.date"
                                             />
@@ -303,7 +303,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                                     ' - ' +
                                                     format(toDate, 'dd/MM/yyyy')
                                                 "
-                                            >
+                                            />
                                         </div>
                                         <div class="relative -mt-1 w-full">
                                             <SvgStripes
@@ -351,7 +351,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                             class="absolute right-[50%] top-[25%] z-20 w-40 -translate-y-[25%] translate-x-[50%] max-sm:mt-1"
                                             :src="qrcode"
                                             alt="QR Code"
-                                        >
+                                        />
                                         <div
                                             class="absolute bottom-4 right-2 z-40 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-input-placeholder pl-1.5 pr-1.5 text-xs text-input-placeholder dark:border-white dark:text-white"
                                         >
@@ -396,13 +396,13 @@ async function changeRole(userid: string, selectedRole: number) {
                                     class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
                                     disabled
                                     :value="journeyData.name"
-                                >
+                                />
                                 <T key-name="form.input.journey.destination" />
                                 <input
                                     class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
                                     disabled
                                     :value="journeyData.destination"
-                                >
+                                />
                                 <T key-name="form.input.journey.date" />
                                 <input
                                     class="text-md mb-2 rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white md:w-5/6 lg:w-2/3"
@@ -412,7 +412,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                         ' - ' +
                                         format(toDate, 'dd/MM/yyyy')
                                     "
-                                >
+                                />
                             </div>
                             <div
                                 class="absolute w-full md:col-span-2 lg:col-span-2 xl:col-span-1 2xl:col-span-1"
@@ -452,7 +452,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 class="absolute right-[50%] top-[25%] z-20 -translate-y-[25%] translate-x-[50%] md:w-[8rem] lg:w-[10rem]"
                                 :src="qrcode"
                                 alt="QR Code"
-                            >
+                            />
                             <SvgStripes
                                 class="absolute right-0 md:w-[8.8rem] lg:w-[10.15rem]"
                             />
@@ -479,7 +479,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                                 class="w-full rounded-l-md border-2 border-border-gray bg-input-disabled pb-1 pl-2.5 pt-1 text-base font-medium text-text shadow-sm focus:outline-none focus:ring-1 dark:border-input-disabled-dark-grey dark:bg-color-gray-200 dark:text-white"
                                                 disabled
                                                 :value="journeyData.invite"
-                                            >
+                                            />
                                             <button
                                                 class="flex h-9 w-9 items-center justify-center rounded-r-md border-2 border-y-2 border-r-2 border-cta-border bg-input-disabled shadow-sm hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark"
                                                 @click="copyToClipboard"

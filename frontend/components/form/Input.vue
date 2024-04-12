@@ -34,14 +34,14 @@ defineEmits(["input"]);
             @focus="isFocused = true"
             @blur="isFocused = false"
             @input="$emit('input', $event)"
-        >
+        />
         <label
             :for="id"
             class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-input-placeholder transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-input-label"
         >
             <T :key-name="translationKey" />
         </label>
-        <br v-if="errorMessage" >
+        <br v-if="errorMessage" />
         <div class="h-1.5 w-full text-left">
             <span
                 class="ml-3 text-xs text-error dark:font-bold dark:text-error-dark"

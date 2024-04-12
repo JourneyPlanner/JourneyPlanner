@@ -328,7 +328,7 @@ const onSave = handleSubmit(async (values) => {
                     <span class="mr-0.5 text-border">
                         <T key-name="dashboard.date" />
                     </span>
-                    <br class="sm:hidden" >
+                    <br class="sm:hidden" />
                     <span class="whitespace-nowrap text-text dark:text-white"
                         >{{ format(from, "dd/MM/yyyy") }} -
                         {{ format(to, "dd/MM/yyyy") }}</span

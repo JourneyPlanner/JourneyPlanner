@@ -15,7 +15,7 @@ export default defineNuxtConfig({
         "@vee-validate/nuxt",
         "nuxt-auth-sanctum",
         "@pinia/nuxt",
-        "@nuxt/eslint"
+        "@nuxt/eslint",
     ],
     css: [
         "@/assets/css/fonts/fonts.css",

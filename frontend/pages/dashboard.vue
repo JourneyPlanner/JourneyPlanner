@@ -202,7 +202,7 @@ function editJourney(journey: Journey, id: string) {
                             class="rounded-3xl border border-border-grey bg-input px-3 py-1.5 placeholder-input-placeholder focus:outline-none focus:ring-1 focus:ring-cta-border dark:border-input-dark dark:bg-input-dark dark:placeholder-text-light-dark"
                             :placeholder="t('dashboard.search')"
                             @input="searchJourneys"
-                        >
+                        />
                         <button @click="searchInput.focus()">
                             <SvgSearchIcon
                                 class="absolute right-1 top-1 h-7 w-7"
@@ -257,7 +257,7 @@ function editJourney(journey: Journey, id: string) {
                         class="w-40 rounded-3xl border border-border-grey bg-input px-3 py-1.5 placeholder-input-placeholder focus:outline-none focus:ring-1 focus:ring-cta-border dark:border-input-dark dark:bg-input-dark dark:placeholder-text-light-dark md:w-52"
                         :placeholder="t('dashboard.search')"
                         @input="searchJourneys"
-                    >
+                    />
                     <button @click="searchInputMobile.focus()">
                         <SvgSearchIcon class="absolute right-1 top-1 h-7 w-7" />
                     </button>
