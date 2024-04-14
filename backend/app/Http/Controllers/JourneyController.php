@@ -16,7 +16,10 @@ class JourneyController extends Controller
     public function index(Request $request)
     {
         // Get all journeys of the authenticated user
-        $journeys = auth()->user()->journeys()->get(['id', 'name', 'destination', 'from', 'to', 'role']);
+        $journeys = auth()
+            ->user()
+            ->journeys()
+            ->get(["id", "name", "destination", "from", "to", "role"]);
 
         return response()->json($journeys);
     }
@@ -26,24 +29,22 @@ class JourneyController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate(
-            [
-                'name' => 'required|string',
-                'destination' => 'required|string',
-                'from' => 'required|date',
-                'to' => 'required|date',
-                'invite' => 'required|uuid',
-            ]
-        );
+        $validated = $request->validate([
+            "name" => "required|string",
+            "destination" => "required|string",
+            "from" => "required|date",
+            "to" => "required|date",
+            "invite" => "required|uuid",
+        ]);
 
         $journey = Journey::create($validated);
         // Add the authenticated user to the journey with the role of 1 (journey guide)
-        $journey->users()->attach(auth()->id(), ['role' => 1]);
+        $journey->users()->attach(auth()->id(), ["role" => 1]);
 
         return response()->json(
             [
-                'message' => 'Journey created successfully',
-                'journey' => $journey,
+                "message" => "Journey created successfully",
+                "journey" => $journey,
             ],
             201
         );
@@ -55,7 +56,7 @@ class JourneyController extends Controller
     public function show(Journey $journey)
     {
         // Check if the authenticated user is a member of the requested journey
-        Gate::authorize('journeyMember', $journey);
+        Gate::authorize("journeyMember", $journey);
 
         return response()->json($journey);
     }
@@ -65,7 +66,7 @@ class JourneyController extends Controller
      */
     public function update(JourneyRequest $request, Journey $journey)
     {
-        Gate::authorize('journeyGuide', $journey);
+        Gate::authorize("journeyGuide", $journey);
 
         // Validate the request
         $validated = $request->safe()->all();
@@ -78,7 +79,7 @@ class JourneyController extends Controller
      */
     public function destroy(Request $request, Journey $journey)
     {
-        Gate::authorize('journeyGuide', $journey);
+        Gate::authorize("journeyGuide", $journey);
 
         $journey->delete();
     }

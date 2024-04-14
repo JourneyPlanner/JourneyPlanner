@@ -15,11 +15,32 @@ pipeline {
                 }
             }
         }
+        stage('Check Frontend Code') {
+            steps {
+                dir('frontend') {
+                    script {
+                        sh 'npm install'
+                        sh 'npx prettier . --check'
+                        sh 'npx eslint .'
+                    }
+                }
+            }
+        }
         stage('Build Backend') {
             steps {
                 dir('backend') {
                     script {
                         docker.build(env.BACKEND_IMAGE)
+                    }
+                }
+            }
+        }
+        stage('Check Backend Code') {
+            steps {
+                dir('backend') {
+                    script {
+                        sh 'npm install'
+                        sh 'npx prettier . --check'
                     }
                 }
             }

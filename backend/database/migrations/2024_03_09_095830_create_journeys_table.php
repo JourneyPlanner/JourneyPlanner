@@ -10,13 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('journeys', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('destination');
-            $table->date('from');
-            $table->date('to');
-            $table->uuid('invite');
+        Schema::create("journeys", function (Blueprint $table) {
+            $table->uuid("id")->primary();
+            $table->string("name");
+            $table->string("destination");
+            $table->date("from");
+            $table->date("to");
+            $table->uuid("invite");
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('journeys');
+        Schema::dropIfExists("journeys");
     }
 };

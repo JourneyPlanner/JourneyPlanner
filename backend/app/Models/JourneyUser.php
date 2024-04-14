@@ -12,12 +12,10 @@ class JourneyUser extends Model
     /**
      * The table associated with the model.
      */
-    protected $table = 'journey_user';
+    protected $table = "journey_user";
 
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [
-        'role'
-    ];
+    protected $fillable = ["role"];
 }
