@@ -25,7 +25,10 @@ Route::apiResource("journey", JourneyController::class)->middleware(
     "auth:sanctum"
 );
 
-Route::apiResource("journey/{id}/activity", ActivityController::class); //->middleware("auth:sanctum");
+Route::apiResource(
+    "journey/{id}/activity",
+    ActivityController::class
+)->middleware("auth:sanctum");
 
 Route::apiResource("journey/{id}/user", JourneyUserController::class)
     ->only("index", "update")
