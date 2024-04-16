@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\JourneyUserController;
 use Illuminate\Http\Request;
@@ -23,6 +24,8 @@ Route::middleware(["auth:sanctum"])->get("/user", function (Request $request) {
 Route::apiResource("journey", JourneyController::class)->middleware(
     "auth:sanctum"
 );
+
+Route::apiResource("journey/{id}/activity", ActivityController::class); //->middleware("auth:sanctum");
 
 Route::apiResource("journey/{id}/user", JourneyUserController::class)
     ->only("index", "update")
