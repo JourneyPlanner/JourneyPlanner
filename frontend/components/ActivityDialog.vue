@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { useTranslate, T } from "@tolgee/vue";
+import { T, useTranslate } from "@tolgee/vue";
 import { useForm } from "vee-validate";
-import type { Slot } from "vue";
 import * as yup from "yup";
 
 const { t } = useTranslate();
@@ -11,35 +10,19 @@ const emit = defineEmits(["close"]);
 
 const isVisible = ref(props.visible);
 const loadingSave = ref(false);
-const { value: dateValue } = useField<Date>("date");
-const { value: timeValue } = useField<String[]>("time");
+
 const store = useJourneyStore();
-const date = ref();
-const time = ref();
+const to = new Date(store.getToDate());
+const from = new Date(store.getFromDate());
 
-interface SlotProps {
-    date: {
-        day: number;
-        month: number;
-        year: number;
-    };
-}
+const selectedDate = ref();
 
-const toDate = new Date(store.getToDate()).getDate();
-const fromDate = new Date(store.getFromDate()).getDate();
-const toMonth = new Date(store.getToDate()).getMonth();
-const fromMonth = new Date(store.getFromDate()).getMonth();
-const toYear = new Date(store.getToDate()).getFullYear();
-const fromYear = new Date(store.getFromDate()).getFullYear();
-
-function checkJourneyRange(slotProp: SlotProps) {
-    return slotProp.date.day >= fromDate && slotProp.date.day <= toDate && slotProp.date.month >= fromMonth && slotProp.date.month <= toMonth && slotProp.date.year >= fromYear && slotProp.date.year <= toYear;
-};
-
-
-watch(() => props.visible, (value) => {
-    isVisible.value = value;
-});
+watch(
+    () => props.visible,
+    (value) => {
+        isVisible.value = value;
+    },
+);
 
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
@@ -50,101 +33,164 @@ const { handleSubmit } = useForm({
 
 const onSubmit = handleSubmit((values) => {
     console.log(values);
+    console.log(values.duration.getHours());
+    console.log(values.duration.getMinutes());
 });
 
 const close = () => {
+    selectedDate.value = null;
     emit("close");
 };
 
+function setSelectedDate(date: Date) {
+    selectedDate.value = date;
+    console.log(selectedDate.value);
+}
 </script>
 
-
 <template>
-    <Dialog v-model:visible="isVisible" modal class="w-2/4" dragabble="false" @hide="close"
-        :pt="{ root: { class: 'font-nunito' }, header: { class: 'flex justify-end h-1 pb-2' }, }">
+    <Dialog
+        v-model:visible="isVisible"
+        modal
+        class="w-2/4"
+        :pt="{
+            root: { class: 'font-nunito' },
+            header: { class: 'flex justify-end h-1 pb-2' },
+        }"
+        @hide="close"
+    >
         <form @submit="onSubmit">
             <TabView :pt="{ root: { class: 'font-nunito' } }">
                 <TabPanel :header="t('activity.create.header')">
                     <div class="grid grid-cols-2 grid-rows-4 gap-x-10">
-                        <FormClassicInput id="name" name="name" translationKey="form.input.activity.name" />
-                        <FormTimeInput id="duration" name="duration" translationKey="form.input.activity.duration" />
-                        <FormClassicInput id="address" name="address" translationKey="form.input.activity.address" />
-                        <FormClassicInput id="costs" name="costs" translationKey="form.input.activity.costs" />
-                        <FormClassicInput id="description" name="description"
-                            translationKey="form.input.activity.description" class="col-span-2 row-span-3"
-                            customClass="h-full" inputType="textarea" />
+                        <FormClassicInputIcon
+                            id="name"
+                            name="name"
+                            translation-key="form.input.activity.name"
+                            icon="pi-tag"
+                        />
+                        <FormTimeInput
+                            id="duration"
+                            name="duration"
+                            translation-key="form.input.activity.duration"
+                            class="w-full"
+                        />
+                        <FormClassicInputIcon
+                            id="address"
+                            name="address"
+                            translation-key="form.input.activity.address"
+                            icon="pi-map-marker"
+                        />
+                        <FormClassicInputIcon
+                            id="costs"
+                            name="costs"
+                            translation-key="form.input.activity.costs"
+                            icon="pi-money-bill"
+                        />
+                        <FormClassicInputIcon
+                            id="description"
+                            name="description"
+                            translation-key="form.input.activity.description"
+                            class="col-span-2 row-span-3"
+                            custom-class="h-full"
+                            input-type="textarea"
+                        />
                     </div>
                 </TabPanel>
                 <TabPanel :header="t('activity.extra.header')">
-                    <div class="grid grid-cols-2 grid-rows-1 gap-x-10 ">
+                    <div class="grid grid-cols-2 grid-rows-1 gap-x-10">
                         <div>
-                            <FormGroupInput id="link" name="link" translationKey="form.input.activity.link"
-                                icon="pi-globe" />
+                            <FormGroupInput
+                                id="link"
+                                name="link"
+                                translation-key="form.input.activity.link"
+                                icon="pi-globe"
+                            />
                             <label>
-                                <T keyName="form.input.activity.contact" />
+                                <T key-name="form.input.activity.contact" />
                             </label>
-                            <FormGroupInput id="email" name="email" icon="pi-at" />
-                            <FormGroupInput id="phone" name="phone" icon="pi-phone" />
+                            <FormGroupInput
+                                id="email"
+                                name="email"
+                                icon="pi-at"
+                            />
+                            <FormGroupInput
+                                id="phone"
+                                name="phone"
+                                icon="pi-phone"
+                            />
                         </div>
-                        <FormClassicInput id="opening-hours" name="opening-hours"
-                            translationKey="form.input.activity.opening-hours" customClass="h-full pb-32"
-                            inputType="textarea" class="col-start-2 row-span-2" />
+                        <FormClassicInputIcon
+                            id="opening-hours"
+                            name="opening-hours"
+                            translation-key="form.input.activity.opening-hours"
+                            custom-class="h-full pb-32"
+                            input-type="textarea"
+                            class="col-start-2 row-span-2"
+                        />
                     </div>
                 </TabPanel>
                 <TabPanel :header="t('activity.manual.header')">
-                    <div class="grid cols-2 grid-rows-1">
-                        <div class="col-start-1">
-                            <Calendar v-model="dateValue" inline showWeek class="border rounded-lg border-border-grey">
-                                <template #date="slotProps">
-                                    <strong v-if="checkJourneyRange(slotProps)" style="font-weight: 800;">{{
-                                        slotProps.date.day
-                                    }}</strong>
-                                    <template v-else>{{ slotProps.date.day }}</template>
-                                </template>
-                            </Calendar>
-                            <p>
-                                <T keyName="form.input.date.info" />
-                            </p>
+                    <div
+                        class="cols-1 md:cols-2 grid grid-rows-2 md:grid-rows-1"
+                    >
+                        <div class="col-start-1 h-72">
+                            <FormInlineCalendar
+                                id="calendar-inline"
+                                name="calendar-date"
+                                :from="from"
+                                :to="to"
+                                :prefill="selectedDate"
+                                @date-selected="setSelectedDate"
+                            />
                         </div>
-                        <!-- TODO: time und date werden noch nicht submitted -->
-                        <div class="col-start-2 flex flex-col gap-5">
+                        <div class="flex flex-col gap-5 md:col-start-2">
                             <div class="flex flex-col">
                                 <label for="calendar-input">
-                                    <T keyName="form.input.activity.date" />
+                                    <T key-name="form.input.activity.date" />
                                 </label>
-                                <Calendar v-model="dateValue" id="calendar-input" showIcon iconDisplay="input"
-                                    name="date"
-                                    inputClass="block rounded-lg px-2.5 pb-1 pt-1 text-md text-text font-normal bg-input border-2 border-border focus:outline-none focus:ring-1" />
+                                <FormInputCalendar
+                                    id="calendar-input"
+                                    name="calendar-input"
+                                    :from="from"
+                                    :to="to"
+                                    :prefill="selectedDate"
+                                    @date-selected="setSelectedDate"
+                                />
                             </div>
-                            <div class="flex flex-col">
-                                <label for="calendar-input">
-                                    <T keyName="form.input.activity.time" />
-                                </label>
-                                <!-- TODO: type -->
-                                <Calendar v-model="timeValue" showIcon iconDisplay="input" timeOnly name="time"
-                                    inputClass="block rounded-lg px-2.5 pb-1 pt-1 text-md text-text font-normal bg-input border-2 border-border focus:outline-none focus:ring-1">
-                                    <template #inputicon="{ clickCallback }">
-                                        <InputIcon class="pi pi-clock cursor-pointer" @click="clickCallback" />
-                                    </template>
-                                </Calendar>
-                            </div>
+
+                            <FormTimeInput
+                                id="calendar-time"
+                                name="calendar-time"
+                                translation-key="form.input.activity.time"
+                            />
                         </div>
                     </div>
                 </TabPanel>
             </TabView>
-            <!-- TODO: padding lr -->
-            <div class="flex justify-between mt-10 gap-2 col-span-2">
-                <Button @click="close" type="button" :label="t('common.button.cancel')" icon="pi pi-times"
-                    class="w-40 h-9 px-2 text-text dark:text-white font-bold border-2 bg-input dark:bg-input-dark hover:bg-cancel-bg dark:hover:bg-cancel-bg-dark border-cancel-border rounded-xl"
+            <div class="col-span-2 mt-10 flex justify-between gap-2 px-5">
+                <Button
+                    type="button"
+                    :label="t('common.button.cancel')"
+                    icon="pi pi-times"
+                    class="h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-white dark:hover:bg-cancel-bg-dark"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
                         label: { class: 'display-block flex-none' },
-                    }" />
-                <Button type="submit" :label="t('common.save')" icon="pi pi-check" :loading="loadingSave" :pt="{
-                    root: { class: 'flex items-center justify-center' },
-                    label: { class: 'display-block flex-none' },
-                }"
-                    class="w-40 h-9 flex flex-row justify-center text-center font-bold text-text dark:text-white border-2 bg-input dark:bg-input-dark hover:bg-fill-green-save dark:hover:bg-fill-green-save-dark border-border-green-save dark:border-border-green-save-dark rounded-xl" />
+                    }"
+                    @click="close"
+                />
+                <Button
+                    type="submit"
+                    :label="t('common.save')"
+                    icon="pi pi-check"
+                    :loading="loadingSave"
+                    :pt="{
+                        root: { class: 'flex items-center justify-center' },
+                        label: { class: 'display-block flex-none' },
+                    }"
+                    class="flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-border-green-save bg-input text-center font-bold text-text hover:bg-fill-green-save dark:border-border-green-save-dark dark:bg-input-dark dark:text-white dark:hover:bg-fill-green-save-dark"
+                />
             </div>
         </form>
     </Dialog>
