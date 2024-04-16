@@ -2,7 +2,7 @@
 const props = defineProps({
     name: { type: String, required: true },
     id: { type: String, required: true },
-    prefill: { type: Date, default: "" },
+    prefill: { type: Date, default: null },
     from: { type: Date, required: true },
     to: { type: Date, required: true },
 });
@@ -26,14 +26,14 @@ const fromYear = props.from.getFullYear();
 
 const { value } = useField<Date>(() => props.name);
 
-if (props.prefill) {
+if (props.prefill instanceof Date) {
     value.value = props.prefill;
 }
 
 watch(
     () => props.prefill,
     () => {
-        value.value = props.prefill;
+        value.value = new Date(props.prefill);
     },
 );
 
@@ -67,6 +67,7 @@ function checkJourneyRange(slotProp: SlotProps) {
         :pt="{
             root: { class: 'font-nunito text-text' },
             title: { class: 'flex gap-1' },
+            panel: { class: 'font-nunito text-text' },
         }"
         @date-select="dateSelected"
     >

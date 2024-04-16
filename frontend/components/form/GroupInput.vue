@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Field } from "vee-validate";
+import { ErrorMessage, Field } from "vee-validate";
+
 defineProps({
     id: { type: String, required: true },
     name: { type: String, required: true },
@@ -7,21 +8,34 @@ defineProps({
     customClass: { type: String, default: "" },
     inputType: { type: String, default: "" },
     icon: { type: String, default: "" },
+    placeholder: { type: String, default: "" },
 });
 </script>
 
 <template>
-    <div class="mb-2">
-        <label :for="id" class="font-medium">
-            <T :keyName="translationKey" />
+    <div class="mb-2 flex flex-col">
+        <label :for="id" class="text-sm font-medium md:text-base">
+            <T :key-name="translationKey" />
         </label>
         <InputGroup>
-            <InputGroupAddon class="bg-input border-border border-2">
-                <i class="pi text-border" :class="icon"></i>
+            <InputGroupAddon
+                class="border-2 border-border bg-input dark:bg-input-dark"
+            >
+                <i class="pi text-border" :class="icon" />
             </InputGroupAddon>
-            <Field type="text" :as="inputType" :id="id" :name="name"
-                class="block px-2.5 pb-1 pt-1 w-full text-md text-text font-normal bg-input border-r-2 border-t-2 border-b-2 border-border focus:outline-none focus:ring-1"
-                :class="customClass" placeholder=" " />
+            <Field
+                :id="id"
+                type="text"
+                :as="inputType"
+                :name="name"
+                :placeholder="placeholder"
+                class="text-md block w-full border-b-2 border-r-2 border-t-2 border-border bg-input px-2.5 pb-1 pt-1 font-normal text-text focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
+                :class="customClass"
+            />
         </InputGroup>
+        <ErrorMessage
+            :name="name"
+            class="text-sm text-error dark:font-bold dark:text-error-dark"
+        />
     </div>
 </template>
