@@ -16,12 +16,13 @@ return new class extends Migration {
             $table->string("name");
             $table->time("estimated_duration");
             $table->text("opening_hourse")->nullable();
-            $table->text("contact")->nullable();
+            $table->string("email")->nullable();
+            $table->string("phone")->nullable();
             $table->text("link")->nullable();
             $table->double("cost")->nullable();
             $table->text("description")->nullable();
-            $table->string("address")->nullable();
-            $table->string("mapbox_id")->nullable();
+            $table->text("address")->nullable();
+            $table->text("mapbox_id")->nullable();
             $table->decimal("longitude", 11, 8)->nullable();
             $table->decimal("latitude", 10, 8)->nullable();
             $table->timestamps();

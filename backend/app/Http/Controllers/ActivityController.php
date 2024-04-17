@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Activity;
+use App\Models\CalendarActivity;
 use App\Models\Journey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -20,7 +21,7 @@ class ActivityController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created activity in storage.
      */
     public function store(Request $request, $journey): JsonResponse
     {
@@ -32,10 +33,13 @@ class ActivityController extends Controller
             "estimated_duration" => "required|date_format:H:i",
             "mapbox_id" => "nullable|string",
             "opening_hours" => "nullable|string",
-            "contact" => "nullable|string",
+            "email" => "nullable|email",
+            "phone" => "nullable|string",
             "link" => "nullable|url",
             "cost" => "nullable|numeric",
             "description" => "nullable|string",
+            "date" => "nullable|date",
+            "time" => "nullable|date_format:H:i",
         ]);
 
         $activity = new Activity($validated);
@@ -43,6 +47,19 @@ class ActivityController extends Controller
 
         if (!$request->mapbox_id) {
             $activity->save();
+
+            if ($validated["date"]) {
+                if (!$validated["time"]) {
+                    $validated["time"] = "00:00";
+                }
+
+                $calendarActivity = new CalendarActivity([
+                    "activity_id" => $activity->id,
+                    "date" => $validated["date"],
+                    "time" => $validated["time"],
+                ]);
+                $calendarActivity->save();
+            }
 
             return response()->json($activity, 201);
         }
@@ -57,6 +74,19 @@ class ActivityController extends Controller
         $activity->longitude = $geocodingData["geometry"]["coordinates"][0];
         $activity->latitude = $geocodingData["geometry"]["coordinates"][1];
         $activity->address = $geocodingData["properties"]["full_address"];
+
+        if ($validated["date"]) {
+            if (!$validated["time"]) {
+                $validated["time"] = "00:00";
+            }
+
+            $calendarActivity = new CalendarActivity([
+                "activity_id" => $activity->id,
+                "date" => $validated["date"],
+                "time" => $validated["time"],
+            ]);
+            $calendarActivity->save();
+        }
 
         $activity->save();
 
