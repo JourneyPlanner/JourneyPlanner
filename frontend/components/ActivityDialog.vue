@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
 import { format } from "date-fns";
-import { Form } from "vee-validate";
+//import {  } from "vee-validate";
 import * as yup from "yup";
 
 const { t } = useTranslate();
@@ -26,7 +26,24 @@ watch(
     },
 );
 
+interface ActivityForm {
+    name: string;
+    duration: string;
+    address: string;
+    costs: string;
+    description: string;
+    link: string;
+    email: string;
+    phone: string;
+    open: string;
+    date: Date;
+    time: string;
+}
+
+type ActivityFormErrors = Partial<Record<keyof ActivityForm, string>>;
+
 const validationSchema = yup.object({
+    bool: yup.boolean(),
     name: yup.string().required(t.value("form.input.required")),
     duration: yup
         .string()
@@ -41,45 +58,61 @@ const validationSchema = yup.object({
     link: yup.string().url(t.value("form.input.link.error")).nullable(),
     email: yup.string().email(t.value("form.input.email.error")).nullable(),
     phone: yup.string().nullable(),
-    "opening-hours": yup.string().nullable(),
-    "calendar-date": yup.date().nullable(),
-    "calendar-time": yup.string().nullable(),
+    open: yup.string().nullable(),
+    date: yup
+        .string()
+        .ensure()
+        .when("time", (time, schema) => {
+            console.log(time);
+            return time[0] !== undefined
+                ? schema.required(t.value("form.input.activity.date.error"))
+                : schema.notRequired();
+        })
+        .notRequired(),
+    time: yup.string().notRequired(),
 });
 
-function onSubmit(values: {
-    name: string;
-    duration: string;
-    address: string;
-    costs: string;
-    description: string;
-    link: string;
-    email: string;
-    phone: string;
-    "opening-hours": string;
-    "calendar-date": Date;
-    "calendar-time": string;
-}) {
+const { handleSubmit } = useForm<ActivityForm>({
+    validationSchema: validationSchema,
+});
+
+const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
+
+function onSuccess(values: ActivityForm) {
+    const durationDate = new Date(values.duration);
+    const duration = `${durationDate.getHours()}:${String(durationDate.getMinutes()).padStart(2, "0")}`;
+
+    let time = undefined;
+
+    if (values.date) {
+        const timeDate = new Date(values.time);
+        time = `${timeDate.getHours()}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+    }
+
     //TODO: Implement API call
     loadingSave.value = true;
     const activity = {
         name: values.name,
-        duration: values.duration,
+        estimated_duration: duration,
         address: values.address,
         costs: values.costs,
         description: values.description,
         link: values.link,
         email: values.email,
         phone: values.phone,
-        openingHours: values["opening-hours"],
-        date: format(values["calendar-date"], "yyyy-MM-dd"),
-        time: values["calendar-time"],
+        opening_hours: values.open,
+        date: format(values.date, "yyyy-MM-dd"),
+        time: time,
     };
     console.log(activity);
 }
 
-function onInvalidSubmit({ errors }: { errors: { link: string } }) {
+function onInvalidSubmit({ errors }: { errors: ActivityFormErrors }) {
+    console.log(errors);
     if (errors.link) {
         activeIndex.value = 1;
+    } else if (errors.date || errors.time) {
+        activeIndex.value = 2;
     } else {
         activeIndex.value = 0;
     }
@@ -114,11 +147,9 @@ function setSelectedDate(date: Date) {
         }"
         @hide="close"
     >
-        <Form
-            :validation-schema="validationSchema"
+        <form
             class="bg-background font-nunito text-text dark:bg-background-dark dark:text-input"
             @submit="onSubmit"
-            @invalid-submit="onInvalidSubmit"
         >
             <TabView
                 v-model:active-index="activeIndex"
@@ -166,6 +197,7 @@ function setSelectedDate(date: Date) {
                             translation-key="form.input.activity.duration"
                             class="w-full"
                             :default-time="new Array(0, 30)"
+                            custom-class="w-10"
                         />
                         <FormClassicInputIcon
                             id="address"
@@ -188,14 +220,21 @@ function setSelectedDate(date: Date) {
                             input-type="textarea"
                         />
                     </div>
+                    <FormAddressInput />
                 </TabPanel>
                 <TabPanel
                     :header="t('activity.extra.header')"
                     :pt="{
-                        headerAction: {
-                            class: 'font-nunito bg-background dark:bg-background-dark',
-                        },
-                        headerTitle: { class: 'text-input-placeholder' },
+                        headerAction: () => ({
+                            class: [
+                                'font-nunito bg-background dark:bg-background-dark',
+                                {
+                                    'text-border border-b-2 border-border':
+                                        activeIndex === 1,
+                                    'text-input-placeholder': activeIndex !== 1,
+                                },
+                            ],
+                        }),
                     }"
                 >
                     <div
@@ -228,7 +267,7 @@ function setSelectedDate(date: Date) {
                         </div>
                         <FormClassicInputIcon
                             id="opening-hours"
-                            name="opening-hours"
+                            name="open"
                             translation-key="form.input.activity.opening-hours"
                             custom-class="h-full"
                             input-type="textarea"
@@ -239,13 +278,16 @@ function setSelectedDate(date: Date) {
                 <TabPanel
                     :header="t('activity.manual.header')"
                     :pt="{
-                        header: {
-                            class: 'font-nunito bg-background dark:bg-background-dark text-input-placeholder',
-                        },
-                        headerAction: {
-                            class: 'font-nunito bg-background dark:bg-background-dark',
-                        },
-                        headerTitle: { class: 'text-input-placeholder' },
+                        headerAction: () => ({
+                            class: [
+                                'font-nunito bg-background dark:bg-background-dark',
+                                {
+                                    'text-border border-b-2 border-border':
+                                        activeIndex === 2,
+                                    'text-input-placeholder': activeIndex !== 2,
+                                },
+                            ],
+                        }),
                     }"
                 >
                     <div
@@ -255,7 +297,7 @@ function setSelectedDate(date: Date) {
                             <!-- TODO: dark mode color -->
                             <FormInlineCalendar
                                 id="calendar-inline"
-                                name="calendar-date"
+                                name="date"
                                 :from="from"
                                 :to="to"
                                 :prefill="selectedDate"
@@ -263,26 +305,21 @@ function setSelectedDate(date: Date) {
                             />
                         </div>
                         <div
-                            class="mt-2 flex flex-col gap-3 md:col-start-2 md:mt-0 md:gap-5"
+                            class="mt-2 flex flex-col gap-3 md:col-start-2 md:mt-0 md:gap-0"
                         >
-                            <div class="flex flex-col">
-                                <label for="calendar-input">
-                                    <T key-name="form.input.activity.date" />
-                                </label>
-                                <FormInputCalendar
-                                    id="calendar-input"
-                                    name="calendar-input"
-                                    :from="from"
-                                    :to="to"
-                                    :prefill="selectedDate"
-                                    @date-selected="setSelectedDate"
-                                />
-                            </div>
+                            <FormInputCalendar
+                                id="calendar-input"
+                                name="date"
+                                :from="from"
+                                :to="to"
+                                :prefill="selectedDate"
+                                translation-key="form.input.activity.date"
+                                @date-selected="setSelectedDate"
+                            />
                             <FormTimeInput
                                 id="calendar-time"
-                                name="calendar-time"
+                                name="time"
                                 translation-key="form.input.activity.time"
-                                :default-time="new Array(12, 0)"
                             />
                         </div>
                     </div>
@@ -302,7 +339,7 @@ function setSelectedDate(date: Date) {
                 />
                 <Button
                     type="submit"
-                    :label="t('common.save')"
+                    :label="t('common.button.create')"
                     icon="pi pi-check"
                     :loading="loadingSave"
                     :pt="{
@@ -312,6 +349,6 @@ function setSelectedDate(date: Date) {
                     class="flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-border-green-save bg-input text-center font-bold text-text hover:bg-fill-green-save dark:border-border-green-save-dark dark:bg-input-dark dark:text-input dark:hover:bg-fill-green-save-dark"
                 />
             </div>
-        </Form>
+        </form>
     </Dialog>
 </template>
