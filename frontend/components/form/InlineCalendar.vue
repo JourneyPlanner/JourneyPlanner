@@ -65,9 +65,14 @@ function checkJourneyRange(slotProp: SlotProps) {
         class="rounded-lg border border-border-grey"
         date-format="dd/mm/yy"
         :pt="{
-            root: { class: 'font-nunito text-text' },
-            title: { class: 'flex gap-1' },
-            panel: { class: 'font-nunito text-text' },
+            root: { class: 'font-nunito text-text bg-input border-0' },
+            title: { class: 'flex gap-1 text-text dark:text-input' },
+            header: {
+                class: 'bg-input dark:bg-input-dark text-text dark:text-input',
+            },
+            panel: {
+                class: 'font-nunito text-text bg-input dark:bg-input-dark text-border dark:text-border',
+            },
         }"
         @date-select="dateSelected"
     >

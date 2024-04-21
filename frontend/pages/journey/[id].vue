@@ -451,16 +451,16 @@ async function changeRole(userid: string, selectedRole: number) {
                         <div
                             class="relative flex h-full w-full flex-col items-end"
                         >
-                            <img
-                                class="absolute right-[50%] top-[25%] z-20 -translate-y-[25%] translate-x-[50%] md:w-[8rem] lg:w-[10rem]"
-                                :src="qrcode"
-                                alt="QR Code"
-                            />
                             <SvgStripes
                                 class="absolute right-0 md:w-[8.8rem] lg:w-[10.15rem]"
                             />
+                            <img
+                                class="absolute right-[50%] top-[25%] -translate-y-[25%] translate-x-[50%] md:w-[8rem] lg:w-[10rem]"
+                                :src="qrcode"
+                                alt="QR Code"
+                            />
                             <button
-                                class="absolute right-[50%] top-[80%] z-30 flex h-1/6 w-2/5 translate-x-[50%] items-center justify-center rounded-xl border-2 border-cta-border bg-background font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark md:-translate-y-[30%] lg:-translate-y-[2%]"
+                                class="absolute right-[50%] top-[80%] flex h-1/6 w-2/5 translate-x-[50%] items-center justify-center rounded-xl border-2 border-cta-border bg-background font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark md:-translate-y-[30%] lg:-translate-y-[2%]"
                                 @click="toggle"
                             >
                                 <T key-name="journey.button.invite" />
@@ -692,9 +692,12 @@ async function changeRole(userid: string, selectedRole: number) {
                 </div>
             </div>
         </div>
-      <button @click="isActivityDialogVisible = !isActivityDialogVisible">Create
-      activity</button>
-    <ActivityDialog :visible="isActivityDialogVisible" @close="isActivityDialogVisible = false" />
-  </div>
+        <button @click="isActivityDialogVisible = !isActivityDialogVisible">
+            Create activity
+        </button>
+        <ActivityDialog
+            :visible="isActivityDialogVisible"
+            @close="isActivityDialogVisible = false"
+        />
+    </div>
 </template>
-()()()()()()

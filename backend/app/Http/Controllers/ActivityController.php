@@ -31,6 +31,7 @@ class ActivityController extends Controller
         $validated = $request->validate([
             "name" => "required|string",
             "estimated_duration" => "required|date_format:H:i",
+            "full_address" => "nullable|string",
             "mapbox_id" => "nullable|string",
             "opening_hours" => "nullable|string",
             "email" => "nullable|email",
@@ -45,11 +46,11 @@ class ActivityController extends Controller
         $activity = new Activity($validated);
         $activity->journey_id = $journey->id;
 
-        if (!$request->mapbox_id) {
+        if (!array_key_exists("full_address", $validated) || !$validated["full_address"]) {
             $activity->save();
 
-            if ($validated["date"]) {
-                if (!$validated["time"]) {
+            if (array_key_exists("date", $validated) && $validated["date"]) {
+                if (!array_key_exists("time", $validated) || !$validated["time"]) {
                     $validated["time"] = "00:00";
                 }
 
@@ -66,17 +67,19 @@ class ActivityController extends Controller
 
         $geocodingResponse = Http::get(
             "https://api.mapbox.com/search/geocode/v6/forward?q=" .
-                $validated["mapbox_id"] .
-                "&permanent=true&autocomplete=false&limit=1&access_token=" .
-                env("MAPBOX_API_KEY")
+            $validated["full_address"] .
+            "&permanent=true&autocomplete=false&limit=1&access_token=" .
+            env("MAPBOX_API_KEY")
         );
         $geocodingData = $geocodingResponse->json()["features"][0];
         $activity->longitude = $geocodingData["geometry"]["coordinates"][0];
         $activity->latitude = $geocodingData["geometry"]["coordinates"][1];
         $activity->address = $geocodingData["properties"]["full_address"];
 
-        if ($validated["date"]) {
-            if (!$validated["time"]) {
+        $activity->save();
+
+        if (array_key_exists("date", $validated) && $validated["date"]) {
+            if (!array_key_exists("time", $validated) || !$validated["time"]) {
                 $validated["time"] = "00:00";
             }
 
@@ -87,8 +90,6 @@ class ActivityController extends Controller
             ]);
             $calendarActivity->save();
         }
-
-        $activity->save();
 
         return response()->json($activity, 201);
     }

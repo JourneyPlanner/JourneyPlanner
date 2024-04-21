@@ -12,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="mb-2 flex flex-col">
+    <div class="mb-0 flex flex-col sm:mb-2">
         <label
             v-if="translationKey"
             :for="id"
@@ -27,7 +27,7 @@ defineProps({
                 type="text"
                 :as="inputType"
                 :name="name"
-                class="text-md peer block w-full rounded-lg border-2 border-border bg-input px-2.5 pb-1 pt-1 font-normal text-text focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
+                class="block w-full rounded-lg border-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
                 :class="customClass"
                 placeholder=" "
             />
