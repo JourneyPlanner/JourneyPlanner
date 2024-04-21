@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
 import { format } from "date-fns";
-//import {  } from "vee-validate";
 import * as yup from "yup";
 
 const { t } = useTranslate();
@@ -18,6 +17,7 @@ const to = new Date(store.getToDate());
 const from = new Date(store.getFromDate());
 
 const selectedDate = ref();
+const timeDisabled = ref(true);
 
 watch(
     () => props.visible,
@@ -43,14 +43,17 @@ interface ActivityForm {
 type ActivityFormErrors = Partial<Record<keyof ActivityForm, string>>;
 
 const validationSchema = yup.object({
-    bool: yup.boolean(),
     name: yup.string().required(t.value("form.input.required")),
     duration: yup
         .string()
-        .test("not-00-00", t.value("form.input.required"), (value) => {
-            const time = new Date(value || "");
-            return time.getHours() + time.getMinutes() !== 0;
-        })
+        .test(
+            "not-00-00",
+            t.value("form.input.activity.duration.error"),
+            (value) => {
+                const time = new Date(value || "");
+                return time.getHours() + time.getMinutes() !== 0;
+            },
+        )
         .required(t.value("form.input.required")),
     address: yup.string().nullable(),
     costs: yup.string().nullable(),
@@ -59,17 +62,14 @@ const validationSchema = yup.object({
     email: yup.string().email(t.value("form.input.email.error")).nullable(),
     phone: yup.string().nullable(),
     open: yup.string().nullable(),
-    date: yup
-        .string()
-        .ensure()
-        .when("time", (time, schema) => {
-            console.log(time);
-            return time[0] !== undefined
-                ? schema.required(t.value("form.input.activity.date.error"))
-                : schema.notRequired();
-        })
-        .notRequired(),
-    time: yup.string().notRequired(),
+    date: yup.string().nullable(),
+    time: yup.string().nullable(),
+    dateAndTime: yup.bool().when(["date", "time"], {
+        is: (date: Date, time: Date) => (!date && !time) || (!!date && !!time),
+        then: () => yup.bool().nullable(),
+        otherwise: () =>
+            yup.bool().required(t.value("form.input.activity.custom.error")),
+    }),
 });
 
 const { handleSubmit } = useForm<ActivityForm>({
@@ -82,11 +82,15 @@ function onSuccess(values: ActivityForm) {
     const durationDate = new Date(values.duration);
     const duration = `${durationDate.getHours()}:${String(durationDate.getMinutes()).padStart(2, "0")}`;
 
+    let date = undefined;
     let time = undefined;
 
     if (values.date) {
-        const timeDate = new Date(values.time);
-        time = `${timeDate.getHours()}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+        if (values.time) {
+            date = format(values.date, "yyyy-MM-dd");
+            const timeDate = new Date(values.time);
+            time = `${timeDate.getHours()}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+        }
     }
 
     //TODO: Implement API call
@@ -101,7 +105,7 @@ function onSuccess(values: ActivityForm) {
         email: values.email,
         phone: values.phone,
         opening_hours: values.open,
-        date: format(values.date, "yyyy-MM-dd"),
+        date: date,
         time: time,
     };
     console.log(activity);
@@ -120,20 +124,25 @@ function onInvalidSubmit({ errors }: { errors: ActivityFormErrors }) {
 
 const close = () => {
     selectedDate.value = null;
+    timeDisabled.value = true;
     emit("close");
 };
 
 function setSelectedDate(date: Date) {
-    selectedDate.value = date;
+    if (date instanceof Date) {
+        timeDisabled.value = false;
+        selectedDate.value = date;
+    }
 }
 </script>
 
 <template>
-    <!-- TODO: richtige color bei inkbar light & dark -->
     <Dialog
         v-model:visible="isVisible"
         modal
-        class="md:3/4 w-full rounded-lg bg-background font-nunito dark:bg-background-dark md:rounded-xl lg:w-4/5 xl:w-2/4"
+        :auto-z-index="false"
+        :draggable="false"
+        class="md:3/4 z-50 w-full rounded-lg bg-background font-nunito dark:bg-background-dark md:rounded-xl lg:w-4/5 xl:w-2/4"
         :pt="{
             root: {
                 class: 'font-nunito bg-background dark:bg-background-dark',
@@ -163,8 +172,10 @@ function setSelectedDate(date: Date) {
                     nav: {
                         class: 'font-nunito bg-background dark:bg-background-dark',
                     },
-                    navContainer: { class: 'border-b-2 border-border-gray' },
-                    inkbar: { class: 'text-cta-bg-fill' },
+                    navContainer: {
+                        class: 'border-b-2 border-border-gray dark:border-input-placeholder',
+                    },
+                    inkbar: { class: 'pt-0.5 bg-border' },
                 }"
             >
                 <TabPanel
@@ -190,37 +201,39 @@ function setSelectedDate(date: Date) {
                             name="name"
                             translation-key="form.input.activity.name"
                             icon="pi-tag"
+                            class="order-1 col-span-2 sm:col-span-1"
                         />
                         <FormTimeInput
                             id="duration"
                             name="duration"
                             translation-key="form.input.activity.duration"
-                            class="w-full"
+                            class="order-2 w-full sm:w-5/6 sm:justify-self-end"
                             :default-time="new Array(0, 30)"
-                            custom-class="w-10"
                         />
-                        <FormClassicInputIcon
-                            id="address"
-                            name="address"
-                            translation-key="form.input.activity.address"
-                            icon="pi-map-marker"
-                        />
+                        <div
+                            class="order-4 col-span-2 flex flex-col sm:order-3 sm:col-span-1"
+                        >
+                            <label class="text-sm font-medium md:text-base">
+                                <T key-name="form.input.activity.address" />
+                            </label>
+                            <FormAddressInput name="address" />
+                        </div>
                         <FormClassicInputIcon
                             id="costs"
                             name="costs"
                             translation-key="form.input.activity.costs"
                             icon="pi-money-bill"
+                            class="order-3 w-full sm:order-4 sm:w-5/6 sm:justify-self-end"
                         />
                         <FormClassicInputIcon
                             id="description"
                             name="description"
                             translation-key="form.input.activity.description"
-                            class="col-span-2 row-span-2"
+                            class="order-5 col-span-2 row-span-2"
                             custom-class="h-full"
                             input-type="textarea"
                         />
                     </div>
-                    <FormAddressInput />
                 </TabPanel>
                 <TabPanel
                     :header="t('activity.extra.header')"
@@ -238,7 +251,7 @@ function setSelectedDate(date: Date) {
                     }"
                 >
                     <div
-                        class="grid grid-cols-2 gap-x-3 md:grid-rows-2 md:gap-x-10"
+                        class="grid grid-cols-1 gap-x-3 sm:grid-cols-2 md:grid-rows-2 md:gap-x-10"
                     >
                         <div>
                             <FormGroupInput
@@ -271,7 +284,7 @@ function setSelectedDate(date: Date) {
                             translation-key="form.input.activity.opening-hours"
                             custom-class="h-full"
                             input-type="textarea"
-                            class="col-start-2 md:row-span-2"
+                            class="sm:col-start-2 md:row-span-2"
                         />
                     </div>
                 </TabPanel>
@@ -294,7 +307,6 @@ function setSelectedDate(date: Date) {
                         class="md:cols-1 md:cols-2 grid-rows-2 md:grid md:grid-rows-1 md:gap-5"
                     >
                         <div class="col-start-1 flex min-h-72 justify-end">
-                            <!-- TODO: dark mode color -->
                             <FormInlineCalendar
                                 id="calendar-inline"
                                 name="date"
@@ -305,7 +317,7 @@ function setSelectedDate(date: Date) {
                             />
                         </div>
                         <div
-                            class="mt-2 flex flex-col gap-3 md:col-start-2 md:mt-0 md:gap-0"
+                            class="mt-2 flex gap-3 sm:flex-col md:col-start-2 md:mt-0 md:gap-0"
                         >
                             <FormInputCalendar
                                 id="calendar-input"
@@ -320,11 +332,13 @@ function setSelectedDate(date: Date) {
                                 id="calendar-time"
                                 name="time"
                                 translation-key="form.input.activity.time"
+                                :disabled="timeDisabled"
                             />
                         </div>
                     </div>
                 </TabPanel>
             </TabView>
+
             <div class="col-span-2 flex justify-between gap-2 px-5 md:mt-10">
                 <Button
                     type="button"
@@ -333,7 +347,9 @@ function setSelectedDate(date: Date) {
                     class="h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
-                        label: { class: 'display-block flex-none' },
+                        label: {
+                            class: 'display-block flex-none font-bold font-nunito',
+                        },
                     }"
                     @click="close"
                 />
@@ -344,9 +360,11 @@ function setSelectedDate(date: Date) {
                     :loading="loadingSave"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
-                        label: { class: 'display-block flex-none' },
+                        label: {
+                            class: 'display-block flex-none font-bold font-nunito',
+                        },
                     }"
-                    class="flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-border-green-save bg-input text-center font-bold text-text hover:bg-fill-green-save dark:border-border-green-save-dark dark:bg-input-dark dark:text-input dark:hover:bg-fill-green-save-dark"
+                    class="flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-cta-border bg-input text-center text-text hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
                 />
             </div>
         </form>

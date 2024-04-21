@@ -8,6 +8,11 @@ export default defineNuxtConfig({
         pageTransition: { name: "page", mode: "out-in" },
         layoutTransition: { name: "page", mode: "out-in" },
     },
+    vue: {
+        compilerOptions: {
+            isCustomElement: (tag) => ["mapbox-search-box"].includes(tag),
+        },
+    },
     modules: [
         "@nuxtjs/tailwindcss",
         "@nuxtjs/color-mode",
