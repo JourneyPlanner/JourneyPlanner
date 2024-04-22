@@ -31,6 +31,7 @@ class ActivityController extends Controller
         $journey = Journey::findOrFail($journey);
         Gate::authorize("journeyGuide", $journey);
 
+        // Validate the request
         $validated = $request->validate([
             "name" => "required|string",
             "estimated_duration" => "required|date_format:H:i",
@@ -46,41 +47,31 @@ class ActivityController extends Controller
             "time" => "nullable|date_format:H:i",
         ]);
 
+        // Create the activity
         $activity = new Activity($validated);
         $activity->journey_id = $journey->id;
 
-        if (!array_key_exists("full_address", $validated) || !$validated["full_address"]) {
-            $activity->save();
+        // Get the longitude and latitude of the address if it exists
+        if (array_key_exists("full_address", $validated) && $validated["full_address"]) {
+            $geocodingResponse = Http::get(
+                "https://api.mapbox.com/search/geocode/v6/forward?q=" .
+                $validated["full_address"] .
+                "&permanent=true&autocomplete=false&limit=1&access_token=" .
+                env("MAPBOX_API_KEY")
+            );
+            $geocodingData = $geocodingResponse->json();
 
-            if (array_key_exists("date", $validated) && $validated["date"]) {
-                if (!array_key_exists("time", $validated) || !$validated["time"]) {
-                    $validated["time"] = "00:00";
-                }
-
-                $calendarActivity = new CalendarActivity([
-                    "activity_id" => $activity->id,
-                    "date" => $validated["date"],
-                    "time" => $validated["time"],
-                ]);
-                $calendarActivity->save();
+            if (array_key_exists("features", $geocodingData) && count($geocodingData["features"]) !== 0) {
+                $geocodingData = $geocodingResponse->json()["features"][0];
+                $activity->longitude = $geocodingData["geometry"]["coordinates"][0];
+                $activity->latitude = $geocodingData["geometry"]["coordinates"][1];
+                $activity->address = $geocodingData["properties"]["full_address"];
             }
-
-            return response()->json($activity, 201);
         }
-
-        $geocodingResponse = Http::get(
-            "https://api.mapbox.com/search/geocode/v6/forward?q=" .
-            $validated["full_address"] .
-            "&permanent=true&autocomplete=false&limit=1&access_token=" .
-            env("MAPBOX_API_KEY")
-        );
-        $geocodingData = $geocodingResponse->json()["features"][0];
-        $activity->longitude = $geocodingData["geometry"]["coordinates"][0];
-        $activity->latitude = $geocodingData["geometry"]["coordinates"][1];
-        $activity->address = $geocodingData["properties"]["full_address"];
 
         $activity->save();
 
+        // Create the calendar activity if the date is provided
         if (array_key_exists("date", $validated) && $validated["date"]) {
             if (!array_key_exists("time", $validated) || !$validated["time"]) {
                 $validated["time"] = "00:00";
