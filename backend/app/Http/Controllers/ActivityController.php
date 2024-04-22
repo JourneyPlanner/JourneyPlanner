@@ -74,10 +74,14 @@ class ActivityController extends Controller
             "&permanent=true&autocomplete=false&limit=1&access_token=" .
             env("MAPBOX_API_KEY")
         );
-        $geocodingData = $geocodingResponse->json()["features"][0];
-        $activity->longitude = $geocodingData["geometry"]["coordinates"][0];
-        $activity->latitude = $geocodingData["geometry"]["coordinates"][1];
-        $activity->address = $geocodingData["properties"]["full_address"];
+        $geocodingData = $geocodingResponse->json();
+
+        if (array_key_exists("features", $geocodingData) && count($geocodingData["features"]) !== 0) {
+            $geocodingData = $geocodingResponse->json()["features"][0];
+            $activity->longitude = $geocodingData["geometry"]["coordinates"][0];
+            $activity->latitude = $geocodingData["geometry"]["coordinates"][1];
+            $activity->address = $geocodingData["properties"]["full_address"];
+        }
 
         $activity->save();
 
