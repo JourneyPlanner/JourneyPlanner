@@ -243,7 +243,7 @@ function setSelectedDate(date: Date) {
                             name="name"
                             translation-key="form.input.activity.name"
                             icon="pi-tag"
-                            :icon-pos-is-right="false"
+                            :icon-pos-is-left="true"
                             class="order-1 col-span-2 sm:col-span-1"
                         />
                         <FormTimeInput

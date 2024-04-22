@@ -8,12 +8,14 @@ const props = defineProps({
     customClass: { type: String, default: "" },
     inputType: { type: String, default: "" },
     icon: { type: String, default: "" },
-    iconPosIsRight: { type: Boolean, default: true },
+    iconPosIsLeft: { type: Boolean, default: false },
 });
 
-let iconPos: "left" | "right" = "left";
-if (props.iconPosIsRight) {
-    iconPos = "right";
+let addClass = props.customClass;
+let iconPos: "left" | "right" = "right";
+if (props.iconPosIsLeft) {
+    iconPos = "left";
+    addClass += " pl-10";
 }
 </script>
 
@@ -34,7 +36,7 @@ if (props.iconPosIsRight) {
                 :as="inputType"
                 :name="name"
                 class="block w-full rounded-lg border-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
-                :class="customClass"
+                :class="addClass"
                 placeholder=" "
             />
         </IconField>
