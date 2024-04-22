@@ -40,7 +40,7 @@ class ActivityController extends Controller
             "email" => "nullable|email",
             "phone" => "nullable|string",
             "link" => "nullable|url",
-            "cost" => "nullable|numeric",
+            "cost" => "nullable|string",
             "description" => "nullable|string",
             "date" => "nullable|date",
             "time" => "nullable|date_format:H:i",

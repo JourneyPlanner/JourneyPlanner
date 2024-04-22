@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string("email")->nullable();
             $table->string("phone")->nullable();
             $table->text("link")->nullable();
-            $table->double("cost")->nullable();
+            $table->text("cost")->nullable();
             $table->text("description")->nullable();
             $table->text("address")->nullable();
             $table->text("mapbox_id")->nullable();
