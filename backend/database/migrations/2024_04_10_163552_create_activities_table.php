@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignUuid("journey_id")->constrained()->cascadeOnDelete();
             $table->string("name");
             $table->time("estimated_duration");
-            $table->text("opening_hourse")->nullable();
+            $table->text("opening_hours")->nullable();
             $table->string("email")->nullable();
             $table->string("phone")->nullable();
             $table->text("link")->nullable();
