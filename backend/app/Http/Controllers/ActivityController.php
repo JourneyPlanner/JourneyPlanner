@@ -13,11 +13,14 @@ use Illuminate\Support\Facades\Gate;
 class ActivityController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Get all activities of the specified journey.
      */
-    public function index()
+    public function index($journey)
     {
-        //
+        $journey = Journey::findOrFail($journey);
+        Gate::authorize("journeyMember", $journey);
+
+        return response()->json($journey->activities()->with('calendarActivities')->get());
     }
 
     /**
@@ -95,19 +98,14 @@ class ActivityController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified activity.
      */
-    public function show(Activity $activity)
+    public function show($journey, Activity $activity)
     {
-        //
-    }
+        $journey = Journey::findOrFail($journey);
+        Gate::authorize("journeyMember", $journey);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Activity $activity)
-    {
-        //
+        return response()->json($activity->load('calendarActivities'));
     }
 
     /**
