@@ -1,20 +1,20 @@
-import { ref } from "vue";
 import { defineStore } from "pinia";
+import { ref } from "vue";
 
 export const useJourneyStore = defineStore("journey", () => {
-  const journey = ref({});
+    const journey = ref({});
 
-  function setJourney(journey) {
-    this.journey = journey;
-  }
+    function setJourney(journey) {
+        this.journey = journey;
+    }
 
-  function getFromDate() {
-    return this.journey.from;
-  }
+    function getFromDate() {
+        return this.journey.from;
+    }
 
-  function getToDate() {
-    return this.journey.to;
-  }
+    function getToDate() {
+        return this.journey.to;
+    }
 
-  return { journey, setJourney, getFromDate, getToDate };
+    return { journey, setJourney, getFromDate, getToDate };
 });
