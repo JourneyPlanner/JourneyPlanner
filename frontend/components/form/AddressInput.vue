@@ -8,27 +8,14 @@ const props = defineProps({
     name: { type: String, required: true },
 });
 
-onMounted(() => {
-    if (import.meta.client) {
-        import("@mapbox/search-js-web")
-            .then((Mapbox) => {
-                // Use Mapbox here, for example:
-                console.log(Mapbox);
-                const search = new Mapbox.MapboxSearchBox();
-                search.accessToken = config.public
-                    .NUXT_MAPBOX_API_KEY as string;
-            })
-            .catch((error) => {
-                console.error("Error loading Mapbox:", error);
-            });
-    }
-});
-
 const { value } = useField<Feature>(() => props.name);
 const config = useRuntimeConfig();
 
-const search = new Mapbox.MapboxSearchBox();
-search.accessToken = config.public.NUXT_MAPBOX_API_KEY as string;
+let search: Mapbox.MapboxSearchBox | null = null;
+if (import.meta.client) {
+    search = new Mapbox.MapboxSearchBox();
+    search.accessToken = config.public.NUXT_MAPBOX_API_KEY as string;
+}
 
 const tolgee = useTolgee(["language"]);
 const fullConfig = resolveConfig(tailwindConfig);

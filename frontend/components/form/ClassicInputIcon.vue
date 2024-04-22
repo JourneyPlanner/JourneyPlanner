@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { ErrorMessage, Field } from "vee-validate";
 
-defineProps({
+const props = defineProps({
     id: { type: String, required: true },
     name: { type: String, required: true },
     translationKey: { type: String, default: "" },
     customClass: { type: String, default: "" },
     inputType: { type: String, default: "" },
     icon: { type: String, default: "" },
+    iconPosIsRight: { type: Boolean, default: true },
 });
+
+let iconPos: "left" | "right" = "left";
+if (props.iconPosIsRight) {
+    iconPos = "right";
+}
 </script>
 
 <template>
@@ -20,7 +26,7 @@ defineProps({
         >
             <T :key-name="translationKey" />
         </label>
-        <IconField :class="customClass">
+        <IconField :class="customClass" :icon-position="iconPos">
             <InputIcon class="pi text-border" :class="icon" />
             <Field
                 :id="id"

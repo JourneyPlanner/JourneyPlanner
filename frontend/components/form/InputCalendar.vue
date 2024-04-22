@@ -49,7 +49,7 @@ watch(
             @blur="dateSelected"
         >
             <template #inputicon>
-                <InputIcon class="pi pi-calendar cursor-pointer text-border" />
+                <InputIcon class="pi pi-calendar text-border" />
             </template>
         </Calendar>
         <span class="text-sm text-error dark:font-bold dark:text-error-dark">{{

@@ -93,7 +93,7 @@ async function onSuccess(values: ActivityForm) {
         if (values.time) {
             date = format(values.date, "yyyy-MM-dd");
             const timeDate = new Date(values.time);
-            time = `${timeDate.getHours()}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+            time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
         }
     }
 
@@ -102,8 +102,8 @@ async function onSuccess(values: ActivityForm) {
     const activity = {
         name: values.name,
         estimated_duration: duration,
-        full_address: values.address.properties.full_address,
-        mapbox_id: values.address.properties.mapbox_id,
+        full_address: values.address?.properties?.full_address,
+        mapbox_id: values.address?.properties?.mapbox_id,
         cost: values.costs,
         description: values.description,
         link: values.link,
@@ -121,8 +121,10 @@ async function onSuccess(values: ActivityForm) {
             if (response.ok) {
                 toast.add({
                     severity: "success",
-                    summary: t.value("edit.journey.toast.success.heading"),
-                    detail: t.value("edit.journey.toast.success"),
+                    summary: t.value(
+                        "form.input.activity.toast.success.heading",
+                    ),
+                    detail: t.value("form.input.activity.toast.success.detail"),
                     life: 6000,
                 });
                 close();
@@ -241,6 +243,7 @@ function setSelectedDate(date: Date) {
                             name="name"
                             translation-key="form.input.activity.name"
                             icon="pi-tag"
+                            :icon-pos-is-right="false"
                             class="order-1 col-span-2 sm:col-span-1"
                         />
                         <FormTimeInput
