@@ -696,6 +696,7 @@ async function changeRole(userid: string, selectedRole: number) {
             Create activity
         </button>
         <ActivityDialog
+            :id="journeyId.toString()"
             :visible="isActivityDialogVisible"
             @close="isActivityDialogVisible = false"
         />

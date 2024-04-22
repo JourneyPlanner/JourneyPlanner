@@ -4,8 +4,13 @@ import { format } from "date-fns";
 import * as yup from "yup";
 
 const { t } = useTranslate();
+const client = useSanctumClient();
+const toast = useToast();
 
-const props = defineProps({ visible: Boolean });
+const props = defineProps({
+    visible: { type: Boolean, required: true },
+    id: { type: String, required: true },
+});
 const emit = defineEmits(["close"]);
 
 const isVisible = ref(props.visible);
@@ -29,7 +34,7 @@ watch(
 interface ActivityForm {
     name: string;
     duration: string;
-    address: string;
+    address: Feature;
     costs: string;
     description: string;
     link: string;
@@ -55,7 +60,6 @@ const validationSchema = yup.object({
             },
         )
         .required(t.value("form.input.required")),
-    address: yup.string().nullable(),
     costs: yup.string().nullable(),
     description: yup.string().nullable(),
     link: yup.string().url(t.value("form.input.link.error")).nullable(),
@@ -78,9 +82,9 @@ const { handleSubmit } = useForm<ActivityForm>({
 
 const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 
-function onSuccess(values: ActivityForm) {
+async function onSuccess(values: ActivityForm) {
     const durationDate = new Date(values.duration);
-    const duration = `${durationDate.getHours()}:${String(durationDate.getMinutes()).padStart(2, "0")}`;
+    const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}`;
 
     let date = undefined;
     let time = undefined;
@@ -93,13 +97,14 @@ function onSuccess(values: ActivityForm) {
         }
     }
 
-    //TODO: Implement API call
     loadingSave.value = true;
+
     const activity = {
         name: values.name,
         estimated_duration: duration,
-        address: values.address,
-        costs: values.costs,
+        full_address: values.address.properties.full_address,
+        mapbox_id: values.address.properties.mapbox_id,
+        cost: values.costs,
         description: values.description,
         link: values.link,
         email: values.email,
@@ -108,7 +113,41 @@ function onSuccess(values: ActivityForm) {
         date: date,
         time: time,
     };
-    console.log(activity);
+
+    await client(`/api/journey/${props.id}/activity`, {
+        method: "POST",
+        body: activity,
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("edit.journey.toast.success.heading"),
+                    detail: t.value("edit.journey.toast.success"),
+                    life: 6000,
+                });
+                close();
+                loadingSave.value = false;
+            }
+        },
+        async onRequestError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+            loadingSave.value = false;
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+            loadingSave.value = false;
+        },
+    });
 }
 
 function onInvalidSubmit({ errors }: { errors: ActivityFormErrors }) {
@@ -125,6 +164,7 @@ function onInvalidSubmit({ errors }: { errors: ActivityFormErrors }) {
 const close = () => {
     selectedDate.value = null;
     timeDisabled.value = true;
+    loadingSave.value = false;
     emit("close");
 };
 

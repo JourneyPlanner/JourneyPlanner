@@ -1,48 +1,86 @@
 <script setup lang="ts">
 import * as Mapbox from "@mapbox/search-js-web";
 import { useTolgee } from "@tolgee/vue";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "~/tailwind.config.js";
 
 const props = defineProps({
     name: { type: String, required: true },
 });
 
-const { value } = useField<string>(() => props.name);
+onMounted(() => {
+    if (import.meta.client) {
+        import("@mapbox/search-js-web")
+            .then((Mapbox) => {
+                // Use Mapbox here, for example:
+                console.log(Mapbox);
+                const search = new Mapbox.MapboxSearchBox();
+                search.accessToken = config.public
+                    .NUXT_MAPBOX_API_KEY as string;
+            })
+            .catch((error) => {
+                console.error("Error loading Mapbox:", error);
+            });
+    }
+});
 
-//TODO: Add Mapbox access token here
+const { value } = useField<Feature>(() => props.name);
+const config = useRuntimeConfig();
+
 const search = new Mapbox.MapboxSearchBox();
-search.accessToken = "";
+search.accessToken = config.public.NUXT_MAPBOX_API_KEY as string;
 
 const tolgee = useTolgee(["language"]);
+const fullConfig = resolveConfig(tailwindConfig);
 
 const colorMode = useColorMode();
 const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
 
-//TODO: maybe improve this
-let css = "";
+let input = "";
+let text = "";
+let bg = "";
+let hoverCancel = "";
+
 if (
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
 ) {
-    css =
-        ".Input {background-color: #454849; color: #f8f8f8;} .Input:focus {background-color: #454849; color: #f8f8f8; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Results {background-color: #454849; color: #f8f8f8;} .SearchBox {background-color: #2c2c2c;} .Suggestion:hover {background-color: #2c2c2c;}  .ClearBtn:hover {color: #7c6464}";
+    input = fullConfig.theme.accentColor["input-dark"] as string;
+    text = fullConfig.theme.accentColor["input"] as string;
+    bg = fullConfig.theme.accentColor["background-dark"] as string;
+    hoverCancel = fullConfig.theme.accentColor["cancel-bg-dark"] as string;
 } else {
-    css =
-        ".Input {background-color: #f8f8f8; color: #333333;} .Input:focus {background-color: #f8f8f8; color: #333333; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Results {background-color: #f8f8f8; color: #333333;} .SearchBox {background-color: #fcfcfc;} .ClearBtn:hover {color: #d98f8f}";
+    input = fullConfig.theme.accentColor["input"] as string;
+    text = fullConfig.theme.accentColor["text"] as string;
+    bg = fullConfig.theme.accentColor["background"] as string;
+    hoverCancel = fullConfig.theme.accentColor["cancel-bg"] as string;
 }
+
+const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Results {background-color: ${input}; color: ${text};} .SearchBox {background-color: ${bg};} .Suggestion:hover {background-color: ${bg};}  .ClearBtn:hover {color: ${hoverCancel}}`;
+
+function handleRetrieve(event: MapBoxRetrieveEvent) {
+    value.value = event.detail.features[0];
+}
+
+//TODO: fix für document error?
 </script>
 <template>
-    <form class="mb-0 font-nunito" @submit.prevent>
-        <mapbox-search-box
-            v-model="value"
-            class="font-nunito"
-            :name="name"
-            access-token=""
-            proximity="0,0"
-            placeholder=" "
-            :options="{ language: tolgee.getLanguage() }"
-            :theme="{
-                cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px #69aecd;} .Input:focus {border-radius: 0.5rem; border: solid 2px #69aecd;} .SearchBox {box-shadow: none} .Results {font-family: Nunito;} .ResultsAttribution {color: #7b7b7b} .SearchIcon {fill: #69aecd;} .ActionIcon {color: #7b7b7b}  ${css}`,
-            }"
-        />
-    </form>
+    <client-only>
+        <form class="mb-0 font-nunito" @submit.prevent>
+            <mapbox-search-box
+                class="font-nunito"
+                :name="name"
+                :access-token="config.public.NUXT_MAPBOX_API_KEY"
+                proximity="0,0"
+                placeholder=" "
+                :options="{ language: tolgee.getLanguage() }"
+                :theme="{
+                    cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px #69aecd;} .Input:focus {border-radius: 0.5rem; border: solid 2px #69aecd;} .SearchBox {box-shadow: none} .Results {font-family: Nunito;} .ResultsAttribution {color: #7b7b7b} .SearchIcon {fill: #69aecd;} .ActionIcon {color: #7b7b7b}  ${css}`,
+                }"
+                @retrieve="
+                    (event: MapBoxRetrieveEvent) => handleRetrieve(event)
+                "
+            />
+        </form>
+    </client-only>
 </template>
