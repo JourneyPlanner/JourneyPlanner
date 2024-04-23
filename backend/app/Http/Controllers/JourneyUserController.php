@@ -111,25 +111,15 @@ class JourneyUserController extends Controller
     /**
      * Leave the journey.
      */
-    public function destroy($journey, $user)
+    public function leave($journey)
     {
         $journey = Journey::findOrFail($journey);
-
-        // Prevent the user from removing other users
-        if (auth()->user()->id !== $user) {
-            return response()->json(
-                [
-                    "message" => "You cannot remove another user",
-                ],
-                403
-            );
-        }
 
         // Prevent the user from leaving if they are the only guide
         if (
             $journey
                 ->users()
-                ->wherePivot("user_id", $user)
+                ->wherePivot("user_id", auth()->id())
                 ->wherePivot("role", 1)
                 ->exists() &&
             $journey->users()->wherePivot("role", 1)->count() === 1
@@ -143,7 +133,7 @@ class JourneyUserController extends Controller
             );
         }
 
-        $journey->users()->detach($user);
+        $journey->users()->detach(auth()->id());
 
         // Remove the journey if the user was the last member
         if ($journey->users()->count() === 0) {
