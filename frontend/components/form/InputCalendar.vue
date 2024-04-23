@@ -52,8 +52,9 @@ watch(
                 <InputIcon class="pi pi-calendar text-border" />
             </template>
         </Calendar>
-        <span class="text-sm text-error dark:font-bold dark:text-error-dark">{{
-            errorMessage
-        }}</span>
+        <span
+            class="text-xs text-error dark:font-bold dark:text-error-dark sm:text-sm"
+            >{{ errorMessage }}</span
+        >
     </div>
 </template>

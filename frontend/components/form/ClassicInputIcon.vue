@@ -42,7 +42,7 @@ if (props.iconPosIsLeft) {
         </IconField>
         <ErrorMessage
             :name="name"
-            class="text-sm text-error dark:font-bold dark:text-error-dark"
+            class="text-xs text-error dark:font-bold dark:text-error-dark sm:text-sm"
         />
     </div>
 </template>

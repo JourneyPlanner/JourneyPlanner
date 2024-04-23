@@ -69,7 +69,6 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                 class="font-nunito"
                 :name="name"
                 :access-token="config.public.NUXT_MAPBOX_API_KEY"
-                proximity="0,0"
                 placeholder=" "
                 :options="{ language: tolgee.getLanguage() }"
                 :theme="{
