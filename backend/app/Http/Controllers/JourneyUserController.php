@@ -122,7 +122,8 @@ class JourneyUserController extends Controller
                 ->wherePivot("user_id", auth()->id())
                 ->wherePivot("role", 1)
                 ->exists() &&
-            $journey->users()->wherePivot("role", 1)->count() !== 1
+            $journey->users()->wherePivot("role", 1)->count() === 1 &&
+            $journey->users()->count() !== 1
         ) {
             return response()->json(
                 [
