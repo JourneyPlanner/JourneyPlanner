@@ -25,8 +25,9 @@ Route::apiResource("journey", JourneyController::class)->middleware(
 );
 
 Route::apiResource("journey/{id}/user", JourneyUserController::class)
-    ->only("index", "update")
+    ->only("index", "update", "destroy")
     ->middleware("auth:sanctum");
+
 Route::get("journey/{journey}/user/me", [
     JourneyUserController::class,
     "currentUserDetails",
