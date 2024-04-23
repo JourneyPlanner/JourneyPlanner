@@ -90,9 +90,19 @@ class ActivityController extends Controller
                 $validated["time"] = "00:00";
             }
 
-            $start = new DateTime($validated["date"] . " " . $validated["time"]);
+            $start = new DateTime(
+                $validated["date"] . " " . $validated["time"]
+            );
             $end = clone $start;
-            $end->add(new DateInterval("PT" . substr($activity->estimated_duration, 0, 2) . "H" . substr($activity->estimated_duration, 3) . "M"));
+            $end->add(
+                new DateInterval(
+                    "PT" .
+                        substr($activity->estimated_duration, 0, 2) .
+                        "H" .
+                        substr($activity->estimated_duration, 3) .
+                        "M"
+                )
+            );
 
             $calendarActivity = new CalendarActivity([
                 "activity_id" => $activity->id,
@@ -100,7 +110,7 @@ class ActivityController extends Controller
                 "end" => $end,
             ]);
             $calendarActivity->save();
-            return response()->json($activity->load('calendarActivities'), 201);
+            return response()->json($activity->load("calendarActivities"), 201);
         }
 
         return response()->json($activity, 201);
