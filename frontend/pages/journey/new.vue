@@ -137,10 +137,22 @@ function copyToClipboard() {
                             name="journeyName"
                             translation-key="form.input.journey.name"
                         />
+                        <!--
                         <FormInput
                             id="journey-destination"
                             name="journeyDestination"
                             translation-key="form.input.journey.destination"
+                        />
+                        -->
+                        <FormAddressInput
+                            id="journey-destination"
+                            name="journeyDestination"
+                            :placeholder="t('form.input.journey.destination')"
+                            class="mb-5"
+                            :translation-key="
+                                t('form.input.journey.destination')
+                            "
+                            custom-class=".Input {height: fit-content; padding-left: 0.625rem/; padding-right: 0.625rem; padding-top: 1rem; padding-bottom: 0.25rem} .Input::placeholder {color: transparent;}"
                         />
                         <FormCalendar
                             id="journey-range-calendar"
