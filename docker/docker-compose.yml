@@ -19,6 +19,8 @@ services:
     depends_on:
       - backend
       - i18n
+    environment:
+      - NUXT_MAPBOX_API_KEY=$NUXT_MAPBOX_API_KEY
   i18n:
     build: ./i18n
     pull_policy: build
