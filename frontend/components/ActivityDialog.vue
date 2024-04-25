@@ -34,7 +34,8 @@ watch(
 interface ActivityForm {
     name: string;
     duration: string;
-    address: Feature;
+    mapbox: Feature;
+    address: string;
     costs: string;
     description: string;
     link: string;
@@ -60,6 +61,7 @@ const validationSchema = yup.object({
             },
         )
         .required(t.value("form.input.required")),
+    address: yup.string().nullable(),
     costs: yup.string().nullable(),
     description: yup.string().nullable(),
     link: yup.string().url(t.value("form.input.link.error")).nullable(),
@@ -102,8 +104,9 @@ async function onSuccess(values: ActivityForm) {
     const activity = {
         name: values.name,
         estimated_duration: duration,
-        full_address: values.address?.properties?.full_address,
-        mapbox_id: values.address?.properties?.mapbox_id,
+        address: values.address,
+        mapbox_full_address: values.mapbox?.properties?.full_address,
+        mapbox_id: values.mapbox?.properties?.mapbox_id,
         cost: values.costs,
         description: values.description,
         link: values.link,

@@ -7,13 +7,14 @@ const props = defineProps({
     name: { type: String, required: true },
 });
 
-const { value } = useField<Feature>(() => props.name);
+const { value: mapbox } = useField<Feature>(() => "mapbox");
+const { value: inputValue } = useField<string>(() => props.name);
+
 const config = useRuntimeConfig();
 
 let search = null;
 let Mapbox = null;
 const isLoaded = ref(false);
-const isRetrieved = ref(false);
 
 onBeforeMount(async () => {
     if (import.meta.client) {
@@ -58,9 +59,13 @@ if (
 
 const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Results {background-color: ${input}; color: ${text};} .SearchBox {background-color: ${bg};} .Suggestion:hover {background-color: ${bg};}  .ClearBtn:hover {color: ${hoverCancel}}`;
 
+function changeInput(event: InputEvent) {
+    inputValue.value = (event.target as HTMLInputElement).value;
+}
+
 function handleRetrieve(event: MapBoxRetrieveEvent) {
-    isRetrieved.value = true;
-    value.value = event.detail.features[0];
+    mapbox.value = event.detail.features[0];
+    inputValue.value = event.detail.features[0].properties.full_address;
 }
 </script>
 <template>
@@ -75,6 +80,7 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                 :theme="{
                     cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px #69aecd;} .Input:focus {border-radius: 0.5rem; border: solid 2px #69aecd;} .SearchBox {box-shadow: none} .Results {font-family: Nunito;} .ResultsAttribution {color: #7b7b7b} .SearchIcon {fill: #69aecd;} .ActionIcon {color: #7b7b7b}  ${css}`,
                 }"
+                @input="changeInput"
                 @retrieve="
                     (event: MapBoxRetrieveEvent) => handleRetrieve(event)
                 "
