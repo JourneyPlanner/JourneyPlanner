@@ -182,12 +182,12 @@ function setSelectedDate(date: Date) {
     <Dialog
         v-model:visible="isVisible"
         modal
-        :auto-z-index="false"
+        :auto-z-index="true"
         :draggable="false"
         class="md:3/4 z-50 w-full rounded-lg bg-background font-nunito dark:bg-background-dark md:rounded-xl lg:w-4/5 xl:w-2/4"
         :pt="{
             root: {
-                class: 'font-nunito bg-background dark:bg-background-dark',
+                class: 'font-nunito bg-background dark:bg-background-dark z-10',
             },
             header: {
                 class: 'flex justify-end h-1 pb-2 font-nunito bg-background dark:bg-background-dark',

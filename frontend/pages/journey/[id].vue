@@ -700,5 +700,6 @@ async function changeRole(userid: string, selectedRole: number) {
             :visible="isActivityDialogVisible"
             @close="isActivityDialogVisible = false"
         />
+        <ActivityPool :id="journeyId.toString()" />
     </div>
 </template>

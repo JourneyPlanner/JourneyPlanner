@@ -16,8 +16,8 @@ return new class extends Migration {
                 ->foreignUuid("activity_id")
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->date("date");
-            $table->time("time");
+            $table->dateTime("start");
+            $table->dateTime("end");
             $table->timestamps();
         });
     }
