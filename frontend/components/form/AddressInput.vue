@@ -1,5 +1,4 @@
 <script setup lang="ts">
-//import * as Mapbox from "@mapbox/search-js-web";
 import { useTolgee } from "@tolgee/vue";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "~/tailwind.config.js";
@@ -14,6 +13,7 @@ const config = useRuntimeConfig();
 let search = null;
 let Mapbox = null;
 const isLoaded = ref(false);
+const isRetrieved = ref(false);
 
 onBeforeMount(async () => {
     if (import.meta.client) {
@@ -59,6 +59,7 @@ if (
 const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Results {background-color: ${input}; color: ${text};} .SearchBox {background-color: ${bg};} .Suggestion:hover {background-color: ${bg};}  .ClearBtn:hover {color: ${hoverCancel}}`;
 
 function handleRetrieve(event: MapBoxRetrieveEvent) {
+    isRetrieved.value = true;
     value.value = event.detail.features[0];
 }
 </script>

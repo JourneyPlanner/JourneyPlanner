@@ -185,7 +185,7 @@ function setSelectedDate(date: Date) {
         modal
         :auto-z-index="false"
         :draggable="false"
-        class="z-50 flex h-[80vh] w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:h-[70vh] sm:w-6/12 md:rounded-xl"
+        class="z-50 flex h-[88vh] w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:h-[70vh] sm:w-6/12 md:rounded-xl"
         :pt="{
             root: {
                 class: 'font-nunito bg-background dark:bg-background-dark',
@@ -194,11 +194,11 @@ function setSelectedDate(date: Date) {
                 class: 'flex justify-end h-1 pb-2 font-nunito bg-background dark:bg-background-dark',
             },
             content: {
-                class: 'font-nunito bg-background dark:bg-background-dark px-0 sm:px-5 h-full',
+                class: 'z-10 font-nunito bg-background dark:bg-background-dark px-0 sm:px-5 h-full',
             },
             footer: { class: 'h-0' },
             closeButtonIcon: {
-                class: 'text-input-placeholder hover:text-text dark:text-input-placeholder dark:hover:text-input',
+                class: 'z-20 text-input-placeholder hover:text-text dark:text-input-placeholder dark:hover:text-input h-10 w-10',
             },
         }"
         @hide="close"
@@ -353,7 +353,7 @@ function setSelectedDate(date: Date) {
                     }"
                 >
                     <div
-                        class="grid-rows-1 md:grid md:grid-cols-4 md:grid-rows-1 md:gap-5"
+                        class="grid-rows-1 md:grid md:grid-cols-4 md:grid-rows-1 md:gap-0"
                     >
                         <FormInlineCalendar
                             id="calendar-inline"
@@ -365,7 +365,7 @@ function setSelectedDate(date: Date) {
                             @date-selected="setSelectedDate"
                         />
                         <div
-                            class="col-span-2 mt-2 flex flex-row gap-x-2 sm:mt-0 sm:flex-col"
+                            class="col-span-2 mt-2 flex flex-row gap-x-2 sm:mt-0 sm:flex-col sm:pl-10"
                         >
                             <FormInputCalendar
                                 id="calendar-input"
@@ -374,7 +374,7 @@ function setSelectedDate(date: Date) {
                                 :to="to"
                                 :prefill="selectedDate"
                                 translation-key="form.input.activity.date"
-                                class="w-full sm:pr-32"
+                                class="w-full sm:pb-2 sm:pr-16"
                                 @date-selected="setSelectedDate"
                             />
                             <FormTimeInput
@@ -382,7 +382,7 @@ function setSelectedDate(date: Date) {
                                 name="time"
                                 translation-key="form.input.activity.time"
                                 :disabled="timeDisabled"
-                                class="w-full sm:pr-32"
+                                class="w-full sm:pr-16"
                             />
                         </div>
                     </div>
