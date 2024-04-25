@@ -5,6 +5,7 @@ import JSConfetti from "js-confetti";
 import Toast from "primevue/toast";
 import QRCode from "qrcode";
 
+const confirm = useConfirm();
 const route = useRoute();
 const journeyId = route.params.id;
 const qrcode = ref("");
@@ -121,6 +122,65 @@ const flip = () => {
     isFlipped.value = !isFlipped.value;
 };
 
+const confirmLeave = (event: Event) => {
+    confirm.require({
+        target: event.currentTarget as HTMLElement,
+        header: t.value("journey.leave.header"),
+        message: t.value("journey.leave.message"),
+        icon: "pi pi-exclamation-triangle",
+        rejectClass: "hover:underline",
+        acceptClass:
+            "text-error dark:text-error-dark hover:underline font-bold",
+        rejectLabel: t.value("common.button.cancel"),
+        acceptLabel: t.value("journey.leave"),
+        accept: () => {
+            toast.add({
+                severity: "info",
+                summary: t.value("common.toast.info.heading"),
+                detail: t.value("leave.journey.toast.message"),
+                life: 3000,
+            });
+            leaveJourney();
+        },
+    });
+};
+
+async function leaveJourney() {
+    await client(`/api/journey/${journeyId}/leave`, {
+        method: "DELETE",
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("leave.journey.toast.success.heading"),
+                    detail: t.value("leave.journey.toast.success.detail"),
+                    life: 3000,
+                });
+                await navigateTo("/dashboard");
+            }
+        },
+        async onResponseError({ response }) {
+            console.log(response);
+
+            if (response.status === 403) {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("leave.journey.toast.error"),
+                    life: 6000,
+                });
+            } else {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+            }
+        },
+    });
+}
+
 function copyToClipboard() {
     navigator.clipboard.writeText(journeyData.value.invite);
     toast.add({
@@ -161,6 +221,20 @@ async function changeRole(userid: string, selectedRole: number) {
 <template>
     <div class="flex flex-col font-nunito text-text dark:text-white">
         <Toast class="w-3/4 sm:w-auto" />
+        <ConfirmDialog
+            :draggable="false"
+            :pt="{
+                header: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                content: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                footer: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+            }"
+        />
         <Sidebar
             v-model:visible="visibleSidebar"
             position="right"
@@ -169,11 +243,17 @@ async function changeRole(userid: string, selectedRole: number) {
                 closeIcon: {
                     class: 'w-7 h-7 text-text-disabled dark:text-white',
                 },
-                header: { class: 'p-2' },
+                header: { class: 'p-2 flex items-center' },
                 content: { class: 'pl-3 pr-2 py-2' },
                 root: { class: ' dark:bg-background-dark font-nunito' },
             }"
         >
+            <template #header>
+                <span
+                    class="pi pi-sign-out order-1 pr-2 text-xl text-text hover:cursor-pointer hover:text-error"
+                    @click="confirmLeave($event)"
+                />
+            </template>
             <div class="text-xl font-medium text-text dark:text-white">
                 <T key-name="sidebar.invite.link" />
             </div>
@@ -691,4 +771,3 @@ async function changeRole(userid: string, selectedRole: number) {
         </div>
     </div>
 </template>
-()()()()()()
