@@ -2,6 +2,8 @@ FROM node:lts as build-stage
 WORKDIR /app
 ARG INFISICAL_API_URL
 ARG INFISICAL_TOKEN
+ENV NUXT_BACKEND_URL=https://api.journeyplanner.io/
+ENV NUXT_FRONTEND_URL=https://dev.journeyplanner.io/
 
 COPY package*.json ./
 RUN npm install
