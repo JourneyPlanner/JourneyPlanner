@@ -188,7 +188,7 @@ function setSelectedDate(date: Date) {
         modal
         :auto-z-index="false"
         :draggable="false"
-        class="z-50 flex h-[88vh] w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:h-[70vh] sm:w-6/12 md:rounded-xl"
+        class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-6/12 md:rounded-xl"
         :pt="{
             root: {
                 class: 'font-nunito bg-background dark:bg-background-dark',
@@ -244,7 +244,7 @@ function setSelectedDate(date: Date) {
                     }"
                 >
                     <div
-                        class="grid grid-cols-2 grid-rows-4 gap-x-2 sm:grid-cols-5 sm:gap-x-0"
+                        class="mb-8 grid grid-cols-2 grid-rows-4 gap-x-2 sm:grid-cols-5 sm:gap-x-0"
                     >
                         <FormClassicInputIcon
                             id="name"
@@ -302,7 +302,7 @@ function setSelectedDate(date: Date) {
                     }"
                 >
                     <div
-                        class="grid grid-cols-1 gap-x-3 sm:grid-cols-2 md:gap-x-10"
+                        class="mb-8 grid grid-cols-1 gap-x-3 sm:mb-9 sm:grid-cols-2 md:gap-x-10"
                     >
                         <div>
                             <FormGroupInput
