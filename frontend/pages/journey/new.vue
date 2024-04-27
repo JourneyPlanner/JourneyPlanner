@@ -137,13 +137,6 @@ function copyToClipboard() {
                             name="journeyName"
                             translation-key="form.input.journey.name"
                         />
-                        <!--
-                        <FormInput
-                            id="journey-destination"
-                            name="journeyDestination"
-                            translation-key="form.input.journey.destination"
-                        />
-                        -->
                         <FormAddressInput
                             id="journey-destination"
                             name="journeyDestination"
@@ -152,14 +145,15 @@ function copyToClipboard() {
                             :translation-key="
                                 t('form.input.journey.destination')
                             "
-                            custom-class=".Input {height: fit-content; padding-right: 0.625rem; padding-top: 0.5rem; padding-bottom: 0.5rem} .Input::placeholder {font-family: Nunito; font-size: 0.875rem; line-height: 1.25rem;}"
+                            bg-light-key="surface"
+                            bg-dark-key="surface-dark"
+                            custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-size: 0.875rem; line-height: 1.25rem;}"
                         />
                         <FormCalendar
                             id="journey-range-calendar"
                             name="journeyRange"
                             translation-key="form.input.journey.dates"
                         />
-
                         <Divider
                             type="solid"
                             class="border-10 border text-input-label"
@@ -172,7 +166,7 @@ function copyToClipboard() {
                                 type="text"
                                 name="journey-invite"
                                 disabled
-                                class="placeholder:text-transparent text-md peer w-[90%] rounded-lg border-2 border-border bg-input-disabled px-2.5 pb-1 pt-4 font-bold text-text-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark-grey dark:text-input-disabled-dark-gray"
+                                class="text-md peer w-[90%] rounded-lg border-2 border-border bg-input-disabled px-2.5 pb-1 pt-4 font-bold text-text-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark-grey dark:text-input-disabled-dark-gray"
                                 placeholder=" "
                             />
                             <label
