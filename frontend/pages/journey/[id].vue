@@ -250,7 +250,7 @@ async function changeRole(userid: string, selectedRole: number) {
         >
             <template #header>
                 <span
-                    class="pi pi-sign-out order-1 pr-2 text-xl text-text hover:cursor-pointer hover:text-error dark:text-input"
+                    class="pi pi-sign-out order-1 pr-2 text-xl text-text hover:cursor-pointer hover:text-error dark:text-input dark:hover:text-error-dark"
                     @click="confirmLeave($event)"
                 />
             </template>
