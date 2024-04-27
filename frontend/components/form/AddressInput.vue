@@ -10,6 +10,8 @@ const props = defineProps({
     withLabel: { type: Boolean, default: false },
     id: { type: String, default: "" },
     translationKey: { type: String, default: "" },
+    bgLightKey: { type: String, default: "background" },
+    bgDarkKey: { type: String, default: "background-dark" },
 });
 
 const { value: mapbox } = useField<Feature>(() => "mapbox");
@@ -47,6 +49,7 @@ let text = "";
 let placeholderColor = "";
 let bg = "";
 let hoverCancel = "";
+const border = fullConfig.theme.accentColor["border"] as string;
 
 if (
     colorMode.preference === "dark" ||
@@ -57,7 +60,7 @@ if (
     placeholderColor = fullConfig.theme.accentColor[
         "input-placeholder"
     ] as string;
-    bg = fullConfig.theme.accentColor["background-dark"] as string;
+    bg = fullConfig.theme.accentColor[props.bgDarkKey] as string;
     hoverCancel = fullConfig.theme.accentColor["cancel-bg-dark"] as string;
 } else {
     input = fullConfig.theme.accentColor["input"] as string;
@@ -65,7 +68,7 @@ if (
     placeholderColor = fullConfig.theme.accentColor[
         "input-placeholder"
     ] as string;
-    bg = fullConfig.theme.accentColor["background"] as string;
+    bg = fullConfig.theme.accentColor[props.bgLightKey] as string;
     hoverCancel = fullConfig.theme.accentColor["cancel-bg"] as string;
 }
 
@@ -82,7 +85,7 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
 </script>
 <template>
     <form class="mb-0 font-nunito" @submit.prevent>
-        <ClientOnly v-if="isLoaded">
+        <ClientOnly v-if="isLoaded" class="relative">
             <mapbox-search-box
                 class="font-nunito"
                 :name="name"
@@ -90,7 +93,7 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                 :placeholder="placeholder"
                 :options="{ language: tolgee.getLanguage() }"
                 :theme="{
-                    cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px #69aecd;} .Input:focus {border-radius: 0.5rem; border: solid 2px #69aecd;} .SearchBox {box-shadow: none} .Results {font-family: Nunito;} .ResultsAttribution {color: #7b7b7b} .SearchIcon {fill: #69aecd;} .ActionIcon {color: #7b7b7b}  ${css} ${customClass}`,
+                    cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px ${border};} .Input:focus {border-radius: 0.5rem; border: solid 2px ${border};} .SearchBox {box-shadow: none;} .Results {font-family: Nunito;} .ResultsAttribution {color: ${placeholderColor}} .SearchIcon {fill: ${border};} .ActionIcon {color: ${placeholderColor}}  ${css} ${customClass}`,
                 }"
                 @input="changeInput"
                 @retrieve="
