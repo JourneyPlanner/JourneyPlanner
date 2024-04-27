@@ -21,8 +21,9 @@ return new class extends Migration {
             $table->text("link")->nullable();
             $table->text("cost")->nullable();
             $table->text("description")->nullable();
-            $table->text("address")->nullable();
             $table->text("mapbox_id")->nullable();
+            $table->text("mapbox_full_address")->nullable();
+            $table->text("address")->nullable();
             $table->decimal("longitude", 11, 8)->nullable();
             $table->decimal("latitude", 10, 8)->nullable();
             $table->timestamps();

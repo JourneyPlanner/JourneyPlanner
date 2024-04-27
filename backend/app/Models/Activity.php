@@ -21,8 +21,9 @@ class Activity extends Model
     protected $fillable = [
         "name",
         "estimated_duration",
-        "address",
         "mapbox_id",
+        "mapbox_full_address",
+        "address",
         "opening_hours",
         "contact",
         "link",
