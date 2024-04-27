@@ -13,14 +13,16 @@ services:
     depends_on:
       - frontend
   frontend:
-    build: ../frontend
+    build:
+      context: ../frontend
+      args:
+        - INFISICAL_API_URL=$FRONTEND_INFISICAL_API_URL
+        - INFISICAL_TOKEN=$FRONTEND_INFISICAL_TOKEN
     pull_policy: build
     restart: unless-stopped
     depends_on:
       - backend
       - i18n
-    environment:
-      - NUXT_MAPBOX_API_KEY=$NUXT_MAPBOX_API_KEY
   i18n:
     build: ./i18n
     pull_policy: build
@@ -36,8 +38,8 @@ services:
     pull_policy: build
     restart: unless-stopped
     environment:
-      - INFISICAL_API_URL=$INFISICAL_API_URL
-      - INFISICAL_TOKEN=$INFISICAL_TOKEN
+      - INFISICAL_API_URL=$BACKEND_INFISICAL_API_URL
+      - INFISICAL_TOKEN=$BACKEND_INFISICAL_TOKEN
   db:
     image: mariadb:latest
     pull_policy: always
