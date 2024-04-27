@@ -12,7 +12,7 @@ pipeline {
             steps {
                 dir('frontend') {
                     script {
-                        docker.build(env.FRONTEND_IMAGE, '--build-arg INFISICAL_API_URL=${FRONTEND_INFISICAL_API_URL} --build-arg INFISICAL_TOKEN=${FRONTEND_INFISICAL_TOKEN}')
+                        docker.build(env.FRONTEND_IMAGE, '--build-arg INFISICAL_API_URL=${FRONTEND_INFISICAL_API_URL} --build-arg INFISICAL_TOKEN=${FRONTEND_INFISICAL_TOKEN}', '.')
                     }
                 }
             }
