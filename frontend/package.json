@@ -12,6 +12,7 @@
         "prepare": "cd .. && husky frontend/.husky"
     },
     "dependencies": {
+        "@mapbox/search-js-web": "^1.0.0-beta.19",
         "@nuxt/eslint": "^0.3.8",
         "@pinia/nuxt": "^0.5.1",
         "@tolgee/vue": "^5.24.1",

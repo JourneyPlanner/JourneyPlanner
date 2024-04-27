@@ -8,6 +8,11 @@ export default defineNuxtConfig({
         pageTransition: { name: "page", mode: "out-in" },
         layoutTransition: { name: "page", mode: "out-in" },
     },
+    vue: {
+        compilerOptions: {
+            isCustomElement: (tag) => ["mapbox-search-box"].includes(tag),
+        },
+    },
     modules: [
         "@nuxtjs/tailwindcss",
         "@nuxtjs/color-mode",
@@ -32,6 +37,7 @@ export default defineNuxtConfig({
             NUXT_TOLGEE_API_KEY: process.env.NUXT_TOLGEE_API_KEY,
             NUXT_TOLGEE_API_URL: process.env.NUXT_TOLGEE_API_URL,
             NUXT_BACKEND_URL: process.env.NUXT_BACKEND_URL,
+            NUXT_MAPBOX_API_KEY: process.env.NUXT_MAPBOX_API_KEY,
         },
     },
     primevue: {
@@ -54,6 +60,12 @@ export default defineNuxtConfig({
                 "Toast",
                 "Sidebar",
                 "OverlayPanel",
+                "TabView",
+                "TabPanel",
+                "InputGroup",
+                "InputGroupAddon",
+                "InputIcon",
+                "IconField",
             ],
         },
     },

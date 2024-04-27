@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Journey extends Model
 {
@@ -57,5 +58,13 @@ class Journey extends Model
             "from" => "required|date",
             "to" => "required|date",
         ];
+    }
+
+    /**
+     * The activities that are a part of the journey.
+     */
+    public function activities(): HasMany
+    {
+        return $this->hasMany(Activity::class);
     }
 }

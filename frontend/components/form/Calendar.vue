@@ -44,7 +44,7 @@ defineEmits(["input"]);
             :pt="{
                 panel: { class: 'text-text font-nunito' },
                 header: {
-                    class: 'flex border-b bg-input dark:bg-background-dark dark:text-white',
+                    class: 'flex justify-between border-b bg-input dark:bg-background-dark dark:text-white',
                 },
                 dayLabel: { class: 'text-border' },
                 datepickerMask: { class: 'text-text bg-background-dark' },
