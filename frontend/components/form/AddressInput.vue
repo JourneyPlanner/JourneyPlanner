@@ -97,12 +97,6 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                     (event: MapBoxRetrieveEvent) => handleRetrieve(event)
                 "
             />
-            <label
-                :for="id"
-                class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-input-placeholder transition-transform duration-100 ease-linear group-placeholder-shown:translate-y-2.5 group-placeholder-shown:text-sm group-placeholder-shown:text-input-placeholder group-focus:ml-1.5 group-focus:-translate-y-0.5 group-focus:px-1 group-focus:text-xs group-focus:text-input-label"
-            >
-                <T :key-name="translationKey" />
-            </label>
         </ClientOnly>
     </form>
 </template>
