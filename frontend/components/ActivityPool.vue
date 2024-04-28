@@ -11,7 +11,7 @@ const toggle = (event: Event) => {
     menu.value.toggle(event);
 };
 
-const props = defineProps({
+defineProps({
     id: {
         type: String,
         required: true,
@@ -182,7 +182,7 @@ function showInfo(id: string) {
             </ScrollPanel>
         </div>
         <ActivityDialog
-            :id="$props.id.toString()"
+            :id="id.toString()"
             :visible="isActivityInfoVisible"
             :only-show="onlyShow"
             :address="address"
