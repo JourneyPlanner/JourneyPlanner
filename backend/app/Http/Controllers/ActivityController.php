@@ -76,9 +76,9 @@ class ActivityController extends Controller
             $geocodingData = [];
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
-                    $validated["mapbox_full_address"] .
-                    "&permanent=true&autocomplete=false&limit=1&access_token=" .
-                    env("MAPBOX_API_KEY")
+                $validated["mapbox_full_address"] .
+                "&permanent=true&autocomplete=false&limit=1&access_token=" .
+                env("MAPBOX_API_KEY")
             );
             $geocodingData = $geocodingResponse->json();
 
@@ -115,10 +115,10 @@ class ActivityController extends Controller
             $end->add(
                 new DateInterval(
                     "PT" .
-                        substr($activity->estimated_duration, 0, 2) .
-                        "H" .
-                        substr($activity->estimated_duration, 3) .
-                        "M"
+                    substr($activity->estimated_duration, 0, 2) .
+                    "H" .
+                    substr($activity->estimated_duration, 3) .
+                    "M"
                 )
             );
 
@@ -170,9 +170,11 @@ class ActivityController extends Controller
             "time" => "nullable|date_format:H:i",
         ]);
 
+        $oldMapboxFullAddress = $activity->mapbox_full_address;
+
         if (
             array_key_exists("mapbox_full_address", $validated) &&
-            $validated["mapbox_full_address"]
+            $validated["mapbox_full_address"] !== $oldMapboxFullAddress
         ) {
             $validated["address"] = "";
         } elseif (
@@ -181,8 +183,6 @@ class ActivityController extends Controller
         ) {
             $validated["mapbox_full_address"] = $validated["address"];
         }
-
-        $oldMapboxFullAddress = $activity->mapbox_full_address;
 
         // Update the activity
         $activity->update($validated);
@@ -196,9 +196,9 @@ class ActivityController extends Controller
             $geocodingData = [];
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
-                    $validated["mapbox_full_address"] .
-                    "&permanent=true&autocomplete=false&limit=1&access_token=" .
-                    env("MAPBOX_API_KEY")
+                $validated["mapbox_full_address"] .
+                "&permanent=true&autocomplete=false&limit=1&access_token=" .
+                env("MAPBOX_API_KEY")
             );
             $geocodingData = $geocodingResponse->json();
 
@@ -235,10 +235,10 @@ class ActivityController extends Controller
             $end->add(
                 new DateInterval(
                     "PT" .
-                        substr($activity->estimated_duration, 0, 2) .
-                        "H" .
-                        substr($activity->estimated_duration, 3) .
-                        "M"
+                    substr($activity->estimated_duration, 0, 2) .
+                    "H" .
+                    substr($activity->estimated_duration, 3) .
+                    "M"
                 )
             );
 
