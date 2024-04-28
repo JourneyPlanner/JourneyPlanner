@@ -71,12 +71,12 @@ const onSubmit = handleSubmit(async (values) => {
     const journey = {
         name,
         destination,
+        mapbox_full_address: values.mapbox?.properties?.full_address,
+        mapbox_id: values.mapbox?.properties?.mapbox_id,
         from,
         to,
         invite,
     };
-
-    console.log(journey);
 
     await client("/api/journey", {
         method: "POST",
@@ -147,7 +147,7 @@ function copyToClipboard() {
                             "
                             bg-light-key="surface"
                             bg-dark-key="surface-dark"
-                            custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-size: 0.875rem; line-height: 1.25rem;}"
+                            custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
                         />
                         <FormCalendar
                             id="journey-range-calendar"

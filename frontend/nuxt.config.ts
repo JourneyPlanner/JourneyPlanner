@@ -21,6 +21,7 @@ export default defineNuxtConfig({
         "nuxt-auth-sanctum",
         "@pinia/nuxt",
         "@nuxt/eslint",
+        "nuxt-mapbox",
     ],
     css: [
         "@/assets/css/fonts/fonts.css",
@@ -93,5 +94,8 @@ export default defineNuxtConfig({
             onAuthOnly: "/login",
             onGuestOnly: "/dashboard",
         },
+    },
+    mapbox: {
+        accessToken: process.env.NUXT_MAPBOX_API_KEY,
     },
 });

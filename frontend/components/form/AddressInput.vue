@@ -15,7 +15,7 @@ const props = defineProps({
 });
 
 const { value: mapbox } = useField<Feature>(() => "mapbox");
-const { value: inputValue } = useField<string>(() => props.name);
+const { value: inputValue, errorMessage } = useField<string>(() => props.name);
 
 const config = useRuntimeConfig();
 
@@ -100,6 +100,16 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                     (event: MapBoxRetrieveEvent) => handleRetrieve(event)
                 "
             />
+            <div v-if="errorMessage" class="h-1.5 w-full text-left">
+                <span
+                    class="ml-3 text-xs text-error dark:font-bold dark:text-error-dark"
+                    :class="{
+                        invisible: !errorMessage,
+                        visible: errorMessage,
+                    }"
+                    >{{ errorMessage }}</span
+                >
+            </div>
         </ClientOnly>
     </form>
 </template>

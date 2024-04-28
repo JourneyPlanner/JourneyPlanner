@@ -16,6 +16,7 @@ interface Journey {
     id: string;
     name: string;
     destination: string;
+    mapbox_full_address: string;
     from: Date;
     to: Date;
     role: number;
@@ -110,6 +111,9 @@ const { data } = await useAsyncData("journeys", () => client("/api/journey"));
 journeys.value = data.value;
 currentJourneys.value = data.value;
 store.setJourneys(data.value);
+
+//TODO: richtige location bei dashboard
+//TODO: reise bearbeiten
 
 /**
  * Searches for journeys based on the searchValue
@@ -290,7 +294,11 @@ function editJourney(journey: Journey, id: string) {
                     :id="String(journey.id)"
                     :key="journey.id"
                     :name="journey.name"
-                    :destination="journey.destination"
+                    :destination="
+                        journey.destination === ''
+                            ? journey.mapbox_full_address
+                            : journey.destination
+                    "
                     :from="new Date(journey.from)"
                     :to="new Date(journey.to)"
                     :role="Number(journey.role)"

@@ -814,5 +814,6 @@ async function changeRole(userid: string, selectedRole: number) {
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
+        <ActivityMap />
     </div>
 </template>
