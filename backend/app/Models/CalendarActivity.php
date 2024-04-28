@@ -24,9 +24,5 @@ class CalendarActivity extends Model
      *
      * @var string[]
      */
-    protected $fillable = [
-        "activity_id",
-        "start",
-        "end",
-    ];
+    protected $fillable = ["activity_id", "start", "end"];
 }
