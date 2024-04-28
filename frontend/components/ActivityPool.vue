@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { Draggable } from "@fullcalendar/interaction";
-import { useTranslate } from "@tolgee/vue";
 import { format, parse } from "date-fns";
 import { useActivityStore } from "~/stores/activities";
 
 import ActivityDialog from "./ActivityDialog.vue";
 
 const store = useActivityStore();
-const { t } = useTranslate();
 const menu = ref();
 const toggle = (event: Event) => {
     menu.value.toggle(event);
@@ -21,7 +19,6 @@ const props = defineProps({
 });
 
 const containerElement = ref();
-const client = useSanctumClient();
 const onlyShow = ref(true);
 const address = ref("");
 const cost = ref("");

@@ -54,7 +54,7 @@ defineEmits(["input"]);
             @input="handleFocus"
             @date-select="$emit('input', $event), handleFocus"
         />
-        <br >
+        <br />
         <div class="h-3">
             <span
                 class="ml-2.5 text-xs text-error dark:font-bold dark:text-error-dark"
