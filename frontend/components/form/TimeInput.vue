@@ -5,11 +5,16 @@ const props = defineProps({
     translationKey: { type: String, required: true },
     defaultTime: { type: Array<number>, default: null },
     disabled: { type: Boolean, default: false },
+    value: { type: String, default: null },
 });
 
 const { value, errorMessage } = useField<Date>(() => props.name);
 
-if (props.defaultTime !== null) {
+if (props.value !== null && props.value !== "") {
+    value.value = new Date();
+    value.value.setHours(parseInt(props.value.split(":")[0]));
+    value.value.setMinutes(parseInt(props.value.split(":")[1]));
+} else if (props.defaultTime !== null) {
     value.value = new Date();
     value.value.setHours(props.defaultTime[0]);
     value.value.setMinutes(props.defaultTime[1]);
@@ -34,6 +39,7 @@ const computedClass = computed(() => {
             :id="id"
             v-model="value"
             show-icon
+            value=""
             icon-display="input"
             time-only
             name="time"
@@ -41,7 +47,7 @@ const computedClass = computed(() => {
             :disabled="disabled"
             :pt="{ timePicker: { class: 'font-nunito' } }"
             :input-class="computedClass"
-            panel-class="bg-input dark:bg-input-dark text-text dark:text-input"
+            panel-class="bg-input dark:bg-input-dark text-text dark:text-input disabled:bg-input"
         >
             <template #inputicon="{ clickCallback }">
                 <InputIcon

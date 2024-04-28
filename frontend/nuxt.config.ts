@@ -44,6 +44,9 @@ export default defineNuxtConfig({
         options: {
             ripple: true,
             unstyled: false,
+            zIndex: {
+                modal: 500,
+            },
         },
         components: {
             include: [
@@ -59,6 +62,7 @@ export default defineNuxtConfig({
                 "ConfirmDialog",
                 "Toast",
                 "Sidebar",
+                "ScrollPanel",
                 "OverlayPanel",
                 "TabView",
                 "TabPanel",

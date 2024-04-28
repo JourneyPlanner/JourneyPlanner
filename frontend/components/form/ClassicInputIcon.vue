@@ -3,11 +3,13 @@ import { ErrorMessage, Field } from "vee-validate";
 
 const props = defineProps({
     id: { type: String, required: true },
+    value: { type: String, default: "" },
     name: { type: String, required: true },
     translationKey: { type: String, default: "" },
     customClass: { type: String, default: "" },
     inputType: { type: String, default: "" },
     icon: { type: String, default: "" },
+    disabled: { type: Boolean, default: false },
     iconPosIsLeft: { type: Boolean, default: false },
 });
 
@@ -17,6 +19,8 @@ if (props.iconPosIsLeft) {
     iconPos = "left";
     addClass += " pl-10";
 }
+
+const refValue = ref(props.value);
 </script>
 
 <template>
@@ -32,10 +36,12 @@ if (props.iconPosIsLeft) {
             <InputIcon class="pi text-border" :class="icon" />
             <Field
                 :id="id"
+                v-model="refValue"
                 type="text"
+                :disabled="disabled"
                 :as="inputType"
                 :name="name"
-                class="block w-full rounded-lg border-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
+                class="block w-full rounded-lg border-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:bg-input-disabled dark:bg-input-dark dark:text-input disabled:dark:bg-input-disabled-dark"
                 :class="addClass"
                 placeholder=" "
             />

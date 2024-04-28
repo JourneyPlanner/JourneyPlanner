@@ -10,7 +10,24 @@ const toast = useToast();
 const props = defineProps({
     visible: { type: Boolean, required: true },
     id: { type: String, required: true },
+    address: { type: String, default: "" },
+    onlyShow: { type: Boolean, default: false },
+    cost: { type: String, default: "" },
+    created_at: { type: String, default: "" },
+    description: { type: String, default: "" },
+    email: { type: String, default: "" },
+    estimated_duration: { type: String, default: "" },
+    journey_id: { type: String, default: "" },
+    latitude: { type: String, default: "" },
+    longitude: { type: String, default: "" },
+    link: { type: String, default: "" },
+    mapbox_id: { type: String, default: "" },
+    name: { type: String, default: "" },
+    opening_hours: { type: String, default: "" },
+    phone: { type: String, default: "" },
+    updated_at: { type: String, default: "" },
 });
+
 const emit = defineEmits(["close"]);
 
 const isVisible = ref(props.visible);
@@ -18,6 +35,7 @@ const loadingSave = ref(false);
 const activeIndex = ref(0);
 
 const store = useJourneyStore();
+const activityStore = useActivityStore();
 const to = new Date(store.getToDate());
 const from = new Date(store.getFromDate());
 
@@ -132,6 +150,11 @@ async function onSuccess(values: ActivityForm) {
                 });
                 close();
                 loadingSave.value = false;
+                const { data: activityData } = await useAsyncData(
+                    "activity",
+                    () => client(`/api/journey/${props.id}/activity`),
+                );
+                activityStore.setActivities(activityData.value);
             }
         },
         async onRequestError() {
@@ -186,18 +209,19 @@ function setSelectedDate(date: Date) {
     <Dialog
         v-model:visible="isVisible"
         modal
-        :auto-z-index="false"
+        :auto-z-index="true"
+        :base-z-index="1000"
         :draggable="false"
         class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-6/12 md:rounded-xl"
         :pt="{
             root: {
-                class: 'font-nunito bg-background dark:bg-background-dark',
+                class: 'font-nunito bg-background dark:bg-background-dark z-10',
             },
             header: {
                 class: 'flex justify-end h-1 pb-2 font-nunito bg-background dark:bg-background-dark',
             },
             content: {
-                class: 'z-10 font-nunito bg-background dark:bg-background-dark px-0 sm:px-5 h-full',
+                class: 'font-nunito bg-background dark:bg-background-dark px-0 sm:px-5 h-full',
             },
             footer: { class: 'h-0' },
             closeButtonIcon: {
@@ -249,6 +273,8 @@ function setSelectedDate(date: Date) {
                         <FormClassicInputIcon
                             id="name"
                             name="name"
+                            :value="name"
+                            :disabled="onlyShow"
                             translation-key="form.input.activity.name"
                             icon="pi-tag"
                             :icon-pos-is-left="true"
@@ -257,11 +283,14 @@ function setSelectedDate(date: Date) {
                         <FormTimeInput
                             id="duration"
                             name="duration"
+                            :value="estimated_duration"
+                            :disabled="onlyShow"
                             translation-key="form.input.activity.duration"
                             class="order-2 col-span-1 w-full sm:col-span-2 sm:w-5/6 sm:justify-self-end"
                             :default-time="new Array(0, 30)"
                         />
                         <div
+                            v-if="!onlyShow"
                             class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
                         >
                             <label class="text-sm font-medium md:text-base">
@@ -269,9 +298,24 @@ function setSelectedDate(date: Date) {
                             </label>
                             <FormAddressInput name="address" />
                         </div>
+
+                        <FormClassicInputIcon
+                            v-if="onlyShow"
+                            id="address"
+                            name="address"
+                            :value="address"
+                            :disabled="onlyShow"
+                            translation-key="form.input.activity.address"
+                            icon="pi-map-marker"
+                            :icon-pos-is-left="true"
+                            class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
+                        />
+
                         <FormClassicInputIcon
                             id="costs"
                             name="costs"
+                            :value="cost"
+                            :disabled="onlyShow"
                             translation-key="form.input.activity.costs"
                             icon="pi-money-bill"
                             class="order-3 col-span-1 w-full sm:order-4 sm:col-span-2 sm:w-5/6 sm:justify-self-end"
@@ -279,6 +323,8 @@ function setSelectedDate(date: Date) {
                         <FormClassicInputIcon
                             id="description"
                             name="description"
+                            :value="description"
+                            :disabled="onlyShow"
                             translation-key="form.input.activity.description"
                             class="order-5 col-span-full row-span-2"
                             custom-class="h-full"
@@ -307,6 +353,8 @@ function setSelectedDate(date: Date) {
                         <div>
                             <FormGroupInput
                                 id="link"
+                                :disabled="onlyShow"
+                                :value="link"
                                 name="link"
                                 translation-key="form.input.activity.link"
                                 placeholder="https://www.journeyplanner.io"
@@ -319,12 +367,16 @@ function setSelectedDate(date: Date) {
                             </label>
                             <FormGroupInput
                                 id="email"
+                                :disabled="onlyShow"
+                                :value="email"
                                 name="email"
                                 icon="pi-at"
                                 placeholder="contact@journeyplanner.io"
                             />
                             <FormGroupInput
                                 id="phone"
+                                :disabled="onlyShow"
+                                :value="phone"
                                 name="phone"
                                 icon="pi-phone"
                                 placeholder="+12 3456789"
@@ -333,6 +385,8 @@ function setSelectedDate(date: Date) {
                         <FormClassicInputIcon
                             id="opening-hours"
                             name="open"
+                            :disabled="onlyShow"
+                            :value="opening_hours"
                             translation-key="form.input.activity.opening-hours"
                             input-type="textarea"
                             custom-class="h-full"
@@ -341,6 +395,7 @@ function setSelectedDate(date: Date) {
                     </div>
                 </TabPanel>
                 <TabPanel
+                    v-if="!onlyShow"
                     :header="t('activity.manual.header')"
                     :pt="{
                         headerAction: () => ({
@@ -393,6 +448,7 @@ function setSelectedDate(date: Date) {
             </TabView>
 
             <div
+                v-if="!onlyShow"
                 class="mx-5 flex h-full flex-row justify-between gap-2 bg-background align-bottom font-nunito dark:bg-background-dark"
             >
                 <Button

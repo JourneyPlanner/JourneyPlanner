@@ -78,7 +78,7 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                 placeholder=" "
                 :options="{ language: tolgee.getLanguage() }"
                 :theme="{
-                    cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px #69aecd;} .Input:focus {border-radius: 0.5rem; border: solid 2px #69aecd;} .SearchBox {box-shadow: none} .Results {font-family: Nunito;} .ResultsAttribution {color: #7b7b7b} .SearchIcon {fill: #69aecd;} .ActionIcon {color: #7b7b7b}  ${css}`,
+                    cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px #69aecd;} .Input:focus {border-radius: 0.5rem; border: solid 2px #69aecd;} .SearchBox {box-shadow: none} .Results {font-family: Nunito;, z-index:500} .ResultsAttribution {color: #7b7b7b} .SearchIcon {fill: #69aecd;} .ActionIcon {color: #7b7b7b}  ${css}`,
                 }"
                 @input="changeInput"
                 @retrieve="

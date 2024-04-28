@@ -8,6 +8,7 @@ import QRCode from "qrcode";
 const confirm = useConfirm();
 const route = useRoute();
 const store = useJourneyStore();
+const activityStore = useActivityStore();
 const journeyId = route.params.id;
 const qrcode = ref("");
 const duringJourney = ref(false);
@@ -57,6 +58,12 @@ if (error.value) {
         fatal: true,
     });
 }
+
+const { data: activityData } = await useAsyncData("activity", () =>
+    client(`/api/journey/${journeyId}/activity`),
+);
+
+activityStore.setActivities(activityData);
 
 const { data: users } = await useAsyncData("users", () =>
     client(`/api/journey/${journeyId}/user`),
@@ -772,13 +779,40 @@ async function changeRole(userid: string, selectedRole: number) {
                 </div>
             </div>
         </div>
-        <button @click="isActivityDialogVisible = !isActivityDialogVisible">
-            Create activity
-        </button>
+        <div class="flex justify-center md:justify-start">
+            <div
+                class="flex w-[90%] items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            >
+                <Divider
+                    type="solid"
+                    class="border text-surface md:hidden md:w-0"
+                />
+            </div>
+        </div>
+        <div
+            v-if="currUser.role === 1"
+            class="flex justify-center md:justify-start"
+        >
+            <div
+                class="-mt-4 flex h-10 w-[90%] items-end sm:w-5/6 md:ml-[10%] md:h-20 md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:h-24 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            >
+                <div class="-mb-2.5 text-2xl font-semibold lg:mb-3">
+                    <T key-name="journey.activities" />
+                </div>
+                <button
+                    class="-mb-3 ml-auto flex rounded-xl border-2 border-cta-border bg-input px-2 py-1 text-base font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark lg:mb-4"
+                    @click="isActivityDialogVisible = !isActivityDialogVisible"
+                >
+                    <SvgAddLocation class="h-6 w-6" />
+                    <T key-name="journey.button.create.activity" />
+                </button>
+            </div>
+        </div>
         <ActivityDialog
             :id="journeyId.toString()"
             :visible="isActivityDialogVisible"
             @close="isActivityDialogVisible = false"
         />
+        <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
     </div>
 </template>
