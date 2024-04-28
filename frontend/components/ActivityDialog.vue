@@ -10,6 +10,7 @@ const toast = useToast();
 const props = defineProps({
     visible: { type: Boolean, required: true },
     id: { type: String, required: true },
+    activityId: { type: String, default: "" },
     address: { type: String, default: "" },
     onlyShow: { type: Boolean, default: false },
     cost: { type: String, default: "" },
@@ -26,6 +27,7 @@ const props = defineProps({
     opening_hours: { type: String, default: "" },
     phone: { type: String, default: "" },
     updated_at: { type: String, default: "" },
+    update: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["close"]);
@@ -33,6 +35,7 @@ const emit = defineEmits(["close"]);
 const isVisible = ref(props.visible);
 const loadingSave = ref(false);
 const activeIndex = ref(0);
+const confirm = useConfirm();
 
 const store = useJourneyStore();
 const activityStore = useActivityStore();
@@ -65,6 +68,72 @@ interface ActivityForm {
 }
 
 type ActivityFormErrors = Partial<Record<keyof ActivityForm, string>>;
+
+const confirmDelete = () => {
+    confirm.require({
+        header: t.value("activity.delete.header"),
+        message: t.value("activity.delete.confirm"),
+        icon: "pi pi-exclamation-triangle",
+        rejectClass: "hover:underline",
+        acceptClass:
+            "text-error dark:text-error-dark hover:underline font-bold",
+        rejectLabel: t.value("common.button.cancel"),
+        acceptLabel: t.value("journey.delete"),
+
+        accept: () => {
+            toast.add({
+                severity: "info",
+                summary: t.value("common.toast.info.heading"),
+                detail: t.value("delete.journey.toast.message"),
+                life: 3000,
+            });
+            deleteActivity();
+        },
+    });
+};
+
+async function deleteActivity() {
+    await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
+        method: "delete",
+        body: {},
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value(
+                        "form.input.activity.delete.toast.success.heading",
+                    ),
+                    detail: t.value(
+                        "form.input.activity.delete.toast.success.detail",
+                    ),
+                    life: 6000,
+                });
+                close();
+                const { data: activityData } = await useAsyncData(
+                    "activity",
+                    () => client(`/api/journey/${props.id}/activity`),
+                );
+                activityStore.setActivities(activityData.value);
+            }
+        },
+        async onRequestError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
 
 const validationSchema = yup.object({
     name: yup.string().required(t.value("form.input.required")),
@@ -135,47 +204,95 @@ async function onSuccess(values: ActivityForm) {
         time: time,
     };
 
-    await client(`/api/journey/${props.id}/activity`, {
-        method: "POST",
-        body: activity,
-        async onResponse({ response }) {
-            if (response.ok) {
+    if (props.update) {
+        await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
+            method: "PATCH",
+            body: activity,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value(
+                            "form.input.activity.toast.success.heading",
+                        ),
+                        detail: t.value(
+                            "form.input.activity.toast.success.detail",
+                        ),
+                        life: 6000,
+                    });
+                    close();
+                    loadingSave.value = false;
+                    const { data: activityData } = await useAsyncData(
+                        "activity",
+                        () => client(`/api/journey/${props.id}/activity`),
+                    );
+                    activityStore.setActivities(activityData.value);
+                }
+            },
+            async onRequestError() {
                 toast.add({
-                    severity: "success",
-                    summary: t.value(
-                        "form.input.activity.toast.success.heading",
-                    ),
-                    detail: t.value("form.input.activity.toast.success.detail"),
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
                     life: 6000,
                 });
-                close();
                 loadingSave.value = false;
-                const { data: activityData } = await useAsyncData(
-                    "activity",
-                    () => client(`/api/journey/${props.id}/activity`),
-                );
-                activityStore.setActivities(activityData.value);
-            }
-        },
-        async onRequestError() {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value("common.error.unknown"),
-                life: 6000,
-            });
-            loadingSave.value = false;
-        },
-        async onResponseError() {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value("common.error.unknown"),
-                life: 6000,
-            });
-            loadingSave.value = false;
-        },
-    });
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                loadingSave.value = false;
+            },
+        });
+    } else {
+        await client(`/api/journey/${props.id}/activity`, {
+            method: "POST",
+            body: activity,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value(
+                            "form.input.activity.toast.success.heading",
+                        ),
+                        detail: t.value(
+                            "form.input.activity.toast.success.detail",
+                        ),
+                        life: 6000,
+                    });
+                    close();
+                    loadingSave.value = false;
+                    const { data: activityData } = await useAsyncData(
+                        "activity",
+                        () => client(`/api/journey/${props.id}/activity`),
+                    );
+                    activityStore.setActivities(activityData.value);
+                }
+            },
+            async onRequestError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                loadingSave.value = false;
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                loadingSave.value = false;
+            },
+        });
+    }
 }
 
 function onInvalidSubmit({ errors }: { errors: ActivityFormErrors }) {
@@ -448,7 +565,7 @@ function setSelectedDate(date: Date) {
             </TabView>
 
             <div
-                v-if="!onlyShow"
+                v-if="!onlyShow && !update"
                 class="mx-5 flex h-full flex-row justify-between gap-2 bg-background align-bottom font-nunito dark:bg-background-dark"
             >
                 <Button
@@ -476,6 +593,35 @@ function setSelectedDate(date: Date) {
                         },
                     }"
                     class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-cta-border bg-input text-center text-text hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
+                />
+            </div>
+            <div
+                v-else-if="update"
+                class="mx-5 flex h-full flex-row justify-between gap-2 bg-background align-bottom font-nunito dark:bg-background-dark"
+            >
+                <Button
+                    type="button"
+                    :label="t('dashboard.options.delete')"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
+                    :pt="{
+                        root: { class: 'flex items-center justify-center' },
+                        label: {
+                            class: 'display-block flex-none font-bold font-nunito',
+                        },
+                    }"
+                    @click="confirmDelete"
+                />
+                <Button
+                    type="submit"
+                    :label="t('common.save')"
+                    :loading="loadingSave"
+                    :pt="{
+                        root: { class: 'flex items-center justify-center' },
+                        label: {
+                            class: 'display-block flex-none font-bold font-nunito',
+                        },
+                    }"
+                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-border-green-save bg-input text-center text-text hover:bg-fill-green-save dark:bg-border-green-save-dark dark:text-input dark:hover:bg-fill-green-save-dark"
                 />
             </div>
         </form>
