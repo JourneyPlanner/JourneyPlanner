@@ -162,7 +162,7 @@ function copyToClipboard() {
                                 disabled
                                 class="placeholder:text-transparent text-md peer w-[90%] rounded-lg border-2 border-border bg-input-disabled px-2.5 pb-1 pt-4 font-bold text-text-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark-grey dark:text-input-disabled-dark-gray"
                                 placeholder=" "
-                            />
+                            >
                             <label
                                 for="journey-invite"
                                 class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-link transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-input-label dark:text-border"

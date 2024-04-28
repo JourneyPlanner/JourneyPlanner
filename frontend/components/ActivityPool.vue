@@ -6,7 +6,6 @@ import { useActivityStore } from "~/stores/activities";
 import ActivityDialog from "./ActivityDialog.vue";
 
 const store = useActivityStore();
-const isEditMenuVisible = ref(false);
 const menu = ref();
 const toggle = (event: Event) => {
     menu.value.toggle(event);
@@ -38,14 +37,9 @@ const opening_hours = ref("");
 const phone = ref("");
 const updated_at = ref("");
 
-const isActivityInfoVisible = ref(false);
-const { data: activityData } = await useAsyncData("activity", () =>
-    client(`/api/journey/${props.id}/activity`),
-);
-const activityCount = activityData.value.length;
-
 interface Activity {
     address: string;
+    mapbox_full_address: string;
     calendar_activities: [];
     id: string;
     cost: string;
@@ -63,8 +57,9 @@ interface Activity {
     phone: string;
     updated_at: string;
 }
-
-store.setActivities(activityData);
+const isActivityInfoVisible = ref(false);
+const activities = computed(() => store.activityData as Activity[]);
+const activityCount = activities.value.length;
 
 onMounted(() => {
     new Draggable(containerElement.value, {
@@ -72,10 +67,13 @@ onMounted(() => {
     });
 });
 function showInfo(id: string) {
-    activityData.value.forEach((activity: Activity) => {
+    activities.value.forEach((activity: Activity) => {
         if (activity.id === id) {
             onlyShow.value = true;
-            address.value = activity.address;
+            address.value =
+                activity.address == ""
+                    ? activity.mapbox_full_address
+                    : activity.address;
             cost.value = activity.cost;
             created_at.value = activity.created_at;
             description.value = activity.description;
@@ -115,7 +113,7 @@ function showInfo(id: string) {
                     class="my-2 ml-2 mr-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
                 >
                     <div
-                        v-for="activity in activityData"
+                        v-for="activity in activities"
                         id="draggable-el"
                         :key="activity.id"
                         class="fc-event col-span-1 mx-2 my-2 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-1 py-1 text-base font-normal dark:bg-card-dark sm:h-[4.5rem] sm:text-lg"
@@ -197,26 +195,6 @@ function showInfo(id: string) {
             :phone="phone"
             :updated-at="updated_at"
             @close="isActivityInfoVisible = false"
-        />
-        <Menu
-            id="overlay_menu"
-            ref="menu"
-            class="bg-input dark:bg-input-dark"
-            :popup="true"
-            :pt="{
-                root: { class: 'font-nunito bg-input dark:bg-input-dark' },
-                menuitem: {
-                    class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
-                },
-                content: {
-                    class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
-                },
-                submenuHeader: {
-                    class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark',
-                },
-                label: { class: 'text-text dark:text-white' },
-                icon: { class: 'text-text dark:text-white' },
-            }"
         />
     </div>
 </template>

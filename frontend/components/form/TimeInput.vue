@@ -10,14 +10,11 @@ const props = defineProps({
 
 const { value, errorMessage } = useField<Date>(() => props.name);
 
-console.log(props.value);
 if (props.value !== null && props.value !== "") {
     value.value = new Date();
     value.value.setHours(parseInt(props.value.split(":")[0]));
     value.value.setMinutes(parseInt(props.value.split(":")[1]));
-    console.log(value.value + " " + props.value);
 } else if (props.defaultTime !== null) {
-    console.log(props.defaultTime);
     value.value = new Date();
     value.value.setHours(props.defaultTime[0]);
     value.value.setMinutes(props.defaultTime[1]);

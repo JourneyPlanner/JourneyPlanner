@@ -28,7 +28,7 @@ const { value, errorMessage } = useField(() => props.name);
                     type="checkbox"
                     :name="name"
                     class="peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-border bg-input transition-all checked:border-border checked:bg-border dark:bg-input-dark checked:dark:bg-border"
-                />
+                >
                 <div
                     class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100"
                 >

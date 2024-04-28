@@ -8,6 +8,7 @@ import QRCode from "qrcode";
 const confirm = useConfirm();
 const route = useRoute();
 const store = useJourneyStore();
+const activityStore = useActivityStore();
 const journeyId = route.params.id;
 const qrcode = ref("");
 const duringJourney = ref(false);
@@ -57,6 +58,12 @@ if (error.value) {
         fatal: true,
     });
 }
+
+const { data: activityData } = await useAsyncData("activity", () =>
+    client(`/api/journey/${journeyId}/activity`),
+);
+
+activityStore.setActivities(activityData);
 
 const { data: users } = await useAsyncData("users", () =>
     client(`/api/journey/${journeyId}/user`),

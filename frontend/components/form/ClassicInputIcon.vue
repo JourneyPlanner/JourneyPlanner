@@ -36,9 +36,9 @@ const refValue = ref(props.value);
             <InputIcon class="pi text-border" :class="icon" />
             <Field
                 :id="id"
+                v-model="refValue"
                 type="text"
                 :disabled="disabled"
-                v-model="refValue"
                 :as="inputType"
                 :name="name"
                 class="block w-full rounded-lg border-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:bg-input-disabled dark:bg-input-dark dark:text-input disabled:dark:bg-input-disabled-dark"

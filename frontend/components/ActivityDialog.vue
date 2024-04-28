@@ -35,6 +35,7 @@ const loadingSave = ref(false);
 const activeIndex = ref(0);
 
 const store = useJourneyStore();
+const activityStore = useActivityStore();
 const to = new Date(store.getToDate());
 const from = new Date(store.getFromDate());
 
@@ -149,6 +150,11 @@ async function onSuccess(values: ActivityForm) {
                 });
                 close();
                 loadingSave.value = false;
+                const { data: activityData } = await useAsyncData(
+                    "activity",
+                    () => client(`/api/journey/${props.id}/activity`),
+                );
+                activityStore.setActivities(activityData.value);
             }
         },
         async onRequestError() {
