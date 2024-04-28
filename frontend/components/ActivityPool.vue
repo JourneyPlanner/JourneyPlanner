@@ -58,7 +58,7 @@ interface Activity {
 }
 const isActivityInfoVisible = ref(false);
 const activities = computed(() => store.activityData as Activity[]);
-const activityCount = activities.value.length;
+const activityCount = computed(() => activities.value.length);
 
 onMounted(() => {
     new Draggable(containerElement.value, {
@@ -115,7 +115,7 @@ function showInfo(id: string) {
                         v-for="activity in activities"
                         id="draggable-el"
                         :key="activity.id"
-                        class="fc-event col-span-1 mx-1 my-0 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-1 py-1 text-base font-normal dark:bg-card-dark sm:h-16 sm:text-base"
+                        class="fc-event col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-2 py-1 text-base font-normal dark:bg-card-dark sm:h-16 sm:text-base lg:rounded-xl"
                         :data-event="
                             JSON.stringify({
                                 title: activity.name,

@@ -796,11 +796,11 @@ async function changeRole(userid: string, selectedRole: number) {
             <div
                 class="-mt-4 flex h-10 w-[90%] items-end sm:w-5/6 md:ml-[10%] md:h-20 md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:h-24 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
             >
-                <div class="-mb-3 text-2xl font-semibold lg:mb-3">
+                <div class="-mb-2.5 text-2xl font-semibold lg:mb-3">
                     <T key-name="journey.activities" />
                 </div>
                 <button
-                    class="-mb-3 ml-auto flex rounded-xl border-[2.5px] border-cta-border bg-input px-2 py-1 text-base font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-input lg:mb-4"
+                    class="-mb-3 ml-auto flex rounded-xl border-2 border-cta-border bg-input px-2 py-1 text-base font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark lg:mb-4"
                     @click="isActivityDialogVisible = !isActivityDialogVisible"
                 >
                     <SvgAddLocation class="h-6 w-6" />

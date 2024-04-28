@@ -304,7 +304,7 @@ function setSelectedDate(date: Date) {
                             name="address"
                             :value="address"
                             :disabled="onlyShow"
-                            translation-key="form.input.activity.name"
+                            translation-key="form.input.activity.address"
                             icon="pi-map-marker"
                             :icon-pos-is-left="true"
                             class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
