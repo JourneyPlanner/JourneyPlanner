@@ -143,6 +143,8 @@ class ActivityController extends Controller
                 "activity_id" => $activity->id,
                 "start" => $start,
                 "end" => $end,
+                "start" => $start,
+                "end" => $end,
             ]);
             $calendarActivity->save();
             return response()->json($activity->load("calendarActivities"), 201);
