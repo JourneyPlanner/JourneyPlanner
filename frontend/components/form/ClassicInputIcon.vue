@@ -21,8 +21,6 @@ if (props.iconPosIsLeft) {
 }
 
 const refValue = ref(props.value);
-console.log(props.value);
-console.log(refValue.value);
 </script>
 
 <template>

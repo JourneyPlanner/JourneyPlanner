@@ -6,6 +6,7 @@ import { useActivityStore } from "~/stores/activities";
 import ActivityDialog from "./ActivityDialog.vue";
 
 const store = useActivityStore();
+const isEditMenuVisible = ref(false);
 const menu = ref();
 const toggle = (event: Event) => {
     menu.value.toggle(event);
@@ -196,6 +197,26 @@ function showInfo(id: string) {
             :phone="phone"
             :updated-at="updated_at"
             @close="isActivityInfoVisible = false"
+        />
+        <Menu
+            id="overlay_menu"
+            ref="menu"
+            class="bg-input dark:bg-input-dark"
+            :popup="true"
+            :pt="{
+                root: { class: 'font-nunito bg-input dark:bg-input-dark' },
+                menuitem: {
+                    class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                },
+                content: {
+                    class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                },
+                submenuHeader: {
+                    class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark',
+                },
+                label: { class: 'text-text dark:text-white' },
+                icon: { class: 'text-text dark:text-white' },
+            }"
         />
     </div>
 </template>
