@@ -1,5 +1,4 @@
 <script setup lang="ts">
-//import * as Mapbox from "@mapbox/search-js-web";
 import { useTolgee } from "@tolgee/vue";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "~/tailwind.config.js";
@@ -8,7 +7,9 @@ const props = defineProps({
     name: { type: String, required: true },
 });
 
-const { value } = useField<Feature>(() => props.name);
+const { value: mapbox } = useField<Feature>(() => "mapbox");
+const { value: inputValue } = useField<string>(() => props.name);
+
 const config = useRuntimeConfig();
 
 let search = null;
@@ -58,8 +59,13 @@ if (
 
 const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Results {background-color: ${input}; color: ${text};} .SearchBox {background-color: ${bg};} .Suggestion:hover {background-color: ${bg};}  .ClearBtn:hover {color: ${hoverCancel}}`;
 
+function changeInput(event: InputEvent) {
+    inputValue.value = (event.target as HTMLInputElement).value;
+}
+
 function handleRetrieve(event: MapBoxRetrieveEvent) {
-    value.value = event.detail.features[0];
+    mapbox.value = event.detail.features[0];
+    inputValue.value = event.detail.features[0].properties.full_address;
 }
 </script>
 <template>
@@ -69,12 +75,12 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                 class="font-nunito"
                 :name="name"
                 :access-token="config.public.NUXT_MAPBOX_API_KEY"
-                proximity="0,0"
                 placeholder=" "
                 :options="{ language: tolgee.getLanguage() }"
                 :theme="{
-                    cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px #69aecd;} .Input:focus {border-radius: 0.5rem; border: solid 2px #69aecd;} .SearchBox {box-shadow: none} .Results {font-family: Nunito;} .ResultsAttribution {color: #7b7b7b} .SearchIcon {fill: #69aecd;} .ActionIcon {color: #7b7b7b}  ${css}`,
+                    cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px #69aecd;} .Input:focus {border-radius: 0.5rem; border: solid 2px #69aecd;} .SearchBox {box-shadow: none} .Results {font-family: Nunito;, z-index:500} .ResultsAttribution {color: #7b7b7b} .SearchIcon {fill: #69aecd;} .ActionIcon {color: #7b7b7b}  ${css}`,
                 }"
+                @input="changeInput"
                 @retrieve="
                     (event: MapBoxRetrieveEvent) => handleRetrieve(event)
                 "

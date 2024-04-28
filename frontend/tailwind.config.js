@@ -48,6 +48,7 @@ export default {
             "input-dark": "#454849" /* input background dark */,
             "input-label": "#5ba5c5" /* input label */,
             "input-gray": "#eaeaea" /* gray input */,
+            "input-grey": "#f2f5f9" /* grey input */,
             "input-placeholder": "#7b7b7b" /* input placeholder */,
             "input-disabled": "#f1f1f1",
             "input-disabled-dark": "#636667" /* disabled input dark */,

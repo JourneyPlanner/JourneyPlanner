@@ -33,6 +33,12 @@ Route::apiResource(
 Route::apiResource("journey/{id}/user", JourneyUserController::class)
     ->only("index", "update")
     ->middleware("auth:sanctum");
+
+Route::delete("journey/{journey}/leave", [
+    JourneyUserController::class,
+    "leave",
+])->middleware("auth:sanctum");
+
 Route::get("journey/{journey}/user/me", [
     JourneyUserController::class,
     "currentUserDetails",

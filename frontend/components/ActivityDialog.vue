@@ -10,7 +10,27 @@ const toast = useToast();
 const props = defineProps({
     visible: { type: Boolean, required: true },
     id: { type: String, required: true },
+    address: { type: String, default: "" },
+    onlyShow: { type: Boolean, default: false },
+    cost: { type: String, default: "" },
+    created_at: { type: String, default: "" },
+    description: { type: String, default: "" },
+    email: { type: String, default: "" },
+    estimated_duration: { type: String, default: "" },
+    journey_id: { type: String, default: "" },
+    latitude: { type: String, default: "" },
+    longitude: { type: String, default: "" },
+    link: { type: String, default: "" },
+    mapbox_id: { type: String, default: "" },
+    name: { type: String, default: "" },
+    opening_hours: { type: String, default: "" },
+    phone: { type: String, default: "" },
+    updated_at: { type: String, default: "" },
 });
+
+console.log(props.id);
+console.log(props.estimated_duration);
+
 const emit = defineEmits(["close"]);
 
 const isVisible = ref(props.visible);
@@ -34,7 +54,8 @@ watch(
 interface ActivityForm {
     name: string;
     duration: string;
-    address: Feature;
+    mapbox: Feature;
+    address: string;
     costs: string;
     description: string;
     link: string;
@@ -60,6 +81,7 @@ const validationSchema = yup.object({
             },
         )
         .required(t.value("form.input.required")),
+    address: yup.string().nullable(),
     costs: yup.string().nullable(),
     description: yup.string().nullable(),
     link: yup.string().url(t.value("form.input.link.error")).nullable(),
@@ -68,8 +90,8 @@ const validationSchema = yup.object({
     open: yup.string().nullable(),
     date: yup.string().nullable(),
     time: yup.string().nullable(),
-    dateAndTime: yup.bool().when(["date", "time"], {
-        is: (date: Date, time: Date) => (!date && !time) || (!!date && !!time),
+    dateAndTime: yup.bool().when(["time", "date"], {
+        is: (time: Date, date: Date) => (!date && !time) || (!!date && !!time),
         then: () => yup.bool().nullable(),
         otherwise: () =>
             yup.bool().required(t.value("form.input.activity.custom.error")),
@@ -102,8 +124,9 @@ async function onSuccess(values: ActivityForm) {
     const activity = {
         name: values.name,
         estimated_duration: duration,
-        full_address: values.address?.properties?.full_address,
-        mapbox_id: values.address?.properties?.mapbox_id,
+        address: values.address,
+        mapbox_full_address: values.mapbox?.properties?.full_address,
+        mapbox_id: values.mapbox?.properties?.mapbox_id,
         cost: values.costs,
         description: values.description,
         link: values.link,
@@ -167,6 +190,7 @@ const close = () => {
     selectedDate.value = null;
     timeDisabled.value = true;
     loadingSave.value = false;
+    activeIndex.value = 0;
     emit("close");
 };
 
@@ -182,24 +206,28 @@ function setSelectedDate(date: Date) {
     <Dialog
         v-model:visible="isVisible"
         modal
-        :auto-z-index="false"
+        :auto-z-index="true"
         :draggable="false"
-        class="md:3/4 z-50 w-full rounded-lg bg-background font-nunito dark:bg-background-dark md:rounded-xl lg:w-4/5 xl:w-2/4"
+        class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-6/12 md:rounded-xl"
         :pt="{
             root: {
-                class: 'font-nunito bg-background dark:bg-background-dark',
+                class: 'font-nunito bg-background dark:bg-background-dark z-10',
             },
             header: {
                 class: 'flex justify-end h-1 pb-2 font-nunito bg-background dark:bg-background-dark',
             },
             content: {
-                class: 'font-nunito bg-background dark:bg-background-dark px-0 sm:px-5',
+                class: 'z-10 font-nunito bg-background dark:bg-background-dark px-0 sm:px-5 h-full',
+            },
+            footer: { class: 'h-0' },
+            closeButtonIcon: {
+                class: 'z-20 text-input-placeholder hover:text-text dark:text-input-placeholder dark:hover:text-input h-10 w-10',
             },
         }"
         @hide="close"
     >
         <form
-            class="bg-background font-nunito text-text dark:bg-background-dark dark:text-input"
+            class="flex h-full flex-col justify-between bg-background font-nunito text-text dark:bg-background-dark dark:text-input"
             @submit="onSubmit"
         >
             <TabView
@@ -212,7 +240,7 @@ function setSelectedDate(date: Date) {
                         class: 'text-text dark:text-input font-nunito bg-background dark:bg-background-dark',
                     },
                     nav: {
-                        class: 'font-nunito bg-background dark:bg-background-dark',
+                        class: 'font-nunito bg-background dark:bg-background-dark text-lg',
                     },
                     navContainer: {
                         class: 'border-b-2 border-border-gray dark:border-input-placeholder',
@@ -236,43 +264,65 @@ function setSelectedDate(date: Date) {
                     }"
                 >
                     <div
-                        class="grid grid-cols-2 grid-rows-4 gap-x-3 md:gap-x-10"
+                        class="mb-8 grid grid-cols-2 grid-rows-4 gap-x-2 sm:grid-cols-5 sm:gap-x-0"
                     >
                         <FormClassicInputIcon
                             id="name"
                             name="name"
+                            :value="name"
+                            :disabled="onlyShow"
                             translation-key="form.input.activity.name"
                             icon="pi-tag"
                             :icon-pos-is-left="true"
-                            class="order-1 col-span-2 sm:col-span-1"
+                            class="order-1 col-span-full sm:col-span-3"
                         />
                         <FormTimeInput
                             id="duration"
                             name="duration"
+                            :value="estimated_duration"
+                            :disabled="onlyShow"
                             translation-key="form.input.activity.duration"
-                            class="order-2 w-full sm:w-5/6 sm:justify-self-end"
+                            class="order-2 col-span-1 w-full sm:col-span-2 sm:w-5/6 sm:justify-self-end"
                             :default-time="new Array(0, 30)"
                         />
                         <div
-                            class="order-4 col-span-2 flex flex-col sm:order-3 sm:col-span-1"
+                            v-if="!onlyShow"
+                            class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
                         >
                             <label class="text-sm font-medium md:text-base">
                                 <T key-name="form.input.activity.address" />
                             </label>
                             <FormAddressInput name="address" />
                         </div>
+
+                        <FormClassicInputIcon
+                            v-if="onlyShow"
+                            id="address"
+                            name="address"
+                            :value="address"
+                            :disabled="onlyShow"
+                            translation-key="form.input.activity.name"
+                            icon="pi-map-marker"
+                            :icon-pos-is-left="true"
+                            class="order-4 col-span-2 flex flex-col sm:order-3 sm:col-span-1"
+                        />
+
                         <FormClassicInputIcon
                             id="costs"
                             name="costs"
+                            :value="cost"
+                            :disabled="onlyShow"
                             translation-key="form.input.activity.costs"
                             icon="pi-money-bill"
-                            class="order-3 w-full sm:order-4 sm:w-5/6 sm:justify-self-end"
+                            class="order-3 col-span-1 w-full sm:order-4 sm:col-span-2 sm:w-5/6 sm:justify-self-end"
                         />
                         <FormClassicInputIcon
                             id="description"
                             name="description"
+                            :value="description"
+                            :disabled="onlyShow"
                             translation-key="form.input.activity.description"
-                            class="order-5 col-span-2 row-span-2"
+                            class="order-5 col-span-full row-span-2"
                             custom-class="h-full"
                             input-type="textarea"
                         />
@@ -294,11 +344,13 @@ function setSelectedDate(date: Date) {
                     }"
                 >
                     <div
-                        class="grid grid-cols-1 gap-x-3 sm:grid-cols-2 md:grid-rows-2 md:gap-x-10"
+                        class="mb-8 grid grid-cols-1 gap-x-3 sm:mb-9 sm:grid-cols-2 md:gap-x-10"
                     >
                         <div>
                             <FormGroupInput
                                 id="link"
+                                :disabled="onlyShow"
+                                :value="link"
                                 name="link"
                                 translation-key="form.input.activity.link"
                                 placeholder="https://www.journeyplanner.io"
@@ -311,27 +363,35 @@ function setSelectedDate(date: Date) {
                             </label>
                             <FormGroupInput
                                 id="email"
+                                :disabled="onlyShow"
+                                :value="email"
                                 name="email"
                                 icon="pi-at"
                                 placeholder="contact@journeyplanner.io"
                             />
                             <FormGroupInput
                                 id="phone"
+                                :disabled="onlyShow"
+                                :value="phone"
                                 name="phone"
                                 icon="pi-phone"
+                                placeholder="+12 3456789"
                             />
                         </div>
-                        <FormClassicInputIcon
+                        <FormTextAreaInput
                             id="opening-hours"
                             name="open"
+                            :disabled="onlyShow"
+                            :value="opening_hours"
                             translation-key="form.input.activity.opening-hours"
-                            custom-class="h-full"
                             input-type="textarea"
+                            custom-class="h-full"
                             class="sm:col-start-2 md:row-span-2"
                         />
                     </div>
                 </TabPanel>
                 <TabPanel
+                    v-if="!onlyShow"
                     :header="t('activity.manual.header')"
                     :pt="{
                         headerAction: () => ({
@@ -347,20 +407,19 @@ function setSelectedDate(date: Date) {
                     }"
                 >
                     <div
-                        class="md:cols-1 md:cols-2 grid-rows-2 md:grid md:grid-rows-1 md:gap-5"
+                        class="grid-rows-1 md:grid md:grid-cols-4 md:grid-rows-1 md:gap-0"
                     >
-                        <div class="col-start-1 flex min-h-72 justify-end">
-                            <FormInlineCalendar
-                                id="calendar-inline"
-                                name="date"
-                                :from="from"
-                                :to="to"
-                                :prefill="selectedDate"
-                                @date-selected="setSelectedDate"
-                            />
-                        </div>
+                        <FormInlineCalendar
+                            id="calendar-inline"
+                            name="date"
+                            :from="from"
+                            :to="to"
+                            :prefill="selectedDate"
+                            class="col-span-2"
+                            @date-selected="setSelectedDate"
+                        />
                         <div
-                            class="mt-2 flex gap-3 sm:flex-col md:col-start-2 md:mt-0 md:gap-0"
+                            class="col-span-2 mt-2 flex flex-row gap-x-2 sm:mt-0 sm:flex-col sm:pl-10"
                         >
                             <FormInputCalendar
                                 id="calendar-input"
@@ -369,6 +428,7 @@ function setSelectedDate(date: Date) {
                                 :to="to"
                                 :prefill="selectedDate"
                                 translation-key="form.input.activity.date"
+                                class="w-full sm:pb-2 sm:pr-16"
                                 @date-selected="setSelectedDate"
                             />
                             <FormTimeInput
@@ -376,18 +436,22 @@ function setSelectedDate(date: Date) {
                                 name="time"
                                 translation-key="form.input.activity.time"
                                 :disabled="timeDisabled"
+                                class="w-full sm:pr-16"
                             />
                         </div>
                     </div>
                 </TabPanel>
             </TabView>
 
-            <div class="col-span-2 flex justify-between gap-2 px-5 md:mt-10">
+            <div
+                v-if="!onlyShow"
+                class="mx-5 flex h-full flex-row justify-between gap-2 bg-background align-bottom font-nunito dark:bg-background-dark"
+            >
                 <Button
                     type="button"
                     :label="t('common.button.cancel')"
                     icon="pi pi-times"
-                    class="h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
                         label: {
@@ -407,7 +471,7 @@ function setSelectedDate(date: Date) {
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-cta-border bg-input text-center text-text hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
+                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-cta-border bg-input text-center text-text hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
                 />
             </div>
         </form>

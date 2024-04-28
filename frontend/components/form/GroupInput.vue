@@ -9,6 +9,8 @@ defineProps({
     inputType: { type: String, default: "" },
     icon: { type: String, default: "" },
     placeholder: { type: String, default: "" },
+    disabled: { type: Boolean, default: false },
+    value: { type: String, default: "" },
 });
 </script>
 
@@ -28,6 +30,8 @@ defineProps({
                 type="text"
                 :as="inputType"
                 :name="name"
+                :disabled="disabled"
+                :value="value"
                 :placeholder="placeholder"
                 class="block w-full border-b-2 border-r-2 border-t-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
                 :class="customClass"
@@ -35,7 +39,7 @@ defineProps({
         </InputGroup>
         <ErrorMessage
             :name="name"
-            class="text-sm text-error dark:font-bold dark:text-error-dark"
+            class="text-xs text-error dark:font-bold dark:text-error-dark sm:text-sm"
         />
     </div>
 </template>

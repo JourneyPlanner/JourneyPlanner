@@ -109,10 +109,50 @@ class JourneyUserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Leave the journey.
      */
-    public function destroy(JourneyUser $journeyUser)
+    public function leave($journey)
     {
-        //
+        $journey = Journey::findOrFail($journey);
+
+        // Prevent the user from leaving if they are the only guide
+        if (
+            $journey
+                ->users()
+                ->wherePivot("user_id", auth()->id())
+                ->wherePivot("role", 1)
+                ->exists() &&
+            $journey->users()->wherePivot("role", 1)->count() === 1 &&
+            $journey->users()->count() !== 1
+        ) {
+            return response()->json(
+                [
+                    "message" =>
+                        "You cannot leave the journey if you are the only guide",
+                ],
+                403
+            );
+        }
+
+        $journey->users()->detach(auth()->id());
+
+        // Remove the journey if the user was the last member
+        if ($journey->users()->count() === 0) {
+            $journey->delete();
+
+            return response()->json(
+                [
+                    "message" => "Journey and user removed successfully",
+                ],
+                200
+            );
+        }
+
+        return response()->json(
+            [
+                "message" => "User removed successfully",
+            ],
+            200
+        );
     }
 }

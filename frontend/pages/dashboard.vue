@@ -153,7 +153,7 @@ function sortJourneys(sortKey: string) {
     });
 }
 
-function deleteJourney(id: string) {
+function removeJourney(id: string) {
     journeys.value.splice(
         journeys.value.findIndex((journey) => journey.id === id),
         1,
@@ -294,7 +294,8 @@ function editJourney(journey: Journey, id: string) {
                     :from="new Date(journey.from)"
                     :to="new Date(journey.to)"
                     :role="Number(journey.role)"
-                    @journey-deleted="deleteJourney"
+                    @journey-deleted="removeJourney"
+                    @journey-leave="removeJourney"
                     @journey-edited="editJourney"
                 />
                 <NuxtLink to="/journey/new">
@@ -351,7 +352,6 @@ function editJourney(journey: Journey, id: string) {
         </TieredMenu>
         <ConfirmDialog
             :draggable="false"
-            group="delete"
             :pt="{
                 header: {
                     class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',

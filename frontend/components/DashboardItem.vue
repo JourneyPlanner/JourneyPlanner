@@ -17,7 +17,7 @@ const props = defineProps({
     role: { type: Number, required: true },
 });
 
-const emit = defineEmits(["journeyDeleted", "journeyEdited"]);
+const emit = defineEmits(["journeyDeleted", "journeyEdited", "journeyLeave"]);
 
 const { t } = useTranslate();
 const confirm = useConfirm();
@@ -41,7 +41,6 @@ const toggle = (event: Event) => {
 
 const confirmDelete = (event: Event) => {
     confirm.require({
-        group: "delete",
         target: event.currentTarget as HTMLElement,
         header: t.value("dashboard.delete.header"),
         message: t.value("dashboard.delete.confirm"),
@@ -60,6 +59,29 @@ const confirmDelete = (event: Event) => {
             });
             isEditMenuVisible.value = false;
             deleteJourney();
+        },
+    });
+};
+
+const confirmLeave = (event: Event) => {
+    confirm.require({
+        target: event.currentTarget as HTMLElement,
+        header: t.value("journey.leave.header"),
+        message: t.value("journey.leave.message"),
+        icon: "pi pi-exclamation-triangle",
+        rejectClass: "hover:underline",
+        acceptClass:
+            "text-error dark:text-error-dark hover:underline font-bold",
+        rejectLabel: t.value("common.button.cancel"),
+        acceptLabel: t.value("journey.leave"),
+        accept: () => {
+            toast.add({
+                severity: "info",
+                summary: t.value("common.toast.info.heading"),
+                detail: t.value("leave.journey.toast.message"),
+                life: 3000,
+            });
+            leaveJourney();
         },
     });
 };
@@ -89,6 +111,42 @@ async function deleteJourney() {
     });
 }
 
+async function leaveJourney() {
+    await client(`/api/journey/${props.id}/leave`, {
+        method: "DELETE",
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("leave.journey.toast.success.heading"),
+                    detail: t.value("leave.journey.toast.success.detail"),
+                    life: 3000,
+                });
+                emit("journeyLeave", props.id);
+            }
+        },
+        async onResponseError({ response }) {
+            console.log(response);
+
+            if (response.status === 403) {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("leave.journey.toast.error"),
+                    life: 6000,
+                });
+            } else {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+            }
+        },
+    });
+}
+
 const itemsJourneyGuide = ref([
     {
         label: t.value("dashboard.options.header"),
@@ -108,15 +166,13 @@ const itemsJourneyGuide = ref([
                     confirmDelete($event.originalEvent);
                 },
             },
-            /* leave for JP-34
             {
-                label: t.value('dashboard.options.leave'),
-                icon: 'pi pi-sign-out',
+                label: t.value("dashboard.options.leave"),
+                icon: "pi pi-sign-out",
                 command: ($event: MenuItemCommandEvent) => {
                     confirmLeave($event.originalEvent);
-                }
+                },
             },
-            */
         ],
     },
 ]);
@@ -127,11 +183,13 @@ const itemsJourneyMember = ref([
 
         items: [
             { label: "No options available yet" },
-            /* leave for JP-34
             {
-                label: t.value('dashboard.options.leave'),
-                icon: 'pi pi-sign-out'
-            },*/
+                label: t.value("dashboard.options.leave"),
+                icon: "pi pi-sign-out",
+                command: ($event: MenuItemCommandEvent) => {
+                    confirmLeave($event.originalEvent);
+                },
+            },
         ],
     },
 ]);

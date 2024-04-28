@@ -37,13 +37,17 @@ export default defineNuxtConfig({
             NUXT_TOLGEE_API_KEY: process.env.NUXT_TOLGEE_API_KEY,
             NUXT_TOLGEE_API_URL: process.env.NUXT_TOLGEE_API_URL,
             NUXT_BACKEND_URL: process.env.NUXT_BACKEND_URL,
-            NUXT_MAPBOX_API_KEY: process.env.MAPBOX_API_KEY,
+            NUXT_MAPBOX_API_KEY: process.env.NUXT_MAPBOX_API_KEY,
         },
     },
     primevue: {
         options: {
             ripple: true,
             unstyled: false,
+            zIndex: {
+                overlay: 1000,
+                modal: 500,
+            },
         },
         components: {
             include: [
@@ -59,6 +63,7 @@ export default defineNuxtConfig({
                 "ConfirmDialog",
                 "Toast",
                 "Sidebar",
+                "ScrollPanel",
                 "OverlayPanel",
                 "TabView",
                 "TabPanel",
