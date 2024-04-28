@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Draggable } from "@fullcalendar/interaction";
+import { useTranslate } from "@tolgee/vue";
 import { format, parse } from "date-fns";
 import { useActivityStore } from "~/stores/activities";
 
 import ActivityDialog from "./ActivityDialog.vue";
 
 const store = useActivityStore();
+const { t } = useTranslate();
 const menu = ref();
 const toggle = (event: Event) => {
     menu.value.toggle(event);
@@ -99,10 +101,10 @@ function showInfo(id: string) {
         class="flex w-full justify-center md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
     >
         <div
-            class="h-[11rem] w-[90%] rounded-2xl border-[3px] border-dashed border-border dark:bg-text max-lg:mt-5 sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
+            class="h-40 w-[90%] rounded-2xl border-[3px] border-dashed border-border dark:bg-text max-lg:mt-5 sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
         >
             <ScrollPanel
-                class="h-[10.8rem] w-full sm:h-[12.8rem] md:h-[15.8rem]"
+                class="h-[9.7rem] w-full sm:h-[12.7rem] md:h-[16.7rem]"
                 :pt="{
                     bary: 'invisible hover:hidden',
                 }"
@@ -110,13 +112,13 @@ function showInfo(id: string) {
                 <div
                     id="calendar-container"
                     ref="containerElement"
-                    class="my-2 ml-2 mr-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+                    class="mx-2 my-2 grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-5"
                 >
                     <div
                         v-for="activity in activities"
                         id="draggable-el"
                         :key="activity.id"
-                        class="fc-event col-span-1 mx-2 my-2 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-1 py-1 text-base font-normal dark:bg-card-dark sm:h-[4.5rem] sm:text-lg"
+                        class="fc-event col-span-1 mx-1 my-0 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-1 py-1 text-base font-normal dark:bg-card-dark sm:h-16 sm:text-base"
                         :data-event="
                             JSON.stringify({
                                 title: activity.name,
@@ -168,8 +170,15 @@ function showInfo(id: string) {
                 </div>
 
                 <div
-                    v-else-if="activityCount <= 5"
+                    v-else-if="activityCount <= 3"
                     class="invisible col-span-full flex items-center justify-center text-input-placeholder md:visible lg:pt-4"
+                >
+                    <T key-name="activityPool.placeholder" />
+                </div>
+
+                <div
+                    v-else-if="activityCount <= 5"
+                    class="invisible col-span-full flex items-center justify-center text-input-placeholder lg:visible lg:pt-4"
                 >
                     <T key-name="activityPool.placeholder" />
                 </div>
