@@ -42,7 +42,7 @@ defineEmits(["input"]);
             panel-class="bg-input dark:bg-background-dark dark:text-white"
             input-class="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-white font-bold bg-input dark:bg-input-dark border-2 border-border focus:outline-none focus:ring-1"
             :pt="{
-                panel: { class: 'text-text font-nunito' },
+                panel: { class: 'text-text font-nunito z-50' },
                 header: {
                     class: 'flex justify-between border-b bg-input dark:bg-background-dark dark:text-white',
                 },

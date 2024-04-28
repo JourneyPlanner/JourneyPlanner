@@ -210,6 +210,7 @@ function setSelectedDate(date: Date) {
         v-model:visible="isVisible"
         modal
         :auto-z-index="true"
+        :base-z-index="1000"
         :draggable="false"
         class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-6/12 md:rounded-xl"
         :pt="{
@@ -220,7 +221,7 @@ function setSelectedDate(date: Date) {
                 class: 'flex justify-end h-1 pb-2 font-nunito bg-background dark:bg-background-dark',
             },
             content: {
-                class: 'z-10 font-nunito bg-background dark:bg-background-dark px-0 sm:px-5 h-full',
+                class: 'font-nunito bg-background dark:bg-background-dark px-0 sm:px-5 h-full',
             },
             footer: { class: 'h-0' },
             closeButtonIcon: {

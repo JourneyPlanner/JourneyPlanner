@@ -104,6 +104,7 @@ function showInfo(id: string) {
                 class="h-[9.7rem] w-full sm:h-[12.7rem] md:h-[16.7rem]"
                 :pt="{
                     bary: 'invisible hover:hidden',
+                    wrapper: 'z-0',
                 }"
             >
                 <div

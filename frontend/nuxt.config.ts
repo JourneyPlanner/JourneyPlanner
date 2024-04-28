@@ -45,7 +45,6 @@ export default defineNuxtConfig({
             ripple: true,
             unstyled: false,
             zIndex: {
-                overlay: 1000,
                 modal: 500,
             },
         },
