@@ -18,7 +18,6 @@ const props = defineProps({
     },
 });
 
-console.log(props.id);
 const containerElement = ref();
 const client = useSanctumClient();
 const onlyShow = ref(true);
@@ -39,9 +38,8 @@ const phone = ref("");
 const updated_at = ref("");
 
 const isActivityInfoVisible = ref(false);
-const { data: activityData, error: activityError } = await useAsyncData(
-    "activity",
-    () => client(`/api/journey/${props.id}/activity`),
+const { data: activityData } = await useAsyncData("activity", () =>
+    client(`/api/journey/${props.id}/activity`),
 );
 const activityCount = activityData.value.length;
 
@@ -65,13 +63,7 @@ interface Activity {
     updated_at: string;
 }
 
-console.log(activityData);
-if (activityError !== null) {
-    console.error(activityError);
-} else {
-    store.setActivities(activityData);
-    console.log(activityData);
-}
+store.setActivities(activityData);
 
 onMounted(() => {
     new Draggable(containerElement.value, {
@@ -81,7 +73,6 @@ onMounted(() => {
 function showInfo(id: string) {
     activityData.value.forEach((activity: Activity) => {
         if (activity.id === id) {
-            console.log(activity);
             onlyShow.value = true;
             address.value = activity.address;
             cost.value = activity.cost;
@@ -201,7 +192,7 @@ function showInfo(id: string) {
             :link="link"
             :mapbox-id="mapbox_id"
             :name="name"
-            :opening-hours="opening_hours"
+            :opening_hours="opening_hours"
             :phone="phone"
             :updated-at="updated_at"
             @close="isActivityInfoVisible = false"

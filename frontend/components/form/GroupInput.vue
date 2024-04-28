@@ -33,7 +33,7 @@ defineProps({
                 :disabled="disabled"
                 :value="value"
                 :placeholder="placeholder"
-                class="block w-full border-b-2 border-r-2 border-t-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
+                class="block w-full border-b-2 border-r-2 border-t-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:bg-input-disabled dark:bg-input-dark dark:text-input disabled:dark:bg-input-disabled-dark"
                 :class="customClass"
             />
         </InputGroup>

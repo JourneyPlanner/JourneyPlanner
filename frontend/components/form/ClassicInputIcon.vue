@@ -19,6 +19,10 @@ if (props.iconPosIsLeft) {
     iconPos = "left";
     addClass += " pl-10";
 }
+
+const refValue = ref(props.value);
+console.log(props.value);
+console.log(refValue.value);
 </script>
 
 <template>
@@ -33,25 +37,13 @@ if (props.iconPosIsLeft) {
         <IconField :class="customClass" :icon-position="iconPos">
             <InputIcon class="pi text-border" :class="icon" />
             <Field
-                v-if="inputType === 'textarea'"
                 :id="id"
                 type="text"
+                :disabled="disabled"
+                v-model="refValue"
                 :as="inputType"
                 :name="name"
-                :disabled="disabled"
-                class="block w-full overflow-hidden overflow-ellipsis rounded-lg border-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
-                :class="addClass"
-            >
-                TEst SCghmest
-            </Field>
-            <Field
-                v-else
-                :id="id"
-                type="text"
-                :as="inputType"
-                :name="name"
-                :disabled="disabled"
-                class="block w-full overflow-hidden overflow-ellipsis rounded-lg border-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
+                class="block w-full rounded-lg border-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:bg-input-disabled dark:bg-input-dark dark:text-input disabled:dark:bg-input-disabled-dark"
                 :class="addClass"
                 placeholder=" "
             />

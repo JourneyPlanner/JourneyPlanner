@@ -28,9 +28,6 @@ const props = defineProps({
     updated_at: { type: String, default: "" },
 });
 
-console.log(props.id);
-console.log(props.estimated_duration);
-
 const emit = defineEmits(["close"]);
 
 const isVisible = ref(props.visible);
@@ -304,7 +301,7 @@ function setSelectedDate(date: Date) {
                             translation-key="form.input.activity.name"
                             icon="pi-map-marker"
                             :icon-pos-is-left="true"
-                            class="order-4 col-span-2 flex flex-col sm:order-3 sm:col-span-1"
+                            class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
                         />
 
                         <FormClassicInputIcon
@@ -378,7 +375,7 @@ function setSelectedDate(date: Date) {
                                 placeholder="+12 3456789"
                             />
                         </div>
-                        <FormTextAreaInput
+                        <FormClassicInputIcon
                             id="opening-hours"
                             name="open"
                             :disabled="onlyShow"
@@ -386,7 +383,7 @@ function setSelectedDate(date: Date) {
                             translation-key="form.input.activity.opening-hours"
                             input-type="textarea"
                             custom-class="h-full"
-                            class="sm:col-start-2 md:row-span-2"
+                            class="h-36 sm:col-start-2 sm:h-64"
                         />
                     </div>
                 </TabPanel>

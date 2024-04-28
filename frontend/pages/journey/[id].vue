@@ -772,20 +772,34 @@ async function changeRole(userid: string, selectedRole: number) {
                 </div>
             </div>
         </div>
+        <div class="flex justify-center md:justify-start">
+            <div
+                class="flex w-[90%] items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            >
+                <Divider
+                    type="solid"
+                    class="border text-surface md:hidden md:w-0"
+                />
+            </div>
+        </div>
         <div
             v-if="currUser.role === 1"
-            class="flex h-24 w-full items-end md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            class="flex justify-center md:justify-start"
         >
-            <div class="mb-4 text-3xl font-semibold">
-                <T key-name="journey.activities" />
-            </div>
-            <button
-                class="mb-4 ml-auto flex rounded-xl border-[3px] border-cta-border bg-input px-2 py-1 font-bold"
-                @click="isActivityDialogVisible = !isActivityDialogVisible"
+            <div
+                class="flex h-10 w-[90%] items-end sm:w-5/6 md:ml-[10%] md:h-20 md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:h-24 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
             >
-                <SvgAddLocation class="h-6 w-6" />
-                <T key-name="journey.button.create.activity" />
-            </button>
+                <div class="-mb-3 text-3xl font-semibold lg:mb-4">
+                    <T key-name="journey.activities" />
+                </div>
+                <button
+                    class="-mb-3 ml-auto flex rounded-xl border-[3px] border-cta-border bg-input px-2 py-1 font-bold lg:mb-4"
+                    @click="isActivityDialogVisible = !isActivityDialogVisible"
+                >
+                    <SvgAddLocation class="h-6 w-6" />
+                    <T key-name="journey.button.create.activity" />
+                </button>
+            </div>
         </div>
         <ActivityDialog
             :id="journeyId.toString()"
