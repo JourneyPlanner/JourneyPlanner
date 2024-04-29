@@ -19,6 +19,7 @@ const activitiesWithLocation = ref(
         ),
     ),
 );
+
 const activitiesWithoutLocation = ref(
     computed(() =>
         activities.value.filter(
@@ -26,7 +27,6 @@ const activitiesWithoutLocation = ref(
         ),
     ),
 );
-console.log(activitiesWithLocation);
 
 const colorAdded = fullConfig.theme.accentColor["border"] as string;
 const colorNotAdded = fullConfig.theme.accentColor["background"] as string;
@@ -126,7 +126,6 @@ const isNotFoundActivitiesDialogVisible = ref(false);
             <DataTable
                 :value="activitiesWithoutLocation"
                 striped-rows
-                paginator
                 :rows="8"
                 :rows-per-page-options="[5, 10, 20, 50]"
                 :pt="{
