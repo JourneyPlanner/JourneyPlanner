@@ -4,6 +4,9 @@ export default defineNuxtConfig({
     typescript: {
         typeCheck: true,
     },
+    future: {
+        typescriptBundlerResolution: false,
+    },
     app: {
         pageTransition: { name: "page", mode: "out-in" },
         layoutTransition: { name: "page", mode: "out-in" },
