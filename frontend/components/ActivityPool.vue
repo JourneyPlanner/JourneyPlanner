@@ -83,10 +83,7 @@ function showInfo(id: string, showOnly: boolean = true) {
             }
 
             onlyShow.value = showOnly;
-            address.value =
-                activity.address == ""
-                    ? activity.mapbox_full_address
-                    : activity.address;
+            address.value = activity.address;
             cost.value = activity.cost;
             created_at.value = activity.created_at;
             description.value = activity.description;
@@ -120,8 +117,8 @@ const confirmDelete = (event: Event) => {
         accept: () => {
             toast.add({
                 severity: "info",
-                summary: t.value("common.toast.info.heading"),
-                detail: t.value("delete.journey.toast.message"),
+                summary: t.value("journey.delete"),
+                detail: t.value("journey.delete.detail"),
                 life: 3000,
             });
             deleteActivity();
@@ -145,11 +142,15 @@ async function deleteActivity() {
                     ),
                     life: 6000,
                 });
-                const { data: activityData } = await useAsyncData(
-                    "activity",
-                    () => client(`/api/journey/${props.id}/activity`),
-                );
-                store.setActivities(activityData.value);
+                activities.value.forEach((activity: Activity) => {
+                    if (activity.id === activityId.value) {
+                        activities.value.splice(
+                            activities.value.indexOf(activity),
+                            1,
+                        ),
+                            store.setActivities(activities.value);
+                    }
+                });
             }
         },
         async onRequestError() {
@@ -197,7 +198,7 @@ const itemsJourneyGuide = ref([
 
 <template>
     <div
-        class="flex w-full justify-center md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+        class="flex w-full justify-center overflow-x-hidden md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
     >
         <Toast />
         <div
@@ -219,7 +220,7 @@ const itemsJourneyGuide = ref([
                         v-for="activity in activities"
                         id="draggable-el"
                         :key="activity.id"
-                        class="fc-event col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-2 py-1 text-base font-normal dark:bg-card-dark sm:h-16 sm:text-base lg:rounded-xl"
+                        class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-2 py-1 text-base font-normal dark:bg-card-dark sm:h-16 sm:text-base lg:rounded-xl"
                         :data-event="
                             JSON.stringify({
                                 title: activity.name,
@@ -265,29 +266,38 @@ const itemsJourneyGuide = ref([
                                 )
                             }}
                         </div>
-                        <Menu
-                            id="overlay_menu"
-                            ref="menu"
-                            :model="itemsJourneyGuide"
-                            class="border-border-light rounded-xl border-2 bg-input dark:bg-input-dark"
-                            :popup="true"
-                            :pt="{
-                                root: {
-                                    class: 'font-nunito bg-input dark:bg-input-dark',
-                                },
-                                menuitem: {
-                                    class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
-                                },
-                                content: {
-                                    class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
-                                },
-                                submenuHeader: {
-                                    class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark',
-                                },
-                                label: { class: 'text-text dark:text-white' },
-                                icon: { class: 'text-text dark:text-white' },
-                            }"
-                        />
+                        <div class="absolute overflow-hidden">
+                            <Menu
+                                id="overlay_menu"
+                                ref="menu"
+                                :model="itemsJourneyGuide"
+                                class="relative -ml-5 rounded-xl border-2 border-border-light bg-input dark:bg-input-dark"
+                                :popup="true"
+                                :pt="{
+                                    root: {
+                                        class: 'relative font-nunito bg-input dark:bg-input-dark overflow-hidden',
+                                    },
+                                    menu: {
+                                        class: 'bg-input dark:bg-input-dark',
+                                    },
+                                    menuitem: {
+                                        class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                                    },
+                                    content: {
+                                        class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                                    },
+                                    submenuHeader: {
+                                        class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark',
+                                    },
+                                    label: {
+                                        class: 'text-text dark:text-white',
+                                    },
+                                    icon: {
+                                        class: 'text-text dark:text-white',
+                                    },
+                                }"
+                            />
+                        </div>
                     </div>
                 </div>
                 <div
@@ -334,6 +344,7 @@ const itemsJourneyGuide = ref([
             :updated-at="updated_at"
             :update="update"
             @close="isActivityInfoVisible = false"
+            @delete-activity="deleteActivity"
         />
     </div>
 </template>

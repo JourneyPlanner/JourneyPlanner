@@ -170,8 +170,6 @@ async function leaveJourney() {
             }
         },
         async onResponseError({ response }) {
-            console.log(response);
-
             if (response.status === 403) {
                 toast.add({
                     severity: "error",
@@ -800,20 +798,20 @@ async function changeRole(userid: string, selectedRole: number) {
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
+        <ConfirmDialog
+            class="z-[500]"
+            :draggable="false"
+            :pt="{
+                header: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                content: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                footer: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+            }"
+        />
     </div>
-    <ConfirmDialog
-        class="z-[500]"
-        :draggable="false"
-        :pt="{
-            header: {
-                class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-            },
-            content: {
-                class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-            },
-            footer: {
-                class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-            },
-        }"
-    />
 </template>

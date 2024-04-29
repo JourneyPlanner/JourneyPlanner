@@ -30,7 +30,7 @@ const props = defineProps({
     update: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "deleteActivity"]);
 
 const isVisible = ref(props.visible);
 const loadingSave = ref(false);
@@ -83,57 +83,15 @@ const confirmDelete = () => {
         accept: () => {
             toast.add({
                 severity: "info",
-                summary: t.value("common.toast.info.heading"),
-                detail: t.value("delete.journey.toast.message"),
+                summary: t.value("journey.delete"),
+                detail: t.value("journey.delete.detail"),
                 life: 3000,
             });
-            deleteActivity();
+            emit("deleteActivity");
+            close();
         },
     });
 };
-
-async function deleteActivity() {
-    await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
-        method: "delete",
-        body: {},
-        async onResponse({ response }) {
-            if (response.ok) {
-                toast.add({
-                    severity: "success",
-                    summary: t.value(
-                        "form.input.activity.delete.toast.success.heading",
-                    ),
-                    detail: t.value(
-                        "form.input.activity.delete.toast.success.detail",
-                    ),
-                    life: 6000,
-                });
-                close();
-                const { data: activityData } = await useAsyncData(
-                    "activity",
-                    () => client(`/api/journey/${props.id}/activity`),
-                );
-                activityStore.setActivities(activityData.value);
-            }
-        },
-        async onRequestError() {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value("common.error.unknown"),
-                life: 6000,
-            });
-        },
-        async onResponseError() {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value("common.error.unknown"),
-                life: 6000,
-            });
-        },
-    });
-}
 
 const validationSchema = yup.object({
     name: yup.string().required(t.value("form.input.required")),
@@ -213,10 +171,10 @@ async function onSuccess(values: ActivityForm) {
                     toast.add({
                         severity: "success",
                         summary: t.value(
-                            "form.input.activity.toast.success.heading",
+                            "form.input.activity.edit.toast.success.heading",
                         ),
                         detail: t.value(
-                            "form.input.activity.toast.success.detail",
+                            "form.input.activity.edit.toast.success.detail",
                         ),
                         life: 6000,
                     });
@@ -296,7 +254,6 @@ async function onSuccess(values: ActivityForm) {
 }
 
 function onInvalidSubmit({ errors }: { errors: ActivityFormErrors }) {
-    console.log(errors);
     if (errors.link) {
         activeIndex.value = 1;
     } else if (errors.date || errors.time) {
@@ -326,8 +283,8 @@ function setSelectedDate(date: Date) {
     <Dialog
         v-model:visible="isVisible"
         modal
+        block-scroll
         :auto-z-index="true"
-        :base-z-index="1000"
         :draggable="false"
         class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-6/12 md:rounded-xl"
         :pt="{
@@ -603,6 +560,7 @@ function setSelectedDate(date: Date) {
                     type="button"
                     :label="t('dashboard.options.delete')"
                     class="mt-auto h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
+                    icon="pi pi-trash"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
                         label: {
@@ -615,13 +573,14 @@ function setSelectedDate(date: Date) {
                     type="submit"
                     :label="t('common.save')"
                     :loading="loadingSave"
+                    icon="pi pi-check"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
                         label: {
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-border-green-save bg-input text-center text-text hover:bg-fill-green-save dark:bg-border-green-save-dark dark:text-input dark:hover:bg-fill-green-save-dark"
+                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-border-green-save bg-input text-center text-text hover:bg-fill-green-save dark:bg-input-dark dark:text-input dark:hover:bg-fill-green-save-dark"
                 />
             </div>
         </form>
