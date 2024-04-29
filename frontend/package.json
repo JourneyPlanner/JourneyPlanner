@@ -18,7 +18,7 @@
         "@fullcalendar/timegrid": "^6.1.11",
         "@fullcalendar/vue3": "^6.1.11",
         "@mapbox/search-js-web": "^1.0.0-beta.19",
-        "@nuxt/eslint": "^0.3.8",
+        "@nuxt/eslint": "^0.3.10",
         "@pinia/nuxt": "^0.5.1",
         "@tolgee/vue": "^5.24.1",
         "@vee-validate/nuxt": "^4.12.6",
