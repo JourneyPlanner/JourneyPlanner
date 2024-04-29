@@ -1,12 +1,12 @@
-import { ref } from "vue";
 import { defineStore } from "pinia";
+import { ref } from "vue";
 
 export const useDashboardStore = defineStore("dashboard", () => {
-  const journeys = ref([]);
+    const journeys = ref([]);
 
-  function setJourneys(journeys) {
-    this.journeys = journeys;
-  }
+    function setJourneys(journeys) {
+        this.journeys = journeys;
+    }
 
-  return { journeys, setJourneys };
+    return { journeys, setJourneys };
 });

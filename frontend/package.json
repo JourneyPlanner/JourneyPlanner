@@ -1,45 +1,59 @@
 {
-  "name": "nuxt-app",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "dev:host": "nuxt dev --host 0 --port 3000",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
-  },
-  "dependencies": {
-    "@fullcalendar/core": "^6.1.11",
-    "@fullcalendar/daygrid": "^6.1.11",
-    "@fullcalendar/interaction": "^6.1.11",
-    "@fullcalendar/timegrid": "^6.1.11",
-    "@fullcalendar/vue3": "^6.1.11",
-    "@pinia/nuxt": "^0.5.1",
-    "@tolgee/vue": "^5.23.0",
-    "@vee-validate/nuxt": "^4.12.6",
-    "@vee-validate/yup": "^4.12.6",
-    "date-fns": "^3.6.0",
-    "js-confetti": "^0.12.0",
-    "nuxt": "^3.11.2",
-    "pinia": "^2.1.7",
-    "primeicons": "^7.0.0",
-    "primevue": "^3.51.0",
-    "qrcode": "^1.5.3",
-    "uuid": "^9.0.1",
-    "vue": "^3.4.19",
-    "vue-router": "^4.3.0",
-    "yup": "^1.4.0"
-  },
-  "devDependencies": {
-    "@nuxtjs/color-mode": "^3.3.3",
-    "@nuxtjs/tailwindcss": "^6.11.4",
-    "@types/qrcode": "^1.5.5",
-    "@types/uuid": "^9.0.8",
-    "nuxt-auth-sanctum": "^0.2.1",
-    "nuxt-primevue": "^0.3.1",
-    "typescript": "^5.4.2",
-    "vue-tsc": "^1.8.27"
-  }
+    "name": "nuxt-app",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "nuxt build",
+        "dev": "nuxt dev",
+        "dev:host": "nuxt dev --host 0 --port 3000",
+        "generate": "nuxt generate",
+        "preview": "nuxt preview",
+        "postinstall": "nuxt prepare",
+        "prepare": "cd .. && husky frontend/.husky"
+    },
+    "dependencies": {
+        "@fullcalendar/core": "^6.1.11",
+        "@fullcalendar/daygrid": "^6.1.11",
+        "@fullcalendar/interaction": "^6.1.11",
+        "@fullcalendar/timegrid": "^6.1.11",
+        "@fullcalendar/vue3": "^6.1.11",
+        "@mapbox/search-js-web": "^1.0.0-beta.19",
+        "@nuxt/eslint": "^0.3.8",
+        "@pinia/nuxt": "^0.5.1",
+        "@tolgee/vue": "^5.24.1",
+        "@vee-validate/nuxt": "^4.12.6",
+        "@vee-validate/yup": "^4.12.6",
+        "date-fns": "^3.6.0",
+        "js-confetti": "^0.12.0",
+        "nuxt": "^3.11.2",
+        "pinia": "^2.1.7",
+        "primeicons": "^7.0.0",
+        "primevue": "^3.51.0",
+        "qrcode": "^1.5.3",
+        "uuid": "^9.0.1",
+        "vue": "^3.4.23",
+        "vue-router": "^4.3.2",
+        "yup": "^1.4.0"
+    },
+    "devDependencies": {
+        "@nuxtjs/color-mode": "^3.4.0",
+        "@nuxtjs/tailwindcss": "^6.11.4",
+        "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+        "@types/qrcode": "^1.5.5",
+        "@types/uuid": "^9.0.8",
+        "husky": "^9.0.11",
+        "lint-staged": "^15.2.2",
+        "nuxt-auth-sanctum": "^0.2.1",
+        "nuxt-primevue": "^0.3.1",
+        "prettier": "^3.2.5",
+        "prettier-plugin-tailwindcss": "^0.5.13",
+        "typescript": "^5.4.5",
+        "vue-tsc": "^1.8.27"
+    },
+    "lint-staged": {
+        "*.*": [
+            "eslint --fix",
+            "prettier --write"
+        ]
+    }
 }

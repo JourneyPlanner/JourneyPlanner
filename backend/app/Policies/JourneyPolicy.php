@@ -12,7 +12,10 @@ class JourneyPolicy
      */
     public function journeyMember(User $user, Journey $journey): bool
     {
-        return $journey->users()->where('user_id', $user->id)->exists();
+        return $journey
+            ->users()
+            ->where("user_id", $user->id)
+            ->exists();
     }
 
     /**
@@ -21,6 +24,10 @@ class JourneyPolicy
      */
     public function journeyGuide(User $user, Journey $journey): bool
     {
-        return $journey->users()->where('user_id', $user->id)->wherePivot('role', 1)->exists();
+        return $journey
+            ->users()
+            ->where("user_id", $user->id)
+            ->wherePivot("role", 1)
+            ->exists();
     }
 }

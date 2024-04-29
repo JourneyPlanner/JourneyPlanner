@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Journey extends Model
 {
@@ -17,13 +18,7 @@ class Journey extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'destination',
-        'from',
-        'to',
-        'invite',
-    ];
+    protected $fillable = ["name", "destination", "from", "to", "invite"];
 
     /**
      * The attributes that should be cast.
@@ -31,8 +26,8 @@ class Journey extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'from' => 'date',
-        'to' => 'date',
+        "from" => "date",
+        "to" => "date",
     ];
 
     /**
@@ -40,7 +35,7 @@ class Journey extends Model
      *
      * @var array<int, string>
      */
-    protected $hidden = ['pivot'];
+    protected $hidden = ["pivot"];
 
     /**
      * The users that are a part of the journey.
@@ -58,10 +53,18 @@ class Journey extends Model
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'destination' => 'required|string',
-            'from' => 'required|date',
-            'to' => 'required|date',
+            "name" => "required|string",
+            "destination" => "required|string",
+            "from" => "required|date",
+            "to" => "required|date",
         ];
+    }
+
+    /**
+     * The activities that are a part of the journey.
+     */
+    public function activities(): HasMany
+    {
+        return $this->hasMany(Activity::class);
     }
 }

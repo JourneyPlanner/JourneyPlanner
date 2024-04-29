@@ -1,5 +1,5 @@
 export default defineAppConfig({
-  /* example:
+    /* example:
   title: "Hello Nuxt",
   theme: {
     dark: true,

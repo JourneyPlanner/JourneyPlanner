@@ -14,10 +14,10 @@ class JourneyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'destination' => 'required|string',
-            'from' => 'required|date',
-            'to' => 'required|date'
+            "name" => "required|string",
+            "destination" => "required|string",
+            "from" => "required|date",
+            "to" => "required|date",
         ];
     }
 }
