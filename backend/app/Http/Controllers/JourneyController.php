@@ -79,7 +79,7 @@ class JourneyController extends Controller
                     $geocodingData["geometry"]["coordinates"][1];
                 $journey->mapbox_full_address =
                     $geocodingData["properties"]["full_address"];
-                if ($validated["destination"] = "") {
+                if ($validated["destination"] === "") {
                     $journey->destination =
                         $geocodingData["properties"]["full_address"];
                 }
@@ -168,7 +168,7 @@ class JourneyController extends Controller
                     $geocodingData["geometry"]["coordinates"][1];
                 $journey->mapbox_full_address =
                     $geocodingData["properties"]["full_address"];
-                if ($validated["destination"] = "") {
+                if ($validated["destination"] === "") {
                     $journey->destination =
                         $geocodingData["properties"]["full_address"];
                 }
