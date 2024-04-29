@@ -85,8 +85,6 @@ useHead({
 
 const colorMode = useColorMode();
 const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-console.log(darkThemeMq);
-console.log(colorMode.preference);
 let darkColor = "#333333";
 let lightColor = "#fcfcfc";
 
