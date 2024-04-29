@@ -112,8 +112,10 @@ journeys.value = data.value;
 currentJourneys.value = data.value;
 store.setJourneys(data.value);
 
-//TODO: richtige location bei dashboard
-//TODO: reise bearbeiten
+console.log(data);
+
+//TODO: refresht nicht mehr wenn neue reise
+//TODO: new form wird nicht gecleared, hängt mit dem drüber prob zusammen
 
 /**
  * Searches for journeys based on the searchValue
@@ -294,11 +296,7 @@ function editJourney(journey: Journey, id: string) {
                     :id="String(journey.id)"
                     :key="journey.id"
                     :name="journey.name"
-                    :destination="
-                        journey.destination === ''
-                            ? journey.mapbox_full_address
-                            : journey.destination
-                    "
+                    :destination="journey.destination"
                     :from="new Date(journey.from)"
                     :to="new Date(journey.to)"
                     :role="Number(journey.role)"
@@ -360,6 +358,7 @@ function editJourney(journey: Journey, id: string) {
         </TieredMenu>
         <ConfirmDialog
             :draggable="false"
+            group="dashboard"
             :pt="{
                 header: {
                     class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',

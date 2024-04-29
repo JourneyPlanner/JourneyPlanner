@@ -12,5 +12,9 @@ export const useActivityStore = defineStore("activity", () => {
         this.activityData.push(activity);
     }
 
-    return { activityData, setActivities, addActivity };
+    return {
+        activityData,
+        setActivities,
+        addActivity,
+    };
 });

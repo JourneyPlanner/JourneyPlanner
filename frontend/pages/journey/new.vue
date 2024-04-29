@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
 import { format } from "date-fns";
-import Toast from "primevue/toast";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
@@ -117,7 +116,6 @@ function copyToClipboard() {
 <template>
     <div>
         <div class="z-10 flex min-h-screen flex-col justify-between">
-            <Toast class="w-3/4 sm:w-auto" />
             <div
                 class="z-50 mt-16 flex items-center justify-center font-nunito"
             >

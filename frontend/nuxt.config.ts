@@ -74,6 +74,8 @@ export default defineNuxtConfig({
                 "InputGroupAddon",
                 "InputIcon",
                 "IconField",
+                "DataTable",
+                "Column",
             ],
         },
     },

@@ -2,7 +2,6 @@
 import { T, useTranslate } from "@tolgee/vue";
 import { differenceInDays, format } from "date-fns";
 import JSConfetti from "js-confetti";
-import Toast from "primevue/toast";
 import QRCode from "qrcode";
 
 const confirm = useConfirm();
@@ -133,8 +132,10 @@ const flip = () => {
 };
 
 const confirmLeave = (event: Event) => {
+    visibleSidebar.value = false;
     confirm.require({
         target: event.currentTarget as HTMLElement,
+        group: "journey",
         header: t.value("journey.leave.header"),
         message: t.value("journey.leave.message"),
         icon: "pi pi-exclamation-triangle",
@@ -230,9 +231,9 @@ async function changeRole(userid: string, selectedRole: number) {
 
 <template>
     <div class="flex flex-col font-nunito text-text dark:text-white">
-        <Toast class="w-3/4 sm:w-auto" />
         <ConfirmDialog
             :draggable="false"
+            group="journey"
             :pt="{
                 header: {
                     class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',

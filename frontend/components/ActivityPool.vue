@@ -36,26 +36,6 @@ const opening_hours = ref("");
 const phone = ref("");
 const updated_at = ref("");
 
-interface Activity {
-    address: string;
-    mapbox_full_address: string;
-    calendar_activities: [];
-    id: string;
-    cost: string;
-    created_at: string;
-    description: string;
-    email: string;
-    estimated_duration: string;
-    journey_id: string;
-    latitude: string;
-    longitude: string;
-    link: string;
-    mapbox_id: string;
-    name: string;
-    opening_hours: string;
-    phone: string;
-    updated_at: string;
-}
 const isActivityInfoVisible = ref(false);
 const activities = computed(() => store.activityData as Activity[]);
 const activityCount = computed(() => activities.value.length);
@@ -79,8 +59,8 @@ function showInfo(id: string) {
             email.value = activity.email;
             estimated_duration.value = activity.estimated_duration;
             journey_id.value = activity.journey_id;
-            latitude.value = activity.latitude;
-            longitude.value = activity.longitude;
+            latitude.value = activity.latitude?.toString();
+            longitude.value = activity.longitude?.toString();
             link.value = activity.link;
             mapbox_id.value = activity.mapbox_id;
             name.value = activity.name;
@@ -116,7 +96,7 @@ function showInfo(id: string) {
                         v-for="activity in activities"
                         id="draggable-el"
                         :key="activity.id"
-                        class="fc-event col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-2 py-1 text-base font-normal dark:bg-card-dark sm:h-16 sm:text-base lg:rounded-xl"
+                        class="fc-event col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-2 py-1 text-base font-normal hover:cursor-pointer dark:bg-card-dark sm:h-16 sm:text-base lg:rounded-xl"
                         :data-event="
                             JSON.stringify({
                                 title: activity.name,
