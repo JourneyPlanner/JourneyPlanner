@@ -60,6 +60,7 @@ export default {
             "border-blue-dark": "#58869B" /* dark blue border */,
             "border-gray": "#dcdcdc" /* gray border */,
             "border-grey": "#d9d9d9",
+            "border-light": "#d0d0d0" /* light border */,
             "border-dark": "rgba(105, 174, 205, 0.15)" /* dark border */,
             footer: "#7b7b7b" /* footer text */,
             error: "#d43d3d" /* error text */,
