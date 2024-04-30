@@ -46,7 +46,7 @@ Route::get("journey/{journey}/user/me", [
 ])->middleware("auth:sanctum");
 
 Route::apiResource(
-    "journey/{journey}/activity/{activity}/calendar",
+    "journey/{journey}/activity/{activity}/calendarActivity",
     CalendarActivityController::class
 )->middleware("auth:sanctum");
 
