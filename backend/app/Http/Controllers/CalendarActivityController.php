@@ -20,8 +20,8 @@ class CalendarActivityController extends Controller
         $activity = $journey->activities()->findOrFail($activity);
 
         $validated = $request->validate([
-            "start" => "required|dateTime",
-            "end" => "required|dateTime",
+            "start" => "required|date",
+            "end" => "required|date",
         ]);
 
         $calendarActivity = new CalendarActivity($validated);
@@ -45,8 +45,8 @@ class CalendarActivityController extends Controller
         Gate::authorize("journeyGuide", $journey);
 
         $validated = $request->validate([
-            "start" => "required|dateTime",
-            "end" => "required|dateTime",
+            "start" => "required|date",
+            "end" => "required|date",
         ]);
 
         $calendarActivity->update($validated);
