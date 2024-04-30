@@ -112,11 +112,6 @@ journeys.value = data.value;
 currentJourneys.value = data.value;
 store.setJourneys(data.value);
 
-console.log(data);
-
-//TODO: refresht nicht mehr wenn neue reise
-//TODO: new form wird nicht gecleared, hängt mit dem drüber prob zusammen
-
 /**
  * Searches for journeys based on the searchValue
  * sets the currentJourneys to the results

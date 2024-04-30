@@ -8,5 +8,9 @@ export const useDashboardStore = defineStore("dashboard", () => {
         this.journeys = journeys;
     }
 
-    return { journeys, setJourneys };
+    function addJourney(journey) {
+        this.journeys.push(journey);
+    }
+
+    return { journeys, setJourneys, addJourney };
 });

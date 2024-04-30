@@ -88,6 +88,7 @@ export default {
             "grey-text": "#6B6565",
             "blue-text-dark": "#7FAAC0",
             "grey-text-dark": "#ADACAC",
+            "marker-not-added": "#8CA5B0",
         },
     },
     plugins: [],

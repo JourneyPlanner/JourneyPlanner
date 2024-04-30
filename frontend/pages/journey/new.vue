@@ -8,6 +8,7 @@ import * as yup from "yup";
 const { t } = useTranslate();
 const client = useSanctumClient();
 const toast = useToast();
+const store = useDashboardStore();
 
 const journeyInvite = uuidv4();
 const journeyInviteLink = window.location.origin + "/invite/" + journeyInvite;
@@ -66,15 +67,18 @@ const onSubmit = handleSubmit(async (values) => {
     const from = format(values.journeyRange[0], "yyyy-MM-dd");
     const to = format(values.journeyRange[1], "yyyy-MM-dd");
     const invite = journeyInvite;
+    const mapbox_full_address = values.mapbox?.properties.full_address;
+    const mapbox_id = values.mapbox?.properties.mapbox_id;
 
     const journey = {
         name,
         destination,
-        mapbox_full_address: values.mapbox?.properties?.full_address,
-        mapbox_id: values.mapbox?.properties?.mapbox_id,
+        mapbox_full_address: mapbox_full_address,
+        mapbox_id: mapbox_id,
         from,
         to,
         invite,
+        role: 1,
     };
 
     await client("/api/journey", {
@@ -86,8 +90,9 @@ const onSubmit = handleSubmit(async (values) => {
                     severity: "success",
                     summary: t.value("form.journey.toast.success.heading"),
                     detail: t.value("form.journey.toast.success"),
-                    life: 6000,
+                    life: 3000,
                 });
+                store.addJourney(journey);
                 await navigateTo("/dashboard");
             }
         },

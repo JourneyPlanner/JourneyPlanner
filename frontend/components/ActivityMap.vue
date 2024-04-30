@@ -9,9 +9,13 @@ const { t } = useTranslate();
 const journey = useJourneyStore();
 const activitiesStore = useActivityStore();
 
+const colorMode = useColorMode();
+const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
 const activities = ref(
     computed(() => activitiesStore.activityData as Activity[]),
 );
+
 const activitiesWithLocation = ref(
     computed(() =>
         activities.value.filter(
@@ -19,6 +23,12 @@ const activitiesWithLocation = ref(
         ),
     ),
 );
+
+activitiesWithLocation.value.forEach((activity) => {
+    useMapboxPopup(activity.id, (popup) => {
+        popup.off();
+    });
+});
 
 const activitiesWithoutLocation = ref(
     computed(() =>
@@ -28,11 +38,19 @@ const activitiesWithoutLocation = ref(
     ),
 );
 
-const colorAdded = fullConfig.theme.accentColor["border"] as string;
-const colorNotAdded = fullConfig.theme.accentColor["background"] as string;
+const colorAdded = fullConfig.theme.accentColor["input-label"] as string;
+const colorNotAdded = fullConfig.theme.accentColor[
+    "marker-not-added"
+] as string;
 const lat = computed(() => journey.getLat());
 const long = computed(() => journey.getLong());
 const zoom = computed(() => ((long.value || lat) === null ? 1 : 5));
+const style = computed(() =>
+    colorMode.preference === "dark" ||
+    (darkTheme.matches && colorMode.preference === "system")
+        ? "mapbox://styles/mathematti/clvl1j6rx009301pcgh6mbtam"
+        : "mapbox://styles/mathematti/clvl14yme009101pc4o2c16ex",
+);
 
 const isNotFoundActivitiesDialogVisible = ref(false);
 </script>
@@ -51,7 +69,7 @@ const isNotFoundActivitiesDialogVisible = ref(false);
                     value: t('journey.map.notfound.tooltip'),
                     pt: { root: 'font-nunito' },
                 }"
-                class="pi pi-exclamation-circle -mb-2.5 text-xl text-error hover:cursor-pointer"
+                class="pi pi-exclamation-circle -mb-2.5 text-xl text-cancel-border hover:cursor-pointer"
                 @click="isNotFoundActivitiesDialogVisible = true"
             />
         </div>
@@ -65,11 +83,13 @@ const isNotFoundActivitiesDialogVisible = ref(false);
                 style="position: absolute; top: 0; bottom: 0"
                 class="rounded-xl"
                 :options="{
-                    style: 'mapbox://styles/mapbox/streets-v12',
+                    style: style,
                     center: [long, lat],
                     zoom: zoom,
                 }"
             >
+                <!--TODO: Popup nicht standardmäßig open-->
+                <!-- TODO: error wenn man von reise zu anderer reise geht -->
                 <MapboxDefaultMarker
                     v-for="activity in activitiesWithLocation"
                     :key="activity.id"
@@ -85,11 +105,12 @@ const isNotFoundActivitiesDialogVisible = ref(false);
                     <MapboxDefaultPopup
                         :popup-id="activity.id"
                         :lnglat="[activity.longitude, activity.latitude]"
+                        class="text-text"
                         :options="{
                             closeOnClick: true,
                         }"
                     >
-                        <div class="flex flex-col font-nunito">
+                        <div class="flex flex-col font-nunito text-text">
                             <h1 class="font-bold">
                                 {{ activity.name }}
                             </h1>

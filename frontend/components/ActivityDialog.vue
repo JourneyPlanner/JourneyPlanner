@@ -179,7 +179,6 @@ async function onSuccess(values: ActivityForm) {
 }
 
 function onInvalidSubmit({ errors }: { errors: ActivityFormErrors }) {
-    console.log(errors);
     if (errors.link) {
         activeIndex.value = 1;
     } else if (errors.date || errors.time) {
