@@ -41,26 +41,6 @@ const opening_hours = ref("");
 const phone = ref("");
 const updated_at = ref("");
 
-interface Activity {
-    address: string;
-    mapbox_full_address: string;
-    calendar_activities: [];
-    id: string;
-    cost: string;
-    created_at: string;
-    description: string;
-    email: string;
-    estimated_duration: string;
-    journey_id: string;
-    latitude: string;
-    longitude: string;
-    link: string;
-    mapbox_id: string;
-    name: string;
-    opening_hours: string;
-    phone: string;
-    updated_at: string;
-}
 const isActivityInfoVisible = ref(false);
 const activities = computed(() => store.activityData as Activity[]);
 const activityCount = computed(() => activities.value.length);

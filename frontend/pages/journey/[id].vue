@@ -798,6 +798,7 @@ async function changeRole(userid: string, selectedRole: number) {
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
+        <CalendarFull :id="journeyId.toString()" />
         <ConfirmDialog
             class="z-[500]"
             :draggable="false"

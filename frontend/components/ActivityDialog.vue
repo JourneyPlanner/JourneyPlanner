@@ -28,9 +28,15 @@ const props = defineProps({
     phone: { type: String, default: "" },
     updated_at: { type: String, default: "" },
     update: { type: Boolean, default: false },
+    calendarActivity: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(["close", "deleteActivity"]);
+const emit = defineEmits([
+    "close",
+    "deleteActivity",
+    "removeFromCalendar",
+    "editCalendarActivity",
+]);
 
 const isVisible = ref(props.visible);
 const loadingSave = ref(false);
@@ -88,6 +94,30 @@ const confirmDelete = () => {
                 life: 3000,
             });
             emit("deleteActivity");
+            close();
+        },
+    });
+};
+
+const confirmRemoveFromCalendar = () => {
+    confirm.require({
+        header: t.value("activity.remove.header"),
+        message: t.value("activity.remove.confirm"),
+        icon: "pi pi-exclamation-triangle",
+        rejectClass: "hover:underline",
+        acceptClass:
+            "text-error dark:text-error-dark hover:underline font-bold",
+        rejectLabel: t.value("common.button.cancel"),
+        acceptLabel: t.value("activity.remove"),
+
+        accept: () => {
+            toast.add({
+                severity: "info",
+                summary: t.value("activity.remove"),
+                detail: t.value("activity.remove.detail"),
+                life: 3000,
+            });
+            emit("removeFromCalendar");
             close();
         },
     });
@@ -185,6 +215,9 @@ async function onSuccess(values: ActivityForm) {
                         () => client(`/api/journey/${props.id}/activity`),
                     );
                     activityStore.setActivities(activityData.value);
+                    if (props.calendarActivity) {
+                        emit("editCalendarActivity", activity.name);
+                    }
                 }
             },
             async onRequestError() {
@@ -569,6 +602,21 @@ function setSelectedDate(date: Date) {
                     }"
                     @click="confirmDelete"
                 />
+                <Button
+                    v-if="calendarActivity"
+                    type="button"
+                    :label="t('calendar.options.remove')"
+                    class="mt-auto h-9 w-72 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
+                    icon="pi pi-trash"
+                    :pt="{
+                        root: { class: 'flex items-center justify-center' },
+                        label: {
+                            class: 'display-block flex-none font-bold font-nunito',
+                        },
+                    }"
+                    @click="confirmRemoveFromCalendar"
+                />
+
                 <Button
                     type="submit"
                     :label="t('common.save')"

@@ -37,7 +37,7 @@ export default {
             surface: "rgba(228, 239, 244, 0.8)" /* form surface with opacity */,
             "surface-dark":
                 "rgba(228, 239, 244, 0.22)" /* dark form surface with opacity */,
-            card: "#rgba(228, 239, 244, 0.2)" /* card background */,
+            card: "rgba(228, 239, 244, 0.2)" /* card background */,
             "card-dark": "#353F44",
             text: "#333333" /* grey text */,
             "text-disabled": "#686868" /* disabled text */,
