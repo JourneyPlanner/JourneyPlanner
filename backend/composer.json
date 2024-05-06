@@ -1,10 +1,9 @@
 {
-    "name": "laravel/laravel",
+    "name": "journeyplanner/backend",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "The backend for JourneyPlanner",
     "keywords": [
-        "laravel",
-        "framework"
+        "JourneyPlanner"
     ],
     "license": "MIT",
     "require": {
