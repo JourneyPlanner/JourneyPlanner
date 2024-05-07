@@ -81,6 +81,18 @@ class JourneyController extends Controller
     {
         Gate::authorize("journeyGuide", $journey);
 
+        // Delete journey uploads
+        $journeyFolder = storage_path("app/public/journeys/" . $journey->id);
+        if (file_exists($journeyFolder)) {
+            $files = scandir($journeyFolder);
+            foreach ($files as $file) {
+                if ($file !== "." && $file !== "..") {
+                    unlink($journeyFolder . "/" . $file);
+                }
+            }
+            rmdir($journeyFolder);
+        }
+
         $journey->delete();
     }
 }

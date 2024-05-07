@@ -51,6 +51,12 @@ services:
       - MYSQL_DATABASE=$MYSQL_DATABASE
       - MYSQL_USER=$MYSQL_USER
       - MYSQL_PASSWORD=$MYSQL_PASSWORD
+  redis:
+    image: redis:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
 
 volumes:
   dbdata:

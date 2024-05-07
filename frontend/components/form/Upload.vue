@@ -5,8 +5,24 @@ import "@uppy/dashboard/dist/style.css";
 import Tus from "@uppy/tus";
 import { Dashboard } from "@uppy/vue";
 
-const uppy = new Uppy().use(Tus, {
-    endpoint: "https://tusd.tusdemo.net/files/",
+const journey = useJourneyStore();
+const config = useRuntimeConfig();
+
+function getCookieValue(a: string): string {
+    const b = document.cookie.match("(^|;)\\s*" + a + "\\s*=\\s*([^;]+)");
+    return b ? (b.pop() as string) : "";
+}
+
+const uppy = new Uppy({
+    meta: { journey: journey.getId() },
+}).use(Tus, {
+    endpoint: config.public.NUXT_BACKEND_URL + "/tus/",
+    headers: {
+        "X-XSRF-TOKEN": decodeURIComponent(getCookieValue("XSRF-TOKEN")),
+    },
+    withCredentials: true,
+    removeFingerprintOnSuccess: true,
+    chunkSize: 12 * 1024 * 1024,
 });
 </script>
 
