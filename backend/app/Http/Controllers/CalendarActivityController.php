@@ -38,6 +38,7 @@ class CalendarActivityController extends Controller
     public function update(
         Request $request,
         $journey,
+        $activity,
         CalendarActivity $calendarActivity
     ) {
         $journey = Journey::findOrFail($journey);
@@ -58,6 +59,7 @@ class CalendarActivityController extends Controller
      */
     public function destroy(
         $journey,
+        $activity,
         CalendarActivity $calendarActivity
     ) {
         $journey = Journey::findOrFail($journey);

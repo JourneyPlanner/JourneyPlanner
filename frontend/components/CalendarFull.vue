@@ -5,6 +5,26 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/vue3";
 import { useTolgee, useTranslate } from "@tolgee/vue";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "~/tailwind.config.js";
+
+const fullConfig = resolveConfig(tailwindConfig);
+const colorMode = useColorMode();
+const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+let text = "";
+let bg = "";
+const border = fullConfig.theme.accentColor["border"] as string;
+if (
+    colorMode.preference === "dark" ||
+    (darkTheme.matches && colorMode.preference === "system")
+) {
+    text = fullConfig.theme.accentColor["input"] as string;
+    bg = fullConfig.theme.accentColor["card-dark"] as string;
+} else {
+    text = fullConfig.theme.accentColor["text"] as string;
+    bg = fullConfig.theme.accentColor["card"] as string;
+}
 
 const fullCalendar = ref();
 const store = useActivityStore();
@@ -184,7 +204,6 @@ const calendarOptions = reactive({
                     fullCalendar.value
                         .getApi()
                         .setOption("slotMinTime", "06:00:00");
-                    console.log(fullCalendar.value.getApi());
                     document.getElementsByClassName(
                         "fc-showAllHours-button",
                     )[0].innerHTML = "";
@@ -216,6 +235,9 @@ const calendarOptions = reactive({
     eventDrop: initializeDrop,
     eventResize: editDrop,
     eventClick: showData,
+    eventBackgroundColor: bg,
+    eventBorderColor: border,
+    eventTextColor: text,
     slotDuration: "00:30:00",
     allDaySlot: false,
     timeZone: "local",
@@ -242,6 +264,9 @@ onMounted(() => {
                 const activityData = store.activityData as Activity[];
                 activityData.forEach((activity: Activity) => {
                     if (activity.calendar_activities != null) {
+                        document.getElementsByClassName(
+                            "fc-showAllHours-button",
+                        )[0].innerHTML = "6:00 - 0:00";
                         activity.calendar_activities.forEach(
                             (calendar_activity: CalendarActivity) => {
                                 calendar_activity.title = activity.name;
@@ -253,10 +278,6 @@ onMounted(() => {
                                     document.getElementsByClassName(
                                         "fc-showAllHours-button",
                                     )[0].innerHTML = "0:00 - 0:00";
-                                } else {
-                                    document.getElementsByClassName(
-                                        "fc-showAllHours-button",
-                                    )[0].innerHTML = "6:00 - 0:00";
                                 }
                                 calApi.addEvent(calendar_activity);
                             },
@@ -477,165 +498,194 @@ function editCalendarActivity(name: string) {
     }
 }
 
-@media (prefers-color-scheme: dark) {
-    .fc .fc-button-group {
-        background-color: #2c2c2c;
-    }
-
-    .fc .fc-button-primary:hover,
-    .fc .fc-prev-button:not(:disabled):hover,
-    .fc .fc-next-button:not(:disabled):hover {
-        background-color: #7a7052;
-        color: #f8f8f8;
-        border-color: #e3c454;
-    }
-
-    .fc .fc-button {
-        color: #f8f8f8;
-        background-color: #454849;
-        border-color: #e3c454;
-        border-width: 0.2rem;
-        border-radius: 0.5rem;
-        box-shadow: none !important;
-    }
-
-    .fc .fc-prev-button,
-    .fc .fc-dayGridMonth-button {
-        border-width: 0.2rem 0 0.2rem 0.2rem;
-    }
-
-    .fc .fc-next-button,
-    .fc .fc-timeGridWeek-button {
-        border-width: 0.2rem 0.2rem 0.2rem 0;
-    }
-
-    .fc
-        .fc-button-primary:not(:disabled).fc-button-active:not(
-            .fc-prev-button
-        ):not(.fc-next-button) {
-        background-color: #7a7052;
-        color: #f8f8f8;
-        border-color: #e3c454;
-        box-shadow: none;
-    }
-
-    .fc
-        .fc-button-primary:not(:disabled):focus:not(.fc-prev-button):not(
-            .fc-next-button
-        ) {
-        box-shadow: none;
-        outline: none;
-        outline-style: none;
-        background-color: #7a7052;
-        color: #f8f8f8;
-        border-color: #e3c454;
-    }
-
-    .fc .fc-prev-button:not(:disabled):focus,
-    .fc .fc-next-button:not(:disabled):focus {
-        box-shadow: none;
-        outline: none;
-        outline-style: none;
-        color: #f8f8f8;
-        border-color: #e3c454;
-    }
-
-    .fc
-        .fc-button-primary:not(:disabled).fc-button-active:focus:not(
-            .fc-prev-button
-        ):not(.fc-next-button) {
-        box-shadow: none;
-        background-color: #7a7052;
-        color: #f8f8f8;
-        border-color: #e3c454;
-    }
-
-    .fc .fc-today-button:disabled {
-        background-color: #7a7052;
-        color: #f8f8f8;
-        border-color: #e3c454;
-        opacity: 1;
-    }
+.light .fc-scrollgrid {
+    background-color: #f8f8f8;
 }
 
-@media (prefers-color-scheme: light) {
-    .fc .fc-button-group {
-        background-color: #f8f8f8;
-    }
+.dark .fc-scrollgrid,
+.fc-col-header {
+    background-color: #454849;
+}
 
-    .fc .fc-button-primary:hover,
-    .fc .fc-prev-button:not(:disabled):hover,
-    .fc .fc-next-button:not(:disabled):hover {
-        background-color: #fee384;
-        color: #333333;
-        border-color: #f8d351;
-    }
+.fc-timegrid-slots td,
+.fc-timegrid-slotlanes td {
+    border-color: #7b7b7b;
+}
 
-    .fc .fc-button {
-        color: #333333;
-        background-color: #f8f8f8;
-        border-color: #f8d351;
-        border-width: 0.2rem;
-        border-radius: 0.5rem;
-        box-shadow: none !important;
-    }
+/* dark mode */
 
-    .fc .fc-prev-button,
-    .fc .fc-dayGridMonth-button {
-        border-width: 0.2rem 0 0.2rem 0.2rem;
-    }
+.dark .fc .fc-prev-button,
+.dark .fc .fc-dayGridMonth-button {
+    border-width: 0.2rem 0 0.2rem 0.2rem !important;
+}
 
-    .fc .fc-next-button,
-    .fc .fc-timeGridWeek-button {
-        border-width: 0.2rem 0.2rem 0.2rem 0;
-    }
+.dark .fc .fc-next-button,
+.dark .fc .fc-timeGridWeek-button {
+    border-width: 0.2rem 0.2rem 0.2rem 0 !important;
+}
 
+.dark .fc .fc-button-group {
+    background-color: #2c2c2c;
+}
+
+.dark .fc .fc-button-primary:hover,
+.dark .fc .fc-prev-button:not(:disabled):hover,
+.dark .fc .fc-next-button:not(:disabled):hover {
+    background-color: #7a7052;
+    color: #f8f8f8;
+    border-color: #e3c454;
+}
+
+.dark .fc .fc-button-primary:hover,
+.dark .fc .fc-prev-button:not(:disabled):hover,
+.dark .fc .fc-next-button:not(:disabled):hover {
+    background-color: #7a7052;
+    color: #f8f8f8;
+    border-color: #e3c454;
+}
+
+.dark .fc .fc-button {
+    color: #f8f8f8;
+    background-color: #454849;
+    border-color: #e3c454;
+    border-width: 0.2rem;
+    border-radius: 0.5rem;
+    box-shadow: none !important;
+}
+
+.dark
     .fc
-        .fc-button-primary:not(:disabled).fc-button-active:not(
-            .fc-prev-button
-        ):not(.fc-next-button) {
-        background-color: #fee384;
-        color: #333333;
-        border-color: #f8d351;
-        box-shadow: none;
-    }
+    .fc-button-primary:not(:disabled).fc-button-active:not(.fc-prev-button):not(
+        .fc-next-button
+    ):not(.fc-showAllHours-button) {
+    background-color: #7a7052;
+    color: #f8f8f8;
+    border-color: #e3c454;
+    box-shadow: none;
+}
 
+.dark
     .fc
-        .fc-button-primary:not(:disabled):focus:not(.fc-prev-button):not(
-            .fc-next-button
-        ) {
-        box-shadow: none;
-        outline: none;
-        outline-style: none;
-        background-color: #fee384;
-        color: #333333;
-        border-color: #f8d351;
-    }
+    .fc-button-primary:not(:disabled):focus:not(.fc-prev-button):not(
+        .fc-next-button
+    ):not(.fc-showAllHours-button) {
+    box-shadow: none;
+    outline: none;
+    outline-style: none;
+    background-color: #7a7052;
+    color: #f8f8f8;
+    border-color: #e3c454;
+}
 
-    .fc .fc-prev-button:not(:disabled):focus,
-    .fc .fc-next-button:not(:disabled):focus {
-        box-shadow: none;
-        outline: none;
-        outline-style: none;
-        color: #333333;
-        border-color: #f8d351;
-    }
+.dark .fc .fc-prev-button:not(:disabled):focus,
+.dark .fc .fc-next-button:not(:disabled):focus {
+    box-shadow: none;
+    outline: none;
+    outline-style: none;
+    color: #f8f8f8;
+    border-color: #e3c454;
+}
 
+.dark
     .fc
-        .fc-button-primary:not(:disabled).fc-button-active:focus:not(
-            .fc-prev-button
-        ):not(.fc-next-button) {
-        box-shadow: none;
-        background-color: #fee384;
-        color: #333333;
-        border-color: #f8d351;
-    }
+    .fc-button-primary:not(:disabled).fc-button-active:focus:not(
+        .fc-prev-button
+    ):not(.fc-next-button) {
+    box-shadow: none;
+    background-color: #7a7052;
+    color: #f8f8f8;
+    border-color: #e3c454;
+}
 
-    .fc .fc-today-button:disabled {
-        background-color: #fee384;
-        color: #333333;
-        border-color: #f8d351;
-        opacity: 1;
-    }
+.dark .fc .fc-today-button:disabled {
+    background-color: #7a7052;
+    color: #f8f8f8;
+    border-color: #e3c454;
+    opacity: 1;
+}
+
+/* light mode */
+
+.light .fc .fc-prev-button,
+.light .fc .fc-dayGridMonth-button {
+    border-width: 0.2rem 0 0.2rem 0.2rem !important;
+}
+
+.light .fc .fc-next-button,
+.light .fc .fc-timeGridWeek-button {
+    border-width: 0.2rem 0.2rem 0.2rem 0 !important;
+}
+
+.light .fc .fc-button-group {
+    background-color: #f8f8f8;
+}
+
+.light .fc .fc-button-primary:hover,
+.light .fc .fc-prev-button:not(:disabled):hover,
+.light .fc .fc-next-button:not(:disabled):hover,
+.light .fc .fc-showAllHours-button:not(:disabled):hover {
+    background-color: #fee384;
+    color: #333333;
+    border-color: #f8d351;
+}
+
+.light .fc .fc-button {
+    color: #333333;
+    background-color: #f8f8f8;
+    border-color: #f8d351;
+    border-width: 0.2rem;
+    border-radius: 0.5rem;
+    box-shadow: none !important;
+}
+
+.light
+    .fc
+    .fc-button-primary:not(:disabled).fc-button-active:not(.fc-prev-button):not(
+        .fc-next-button
+    ):not(.fc-showAllHours-button) {
+    background-color: #fee384;
+    color: #333333;
+    border-color: #f8d351;
+    box-shadow: none;
+}
+
+.light
+    .fc
+    .fc-button-primary:not(:disabled):focus:not(.fc-prev-button):not(
+        .fc-next-button
+    ):not(.fc-showAllHours-button) {
+    box-shadow: none;
+    outline: none;
+    outline-style: none;
+    background-color: #fee384;
+    color: #333333;
+    border-color: #f8d351;
+}
+
+.light .fc .fc-prev-button:not(:disabled):focus,
+.light .fc .fc-next-button:not(:disabled):focus {
+    box-shadow: none;
+    outline: none;
+    outline-style: none;
+    color: #333333;
+    border-color: #f8d351;
+}
+
+.light
+    .fc
+    .fc-button-primary:not(:disabled).fc-button-active:focus:not(
+        .fc-prev-button
+    ):not(.fc-next-button) {
+    box-shadow: none;
+    background-color: #fee384;
+    color: #333333;
+    border-color: #f8d351;
+}
+
+.light .fc .fc-today-button:disabled {
+    background-color: #fee384;
+    color: #333333;
+    border-color: #f8d351;
+    opacity: 1;
 }
 </style>
