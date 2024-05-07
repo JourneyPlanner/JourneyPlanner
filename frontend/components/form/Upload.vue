@@ -22,7 +22,7 @@ const uppy = new Uppy({
     },
     withCredentials: true,
     removeFingerprintOnSuccess: true,
-    chunkSize: 12 * 1024 * 1024,
+    chunkSize: 5 * 1024 * 1024,
 });
 </script>
 
