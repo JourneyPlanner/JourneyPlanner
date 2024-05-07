@@ -19,6 +19,10 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    currentUserRole: {
+        type: Number,
+        required: true,
+    },
 });
 const activityId = ref("");
 const calendarId = ref("");
@@ -75,14 +79,9 @@ interface CalendarActivity {
     activity_id: string;
 }
 
-const { data: currUser } = await useAsyncData("userRole", () =>
-    client(`/api/journey/${props.id}/user/me`),
-);
-
 async function deleteActivity() {
     await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
         method: "delete",
-        body: {},
         async onResponse({ response }) {
             if (response.ok) {
                 toast.add({
@@ -131,7 +130,6 @@ async function removeFromCalendar() {
         `/api/journey/${props.id}/activity/${activityId.value}/calendarActivity/${calendarId.value}`,
         {
             method: "delete",
-            body: {},
             async onResponse({ response }) {
                 if (response.ok) {
                     toast.add({
@@ -174,11 +172,10 @@ const calendarOptions = reactive({
         right:
             window.innerWidth < 765
                 ? ""
-                : "dayGridMonth,timeGridWeek,showAllHours",
+                : "dayGridMonth,timeGridWeek showAllHours",
     },
     customButtons: {
         showAllHours: {
-            text: t.value("calendar.showAllHours"),
             click: () => {
                 if (
                     fullCalendar.value.getApi().getOption("slotMinTime") ===
@@ -187,10 +184,23 @@ const calendarOptions = reactive({
                     fullCalendar.value
                         .getApi()
                         .setOption("slotMinTime", "06:00:00");
+                    console.log(fullCalendar.value.getApi());
+                    document.getElementsByClassName(
+                        "fc-showAllHours-button",
+                    )[0].innerHTML = "";
+                    document.getElementsByClassName(
+                        "fc-showAllHours-button",
+                    )[0].innerHTML = "6:00 - 0:00";
                 } else {
                     fullCalendar.value
                         .getApi()
                         .setOption("slotMinTime", "00:00:00");
+                    document.getElementsByClassName(
+                        "fc-showAllHours-button",
+                    )[0].innerHTML = "";
+                    document.getElementsByClassName(
+                        "fc-showAllHours-button",
+                    )[0].innerHTML = "0:00 - 0:00";
                 }
             },
         },
@@ -235,6 +245,19 @@ onMounted(() => {
                         activity.calendar_activities.forEach(
                             (calendar_activity: CalendarActivity) => {
                                 calendar_activity.title = activity.name;
+                                if (
+                                    calendar_activity.start.split(" ")[1] <=
+                                    "06:00:00"
+                                ) {
+                                    calApi.setOption("slotMinTime", "00:00:00");
+                                    document.getElementsByClassName(
+                                        "fc-showAllHours-button",
+                                    )[0].innerHTML = "0:00 - 0:00";
+                                } else {
+                                    document.getElementsByClassName(
+                                        "fc-showAllHours-button",
+                                    )[0].innerHTML = "6:00 - 0:00";
+                                }
                                 calApi.addEvent(calendar_activity);
                             },
                         );
@@ -247,15 +270,13 @@ onMounted(() => {
     );
 });
 
-const isVisible = ref(false);
-
 async function initializeDrop(info: EventObject) {
     const calApi = fullCalendar.value.getApi();
     if (info.event._def.extendedProps.defId === undefined) {
         editDrop(info);
         return;
     }
-    const activityId = ref(info.event._def.extendedProps.defId);
+    const activityId = info.event._def.extendedProps.defId;
     const startTime = info.event._instance.range.start.toISOString();
     const endTime = info.event._instance.range.end.toISOString();
     const activity = {
@@ -264,7 +285,7 @@ async function initializeDrop(info: EventObject) {
     };
 
     await client(
-        `/api/journey/${props.id}/activity/${activityId.value}/calendarActivity/`,
+        `/api/journey/${props.id}/activity/${activityId}/calendarActivity/`,
         {
             method: "POST",
             body: activity,
@@ -307,7 +328,7 @@ async function initializeDrop(info: EventObject) {
 }
 
 async function editDrop(info: EventObject) {
-    const activityId = ref(info.event._def.extendedProps.activity_id);
+    const activityId = info.event._def.extendedProps.activity_id;
     const id = ref(info.event._def.publicId);
     const startTime = info.event._instance.range.start.toISOString();
     const endTime = info.event._instance.range.end.toISOString();
@@ -318,7 +339,7 @@ async function editDrop(info: EventObject) {
     };
 
     await client(
-        `/api/journey/${props.id}/activity/${activityId.value}/calendarActivity/${id.value}`,
+        `/api/journey/${props.id}/activity/${activityId}/calendarActivity/${id.value}`,
         {
             method: "PATCH",
             body: activity,
@@ -361,7 +382,7 @@ function showData(info: EventObject) {
     calendarId.value = info.event._def.publicId;
     activities.value.forEach((activity: Activity) => {
         if (activity.id === activityId.value) {
-            if (currUser.value.role === 1) {
+            if (props.currentUserRole === 1) {
                 update.value = true;
                 onlyShow.value = false;
             } else {
@@ -409,20 +430,6 @@ function editCalendarActivity(name: string) {
         <div
             class="flex w-[90%] flex-col items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
-            <Dialog
-                v-model:visible="isVisible"
-                modal
-                class="w-24"
-                dragabble="false"
-                :pt="{
-                    root: { class: 'font-nunito' },
-                    header: {
-                        class: 'flex justify-end h-1 pb-2',
-                    },
-                }"
-            >
-                TestSchmest
-            </Dialog>
             <div class="z-0 mt-20 h-[35rem] overflow-y-scroll">
                 <FullCalendar
                     ref="fullCalendar"
@@ -467,6 +474,168 @@ function editCalendarActivity(name: string) {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .fc .fc-button-group {
+        background-color: #2c2c2c;
+    }
+
+    .fc .fc-button-primary:hover,
+    .fc .fc-prev-button:not(:disabled):hover,
+    .fc .fc-next-button:not(:disabled):hover {
+        background-color: #7a7052;
+        color: #f8f8f8;
+        border-color: #e3c454;
+    }
+
+    .fc .fc-button {
+        color: #f8f8f8;
+        background-color: #454849;
+        border-color: #e3c454;
+        border-width: 0.2rem;
+        border-radius: 0.5rem;
+        box-shadow: none !important;
+    }
+
+    .fc .fc-prev-button,
+    .fc .fc-dayGridMonth-button {
+        border-width: 0.2rem 0 0.2rem 0.2rem;
+    }
+
+    .fc .fc-next-button,
+    .fc .fc-timeGridWeek-button {
+        border-width: 0.2rem 0.2rem 0.2rem 0;
+    }
+
+    .fc
+        .fc-button-primary:not(:disabled).fc-button-active:not(
+            .fc-prev-button
+        ):not(.fc-next-button) {
+        background-color: #7a7052;
+        color: #f8f8f8;
+        border-color: #e3c454;
+        box-shadow: none;
+    }
+
+    .fc
+        .fc-button-primary:not(:disabled):focus:not(.fc-prev-button):not(
+            .fc-next-button
+        ) {
+        box-shadow: none;
+        outline: none;
+        outline-style: none;
+        background-color: #7a7052;
+        color: #f8f8f8;
+        border-color: #e3c454;
+    }
+
+    .fc .fc-prev-button:not(:disabled):focus,
+    .fc .fc-next-button:not(:disabled):focus {
+        box-shadow: none;
+        outline: none;
+        outline-style: none;
+        color: #f8f8f8;
+        border-color: #e3c454;
+    }
+
+    .fc
+        .fc-button-primary:not(:disabled).fc-button-active:focus:not(
+            .fc-prev-button
+        ):not(.fc-next-button) {
+        box-shadow: none;
+        background-color: #7a7052;
+        color: #f8f8f8;
+        border-color: #e3c454;
+    }
+
+    .fc .fc-today-button:disabled {
+        background-color: #7a7052;
+        color: #f8f8f8;
+        border-color: #e3c454;
+        opacity: 1;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .fc .fc-button-group {
+        background-color: #f8f8f8;
+    }
+
+    .fc .fc-button-primary:hover,
+    .fc .fc-prev-button:not(:disabled):hover,
+    .fc .fc-next-button:not(:disabled):hover {
+        background-color: #fee384;
+        color: #333333;
+        border-color: #f8d351;
+    }
+
+    .fc .fc-button {
+        color: #333333;
+        background-color: #f8f8f8;
+        border-color: #f8d351;
+        border-width: 0.2rem;
+        border-radius: 0.5rem;
+        box-shadow: none !important;
+    }
+
+    .fc .fc-prev-button,
+    .fc .fc-dayGridMonth-button {
+        border-width: 0.2rem 0 0.2rem 0.2rem;
+    }
+
+    .fc .fc-next-button,
+    .fc .fc-timeGridWeek-button {
+        border-width: 0.2rem 0.2rem 0.2rem 0;
+    }
+
+    .fc
+        .fc-button-primary:not(:disabled).fc-button-active:not(
+            .fc-prev-button
+        ):not(.fc-next-button) {
+        background-color: #fee384;
+        color: #333333;
+        border-color: #f8d351;
+        box-shadow: none;
+    }
+
+    .fc
+        .fc-button-primary:not(:disabled):focus:not(.fc-prev-button):not(
+            .fc-next-button
+        ) {
+        box-shadow: none;
+        outline: none;
+        outline-style: none;
+        background-color: #fee384;
+        color: #333333;
+        border-color: #f8d351;
+    }
+
+    .fc .fc-prev-button:not(:disabled):focus,
+    .fc .fc-next-button:not(:disabled):focus {
+        box-shadow: none;
+        outline: none;
+        outline-style: none;
+        color: #333333;
+        border-color: #f8d351;
+    }
+
+    .fc
+        .fc-button-primary:not(:disabled).fc-button-active:focus:not(
+            .fc-prev-button
+        ):not(.fc-next-button) {
+        box-shadow: none;
+        background-color: #fee384;
+        color: #333333;
+        border-color: #f8d351;
+    }
+
+    .fc .fc-today-button:disabled {
+        background-color: #fee384;
+        color: #333333;
+        border-color: #f8d351;
+        opacity: 1;
     }
 }
 </style>
