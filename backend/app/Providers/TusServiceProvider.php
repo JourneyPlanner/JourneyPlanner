@@ -24,13 +24,15 @@ class TusServiceProvider extends ServiceProvider
 
             $server
                 ->event()
-                ->addListener("tus-server.upload.complete", function (\TusPhp\Events\TusEvent $event) {
+                ->addListener("tus-server.upload.complete", function (
+                    \TusPhp\Events\TusEvent $event
+                ) {
                     $fileMeta = $event->getFile()->details();
 
                     // Delete file from uploads dir if the metadata isn't set.
                     if (
-                        !isset ($fileMeta["metadata"]) ||
-                        !isset ($fileMeta["metadata"]["journey"])
+                        !isset($fileMeta["metadata"]) ||
+                        !isset($fileMeta["metadata"]["journey"])
                     ) {
                         // Delete file from uploads dir if the user doesn't have permission to upload to the journey.
                         unlink($fileMeta["file_path"]);
@@ -39,9 +41,7 @@ class TusServiceProvider extends ServiceProvider
 
                     // Check if the journey exists.
                     $journey = $fileMeta["metadata"]["journey"];
-                    $journey = Journey::findOrFail(
-                        $journey
-                    );
+                    $journey = Journey::findOrFail($journey);
 
                     // Check if the user has permission to upload to the journey.
                     if (
@@ -59,7 +59,7 @@ class TusServiceProvider extends ServiceProvider
                     // Create journey folder if not exists.
                     $journeyFolder = storage_path(
                         "app/public/journeys/" .
-                        $fileMeta["metadata"]["journey"]
+                            $fileMeta["metadata"]["journey"]
                     );
                     if (!file_exists($journeyFolder)) {
                         mkdir($journeyFolder, 0777, true);
@@ -69,10 +69,10 @@ class TusServiceProvider extends ServiceProvider
                     rename(
                         $fileMeta["file_path"],
                         $journeyFolder .
-                        "/" .
-                        hrtime(true) .
-                        "_" .
-                        $fileMeta["name"]
+                            "/" .
+                            hrtime(true) .
+                            "_" .
+                            $fileMeta["name"]
                     );
                 });
 
