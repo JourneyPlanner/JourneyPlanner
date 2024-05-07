@@ -16,7 +16,7 @@ class TusServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton("tus-server", function ($app) {
-            $server = new TusServer("file");
+            $server = new TusServer("redis");
 
             $server
                 ->setApiPath("/tus") // tus server endpoint.
