@@ -251,7 +251,7 @@ const itemsJourneyGuide = ref([
                                 id="overlay_menu"
                                 ref="menu"
                                 :model="itemsJourneyGuide"
-                                class="relative -ml-5 rounded-xl border-2 border-border-light bg-input dark:bg-input-dark"
+                                class="relative -ml-5 rounded-xl border-2 border-border-light bg-input dark:border-input-dark"
                                 :popup="true"
                                 :pt="{
                                     root: {
