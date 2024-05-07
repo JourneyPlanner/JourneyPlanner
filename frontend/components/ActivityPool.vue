@@ -1,25 +1,30 @@
 <script setup lang="ts">
 import { Draggable } from "@fullcalendar/interaction";
+import { useTranslate } from "@tolgee/vue";
 import { format, parse } from "date-fns";
+import type { MenuItemCommandEvent } from "primevue/menuitem";
 import { useActivityStore } from "~/stores/activities";
 
 import ActivityDialog from "./ActivityDialog.vue";
 
 const store = useActivityStore();
+const { t } = useTranslate();
 const menu = ref();
 const toggle = (event: Event) => {
-    menu.value.toggle(event);
+    menu.value[0].toggle(event);
 };
 
-defineProps({
+const props = defineProps({
     id: {
         type: String,
         required: true,
     },
 });
 
+const activityId = ref("");
 const containerElement = ref();
 const onlyShow = ref(true);
+const update = ref(false);
 const address = ref("");
 const cost = ref("");
 const created_at = ref("");
@@ -39,20 +44,26 @@ const updated_at = ref("");
 const isActivityInfoVisible = ref(false);
 const activities = computed(() => store.activityData as Activity[]);
 const activityCount = computed(() => activities.value.length);
+const client = useSanctumClient();
+const toast = useToast();
+const confirm = useConfirm();
 
 onMounted(() => {
     new Draggable(containerElement.value, {
         itemSelector: ".fc-event",
     });
 });
-function showInfo(id: string) {
+function showInfo(id: string, showOnly: boolean = true) {
     activities.value.forEach((activity: Activity) => {
         if (activity.id === id) {
-            onlyShow.value = true;
-            address.value =
-                activity.address == ""
-                    ? activity.mapbox_full_address
-                    : activity.address;
+            if (!showOnly) {
+                update.value = true;
+            } else {
+                update.value = false;
+            }
+
+            onlyShow.value = showOnly;
+            address.value = activity.address;
             cost.value = activity.cost;
             created_at.value = activity.created_at;
             description.value = activity.description;
@@ -71,12 +82,105 @@ function showInfo(id: string) {
         }
     });
 }
+
+const confirmDelete = (event: Event) => {
+    confirm.require({
+        target: event.currentTarget as HTMLElement,
+        header: t.value("activity.delete.header"),
+        message: t.value("activity.delete.confirm"),
+        icon: "pi pi-exclamation-triangle",
+        rejectClass: "hover:underline",
+        acceptClass:
+            "text-error dark:text-error-dark hover:underline font-bold",
+        rejectLabel: t.value("common.button.cancel"),
+        acceptLabel: t.value("journey.delete"),
+        accept: () => {
+            toast.add({
+                severity: "info",
+                summary: t.value("journey.delete"),
+                detail: t.value("journey.delete.detail"),
+                life: 3000,
+            });
+            deleteActivity();
+        },
+    });
+};
+
+async function deleteActivity() {
+    await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
+        method: "delete",
+        body: {},
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value(
+                        "form.input.activity.delete.toast.success.heading",
+                    ),
+                    detail: t.value(
+                        "form.input.activity.delete.toast.success.detail",
+                    ),
+                    life: 6000,
+                });
+                activities.value.forEach((activity: Activity) => {
+                    if (activity.id === activityId.value) {
+                        activities.value.splice(
+                            activities.value.indexOf(activity),
+                            1,
+                        ),
+                            store.setActivities(activities.value);
+                    }
+                });
+            }
+        },
+        async onRequestError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
+
+const itemsJourneyGuide = ref([
+    {
+        label: t.value("dashboard.options.header"),
+        items: [
+            {
+                label: t.value("dashboard.options.edit"),
+                icon: "pi pi-pencil",
+                className: "text-cta-border",
+                command: () => {
+                    showInfo(activityId.value, false);
+                },
+            },
+            {
+                label: t.value("dashboard.options.delete"),
+                icon: "pi pi-trash",
+                command: ($event: MenuItemCommandEvent) => {
+                    confirmDelete($event.originalEvent);
+                },
+            },
+        ],
+    },
+]);
 </script>
 
 <template>
     <div
-        class="flex w-full justify-center md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+        class="flex w-full justify-center overflow-x-hidden md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
     >
+        <Toast />
         <div
             class="h-40 w-[90%] rounded-2xl border-[3px] border-dashed border-border dark:bg-text max-lg:mt-5 sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
         >
@@ -96,7 +200,7 @@ function showInfo(id: string) {
                         v-for="activity in activities"
                         id="draggable-el"
                         :key="activity.id"
-                        class="fc-event col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-2 py-1 text-base font-normal hover:cursor-pointer dark:bg-card-dark sm:h-16 sm:text-base lg:rounded-xl"
+                        class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-2 py-1 text-base font-normal dark:bg-card-dark sm:h-16 sm:text-base lg:rounded-xl"
                         :data-event="
                             JSON.stringify({
                                 title: activity.name,
@@ -106,7 +210,7 @@ function showInfo(id: string) {
                                 timeZone: 'local',
                             })
                         "
-                        @click="showInfo(activity.id)"
+                        @click="activityId = activity.id"
                     >
                         <div class="flex sm:pt-1">
                             <p
@@ -115,6 +219,7 @@ function showInfo(id: string) {
                                     pt: { root: 'font-nunito' },
                                 }"
                                 class="w-[98%] overflow-hidden truncate overflow-ellipsis"
+                                @click="showInfo(activity.id)"
                             >
                                 {{ activity.name }}
                             </p>
@@ -125,7 +230,10 @@ function showInfo(id: string) {
                                 @click="toggle"
                             />
                         </div>
-                        <div class="flex items-center pb-4">
+                        <div
+                            class="flex items-center pb-4"
+                            @click="showInfo(activity.id)"
+                        >
                             <SvgClock class="mr-2 h-4 w-4" />
                             {{
                                 format(
@@ -137,6 +245,38 @@ function showInfo(id: string) {
                                     "H:mm",
                                 )
                             }}
+                        </div>
+                        <div class="absolute overflow-hidden">
+                            <Menu
+                                id="overlay_menu"
+                                ref="menu"
+                                :model="itemsJourneyGuide"
+                                class="relative -ml-5 rounded-xl border-2 border-border-light bg-input dark:border-input-dark"
+                                :popup="true"
+                                :pt="{
+                                    root: {
+                                        class: 'relative font-nunito bg-input dark:bg-input-dark overflow-hidden',
+                                    },
+                                    menu: {
+                                        class: 'bg-input dark:bg-input-dark',
+                                    },
+                                    menuitem: {
+                                        class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                                    },
+                                    content: {
+                                        class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                                    },
+                                    submenuHeader: {
+                                        class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark',
+                                    },
+                                    label: {
+                                        class: 'text-text dark:text-white',
+                                    },
+                                    icon: {
+                                        class: 'text-text dark:text-white',
+                                    },
+                                }"
+                            />
                         </div>
                     </div>
                 </div>
@@ -164,6 +304,7 @@ function showInfo(id: string) {
         </div>
         <ActivityDialog
             :id="id.toString()"
+            :activity-id="activityId"
             :visible="isActivityInfoVisible"
             :only-show="onlyShow"
             :address="address"
@@ -181,7 +322,9 @@ function showInfo(id: string) {
             :opening_hours="opening_hours"
             :phone="phone"
             :updated-at="updated_at"
+            :update="update"
             @close="isActivityInfoVisible = false"
+            @delete-activity="deleteActivity"
         />
     </div>
 </template>

@@ -171,8 +171,6 @@ async function leaveJourney() {
             }
         },
         async onResponseError({ response }) {
-            console.log(response);
-
             if (response.status === 403) {
                 toast.add({
                     severity: "error",
