@@ -12,9 +12,14 @@ export const useActivityStore = defineStore("activity", () => {
         this.activityData.push(activity);
     }
 
+    function clearActivities() {
+        this.activityData = [];
+    }
+
     return {
         activityData,
         setActivities,
         addActivity,
+        clearActivities,
     };
 });

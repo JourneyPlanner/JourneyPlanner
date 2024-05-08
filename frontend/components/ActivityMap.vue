@@ -8,20 +8,37 @@ const { t } = useTranslate();
 
 const journey = useJourneyStore();
 const activitiesStore = useActivityStore();
+console.log(activitiesStore.activityData);
+activitiesStore.clearActivities();
+const client = useSanctumClient();
 
-const colorMode = useColorMode();
-const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+const props = defineProps<{
+    id: string;
+}>();
 
-const activities = ref(
-    computed(() => activitiesStore.activityData as Activity[]),
+const { data: activityData } = await useAsyncData("activity", () =>
+    client(`/api/journey/${props.id}/activity`),
 );
+const activities = ref();
+const activitiesWithLocation = ref();
+const activitiesWithoutLocation = ref();
+activities.value = activitiesStore.activityData;
 
-const activitiesWithLocation = ref(
-    computed(() =>
-        activities.value.filter(
-            (activity) => activity.latitude && activity.longitude,
+const difference = computed(() => {
+    console.log(
+        activitiesStore.activityData.filter(
+            (x: object) => !activities.value.includes(x),
         ),
-    ),
+    );
+    return activitiesStore.activityData.filter(
+        (x: object) => !activities.value.includes(x),
+    );
+});
+
+console.log(difference.value);
+
+activitiesWithLocation.value = activities.value.filter(
+    (activity) => activity.latitude && activity.longitude,
 );
 
 activitiesWithLocation.value.forEach((activity) => {
@@ -30,13 +47,14 @@ activitiesWithLocation.value.forEach((activity) => {
     });
 });
 
-const activitiesWithoutLocation = ref(
-    computed(() =>
-        activities.value.filter(
-            (activity) => !activity.latitude || !activity.longitude,
-        ),
-    ),
+activitiesWithoutLocation.value = activities.value.filter(
+    (activity) => !activity.latitude || !activity.longitude,
 );
+activitiesStore.setActivities(activityData);
+console.log(activitiesStore.activityData);
+
+const colorMode = useColorMode();
+const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
 
 const colorAdded = fullConfig.theme.accentColor["input-label"] as string;
 const colorNotAdded = fullConfig.theme.accentColor[
@@ -44,7 +62,7 @@ const colorNotAdded = fullConfig.theme.accentColor[
 ] as string;
 const lat = computed(() => journey.getLat());
 const long = computed(() => journey.getLong());
-const zoom = computed(() => ((long.value || lat) === null ? 1 : 5));
+const zoom = computed(() => ((long.value || lat) === null ? 1 : 8));
 const style = computed(() =>
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
@@ -53,6 +71,22 @@ const style = computed(() =>
 );
 
 const isNotFoundActivitiesDialogVisible = ref(false);
+
+onMounted(() => {
+    watch(
+        activitiesStore.activityData,
+        () => {
+            console.log("Tseeeeeest");
+            const difference = activities.value.filter(
+                (x) => !activitiesStore.activityData.includes(x),
+            );
+            console.log(difference);
+            console.log(activitiesWithLocation.value);
+            console.log(activitiesStore.activityData);
+        },
+        { immediate: true },
+    );
+});
 </script>
 
 <template>
@@ -102,6 +136,7 @@ const isNotFoundActivitiesDialogVisible = ref(false);
                                 : colorNotAdded,
                     }"
                 >
+                    {{ console.log(activity) }}
                     <MapboxDefaultPopup
                         :popup-id="activity.id"
                         :lnglat="[activity.longitude, activity.latitude]"
@@ -109,6 +144,9 @@ const isNotFoundActivitiesDialogVisible = ref(false);
                         :options="{
                             closeOnClick: true,
                         }"
+                        closed="true"
+                        default-open="false"
+                        hidden
                     >
                         <div class="flex flex-col font-nunito text-text">
                             <h1 class="font-bold">

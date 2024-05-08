@@ -225,6 +225,11 @@ async function changeRole(userid: string, selectedRole: number) {
         },
     });
 }
+
+onUnmounted(() => {
+    activityStore.clearActivities();
+    console.log("Journey page unmounted");
+});
 </script>
 
 <template>
@@ -813,6 +818,6 @@ async function changeRole(userid: string, selectedRole: number) {
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
-        <ActivityMap />
+        <ActivityMap :id="journeyId.toString()" />
     </div>
 </template>
