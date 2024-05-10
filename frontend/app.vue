@@ -27,4 +27,35 @@ body {
     opacity: 0;
     filter: blur(1rem);
 }
+
+/*default scrollbar style*/
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: #2c2c2c;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 1rem;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.light ::-webkit-scrollbar-track {
+    background: #fcfcfc;
+}
+
+.light ::-webkit-scrollbar-thumb {
+    background: #dcdcdc;
+    border-radius: 1rem;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+    background: #d0d0d0;
+}
 </style>

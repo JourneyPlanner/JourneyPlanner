@@ -451,7 +451,7 @@ function editCalendarActivity(name: string) {
         <div
             class="flex w-[90%] flex-col items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
-            <div class="z-0 mt-20 h-[35rem] overflow-y-scroll">
+            <div class="z-0 mt-20 h-[35rem] overflow-y-scroll pr-2">
                 <FullCalendar
                     ref="fullCalendar"
                     :options="calendarOptions"
@@ -498,18 +498,24 @@ function editCalendarActivity(name: string) {
     }
 }
 
-.light .fc-scrollgrid {
+.light .fc-scrollgrid,
+.light .fc-col-header {
     background-color: #f8f8f8;
 }
 
 .dark .fc-scrollgrid,
-.fc-col-header {
+.dark .fc-col-header {
     background-color: #454849;
 }
 
-.fc-timegrid-slots td,
-.fc-timegrid-slotlanes td {
+.dark .fc-timegrid-slots td,
+.dark .fc-timegrid-slotlanes td {
     border-color: #7b7b7b;
+}
+
+.light .fc-timegrid-slots td,
+.light .fc-timegrid-slotlanes td {
+    border-color: #dcdcdc;
 }
 
 /* dark mode */
@@ -525,7 +531,8 @@ function editCalendarActivity(name: string) {
 }
 
 .dark .fc .fc-button-group {
-    background-color: #2c2c2c;
+    @apply bg-background-dark;
+    /*background-color: #2c2c2c;*/
 }
 
 .dark .fc .fc-button-primary:hover,
