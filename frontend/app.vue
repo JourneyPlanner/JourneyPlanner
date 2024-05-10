@@ -14,7 +14,7 @@
 <style>
 /* default background in light and dark: mode  */
 body {
-    @apply min-h-screen bg-background dark:bg-background-dark;
+    @apply min-h-screen bg-background font-nunito dark:bg-background-dark;
 }
 
 .page-enter-active,

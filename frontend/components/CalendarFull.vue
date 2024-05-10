@@ -498,26 +498,6 @@ function editCalendarActivity(name: string) {
     }
 }
 
-.light .fc-scrollgrid,
-.light .fc-col-header {
-    background-color: #f8f8f8;
-}
-
-.dark .fc-scrollgrid,
-.dark .fc-col-header {
-    background-color: #454849;
-}
-
-.dark .fc-timegrid-slots td,
-.dark .fc-timegrid-slotlanes td {
-    border-color: #7b7b7b;
-}
-
-.light .fc-timegrid-slots td,
-.light .fc-timegrid-slotlanes td {
-    border-color: #dcdcdc;
-}
-
 /* dark mode */
 
 .dark .fc .fc-prev-button,
@@ -531,8 +511,21 @@ function editCalendarActivity(name: string) {
 }
 
 .dark .fc .fc-button-group {
-    @apply bg-background-dark;
-    /*background-color: #2c2c2c;*/
+    background-color: #2c2c2c;
+}
+
+.dark .fc-day-today {
+    background-color: rgba(36, 68, 86, 0.15) !important;
+}
+
+.dark .fc-scrollgrid,
+.dark .fc-col-header {
+    background-color: #454849;
+}
+
+.dark .fc-timegrid-slots td,
+.dark .fc-timegrid-slotlanes td {
+    border-color: #7b7b7b;
 }
 
 .dark .fc .fc-button-primary:hover,
@@ -613,6 +606,11 @@ function editCalendarActivity(name: string) {
 
 /* light mode */
 
+.light .fc-scrollgrid,
+.light .fc-col-header {
+    background-color: #f8f8f8;
+}
+
 .light .fc .fc-prev-button,
 .light .fc .fc-dayGridMonth-button {
     border-width: 0.2rem 0 0.2rem 0.2rem !important;
@@ -625,6 +623,15 @@ function editCalendarActivity(name: string) {
 
 .light .fc .fc-button-group {
     background-color: #f8f8f8;
+}
+
+.light .fc-day-today {
+    background-color: rgba(219, 236, 242, 0.3) !important;
+}
+
+.light .fc-timegrid-slots td,
+.light .fc-timegrid-slotlanes td {
+    border-color: #dcdcdc;
 }
 
 .light .fc .fc-button-primary:hover,
