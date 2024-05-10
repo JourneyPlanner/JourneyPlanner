@@ -48,6 +48,7 @@ const activityId = ref("");
 const calendarId = ref("");
 const onlyShow = ref(true);
 const update = ref(false);
+const calendarClicked = ref(false);
 const address = ref("");
 const cost = ref("");
 const created_at = ref("");
@@ -404,8 +405,9 @@ function showData(info: EventObject) {
     activities.value.forEach((activity: Activity) => {
         if (activity.id === activityId.value) {
             if (props.currentUserRole === 1) {
-                update.value = true;
-                onlyShow.value = false;
+                update.value = false;
+                onlyShow.value = true;
+                calendarClicked.value = true;
             } else {
                 update.value = false;
                 onlyShow.value = true;
@@ -480,6 +482,7 @@ function editCalendarActivity(name: string) {
                 :phone="phone"
                 :updated-at="updated_at"
                 :update="update"
+                :calendar-clicked="calendarClicked"
                 @close="isActivityInfoVisible = false"
                 @delete-activity="deleteActivity"
                 @remove-from-calendar="removeFromCalendar"

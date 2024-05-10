@@ -53,6 +53,7 @@ onMounted(() => {
         itemSelector: ".fc-event",
     });
 });
+
 function showInfo(id: string, showOnly: boolean = true) {
     activities.value.forEach((activity: Activity) => {
         if (activity.id === id) {

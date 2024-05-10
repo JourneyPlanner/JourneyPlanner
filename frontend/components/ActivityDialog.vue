@@ -29,7 +29,33 @@ const props = defineProps({
     updated_at: { type: String, default: "" },
     update: { type: Boolean, default: false },
     calendarActivity: { type: Boolean, default: false },
+    calendarClicked: { type: Boolean, default: false },
 });
+
+const onlyShowRef = ref(props.onlyShow);
+const updateRef = ref(props.update);
+const calendarClickedRef = ref(props.calendarClicked);
+
+watch(
+    () => props.onlyShow,
+    (value) => {
+        onlyShowRef.value = value;
+    },
+);
+
+watch(
+    () => props.update,
+    (value) => {
+        updateRef.value = value;
+    },
+);
+
+watch(
+    () => props.calendarClicked,
+    (value) => {
+        calendarClickedRef.value = value;
+    },
+);
 
 const emit = defineEmits([
     "close",
@@ -297,6 +323,19 @@ function onInvalidSubmit({ errors }: { errors: ActivityFormErrors }) {
 }
 
 const close = () => {
+    if (props.update) {
+        updateRef.value = true;
+    } else {
+        updateRef.value = false;
+    }
+
+    if (props.calendarClicked) {
+        calendarClickedRef.value = true;
+    } else {
+        calendarClickedRef.value = false;
+    }
+
+    onlyShowRef.value = true;
     selectedDate.value = null;
     timeDisabled.value = true;
     loadingSave.value = false;
@@ -381,7 +420,7 @@ function setSelectedDate(date: Date) {
                             id="name"
                             name="name"
                             :value="name"
-                            :disabled="onlyShow"
+                            :disabled="onlyShowRef"
                             translation-key="form.input.activity.name"
                             icon="pi-tag"
                             :icon-pos-is-left="true"
@@ -391,13 +430,13 @@ function setSelectedDate(date: Date) {
                             id="duration"
                             name="duration"
                             :value="estimated_duration"
-                            :disabled="onlyShow"
+                            :disabled="onlyShowRef"
                             translation-key="form.input.activity.duration"
                             class="order-2 col-span-1 w-full sm:col-span-2 sm:w-5/6 sm:justify-self-end"
                             :default-time="new Array(0, 30)"
                         />
                         <div
-                            v-if="!onlyShow"
+                            v-if="!onlyShowRef"
                             class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
                         >
                             <label class="text-sm font-medium md:text-base">
@@ -407,11 +446,11 @@ function setSelectedDate(date: Date) {
                         </div>
 
                         <FormClassicInputIcon
-                            v-if="onlyShow"
+                            v-if="onlyShowRef"
                             id="address"
                             name="address"
                             :value="address"
-                            :disabled="onlyShow"
+                            :disabled="onlyShowRef"
                             translation-key="form.input.activity.address"
                             icon="pi-map-marker"
                             :icon-pos-is-left="true"
@@ -422,7 +461,7 @@ function setSelectedDate(date: Date) {
                             id="costs"
                             name="costs"
                             :value="cost"
-                            :disabled="onlyShow"
+                            :disabled="onlyShowRef"
                             translation-key="form.input.activity.costs"
                             icon="pi-money-bill"
                             class="order-3 col-span-1 w-full sm:order-4 sm:col-span-2 sm:w-5/6 sm:justify-self-end"
@@ -431,7 +470,7 @@ function setSelectedDate(date: Date) {
                             id="description"
                             name="description"
                             :value="description"
-                            :disabled="onlyShow"
+                            :disabled="onlyShowRef"
                             translation-key="form.input.activity.description"
                             class="order-5 col-span-full row-span-2"
                             custom-class="h-full"
@@ -460,7 +499,7 @@ function setSelectedDate(date: Date) {
                         <div>
                             <FormGroupInput
                                 id="link"
-                                :disabled="onlyShow"
+                                :disabled="onlyShowRef"
                                 :value="link"
                                 name="link"
                                 translation-key="form.input.activity.link"
@@ -474,7 +513,7 @@ function setSelectedDate(date: Date) {
                             </label>
                             <FormGroupInput
                                 id="email"
-                                :disabled="onlyShow"
+                                :disabled="onlyShowRef"
                                 :value="email"
                                 name="email"
                                 icon="pi-at"
@@ -482,7 +521,7 @@ function setSelectedDate(date: Date) {
                             />
                             <FormGroupInput
                                 id="phone"
-                                :disabled="onlyShow"
+                                :disabled="onlyShowRef"
                                 :value="phone"
                                 name="phone"
                                 icon="pi-phone"
@@ -492,7 +531,7 @@ function setSelectedDate(date: Date) {
                         <FormClassicInputIcon
                             id="opening-hours"
                             name="open"
-                            :disabled="onlyShow"
+                            :disabled="onlyShowRef"
                             :value="opening_hours"
                             translation-key="form.input.activity.opening-hours"
                             input-type="textarea"
@@ -502,7 +541,7 @@ function setSelectedDate(date: Date) {
                     </div>
                 </TabPanel>
                 <TabPanel
-                    v-if="!onlyShow"
+                    v-if="!onlyShowRef"
                     :header="t('activity.manual.header')"
                     :pt="{
                         headerAction: () => ({
@@ -555,7 +594,7 @@ function setSelectedDate(date: Date) {
             </TabView>
 
             <div
-                v-if="!onlyShow && !update"
+                v-if="!onlyShowRef && !updateRef"
                 class="mx-5 flex h-full flex-row justify-between gap-2 bg-background align-bottom font-nunito dark:bg-background-dark"
             >
                 <Button
@@ -586,8 +625,44 @@ function setSelectedDate(date: Date) {
                 />
             </div>
             <div
-                v-else-if="update"
-                class="mx-5 flex h-full flex-row justify-between gap-2 bg-background align-bottom font-nunito dark:bg-background-dark"
+                v-else-if="calendarClickedRef"
+                class="mx-5 flex h-full flex-row justify-between gap-1.5 bg-background align-bottom font-nunito dark:bg-background-dark"
+            >
+                <Button
+                    v-if="calendarActivity"
+                    type="button"
+                    :label="t('calendar.options.remove')"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
+                    icon="pi pi-calendar-times"
+                    :pt="{
+                        root: { class: 'flex items-center justify-center' },
+                        label: {
+                            class: 'display-block flex-none font-bold font-nunito',
+                        },
+                    }"
+                    @click="confirmRemoveFromCalendar"
+                />
+                <Button
+                    type="button"
+                    :label="t('dashboard.options.edit')"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cta-border bg-input px-2 font-bold text-text hover:bg-cta-bg-fill dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
+                    icon="pi pi-pencil"
+                    :pt="{
+                        root: { class: 'flex items-center justify-center' },
+                        label: {
+                            class: 'display-block flex-none font-bold font-nunito',
+                        },
+                    }"
+                    @click="
+                        onlyShowRef = false;
+                        updateRef = true;
+                        calendarClickedRef = false;
+                    "
+                />
+            </div>
+            <div
+                v-else-if="updateRef"
+                class="mx-5 flex h-full flex-row justify-between gap-1.5 bg-background align-bottom font-nunito dark:bg-background-dark"
             >
                 <Button
                     type="button"
@@ -602,21 +677,6 @@ function setSelectedDate(date: Date) {
                     }"
                     @click="confirmDelete"
                 />
-                <Button
-                    v-if="calendarActivity"
-                    type="button"
-                    :label="t('calendar.options.remove')"
-                    class="mt-auto h-9 w-72 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
-                    icon="pi pi-trash"
-                    :pt="{
-                        root: { class: 'flex items-center justify-center' },
-                        label: {
-                            class: 'display-block flex-none font-bold font-nunito',
-                        },
-                    }"
-                    @click="confirmRemoveFromCalendar"
-                />
-
                 <Button
                     type="submit"
                     :label="t('common.save')"
