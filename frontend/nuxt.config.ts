@@ -102,5 +102,6 @@ export default defineNuxtConfig({
     },
     mapbox: {
         accessToken: process.env.NUXT_MAPBOX_API_KEY,
+        persistent: false,
     },
 });

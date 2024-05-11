@@ -180,11 +180,9 @@ async function onSuccess(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
-                    const { data: activityData } = await useAsyncData(
-                        "activity",
-                        () => client(`/api/journey/${props.id}/activity`),
-                    );
-                    activityStore.setActivities(activityData.value);
+                    activity.estimated_duration =
+                        activity.estimated_duration + ":00";
+                    activityStore.updateActivity(activity, props.activityId);
                 }
             },
             async onRequestError() {
@@ -224,11 +222,7 @@ async function onSuccess(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
-                    const { data: activityData } = await useAsyncData(
-                        "activity",
-                        () => client(`/api/journey/${props.id}/activity`),
-                    );
-                    activityStore.setActivities(activityData.value);
+                    activityStore.addActivity(response._data);
                 }
             },
             async onRequestError() {

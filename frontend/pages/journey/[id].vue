@@ -9,6 +9,7 @@ const route = useRoute();
 const store = useJourneyStore();
 const activityStore = useActivityStore();
 const journeyId = route.params.id;
+const activityDataLoaded = ref(false);
 const qrcode = ref("");
 const duringJourney = ref(false);
 const journeyEnded = ref(false);
@@ -58,11 +59,15 @@ if (error.value) {
     });
 }
 
-const { data: activityData } = await useAsyncData("activity", () =>
-    client(`/api/journey/${journeyId}/activity`),
-);
-
-activityStore.setActivities(activityData);
+await client(`/api/journey/${journeyId}/activity`, {
+    async onResponse({ response }) {
+        if (response.ok) {
+            console.log(response);
+            activityStore.setActivities(response._data);
+            activityDataLoaded.value = true;
+        }
+    },
+});
 
 const { data: users } = await useAsyncData("users", () =>
     client(`/api/journey/${journeyId}/user`),
@@ -157,7 +162,7 @@ const confirmLeave = (event: Event) => {
 };
 
 async function leaveJourney() {
-    await client(`/api/journey/${journeyId}/leave`, {
+    await client(`/ api / journey / ${journeyId} / leave`, {
         method: "DELETE",
         async onResponse({ response }) {
             if (response.ok) {
@@ -201,7 +206,7 @@ function copyToClipboard() {
 }
 
 async function changeRole(userid: string, selectedRole: number) {
-    await client(`/api/journey/${journeyId}/user/${userid}`, {
+    await client(`/ api / journey / ${journeyId} / user / ${userid}`, {
         method: "PATCH",
         body: {
             role: selectedRole,
@@ -225,11 +230,6 @@ async function changeRole(userid: string, selectedRole: number) {
         },
     });
 }
-
-onUnmounted(() => {
-    activityStore.clearActivities();
-    console.log("Journey page unmounted");
-});
 </script>
 
 <template>
@@ -818,6 +818,6 @@ onUnmounted(() => {
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
-        <ActivityMap :id="journeyId.toString()" />
+        <ActivityMap v-if="activityDataLoaded" :id="journeyId.toString()" />
     </div>
 </template>

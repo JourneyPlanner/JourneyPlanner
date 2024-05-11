@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useActivityStore = defineStore("activity", () => {
-    const activityData = ref({});
+export const useActivityStore = defineStore("activities", () => {
+    const activityData = ref([]);
 
     function setActivities(activityData) {
+        this.activityData = [];
         this.activityData = activityData;
     }
 
@@ -12,14 +13,19 @@ export const useActivityStore = defineStore("activity", () => {
         this.activityData.push(activity);
     }
 
-    function clearActivities() {
-        this.activityData = [];
+    function updateActivity(activity, id) {
+        const index = this.activityData.findIndex((obj) => obj.id === id);
+        this.activityData[index] = activity;
+
+        console.log(activityData.value);
+
+        console.log("Activity updated");
     }
 
     return {
         activityData,
         setActivities,
         addActivity,
-        clearActivities,
+        updateActivity,
     };
 });

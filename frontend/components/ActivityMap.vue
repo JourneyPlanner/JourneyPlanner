@@ -8,50 +8,37 @@ const { t } = useTranslate();
 
 const journey = useJourneyStore();
 const activitiesStore = useActivityStore();
-console.log(activitiesStore.activityData);
-activitiesStore.clearActivities();
-const client = useSanctumClient();
 
-const props = defineProps<{
-    id: string;
-}>();
-
-const { data: activityData } = await useAsyncData("activity", () =>
-    client(`/api/journey/${props.id}/activity`),
-);
 const activities = ref();
 const activitiesWithLocation = ref();
 const activitiesWithoutLocation = ref();
-activities.value = activitiesStore.activityData;
+const isNotFoundActivitiesDialogVisible = ref(false);
 
-const difference = computed(() => {
-    console.log(
-        activitiesStore.activityData.filter(
-            (x: object) => !activities.value.includes(x),
-        ),
-    );
-    return activitiesStore.activityData.filter(
-        (x: object) => !activities.value.includes(x),
-    );
-});
+//TODO: geht aktivität hinzufügen?
+//TODO: geht aktivität bearbeiten?
 
-console.log(difference.value);
+watch(
+    activitiesStore.activityData,
+    () => {
+        activities.value = activitiesStore.activityData;
 
-activitiesWithLocation.value = activities.value.filter(
-    (activity) => activity.latitude && activity.longitude,
+        activitiesWithLocation.value = activities.value.filter(
+            (activity: Activity) => activity.latitude && activity.longitude,
+        );
+
+        activitiesWithLocation.value.forEach((activity: Activity) => {
+            console.log(activity);
+            useMapboxPopup(activity.id, (popup) => {
+                popup.remove();
+            });
+        });
+
+        activitiesWithoutLocation.value = activities.value.filter(
+            (activity: Activity) => !activity.latitude || !activity.longitude,
+        );
+    },
+    { immediate: true },
 );
-
-activitiesWithLocation.value.forEach((activity) => {
-    useMapboxPopup(activity.id, (popup) => {
-        popup.off();
-    });
-});
-
-activitiesWithoutLocation.value = activities.value.filter(
-    (activity) => !activity.latitude || !activity.longitude,
-);
-activitiesStore.setActivities(activityData);
-console.log(activitiesStore.activityData);
 
 const colorMode = useColorMode();
 const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
@@ -69,24 +56,6 @@ const style = computed(() =>
         ? "mapbox://styles/mathematti/clvl1j6rx009301pcgh6mbtam"
         : "mapbox://styles/mathematti/clvl14yme009101pc4o2c16ex",
 );
-
-const isNotFoundActivitiesDialogVisible = ref(false);
-
-onMounted(() => {
-    watch(
-        activitiesStore.activityData,
-        () => {
-            console.log("Tseeeeeest");
-            const difference = activities.value.filter(
-                (x) => !activitiesStore.activityData.includes(x),
-            );
-            console.log(difference);
-            console.log(activitiesWithLocation.value);
-            console.log(activitiesStore.activityData);
-        },
-        { immediate: true },
-    );
-});
 </script>
 
 <template>
@@ -113,7 +82,7 @@ onMounted(() => {
             class="relative mt-5 flex h-96 w-[90%] items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
             <MapboxMap
-                :map-id="journey.getName()"
+                :map-id="journey.getID()"
                 style="position: absolute; top: 0; bottom: 0"
                 class="rounded-xl"
                 :options="{
@@ -122,12 +91,10 @@ onMounted(() => {
                     zoom: zoom,
                 }"
             >
-                <!--TODO: Popup nicht standardmäßig open-->
-                <!-- TODO: error wenn man von reise zu anderer reise geht -->
                 <MapboxDefaultMarker
                     v-for="activity in activitiesWithLocation"
                     :key="activity.id"
-                    :marker-id="activity.id"
+                    :marker-id="'marker' + activity.id"
                     :lnglat="[activity.longitude, activity.latitude]"
                     :options="{
                         color:
@@ -136,19 +103,16 @@ onMounted(() => {
                                 : colorNotAdded,
                     }"
                 >
-                    {{ console.log(activity) }}
                     <MapboxDefaultPopup
                         :popup-id="activity.id"
                         :lnglat="[activity.longitude, activity.latitude]"
-                        class="text-text"
                         :options="{
                             closeOnClick: true,
                         }"
-                        closed="true"
-                        default-open="false"
-                        hidden
                     >
-                        <div class="flex flex-col font-nunito text-text">
+                        <div
+                            class="flex flex-col font-nunito text-text dark:text-input"
+                        >
                             <h1 class="font-bold">
                                 {{ activity.name }}
                             </h1>
@@ -156,6 +120,7 @@ onMounted(() => {
                         </div>
                     </MapboxDefaultPopup>
                 </MapboxDefaultMarker>
+
                 <MapboxGeolocateControl />
                 <MapboxFullscreenControl />
             </MapboxMap>
@@ -208,3 +173,33 @@ onMounted(() => {
         </Dialog>
     </div>
 </template>
+
+<style>
+.mapboxgl-popup-content {
+    @apply bg-background dark:bg-background-dark;
+}
+
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip {
+    @apply border-b-background dark:border-b-background-dark;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip {
+    @apply border-t-background dark:border-t-background-dark;
+}
+
+.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+    @apply border-r-background dark:border-r-background-dark;
+}
+
+.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+    @apply border-l-background dark:border-l-background-dark;
+}
+
+.mapboxgl-popup-close-button {
+    @apply mr-1.5 text-xl;
+}
+</style>

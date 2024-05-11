@@ -42,7 +42,7 @@ const phone = ref("");
 const updated_at = ref("");
 
 const isActivityInfoVisible = ref(false);
-const activities = computed(() => store.activityData as Activity[]);
+const activities = ref(store.activityData as Activity[]);
 const activityCount = computed(() => activities.value.length);
 const client = useSanctumClient();
 const toast = useToast();
@@ -53,6 +53,15 @@ onMounted(() => {
         itemSelector: ".fc-event",
     });
 });
+
+watch(
+    store.activityData,
+    () => {
+        activities.value = store.activityData;
+    },
+    { immediate: true },
+);
+
 function showInfo(id: string, showOnly: boolean = true) {
     activities.value.forEach((activity: Activity) => {
         if (activity.id === id) {
@@ -86,6 +95,7 @@ function showInfo(id: string, showOnly: boolean = true) {
 const confirmDelete = (event: Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
+        group: "journey",
         header: t.value("activity.delete.header"),
         message: t.value("activity.delete.confirm"),
         icon: "pi pi-exclamation-triangle",
@@ -109,7 +119,6 @@ const confirmDelete = (event: Event) => {
 async function deleteActivity() {
     await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
         method: "delete",
-        body: {},
         async onResponse({ response }) {
             if (response.ok) {
                 toast.add({
@@ -312,14 +321,14 @@ const itemsJourneyGuide = ref([
             :created-at="created_at"
             :description="description"
             :email="email"
-            :estimated_duration="estimated_duration"
+            :estimated-duration="estimated_duration"
             :journey-id="journey_id"
             :latitude="latitude"
             :longitude="longitude"
             :link="link"
             :mapbox-id="mapbox_id"
             :name="name"
-            :opening_hours="opening_hours"
+            :opening-hours="opening_hours"
             :phone="phone"
             :updated-at="updated_at"
             :update="update"
