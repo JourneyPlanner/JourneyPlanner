@@ -131,7 +131,7 @@ const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 
 async function onSuccess(values: ActivityForm) {
     const durationDate = new Date(values.duration);
-    const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}`;
+    const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}:00`;
 
     let date = undefined;
     let time = undefined;
@@ -180,9 +180,10 @@ async function onSuccess(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
-                    activity.estimated_duration =
-                        activity.estimated_duration + ":00";
-                    activityStore.updateActivity(activity, props.activityId);
+                    activityStore.updateActivity(
+                        response._data,
+                        props.activityId,
+                    );
                 }
             },
             async onRequestError() {

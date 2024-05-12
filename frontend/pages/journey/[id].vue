@@ -62,7 +62,6 @@ if (error.value) {
 await client(`/api/journey/${journeyId}/activity`, {
     async onResponse({ response }) {
         if (response.ok) {
-            console.log(response);
             activityStore.setActivities(response._data);
             activityDataLoaded.value = true;
         }
@@ -818,6 +817,6 @@ async function changeRole(userid: string, selectedRole: number) {
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
-        <ActivityMap v-if="activityDataLoaded" :id="journeyId.toString()" />
+        <ActivityMap v-if="activityDataLoaded" />
     </div>
 </template>

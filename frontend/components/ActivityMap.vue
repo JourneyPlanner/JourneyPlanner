@@ -14,9 +14,6 @@ const activitiesWithLocation = ref();
 const activitiesWithoutLocation = ref();
 const isNotFoundActivitiesDialogVisible = ref(false);
 
-//TODO: geht aktivität hinzufügen?
-//TODO: geht aktivität bearbeiten?
-
 watch(
     activitiesStore.activityData,
     () => {
@@ -27,7 +24,6 @@ watch(
         );
 
         activitiesWithLocation.value.forEach((activity: Activity) => {
-            console.log(activity);
             useMapboxPopup(activity.id, (popup) => {
                 popup.remove();
             });
@@ -98,7 +94,7 @@ const style = computed(() =>
                     :lnglat="[activity.longitude, activity.latitude]"
                     :options="{
                         color:
-                            activity.calendar_activities.length > 0
+                            activity.calendar_activities?.length > 0
                                 ? colorAdded
                                 : colorNotAdded,
                     }"
@@ -121,8 +117,10 @@ const style = computed(() =>
                     </MapboxDefaultPopup>
                 </MapboxDefaultMarker>
 
+                <MapboxScaleControl />
                 <MapboxGeolocateControl />
                 <MapboxFullscreenControl />
+                <MapboxNavigationControl />
             </MapboxMap>
         </div>
         <Dialog
