@@ -21,7 +21,7 @@
         "@mapbox/search-js-web": "^1.0.0-beta.19",
         "@nuxt/eslint": "^0.3.10",
         "@pinia/nuxt": "^0.5.1",
-        "@tolgee/vue": "^5.24.1",
+        "@tolgee/vue": "^5.25.0",
         "@vee-validate/nuxt": "^4.12.6",
         "@vee-validate/yup": "^4.12.6",
         "concurrently": "^8.2.2",
