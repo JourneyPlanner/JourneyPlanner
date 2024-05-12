@@ -27,5 +27,45 @@ const uppy = new Uppy({
 </script>
 
 <template>
-    <Dashboard :uppy="uppy" class="" />
+    <div class="w-full">
+        <Dashboard :uppy="uppy" :props="{}" />
+    </div>
 </template>
+
+<style>
+.uppy-Root {
+    @apply font-nunito !important;
+}
+
+.uppy-Dashboard .uppy-Dashboard-inner {
+    @apply h-40 w-full rounded-2xl border-[3px] border-dashed border-border text-text dark:bg-text dark:text-input sm:h-[13rem] md:h-[17rem] lg:rounded-3xl !important;
+}
+
+.uppy-Dashboard-AddFiles {
+    @apply border-none !important;
+}
+
+.uppy-Dashboard-AddFiles-title {
+    @apply font-nunito text-text dark:text-input !important;
+}
+
+.uppy-Dashboard-browse {
+    @apply text-link decoration-link !important;
+}
+
+.uppy-c-btn-primary {
+    @apply border-2 border-cta-border bg-cta-bg font-bold text-text dark:border-cta-bg-fill dark:bg-cta-bg-fill !important;
+}
+
+.uppy-DashboardContent-bar {
+    @apply rounded-t-2xl border-b border-input-placeholder bg-background dark:bg-text lg:rounded-t-3xl !important;
+}
+
+.uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
+    @apply rounded-b-2xl bg-background dark:bg-text lg:rounded-b-3xl !important;
+}
+
+.uppy-Dashboard-progressindicators {
+    @apply border-t border-input-placeholder !important;
+}
+</style>
