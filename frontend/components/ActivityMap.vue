@@ -68,7 +68,7 @@ const style = computed(() =>
                     value: t('journey.map.notfound.tooltip'),
                     pt: { root: 'font-nunito' },
                 }"
-                class="pi pi-exclamation-circle -mb-2.5 text-xl text-cancel-border hover:cursor-pointer"
+                class="pi pi-exclamation-circle -mb-2.5 ml-auto text-xl text-cancel-border hover:cursor-pointer"
                 @click="isNotFoundActivitiesDialogVisible = true"
             />
         </div>
