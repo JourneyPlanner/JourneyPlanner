@@ -22,7 +22,7 @@
         "@nuxt/eslint": "^0.3.10",
         "@pinia/nuxt": "^0.5.1",
         "@tolgee/vue": "^5.25.0",
-        "@vee-validate/nuxt": "^4.12.6",
+        "@vee-validate/nuxt": "^4.12.8",
         "@vee-validate/yup": "^4.12.6",
         "concurrently": "^8.2.2",
         "date-fns": "^3.6.0",
