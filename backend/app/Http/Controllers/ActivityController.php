@@ -38,7 +38,7 @@ class ActivityController extends Controller
         // Validate the request
         $validated = $request->validate([
             "name" => "required|string",
-            "estimated_duration" => "required|date_format:H:i",
+            "estimated_duration" => "required|date_format:H:i:s",
             "mapbox_id" => "nullable|string",
             "mapbox_full_address" => "nullable|string",
             "address" => "nullable|string",
@@ -105,7 +105,7 @@ class ActivityController extends Controller
         // Create the calendar activity if the date is provided
         if (array_key_exists("date", $validated) && $validated["date"]) {
             if (!array_key_exists("time", $validated) || !$validated["time"]) {
-                $validated["time"] = "00:00";
+                $validated["time"] = "00:00:00";
             }
 
             $start = new DateTime(
@@ -117,8 +117,10 @@ class ActivityController extends Controller
                     "PT" .
                         substr($activity->estimated_duration, 0, 2) .
                         "H" .
-                        substr($activity->estimated_duration, 3) .
-                        "M"
+                        substr($activity->estimated_duration, 3, 5) .
+                        "M" .
+                        substr($activity->estimated_duration, 6) .
+                        "S"
                 )
             );
 
@@ -156,7 +158,7 @@ class ActivityController extends Controller
         // Validate the request
         $validated = $request->validate([
             "name" => "required|string",
-            "estimated_duration" => "required|date_format:H:i",
+            "estimated_duration" => "required|date_format:H:i:s",
             "mapbox_id" => "nullable|string",
             "mapbox_full_address" => "nullable|string",
             "address" => "nullable|string",
@@ -225,7 +227,7 @@ class ActivityController extends Controller
         // Create the calendar activity if the date is provided
         if (array_key_exists("date", $validated) && $validated["date"]) {
             if (!array_key_exists("time", $validated) || !$validated["time"]) {
-                $validated["time"] = "00:00";
+                $validated["time"] = "00:00:00";
             }
 
             $start = new DateTime(
@@ -237,8 +239,10 @@ class ActivityController extends Controller
                     "PT" .
                         substr($activity->estimated_duration, 0, 2) .
                         "H" .
-                        substr($activity->estimated_duration, 3) .
-                        "M"
+                        substr($activity->estimated_duration, 3, 5) .
+                        "M" .
+                        substr($activity->estimated_duration, 6) .
+                        "S"
                 )
             );
 
