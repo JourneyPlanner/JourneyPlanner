@@ -9,6 +9,8 @@ const { t } = useTranslate();
 const client = useSanctumClient();
 const toast = useToast();
 const store = useDashboardStore();
+const journeyStore = useJourneyStore();
+journeyStore.resetJourney();
 
 const journeyInvite = uuidv4();
 const journeyInviteLink = window.location.origin + "/invite/" + journeyInvite;

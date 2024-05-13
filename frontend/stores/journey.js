@@ -8,6 +8,10 @@ export const useJourneyStore = defineStore("journey", () => {
         this.journey = journey;
     }
 
+    function resetJourney() {
+        this.journey = {};
+    }
+
     function getID() {
         return this.journey.id;
     }
@@ -35,6 +39,7 @@ export const useJourneyStore = defineStore("journey", () => {
     return {
         journey,
         setJourney,
+        resetJourney,
         getID,
         getName,
         getFromDate,

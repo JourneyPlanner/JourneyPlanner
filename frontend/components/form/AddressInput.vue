@@ -17,11 +17,17 @@ const props = defineProps({
 const { value: mapbox } = useField<Feature>(() => "mapbox");
 const { value: inputValue, errorMessage } = useField<string>(() => props.name);
 
+const journey = useJourneyStore();
 const config = useRuntimeConfig();
 
+let longlat = [0, 0];
 let search = null;
 let Mapbox = null;
 const isLoaded = ref(false);
+
+if (journey.getLat() && journey.getLong()) {
+    longlat = [journey.getLong(), journey.getLat()];
+}
 
 onBeforeMount(async () => {
     if (import.meta.client) {
@@ -91,7 +97,10 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                 :name="name"
                 :access-token="config.public.NUXT_MAPBOX_API_KEY"
                 :placeholder="placeholder"
-                :options="{ language: tolgee.getLanguage() }"
+                :options="{
+                    language: tolgee.getLanguage(),
+                    proximity: longlat,
+                }"
                 :theme="{
                     cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px ${border};} .Input:focus {border-radius: 0.5rem; border: solid 2px ${border};} .SearchBox {box-shadow: none;} .Results {font-family: Nunito;} .ResultsAttribution {color: ${placeholderColor}} .SearchIcon {fill: ${border};} .ActionIcon {color: ${placeholderColor}}  ${css} ${customClass}`,
                 }"
