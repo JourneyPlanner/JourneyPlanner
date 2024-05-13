@@ -14,6 +14,15 @@ const activitiesWithLocation = ref();
 const activitiesWithoutLocation = ref();
 const isNotFoundActivitiesDialogVisible = ref(false);
 
+useMapbox(journey.getID(), (map) => {
+    map.setStyle(
+        colorMode.preference === "dark" ||
+            (darkTheme.matches && colorMode.preference === "system")
+            ? "mapbox://styles/mathematti/clvl1j6rx009301pcgh6mbtam"
+            : "mapbox://styles/mathematti/clvl14yme009101pc4o2c16ex",
+    );
+});
+
 watch(
     activitiesStore.activityData,
     () => {

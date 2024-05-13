@@ -161,7 +161,7 @@ const confirmLeave = (event: Event) => {
 };
 
 async function leaveJourney() {
-    await client(`/ api / journey / ${journeyId} / leave`, {
+    await client(`/api/journey/${journeyId}/leave`, {
         method: "DELETE",
         async onResponse({ response }) {
             if (response.ok) {
