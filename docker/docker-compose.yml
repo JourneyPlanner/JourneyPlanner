@@ -60,4 +60,5 @@ services:
 
 volumes:
   dbdata:
+  redisdata:
   i18n:

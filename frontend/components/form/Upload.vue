@@ -1,12 +1,23 @@
 <script setup lang="ts">
+import { useTolgee } from "@tolgee/vue";
 import Uppy from "@uppy/core";
+import type { Locale } from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
+import German from "@uppy/locales/lib/de_DE";
+import English from "@uppy/locales/lib/en_US";
 import Tus from "@uppy/tus";
 import { Dashboard } from "@uppy/vue";
 
+const tolgee = useTolgee(["language"]);
 const journey = useJourneyStore();
 const config = useRuntimeConfig();
+
+let locale: Locale = English;
+
+if (tolgee.value.getLanguage() == "de") {
+    locale = German;
+}
 
 function getCookieValue(a: string): string {
     const b = document.cookie.match("(^|;)\\s*" + a + "\\s*=\\s*([^;]+)");
@@ -15,6 +26,7 @@ function getCookieValue(a: string): string {
 
 const uppy = new Uppy({
     meta: { journey: journey.getId() },
+    locale: German,
 }).use(Tus, {
     endpoint: config.public.NUXT_BACKEND_URL + "/tus/",
     headers: {
@@ -28,7 +40,13 @@ const uppy = new Uppy({
 
 <template>
     <div class="w-full">
-        <Dashboard :uppy="uppy" :props="{}" />
+        <Dashboard
+            :uppy="uppy"
+            :props="{
+                showProgressDetails: true,
+                locale: locale,
+            }"
+        />
     </div>
 </template>
 
@@ -67,5 +85,24 @@ const uppy = new Uppy({
 
 .uppy-Dashboard-progressindicators {
     @apply border-t border-input-placeholder !important;
+}
+
+.uppy-StatusBar.is-waiting,
+.uppy-StatusBar.is-uploading,
+.uppy-StatusBar.is-complete {
+    @apply rounded-b-2xl border-input-placeholder bg-background text-text dark:bg-text dark:text-input lg:rounded-b-3xl !important;
+}
+
+.uppy-DashboardContent-addMore,
+.uppy-DashboardContent-back {
+    @apply text-link !important;
+}
+
+.uppy-StatusBar-actionBtn {
+    @apply border-2 border-cta-border bg-cta-bg font-semibold text-text dark:border-cta-bg-fill dark:bg-cta-bg-fill !important;
+}
+
+.uppy-StatusBar-actionBtn--done {
+    @apply text-text !important;
 }
 </style>
