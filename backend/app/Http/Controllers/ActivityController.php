@@ -119,11 +119,11 @@ class ActivityController extends Controller
             $end->add(
                 new DateInterval(
                     "PT" .
-                        substr($activity->estimated_duration, 0, 2) .
+                        substr($validated["estimated_duration"], 0, 2) .
                         "H" .
-                        substr($activity->estimated_duration, 3, 5) .
+                        substr($validated["estimated_duration"], 3, 2) .
                         "M" .
-                        substr($activity->estimated_duration, 6) .
+                        substr($validated["estimated_duration"], 6) .
                         "S"
                 )
             );
@@ -245,11 +245,11 @@ class ActivityController extends Controller
             $end->add(
                 new DateInterval(
                     "PT" .
-                        substr($activity->estimated_duration, 0, 2) .
+                        substr($validated["estimated_duration"], 0, 2) .
                         "H" .
-                        substr($activity->estimated_duration, 3, 5) .
+                        substr($validated["estimated_duration"], 3, 2) .
                         "M" .
-                        substr($activity->estimated_duration, 6) .
+                        substr($validated["estimated_duration"], 6) .
                         "S"
                 )
             );
