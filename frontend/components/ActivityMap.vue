@@ -14,15 +14,6 @@ const activitiesWithLocation = ref();
 const activitiesWithoutLocation = ref();
 const isNotFoundActivitiesDialogVisible = ref(false);
 
-useMapbox(journey.getID(), (map) => {
-    map.setStyle(
-        colorMode.preference === "dark" ||
-            (darkTheme.matches && colorMode.preference === "system")
-            ? "mapbox://styles/mathematti/clvl1j6rx009301pcgh6mbtam"
-            : "mapbox://styles/mathematti/clvl14yme009101pc4o2c16ex",
-    );
-});
-
 watch(
     activitiesStore.activityData,
     () => {
@@ -58,8 +49,8 @@ const zoom = computed(() => ((long.value || lat) === null ? 1 : 8));
 const style = computed(() =>
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
-        ? "mapbox://styles/mathematti/clvl1j6rx009301pcgh6mbtam"
-        : "mapbox://styles/mathematti/clvl14yme009101pc4o2c16ex",
+        ? "mapbox://styles/mathematti/clw4z6v0s028p01o0askbhfh9"
+        : "mapbox://styles/mathematti/clw4znxzh02mh01qz5hgk3qb6",
 );
 </script>
 
