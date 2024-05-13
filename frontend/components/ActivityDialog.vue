@@ -218,7 +218,7 @@ async function onSuccess(values: ActivityForm) {
         time: time,
     };
 
-    if (props.update) {
+    if (updateRef.value) {
         await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
             method: "PATCH",
             body: activity,
@@ -241,6 +241,7 @@ async function onSuccess(values: ActivityForm) {
                         () => client(`/api/journey/${props.id}/activity`),
                     );
                     activityStore.setActivities(activityData.value);
+                    activityStore.setNewActivity(response._data);
                     if (props.calendarActivity) {
                         emit("editCalendarActivity", activity.name);
                     }
@@ -645,7 +646,7 @@ function setSelectedDate(date: Date) {
                 <Button
                     type="button"
                     :label="t('dashboard.options.edit')"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cta-border bg-input px-2 font-bold text-text hover:bg-cta-bg-fill dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cta-border bg-input px-2 font-bold text-text hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
                     icon="pi pi-pencil"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },

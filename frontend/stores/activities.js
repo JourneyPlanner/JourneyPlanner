@@ -3,6 +3,7 @@ import { ref } from "vue";
 
 export const useActivityStore = defineStore("activity", () => {
     const activityData = ref({});
+    const addedActivity = ref({});
 
     function setActivities(activityData) {
         this.activityData = activityData;
@@ -12,5 +13,15 @@ export const useActivityStore = defineStore("activity", () => {
         this.activityData.push(activity);
     }
 
-    return { activityData, setActivities, addActivity };
+    function setNewActivity(activity) {
+        this.addedActivity = activity;
+    }
+
+    return {
+        activityData,
+        setActivities,
+        addActivity,
+        addedActivity,
+        setNewActivity,
+    };
 });

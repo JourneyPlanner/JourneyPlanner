@@ -23,7 +23,7 @@ if (
     bg = fullConfig.theme.accentColor["card-dark"] as string;
 } else {
     text = fullConfig.theme.accentColor["text"] as string;
-    bg = fullConfig.theme.accentColor["card"] as string;
+    bg = fullConfig.theme.accentColor["link"] as string;
 }
 
 const fullCalendar = ref();
@@ -33,6 +33,7 @@ const activities = computed(() => store.activityData as Activity[]);
 const client = useSanctumClient();
 const alreadyAdded = ref(false);
 const { t } = useTranslate();
+const { addedActivity } = storeToRefs(store);
 const toast = useToast();
 const props = defineProps({
     id: {
@@ -255,6 +256,12 @@ const calendarOptions = reactive({
         },
     },
 }) as unknown as CalendarOptions;
+
+watch(addedActivity, () => {
+    const addedActivity = store.addedActivity as Activity;
+    activityId.value = addedActivity.id;
+    editCalendarActivity(addedActivity.name);
+});
 
 onMounted(() => {
     const calApi = fullCalendar.value.getApi();
