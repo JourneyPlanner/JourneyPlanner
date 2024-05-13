@@ -77,7 +77,11 @@ class ActivityController extends Controller
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     $validated["mapbox_full_address"] .
-                    "&permanent=true&autocomplete=false&limit=1&access_token=" .
+                    "&proximity=" .
+                    $journey->longitude .
+                    "," .
+                    $journey->latitude .
+                    "&permanent=true&autocomplete=true&limit=1&access_token=" .
                     env("MAPBOX_API_KEY")
             );
             $geocodingData = $geocodingResponse->json();
@@ -199,7 +203,11 @@ class ActivityController extends Controller
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     $validated["mapbox_full_address"] .
-                    "&permanent=true&autocomplete=false&limit=1&access_token=" .
+                    "&proximity=" .
+                    $journey->longitude .
+                    "," .
+                    $journey->latitude .
+                    "&permanent=true&autocomplete=true&limit=1&access_token=" .
                     env("MAPBOX_API_KEY")
             );
             $geocodingData = $geocodingResponse->json();
