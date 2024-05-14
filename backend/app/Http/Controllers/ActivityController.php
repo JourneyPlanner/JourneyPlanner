@@ -82,7 +82,7 @@ class ActivityController extends Controller
                     "," .
                     $journey->latitude .
                     "&permanent=true&autocomplete=true&limit=1&access_token=" .
-                    env("MAPBOX_API_KEY")
+                    config("map.mapbox_api_key")
             );
             $geocodingData = $geocodingResponse->json();
 
@@ -208,7 +208,7 @@ class ActivityController extends Controller
                     "," .
                     $journey->latitude .
                     "&permanent=true&autocomplete=true&limit=1&access_token=" .
-                    env("MAPBOX_API_KEY")
+                    config("map.mapbox_api_key")
             );
             $geocodingData = $geocodingResponse->json();
 

@@ -64,7 +64,7 @@ class JourneyController extends Controller
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     $validated["mapbox_full_address"] .
                     "&permanent=true&autocomplete=false&limit=1&access_token=" .
-                    env("MAPBOX_API_KEY")
+                    config("map.mapbox_api_key")
             );
             $geocodingData = $geocodingResponse->json();
 
@@ -153,7 +153,7 @@ class JourneyController extends Controller
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     $validated["mapbox_full_address"] .
                     "&permanent=true&autocomplete=false&limit=1&access_token=" .
-                    env("MAPBOX_API_KEY")
+                    config("map.mapbox_api_key")
             );
             $geocodingData = $geocodingResponse->json();
 
