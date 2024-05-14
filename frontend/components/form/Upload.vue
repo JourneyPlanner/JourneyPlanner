@@ -69,7 +69,8 @@ const uppy = new Uppy({
     @apply border-none !important;
 }
 
-.uppy-Dashboard-AddFiles-title {
+.uppy-Dashboard-AddFiles-title,
+.uppy-StatusBar-status {
     @apply font-nunito text-text dark:text-input !important;
 }
 
