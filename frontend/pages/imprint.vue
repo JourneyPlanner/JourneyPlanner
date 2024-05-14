@@ -16,7 +16,7 @@ const { t } = useTranslate();
         </div>
         <div class="-mt-8 font-nunito text-text dark:text-input">
             <div class="mx-5 mt-10 flex flex-col sm:mx-20 lg:mx-52 xl:mx-96">
-                <h4 class="text-center text-3xl">
+                <h4 class="text-center text-3xl font-bold">
                     <T key-name="common.imprint" />
                 </h4>
                 <p class="mt-4">
@@ -62,10 +62,10 @@ const { t } = useTranslate();
                     <b> <T key-name="imprint.dispute.title" />: </b><br />
                     <T key-name="imprint.dispute.value" />:
                     <a
-                        :href="t('imprint.dispute.link')"
+                        href="http://ec.europa.eu/od"
                         class="hover:text-link hover:underline"
                     >
-                        <T key-name="imprint.dispute.link" />
+                        http://ec.europa.eu/od
                     </a>
                 </p>
                 <p>
@@ -73,8 +73,37 @@ const { t } = useTranslate();
                     <T key-name="imprint.disclaimer.value" />
                 </p>
                 <p>
-                    <b> <T key-name="imprint.purpose.title" /> </b>:
+                    <b>
+                        <T key-name="imprint.purpose.title" /> </b
+                    >:
                     <T key-name="imprint.purpose.value" />
+                </p>
+                <p>
+                    <T key-name="imprint.thirdparty.fonts" />
+                    <a
+                        href="https://fonts.google.com/"
+                        class="hover:text-link hover:underline"
+                    >
+                        Google Fonts
+                    </a>
+                </p>
+                <p>
+                    <T key-name="imprint.thirdparty.icons" />
+                    <a
+                        href="https://github.com/primefaces/primeicons"
+                        class="hover:text-link hover:underline"
+                    >
+                        PrimeIcons
+                    </a>
+                </p>
+                <p>
+                    <T key-name="imprint.thirdparty.illustrations" />
+                    <a
+                        href="https://undraw.co/"
+                        class="hover:text-link hover:underline"
+                    >
+                        undraw.co
+                    </a>
                 </p>
             </div>
         </div>
