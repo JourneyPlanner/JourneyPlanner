@@ -14,6 +14,11 @@ const journey = useJourneyStore();
 const config = useRuntimeConfig();
 
 let locale: Locale = English;
+// TODO dont work
+const restrictions = {
+    maxFileSize: 5 * 1024 * 1024,
+    allowedFileTypes: ["image/*", "video/*", ".pdf", ".txt"],
+};
 
 if (tolgee.value.getLanguage() == "de") {
     locale = German;
@@ -26,7 +31,7 @@ function getCookieValue(a: string): string {
 
 const uppy = new Uppy({
     meta: { journey: journey.getId() },
-    locale: German,
+    locale: locale,
 }).use(Tus, {
     endpoint: config.public.NUXT_BACKEND_URL + "/tus/",
     headers: {
@@ -45,6 +50,7 @@ const uppy = new Uppy({
             :props="{
                 showProgressDetails: true,
                 locale: locale,
+                restrictions: restrictions,
             }"
         />
     </div>
@@ -89,7 +95,8 @@ const uppy = new Uppy({
 
 .uppy-StatusBar.is-waiting,
 .uppy-StatusBar.is-uploading,
-.uppy-StatusBar.is-complete {
+.uppy-StatusBar.is-complete,
+.uppy-StatusBar.is-error {
     @apply rounded-b-2xl border-input-placeholder bg-background text-text dark:bg-text dark:text-input lg:rounded-b-3xl !important;
 }
 
@@ -104,5 +111,9 @@ const uppy = new Uppy({
 
 .uppy-StatusBar-actionBtn--done {
     @apply text-text !important;
+}
+
+.uppy-Dashboard-progressindicators {
+    @apply border-none !important;
 }
 </style>
