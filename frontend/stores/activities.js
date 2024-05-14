@@ -16,10 +16,6 @@ export const useActivityStore = defineStore("activities", () => {
     function updateActivity(activity, id) {
         const index = this.activityData.findIndex((obj) => obj.id === id);
         this.activityData[index] = activity;
-
-        console.log(activityData.value);
-
-        console.log("Activity updated");
     }
 
     return {

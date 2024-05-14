@@ -6,6 +6,8 @@ import tailwindConfig from "~/tailwind.config.js";
 const props = defineProps({
     name: { type: String, required: true },
     placeholder: { type: String, default: " " },
+    value: { type: String, default: "" },
+    disabled: { type: Boolean, default: false },
     customClass: { type: String, default: "" },
     withLabel: { type: Boolean, default: false },
     id: { type: String, default: "" },
@@ -24,6 +26,7 @@ let longlat = [0, 0];
 let search = null;
 let Mapbox = null;
 const isLoaded = ref(false);
+const onlyShow = ref(true);
 
 if (journey.getLat() && journey.getLong()) {
     longlat = [journey.getLong(), journey.getLat()];
@@ -88,9 +91,26 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
     mapbox.value = event.detail.features[0];
     inputValue.value = event.detail.features[0].properties.full_address;
 }
+
+function handleInput() {
+    onlyShow.value = false;
+    inputValue.value = "";
+    mapbox.value = {} as Feature;
+}
 </script>
 <template>
-    <form class="mb-0 font-nunito" @submit.prevent>
+    <FormClassicInputIcon
+        v-if="(value && onlyShow) || disabled"
+        id="address-cover"
+        name="address-cover"
+        :disabled="disabled"
+        :value="value"
+        icon="pi-map-marker"
+        :icon-pos-is-left="true"
+        class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
+        @input="handleInput"
+    />
+    <form v-else class="mb-0 font-nunito" @submit.prevent>
         <ClientOnly v-if="isLoaded" class="relative">
             <mapbox-search-box
                 class="font-nunito"

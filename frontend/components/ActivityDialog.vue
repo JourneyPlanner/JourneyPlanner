@@ -162,6 +162,8 @@ async function onSuccess(values: ActivityForm) {
         time: time,
     };
 
+    console.log(activity);
+
     if (props.update) {
         await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
             method: "PATCH",
@@ -359,26 +361,17 @@ function setSelectedDate(date: Date) {
                             :default-time="new Array(0, 30)"
                         />
                         <div
-                            v-if="!onlyShow"
                             class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
                         >
                             <label class="text-sm font-medium md:text-base">
                                 <T key-name="form.input.activity.address" />
                             </label>
-                            <FormAddressInput name="address" />
+                            <FormAddressInput
+                                name="address"
+                                :value="address"
+                                :disabled="onlyShow"
+                            />
                         </div>
-
-                        <FormClassicInputIcon
-                            v-if="onlyShow"
-                            id="address"
-                            name="address"
-                            :value="address"
-                            :disabled="onlyShow"
-                            translation-key="form.input.activity.address"
-                            icon="pi-map-marker"
-                            :icon-pos-is-left="true"
-                            class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
-                        />
 
                         <FormClassicInputIcon
                             id="costs"
