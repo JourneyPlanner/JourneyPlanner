@@ -73,9 +73,7 @@ const { t } = useTranslate();
                     <T key-name="imprint.disclaimer.value" />
                 </p>
                 <p>
-                    <b>
-                        <T key-name="imprint.purpose.title" /> </b
-                    >:
+                    <b> <T key-name="imprint.purpose.title" /> </b>:
                     <T key-name="imprint.purpose.value" />
                 </p>
             </div>
