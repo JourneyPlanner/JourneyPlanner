@@ -16,6 +16,7 @@ class TusServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton("tus-server", function ($app) {
+            \TusPhp\Config::set("config/tus.php");
             $server = new TusServer("redis");
 
             $server
