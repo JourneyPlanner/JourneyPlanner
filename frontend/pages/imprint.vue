@@ -64,8 +64,7 @@ const { t } = useTranslate();
                     <a
                         href="http://ec.europa.eu/od"
                         class="hover:text-link hover:underline"
-                    >
-                        http://ec.europa.eu/od
+                        >http://ec.europa.eu/od
                     </a>
                 </p>
                 <p>
@@ -78,13 +77,13 @@ const { t } = useTranslate();
                     >:
                     <T key-name="imprint.purpose.value" />
                 </p>
+                <br />
                 <p>
                     <T key-name="imprint.thirdparty.fonts" />
                     <a
                         href="https://fonts.google.com/"
                         class="hover:text-link hover:underline"
-                    >
-                        Google Fonts
+                        >Google Fonts
                     </a>
                 </p>
                 <p>
@@ -92,8 +91,7 @@ const { t } = useTranslate();
                     <a
                         href="https://github.com/primefaces/primeicons"
                         class="hover:text-link hover:underline"
-                    >
-                        PrimeIcons
+                        >PrimeIcons
                     </a>
                 </p>
                 <p>
@@ -101,8 +99,7 @@ const { t } = useTranslate();
                     <a
                         href="https://undraw.co/"
                         class="hover:text-link hover:underline"
-                    >
-                        undraw.co
+                        >undraw.co
                     </a>
                 </p>
             </div>
