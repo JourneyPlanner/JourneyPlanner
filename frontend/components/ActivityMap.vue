@@ -27,6 +27,16 @@ watch(
             useMapboxPopup(activity.id, (popup) => {
                 popup.remove();
             });
+
+            useMapboxMarker(activity.id, (marker) => {
+                const markerEl = marker.getElement();
+                const elements = markerEl.querySelectorAll("svg path");
+                elements.forEach(function (element) {
+                    if (element.getAttribute("fill")) {
+                        element.setAttribute("fill", markerColor(activity));
+                    }
+                });
+            });
         });
 
         activitiesWithoutLocation.value = activities.value.filter(
@@ -43,9 +53,16 @@ const colorAdded = fullConfig.theme.accentColor["input-label"] as string;
 const colorNotAdded = fullConfig.theme.accentColor[
     "marker-not-added"
 ] as string;
+
+function markerColor(activity: Activity) {
+    return activity.calendar_activities?.length > 0
+        ? colorAdded
+        : colorNotAdded;
+}
+
 const lat = computed(() => journey.getLat());
 const long = computed(() => journey.getLong());
-const zoom = computed(() => ((long.value || lat) === null ? 1 : 8));
+const zoom = computed(() => ((long.value || lat.value) === null ? 1 : 8));
 const style = computed(() =>
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
@@ -90,14 +107,8 @@ const style = computed(() =>
                 <MapboxDefaultMarker
                     v-for="activity in activitiesWithLocation"
                     :key="activity.id"
-                    :marker-id="'marker' + activity.id"
+                    :marker-id="activity.id"
                     :lnglat="[activity.longitude, activity.latitude]"
-                    :options="{
-                        color:
-                            activity.calendar_activities?.length > 0
-                                ? colorAdded
-                                : colorNotAdded,
-                    }"
                 >
                     <MapboxDefaultPopup
                         :popup-id="activity.id"
