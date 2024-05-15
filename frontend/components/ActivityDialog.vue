@@ -162,8 +162,6 @@ async function onSuccess(values: ActivityForm) {
         time: time,
     };
 
-    console.log(activity);
-
     if (props.update) {
         await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
             method: "PATCH",
