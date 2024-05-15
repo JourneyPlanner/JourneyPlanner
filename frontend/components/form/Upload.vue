@@ -117,4 +117,8 @@ const uppy = new Uppy({
 .uppy-Dashboard-progressindicators {
     @apply border-none !important;
 }
+
+.uppy-Dashboard-AddFilesPanel {
+    @apply rounded-2xl lg:rounded-3xl !important;
+}
 </style>
