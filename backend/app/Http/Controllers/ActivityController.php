@@ -223,8 +223,8 @@ class ActivityController extends Controller
                     $geocodingData["geometry"]["coordinates"][1];
                 $activity->mapbox_full_address =
                     $geocodingData["properties"]["full_address"];
-                if ($validated["address"] = "") {
-                    $activity->address ===
+                if ($validated["address"] === "") {
+                    $activity->address =
                         $geocodingData["properties"]["full_address"];
                 }
             }
