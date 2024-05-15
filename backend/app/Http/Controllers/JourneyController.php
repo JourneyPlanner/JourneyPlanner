@@ -45,10 +45,7 @@ class JourneyController extends Controller
             $validated["mapbox_full_address"]
         ) {
             $validated["destination"] = "";
-        } elseif (
-            array_key_exists("destination", $validated) &&
-            $validated["destination"]
-        ) {
+        } else {
             $validated["mapbox_full_address"] = $validated["destination"];
         }
 
@@ -63,7 +60,7 @@ class JourneyController extends Controller
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     $validated["mapbox_full_address"] .
-                    "&permanent=true&autocomplete=false&limit=1&access_token=" .
+                    "&permanent=true&autocomplete=true&limit=1&access_token=" .
                     config("map.mapbox_api_key")
             );
             $geocodingData = $geocodingResponse->json();
@@ -84,6 +81,9 @@ class JourneyController extends Controller
                         $geocodingData["properties"]["full_address"];
                 }
             }
+        } else {
+            $journey->longitude = 0;
+            $journey->latitude = 0;
         }
 
         $journey->save();
@@ -134,10 +134,7 @@ class JourneyController extends Controller
             $validated["mapbox_full_address"] !== $previousMapboxFullAddress
         ) {
             $validated["destination"] = "";
-        } elseif (
-            array_key_exists("destination", $validated) &&
-            $validated["destination"]
-        ) {
+        } else {
             $validated["mapbox_full_address"] = $validated["destination"];
         }
 
@@ -152,7 +149,7 @@ class JourneyController extends Controller
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     $validated["mapbox_full_address"] .
-                    "&permanent=true&autocomplete=false&limit=1&access_token=" .
+                    "&permanent=true&autocomplete=true&limit=1&access_token=" .
                     config("map.mapbox_api_key")
             );
             $geocodingData = $geocodingResponse->json();
