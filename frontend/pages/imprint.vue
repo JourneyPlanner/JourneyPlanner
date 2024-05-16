@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import { useTranslate } from "@tolgee/vue";
-
-const { t } = useTranslate();
-</script>
-
 <template>
     <div>
         <div class="flex justify-end">
@@ -35,7 +29,7 @@ const { t } = useTranslate();
                     <T key-name="imprint.contact.phone.title" />:
                     <a
                         class="hover:text-link hover:underline"
-                        :href="'tel:' + t('imprint.contact.phone.value')"
+                        href="tel:+43 681 20301077"
                     >
                         <T key-name="imprint.contact.phone.value" />
                     </a>
@@ -43,7 +37,7 @@ const { t } = useTranslate();
                     <T key-name="imprint.contact.email.title" />:
                     <a
                         class="hover:text-link hover:underline"
-                        :href="'mailto:' + t('imprint.contact.email.value')"
+                        href="mailto:raven.burkard@journeyplanner.io"
                     >
                         <T key-name="imprint.contact.email.value" />
                     </a>
@@ -52,19 +46,21 @@ const { t } = useTranslate();
                 <p>
                     <b> <T key-name="imprint.legislation.title" />: </b>
                     <a
-                        :href="t('imprint.legislation.value')"
+                        href="www.ris.bka.gv.at"
+                        target="_blank"
                         class="hover:text-link hover:underline"
                     >
-                        <T key-name="imprint.legislation.value" />
+                        <T key-name="www.ris.bka.gv.at" />
                     </a>
                 </p>
                 <p>
                     <b> <T key-name="imprint.dispute.title" />: </b><br />
                     <T key-name="imprint.dispute.value" />:
                     <a
-                        href="http://ec.europa.eu/od"
+                        href="http://ec.europa.eu/odr"
+                        target="_blank"
                         class="hover:text-link hover:underline"
-                        >http://ec.europa.eu/od
+                        >http://ec.europa.eu/odr
                     </a>
                 </p>
                 <p>
@@ -75,11 +71,11 @@ const { t } = useTranslate();
                     <b> <T key-name="imprint.purpose.title" /> </b>:
                     <T key-name="imprint.purpose.value" />
                 </p>
-                <br />
-                <p>
+                <p class="mt-3">
                     <T key-name="imprint.thirdparty.fonts" />
                     <a
                         href="https://fonts.google.com/"
+                        target="_blank"
                         class="hover:text-link hover:underline"
                         >Google Fonts
                     </a>
@@ -88,6 +84,7 @@ const { t } = useTranslate();
                     <T key-name="imprint.thirdparty.icons" />
                     <a
                         href="https://github.com/primefaces/primeicons"
+                        target="_blank"
                         class="hover:text-link hover:underline"
                         >PrimeIcons
                     </a>
@@ -96,6 +93,7 @@ const { t } = useTranslate();
                     <T key-name="imprint.thirdparty.illustrations" />
                     <a
                         href="https://undraw.co/"
+                        target="_blank"
                         class="hover:text-link hover:underline"
                         >undraw.co
                     </a>
