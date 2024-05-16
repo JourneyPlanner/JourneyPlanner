@@ -92,7 +92,7 @@ const style = computed(() =>
     </div>
     <div class="flex justify-center md:justify-start">
         <div
-            class="relative mt-5 flex h-96 w-[90%] items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            class="relative mt-5 flex h-44 w-[90%] items-end sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:h-96 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
             <MapboxMap
                 :map-id="journey.getID()"
@@ -146,7 +146,7 @@ const style = computed(() =>
                         class: 'font-nunito text-text bg-input dark:bg-input-dark',
                     },
                     header: {
-                        class: 'h-15 bg-input dark:bg-input-dark text-text dark:text-input',
+                        class: 'pb-2 h-15 bg-input dark:bg-input-dark text-text dark:text-input',
                     },
                     title: { class: 'text-xl mt-0.5' },
                     content: {
@@ -164,7 +164,7 @@ const style = computed(() =>
                 </p>
 
                 <ScrollPanel
-                    class="relative h-[9.7rem] pt-1 sm:h-[12.7rem] md:h-[16.7rem]"
+                    class="relative h-[15rem]"
                     :pt="{
                         barY: 'w-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
                         barX: 'h-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
@@ -173,14 +173,14 @@ const style = computed(() =>
                     <div
                         class="mx-4 overflow-ellipsis font-nunito text-text dark:text-input lg:mx-8"
                     >
-                        <table class="w-full text-left text-sm">
+                        <table class="w-full text-left text-sm md:text-base">
                             <thead
                                 class="border-b border-text text-xs uppercase dark:border-input"
                             >
                                 <tr>
                                     <th
                                         scope="col"
-                                        class="whitespace-nowrap py-3 pr-6"
+                                        class="whitespace-nowrap py-3"
                                     >
                                         <T
                                             key-name="journey.map.notfound.name"
@@ -204,7 +204,7 @@ const style = computed(() =>
                                     <td class="py-2">
                                         {{
                                             activity.address ||
-                                            "------------------------"
+                                            "-----------------"
                                         }}
                                     </td>
                                 </tr>
@@ -218,6 +218,10 @@ const style = computed(() =>
 </template>
 
 <style>
+.mapboxgl-ctrl-top-right {
+    @apply z-0;
+}
+
 .mapboxgl-popup-content {
     @apply bg-background dark:bg-background-dark;
 }
