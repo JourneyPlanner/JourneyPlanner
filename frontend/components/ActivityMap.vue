@@ -133,53 +133,87 @@ const style = computed(() =>
                 <MapboxFullscreenControl />
                 <MapboxNavigationControl />
             </MapboxMap>
-        </div>
-        <Dialog
-            v-model:visible="isNotFoundActivitiesDialogVisible"
-            modal
-            :header="t('journey.map.notfound.title')"
-            :style="{ width: '30rem' }"
-            class="bg-input dark:bg-input-dark"
-            :pt="{
-                root: {
-                    class: 'font-nunito text-text bg-input dark:bg-input-dark',
-                },
-                header: {
-                    class: 'h-15 bg-input dark:bg-input-dark text-text dark:text-input',
-                },
-                title: { class: 'text-xl mt-0.5' },
-                content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-input',
-                },
-            }"
-        >
-            <p>
-                <T key-name="journey.map.notfound.description" />
-            </p>
-            <DataTable
-                :value="activitiesWithoutLocation"
-                striped-rows
-                :rows="8"
-                :rows-per-page-options="[5, 10, 20, 50]"
+
+            <Dialog
+                v-model:visible="isNotFoundActivitiesDialogVisible"
+                modal
+                :header="t('journey.map.notfound.title')"
+                :draggable="false"
+                :style="{ width: '35rem' }"
+                class="bg-input dark:bg-input-dark"
                 :pt="{
-                    paginator: {
-                        class: 'font-nunito bg-input dark:bg-input-dark',
+                    root: {
+                        class: 'font-nunito text-text bg-input dark:bg-input-dark',
+                    },
+                    header: {
+                        class: 'h-15 bg-input dark:bg-input-dark text-text dark:text-input',
+                    },
+                    title: { class: 'text-xl mt-0.5' },
+                    content: {
+                        class: 'bg-input dark:bg-input-dark text-text dark:text-input',
+                    },
+                    closeButtonIcon: {
+                        class: 'text-input-placeholder hover:text-text dark:text-input-placeholder dark:hover:text-input h-5 w-5',
                     },
                 }"
-                class="mt-3 bg-input dark:bg-input-dark"
             >
-                <Column
-                    field="name"
-                    :header="t('journey.map.notfound.name')"
-                    class="bg-input font-nunito text-text dark:bg-input-dark dark:text-input"
-                />
-                <Column
-                    field="address"
-                    :header="t('journey.map.notfound.address')"
-                    class="bg-input font-nunito text-text dark:bg-input-dark dark:text-input"
-                />
-            </DataTable>
-        </Dialog>
+                <p
+                    class="border-b-2 border-border-gray pb-3 dark:border-input-placeholder"
+                >
+                    <T key-name="journey.map.notfound.description" />
+                </p>
+
+                <ScrollPanel
+                    class="relative h-[9.7rem] pt-1 sm:h-[12.7rem] md:h-[16.7rem]"
+                    :pt="{
+                        barY: 'w-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
+                        barX: 'h-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
+                    }"
+                >
+                    <div
+                        class="mx-4 overflow-ellipsis font-nunito text-text dark:text-input lg:mx-8"
+                    >
+                        <table class="w-full text-left text-sm">
+                            <thead
+                                class="border-b border-text text-xs uppercase dark:border-input"
+                            >
+                                <tr>
+                                    <th
+                                        scope="col"
+                                        class="whitespace-nowrap py-3 pr-6"
+                                    >
+                                        <T
+                                            key-name="journey.map.notfound.name"
+                                        />
+                                    </th>
+                                    <th scope="col" class="py-3">
+                                        <T
+                                            key-name="journey.map.notfound.address"
+                                        />
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="activity in activitiesWithoutLocation"
+                                    :key="activity.id"
+                                >
+                                    <th scope="row" class="py-2">
+                                        {{ activity.name }}
+                                    </th>
+                                    <td class="py-2">
+                                        {{
+                                            activity.address ||
+                                            "------------------------"
+                                        }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </ScrollPanel>
+            </Dialog>
+        </div>
     </div>
 </template>
 
