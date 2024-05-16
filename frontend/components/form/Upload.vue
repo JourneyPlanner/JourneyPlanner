@@ -44,7 +44,19 @@ const uppy = new Uppy({
 </script>
 
 <template>
-    <div class="w-full">
+    <div class="w-full flex-col">
+        <div class="mb-3 flex flex-row justify-between">
+            <h1 class="text-2xl font-semibold">
+                <T key-name="journey.upload.title" />
+            </h1>
+            <div class="hidden items-end md:flex">
+                <h6
+                    class="-mb-3 text-base text-input-placeholder dark:text-input-gray"
+                >
+                    <T key-name="journey.upload.info" />
+                </h6>
+            </div>
+        </div>
         <Dashboard
             :uppy="uppy"
             :props="{
@@ -53,6 +65,13 @@ const uppy = new Uppy({
                 restrictions: restrictions,
             }"
         />
+        <div class="flex justify-center md:hidden">
+            <h7
+                class="absolute bottom-10 text-xs text-input-placeholder dark:text-input-gray"
+            >
+                <T key-name="journey.upload.info" />
+            </h7>
+        </div>
     </div>
 </template>
 
@@ -71,7 +90,7 @@ const uppy = new Uppy({
 
 .uppy-Dashboard-AddFiles-title,
 .uppy-StatusBar-status {
-    @apply font-nunito text-text dark:text-input !important;
+    @apply mt-8 font-nunito text-text dark:text-input !important;
 }
 
 .uppy-Dashboard-browse {
