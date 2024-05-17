@@ -70,6 +70,7 @@ export default defineNuxtConfig({
                 "InputGroupAddon",
                 "InputIcon",
                 "IconField",
+                "ProgressSpinner",
             ],
         },
     },
