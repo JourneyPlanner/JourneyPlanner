@@ -12,7 +12,7 @@
             <div
                 class="flex h-screen flex-col items-center justify-center gap-5 text-text dark:text-input"
             >
-                <ProgressSpinner class="w-14 fill-cta-border" />
+                <ProgressSpinner class="w-14" />
                 <h1 class="text-lg font-medium">
                     Getting ready for your adventures...
                 </h1>
