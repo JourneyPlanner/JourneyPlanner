@@ -90,7 +90,7 @@ const uppy = new Uppy({
 
 .uppy-Dashboard-AddFiles-title,
 .uppy-StatusBar-status {
-    @apply mt-8 font-nunito text-text dark:text-input !important;
+    @apply font-nunito text-text dark:text-input !important;
 }
 
 .uppy-Dashboard-browse {
