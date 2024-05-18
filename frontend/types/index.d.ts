@@ -78,7 +78,7 @@ declare global {
     interface Activity {
         address: string;
         mapbox_full_address: string;
-        calendar_activities: [];
+        calendar_activities: CalendarActivity[];
         id: string;
         cost: string;
         created_at: string;
@@ -94,5 +94,14 @@ declare global {
         opening_hours: string;
         phone: string;
         updated_at: string;
+    }
+
+    interface CalendarActivity {
+        id: string;
+        title: string;
+        start: string;
+        end: string;
+        allDay: boolean;
+        activity_id: string;
     }
 }

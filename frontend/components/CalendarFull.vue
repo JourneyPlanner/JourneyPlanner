@@ -5,6 +5,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/vue3";
 import { useTolgee, useTranslate } from "@tolgee/vue";
+import { add, differenceInMinutes } from "date-fns";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "~/tailwind.config.js";
 
@@ -14,16 +15,18 @@ const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
 
 let text = "";
 let bg = "";
-const border = fullConfig.theme.accentColor["border"] as string;
+let border = "";
 if (
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
 ) {
-    text = fullConfig.theme.accentColor["input"] as string;
-    bg = fullConfig.theme.accentColor["card-dark"] as string;
+    text = fullConfig.theme.accentColor["natural-50"] as string;
+    bg = fullConfig.theme.accentColor["dark"] as string;
+    border = fullConfig.theme.accentColor["calypso-600"] as string;
 } else {
     text = fullConfig.theme.accentColor["text"] as string;
-    bg = fullConfig.theme.accentColor["link"] as string;
+    bg = fullConfig.theme.accentColor["light"] as string;
+    border = fullConfig.theme.accentColor["calypso-400"] as string;
 }
 
 const fullCalendar = ref();
@@ -69,6 +72,7 @@ const tolgee = useTolgee(["language"]);
 
 interface EventObject {
     event: Event;
+    draggedEl: HTMLElement;
 }
 
 interface Event {
@@ -90,15 +94,6 @@ interface Event {
         };
     };
     remove: () => void;
-}
-
-interface CalendarActivity {
-    id: string;
-    title: string;
-    start: string;
-    end: string;
-    allDay: boolean;
-    activity_id: string;
 }
 
 async function deleteActivity() {
@@ -161,6 +156,30 @@ async function removeFromCalendar() {
                         life: 6000,
                     });
                     calApi.getEventById(calendarId.value).remove();
+                    activities.value.forEach((activity: Activity) => {
+                        if (activity.id === activityId.value) {
+                            activity.calendar_activities.forEach(
+                                (calendar_activity: CalendarActivity) => {
+                                    if (
+                                        calendar_activity.id ===
+                                        calendarId.value
+                                    ) {
+                                        activities.value[
+                                            activities.value.indexOf(activity)
+                                        ].calendar_activities.splice(
+                                            activity.calendar_activities.indexOf(
+                                                calendar_activity,
+                                            ),
+                                            1,
+                                        ),
+                                            store.setActivities(
+                                                activities.value,
+                                            );
+                                    }
+                                },
+                            );
+                        }
+                    });
                 }
             },
             async onRequestError() {
@@ -269,14 +288,30 @@ onMounted(() => {
         store.activityData,
         () => {
             if (!alreadyAdded.value) {
+                document.getElementsByClassName(
+                    "fc-showAllHours-button",
+                )[0].innerHTML = "6:00 - 0:00";
                 const activityData = store.activityData as Activity[];
                 activityData.forEach((activity: Activity) => {
                     if (activity.calendar_activities != null) {
-                        document.getElementsByClassName(
-                            "fc-showAllHours-button",
-                        )[0].innerHTML = "6:00 - 0:00";
                         activity.calendar_activities.forEach(
                             (calendar_activity: CalendarActivity) => {
+                                const newEnd = add(
+                                    new Date(calendar_activity.start),
+                                    {
+                                        hours: parseInt(
+                                            activity.estimated_duration.split(
+                                                ":",
+                                            )[0],
+                                        ),
+                                        minutes: parseInt(
+                                            activity.estimated_duration.split(
+                                                ":",
+                                            )[1],
+                                        ),
+                                    },
+                                ).toISOString();
+                                calendar_activity.end = newEnd;
                                 calendar_activity.title = activity.name;
                                 if (
                                     calendar_activity.start.split(" ")[1] <=
@@ -305,6 +340,7 @@ async function initializeDrop(info: EventObject) {
         editDrop(info);
         return;
     }
+
     const activityId = info.event._def.extendedProps.defId;
     const startTime = info.event._instance.range.start.toISOString();
     const endTime = info.event._instance.range.end.toISOString();
@@ -326,13 +362,22 @@ async function initializeDrop(info: EventObject) {
                         detail: t.value("calendar.add.toast.success.detail"),
                         life: 6000,
                     });
-                    const activities = store.activityData as Activity[];
-                    activities.forEach((activity: Activity) => {
+                    activities.value.forEach((activity: Activity) => {
                         if (activity.id == response._data.activity_id) {
                             response._data.title = activity.name;
                             calApi.addEvent(response._data);
                         }
                     });
+                    activities.value.forEach((activity: Activity) => {
+                        if (activity.id === activityId) {
+                            activities.value[activities.value.indexOf(activity)]
+                                .calendar_activities;
+                            activities.value[
+                                activities.value.indexOf(activity)
+                            ].calendar_activities.push(response._data);
+                        }
+                    });
+                    store.setActivities(activities.value);
                 }
             },
             async onRequestError() {
@@ -366,6 +411,18 @@ async function editDrop(info: EventObject) {
         start: startTime.substring(0, startTime.length - 2),
         end: endTime.substring(0, endTime.length - 2),
     };
+
+    const duration = differenceInMinutes(
+        new Date(endTime).getTime(),
+        new Date(startTime).getTime(),
+    );
+
+    const hours = Math.floor(duration / 60);
+    const minutes = duration % 60;
+    const newDuration =
+        hours.toString().padStart(2, "0") +
+        ":" +
+        minutes.toString().padStart(2, "0");
 
     await client(
         `/api/journey/${props.id}/activity/${activityId}/calendarActivity/${id.value}`,
@@ -404,6 +461,24 @@ async function editDrop(info: EventObject) {
             },
         },
     );
+
+    const activities = store.activityData as Activity[];
+    let newActivity;
+    activities.forEach((activity: Activity) => {
+        if (activity.id === activityId) {
+            if (activity.estimated_duration !== newDuration) {
+                activities[activities.indexOf(activity)].estimated_duration =
+                    newDuration;
+                newActivity = activities[activities.indexOf(activity)];
+            }
+        }
+    });
+    if (newActivity !== undefined) {
+        await client(`/api/journey/${props.id}/activity/${activityId}`, {
+            method: "PATCH",
+            body: newActivity,
+        });
+    }
 }
 
 function showData(info: EventObject) {
@@ -440,15 +515,33 @@ function showData(info: EventObject) {
     });
 }
 
-function editCalendarActivity(name: string) {
+async function editCalendarActivity(name: string) {
     const calApi = fullCalendar.value.getApi();
     activities.value.forEach((activity: Activity) => {
         if (activity.id === activityId.value) {
             activity.calendar_activities.forEach(
                 (calendar_activity: CalendarActivity) => {
-                    calApi
-                        .getEventById(calendar_activity.id)
-                        .setProp("title", name);
+                    if (calApi.getEventById(calendar_activity.id) !== null) {
+                        calApi
+                            .getEventById(calendar_activity.id)
+                            .setProp("title", name);
+                        const newEnd = add(new Date(calendar_activity.start), {
+                            hours: parseInt(
+                                activity.estimated_duration.split(":")[0],
+                            ),
+                            minutes: parseInt(
+                                activity.estimated_duration.split(":")[1],
+                            ),
+                        }).toISOString();
+                        calApi
+                            .getEventById(calendar_activity.id)
+                            .setEnd(newEnd);
+                    } else {
+                        calApi.addEvent(calendar_activity);
+                        calApi
+                            .getEventById(calendar_activity.id)
+                            .setProp("title", name);
+                    }
                 },
             );
         }
@@ -508,24 +601,48 @@ function editCalendarActivity(name: string) {
     }
 }
 
+.fc .fc-v-event .fc-event-main-frame {
+    margin-left: 0.4rem;
+    margin-top: 0.3rem;
+}
+
+.fc-timegrid-event-harness-inset .fc-timegrid-event,
+.fc-timegrid-event.fc-event-mirror,
+.fc-timegrid-more-link {
+    box-shadow: none;
+}
+
+.dark .fc-theme-standard td,
+.fc-theme-standard th {
+    border-color: #5d5d5d;
+}
+
+.light .fc-theme-standard td,
+.fc-theme-standard th {
+    border-color: #e0e0e0;
+}
 /* dark mode */
+
+.dark .fc-day-today {
+    background-color: rgba(155, 186, 197, 0.2) !important;
+}
+
+.dark .fc-scrollgrid {
+    background-color: #2c2c2c !important;
+}
 
 .dark .fc .fc-prev-button,
 .dark .fc .fc-dayGridMonth-button {
-    border-width: 0.2rem 0 0.2rem 0.2rem !important;
+    border-width: 0.15rem 0 0.15rem 0.15rem !important;
 }
 
 .dark .fc .fc-next-button,
 .dark .fc .fc-timeGridWeek-button {
-    border-width: 0.2rem 0.2rem 0.2rem 0 !important;
+    border-width: 0.15rem 0.15rem 0.15rem 0 !important;
 }
 
 .dark .fc .fc-button-group {
     background-color: #2c2c2c;
-}
-
-.dark .fc-day-today {
-    background-color: rgba(36, 68, 86, 0.15) !important;
 }
 
 .dark .fc-scrollgrid,
@@ -558,7 +675,7 @@ function editCalendarActivity(name: string) {
     color: #f8f8f8;
     background-color: #454849;
     border-color: #e3c454;
-    border-width: 0.2rem;
+    border-width: 0.15rem;
     border-radius: 0.5rem;
     box-shadow: none !important;
 }
