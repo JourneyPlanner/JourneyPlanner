@@ -46,7 +46,24 @@ class JourneyController extends Controller
         ) {
             $validated["destination"] = "";
         } else {
-            $validated["mapbox_full_address"] = $validated["destination"];
+            $searchData = [];
+            $searchResponse = Http::get(
+                "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
+                    urlencode($validated["destination"]) .
+                    "&limit=1&access_token=" .
+                    config("map.mapbox_api_key")
+            );
+            $searchData = $searchResponse->json();
+
+            if (
+                array_key_exists("features", $searchData) &&
+                count($searchData["features"]) !== 0
+            ) {
+                $validated["mapbox_full_address"] =
+                    $searchData["features"][0]["properties"]["full_address"];
+            } else {
+                $validated["mapbox_full_address"] = $validated["destination"];
+            }
         }
 
         $journey = new Journey($validated);
@@ -59,7 +76,7 @@ class JourneyController extends Controller
             $geocodingData = [];
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
-                    $validated["mapbox_full_address"] .
+                    urlencode($validated["mapbox_full_address"]) .
                     "&permanent=true&autocomplete=true&limit=1&access_token=" .
                     config("map.mapbox_api_key")
             );
@@ -128,14 +145,32 @@ class JourneyController extends Controller
         ]);
 
         $previousMapboxFullAddress = $journey->mapbox_full_address;
+        $previousDestination = $journey->destination;
 
         if (
             array_key_exists("mapbox_full_address", $validated) &&
             $validated["mapbox_full_address"] !== $previousMapboxFullAddress
         ) {
             $validated["destination"] = "";
-        } else {
-            $validated["mapbox_full_address"] = $validated["destination"];
+        } elseif ($validated["destination"] !== $previousDestination) {
+            $searchData = [];
+            $searchResponse = Http::get(
+                "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
+                    urlencode($validated["destination"]) .
+                    "&limit=1&access_token=" .
+                    config("map.mapbox_api_key")
+            );
+            $searchData = $searchResponse->json();
+
+            if (
+                array_key_exists("features", $searchData) &&
+                count($searchData["features"]) !== 0
+            ) {
+                $validated["mapbox_full_address"] =
+                    $searchData["features"][0]["properties"]["full_address"];
+            } else {
+                $validated["mapbox_full_address"] = $validated["destination"];
+            }
         }
 
         $journey->update($validated);
@@ -148,7 +183,7 @@ class JourneyController extends Controller
             $geocodingData = [];
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
-                    $validated["mapbox_full_address"] .
+                    urlencode($validated["mapbox_full_address"]) .
                     "&permanent=true&autocomplete=true&limit=1&access_token=" .
                     config("map.mapbox_api_key")
             );

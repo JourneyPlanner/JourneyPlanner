@@ -61,7 +61,28 @@ class ActivityController extends Controller
             array_key_exists("address", $validated) &&
             $validated["address"]
         ) {
-            $validated["mapbox_full_address"] = $validated["address"];
+            $searchData = [];
+            $searchResponse = Http::get(
+                "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
+                    urlencode($validated["address"]) .
+                    "&proximity=" .
+                    ($journey->longitude ? $journey->longitude : 0) .
+                    "," .
+                    ($journey->latitude ? $journey->latitude : 0) .
+                    "&limit=1&access_token=" .
+                    config("map.mapbox_api_key")
+            );
+            $searchData = $searchResponse->json();
+
+            if (
+                array_key_exists("features", $searchData) &&
+                count($searchData["features"]) !== 0
+            ) {
+                $validated["mapbox_full_address"] =
+                    $searchData["features"][0]["properties"]["full_address"];
+            } else {
+                $validated["mapbox_full_address"] = $validated["address"];
+            }
         }
 
         // Create the activity
@@ -76,7 +97,7 @@ class ActivityController extends Controller
             $geocodingData = [];
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
-                    $validated["mapbox_full_address"] .
+                    urlencode($validated["mapbox_full_address"]) .
                     "&proximity=" .
                     ($journey->longitude ? $journey->longitude : 0) .
                     "," .
@@ -177,6 +198,7 @@ class ActivityController extends Controller
         ]);
 
         $oldMapboxFullAddress = $activity->mapbox_full_address;
+        $oldAddress = $activity->address;
 
         if (
             array_key_exists("mapbox_full_address", $validated) &&
@@ -185,9 +207,30 @@ class ActivityController extends Controller
             $validated["address"] = "";
         } elseif (
             array_key_exists("address", $validated) &&
-            $validated["address"]
+            $validated["address"] !== $oldAddress
         ) {
-            $validated["mapbox_full_address"] = $validated["address"];
+            $searchData = [];
+            $searchResponse = Http::get(
+                "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
+                    urlencode($validated["address"]) .
+                    "&proximity=" .
+                    ($journey->longitude ? $journey->longitude : 0) .
+                    "," .
+                    ($journey->latitude ? $journey->latitude : 0) .
+                    "&limit=1&access_token=" .
+                    config("map.mapbox_api_key")
+            );
+            $searchData = $searchResponse->json();
+
+            if (
+                array_key_exists("features", $searchData) &&
+                count($searchData["features"]) !== 0
+            ) {
+                $validated["mapbox_full_address"] =
+                    $searchData["features"][0]["properties"]["full_address"];
+            } else {
+                $validated["mapbox_full_address"] = $validated["address"];
+            }
         }
 
         // Update the activity
@@ -202,7 +245,7 @@ class ActivityController extends Controller
             $geocodingData = [];
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
-                    $validated["mapbox_full_address"] .
+                    urlencode($validated["mapbox_full_address"]) .
                     "&proximity=" .
                     ($journey->longitude ? $journey->longitude : 0) .
                     "," .
