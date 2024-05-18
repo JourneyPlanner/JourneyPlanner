@@ -172,22 +172,21 @@ const style = computed(() =>
                     }"
                 >
                     <div
-                        class="mx-4 overflow-ellipsis font-nunito text-text dark:text-input lg:mx-8"
+                        class="mx-4 font-nunito text-text dark:text-input lg:mx-8"
                     >
-                        <table class="w-full text-left text-sm md:text-base">
+                        <table
+                            class="w-full table-fixed text-left text-sm md:text-base"
+                        >
                             <thead
                                 class="border-b border-text text-xs uppercase dark:border-input"
                             >
                                 <tr>
-                                    <th
-                                        scope="col"
-                                        class="whitespace-nowrap py-3"
-                                    >
+                                    <th scope="col" class="w-10 py-3 pr-5">
                                         <T
                                             key-name="journey.map.notfound.name"
                                         />
                                     </th>
-                                    <th scope="col" class="py-3">
+                                    <th scope="col" class="w-20 py-3">
                                         <T
                                             key-name="journey.map.notfound.address"
                                         />
@@ -199,10 +198,13 @@ const style = computed(() =>
                                     v-for="activity in activitiesWithoutLocation"
                                     :key="activity.id"
                                 >
-                                    <th scope="row" class="py-2">
+                                    <th
+                                        scope="row"
+                                        class="w-10 truncate py-2 pr-5"
+                                    >
                                         {{ activity.name }}
                                     </th>
-                                    <td class="py-2">
+                                    <td class="w-20 truncate py-2">
                                         {{
                                             activity.address ||
                                             "-----------------"
@@ -219,6 +221,7 @@ const style = computed(() =>
 </template>
 
 <style>
+.mapboxgl-ctrl-top-left,
 .mapboxgl-ctrl-top-right {
     @apply z-0;
 }
