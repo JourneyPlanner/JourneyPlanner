@@ -67,7 +67,7 @@ const uppy = new Uppy({
         />
         <div class="flex justify-center md:hidden">
             <h7
-                class="absolute bottom-10 text-xs text-input-placeholder dark:text-input-gray"
+                class="absolute bottom-12 text-xs text-input-placeholder dark:text-input-gray"
             >
                 <T key-name="journey.upload.info" />
             </h7>
@@ -88,13 +88,17 @@ const uppy = new Uppy({
     @apply border-none !important;
 }
 
+.uppy-Dashboard-AddFiles-title {
+    @apply mt-8 text-base;
+}
+
 .uppy-Dashboard-AddFiles-title,
 .uppy-StatusBar-status {
     @apply font-nunito text-text dark:text-input !important;
 }
 
 .uppy-Dashboard-browse {
-    @apply text-link decoration-link !important;
+    @apply text-link hover:font-bold hover:underline hover:decoration-link !important;
 }
 
 .uppy-c-btn-primary {
@@ -137,7 +141,8 @@ const uppy = new Uppy({
     @apply border-none !important;
 }
 
-.uppy-Dashboard-AddFilesPanel {
+.uppy-Dashboard-AddFilesPanel,
+.uppy-Dashboard-innerWrap {
     @apply rounded-2xl lg:rounded-3xl !important;
 }
 </style>
