@@ -13,7 +13,7 @@
                 <h4 class="mb-2 text-center text-3xl font-bold">
                     <T key-name="common.imprint" />
                 </h4>
-                <p class="mt-1">
+                <p class="mb-2 mt-1">
                     <T key-name="imprint.info" />
                 </p>
                 <p class="mt-1">
@@ -24,7 +24,7 @@
                     <b> <T key-name="imprint.address.title" />: </b>
                     <T key-name="imprint.address.value" />
                 </p>
-                <p>
+                <p class="mt-1">
                     <b> <T key-name="imprint.contact.title" />: </b> <br />
                     <T key-name="imprint.contact.phone.title" />:
                     <a
