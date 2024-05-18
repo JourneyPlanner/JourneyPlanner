@@ -129,10 +129,10 @@ const style = computed(() =>
                     </MapboxDefaultPopup>
                 </MapboxDefaultMarker>
 
-                <MapboxScaleControl />
+                <MapboxScaleControl position="top-left" />
                 <MapboxGeolocateControl />
                 <MapboxFullscreenControl />
-                <MapboxNavigationControl />
+                <MapboxNavigationControl position="top-left" />
             </MapboxMap>
 
             <Dialog
