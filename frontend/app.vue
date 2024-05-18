@@ -2,6 +2,7 @@
     <TolgeeProvider>
         <NuxtLoadingIndicator
             color="repeating-linear-gradient(to right,#B9DCE8 0%,#2B5973 100%)"
+            :height="3"
         />
         <NuxtLayout>
             <div>
