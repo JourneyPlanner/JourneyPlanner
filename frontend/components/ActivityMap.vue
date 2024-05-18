@@ -115,6 +115,7 @@ const style = computed(() =>
                         :lnglat="[activity.longitude, activity.latitude]"
                         :options="{
                             closeOnClick: true,
+                            focusAfterOpen: false,
                         }"
                     >
                         <div
