@@ -62,6 +62,11 @@ watch(
     { immediate: true },
 );
 
+/**
+ * set values for activity info dialog
+ * @param id - activity id
+ * @param showOnly - if dialog should just display info or allow editing
+ */
 function showInfo(id: string, showOnly: boolean = true) {
     activities.value.forEach((activity: Activity) => {
         if (activity.id === id) {
@@ -116,6 +121,9 @@ const confirmDelete = (event: Event) => {
     });
 };
 
+/*
+ * delete activity
+ */
 async function deleteActivity() {
     await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
         method: "delete",

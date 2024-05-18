@@ -160,6 +160,11 @@ const confirmLeave = (event: Event) => {
     });
 };
 
+/**
+ * API call to leave the journey
+ * success: toast message and redirect to dashboard
+ * error: toast message
+ */
 async function leaveJourney() {
     await client(`/api/journey/${journeyId}/leave`, {
         method: "DELETE",
@@ -194,6 +199,9 @@ async function leaveJourney() {
     });
 }
 
+/**
+ * copy the invite link to the clipboard
+ */
 function copyToClipboard() {
     navigator.clipboard.writeText(journeyData.value.invite);
     toast.add({
@@ -204,12 +212,16 @@ function copyToClipboard() {
     });
 }
 
+/*
+ * Change the role of a user
+ * @param userid - the id of the user
+ * @param selectedRole - the selected role
+ */
 async function changeRole(userid: string, selectedRole: number) {
-    await client(`/ api / journey / ${journeyId} / user / ${userid}`, {
+    await client(`/api/journey/${journeyId}/user/${userid}`, {
         method: "PATCH",
         body: {
             role: selectedRole,
-            random: 1,
         },
         async onResponse() {
             users.value = users.value.map((user: User) => {

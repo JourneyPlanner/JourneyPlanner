@@ -88,6 +88,9 @@ const confirmLeave = (event: Event) => {
     });
 };
 
+/**
+ * delete the journey
+ */
 async function deleteJourney() {
     await client(`/api/journey/${props.id}`, {
         method: "DELETE",
@@ -113,6 +116,9 @@ async function deleteJourney() {
     });
 }
 
+/**
+ * leave the journey
+ */
 async function leaveJourney() {
     await client(`/api/journey/${props.id}/leave`, {
         method: "DELETE",
