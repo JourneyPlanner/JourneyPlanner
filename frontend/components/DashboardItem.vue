@@ -42,6 +42,7 @@ const toggle = (event: Event) => {
 const confirmDelete = (event: Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
+        group: "dashboard",
         header: t.value("dashboard.delete.header"),
         message: t.value("dashboard.delete.confirm"),
         icon: "pi pi-exclamation-triangle",
@@ -66,6 +67,7 @@ const confirmDelete = (event: Event) => {
 const confirmLeave = (event: Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
+        group: "dashboard",
         header: t.value("journey.leave.header"),
         message: t.value("journey.leave.message"),
         icon: "pi pi-exclamation-triangle",
@@ -86,6 +88,9 @@ const confirmLeave = (event: Event) => {
     });
 };
 
+/**
+ * delete the journey
+ */
 async function deleteJourney() {
     await client(`/api/journey/${props.id}`, {
         method: "DELETE",
@@ -111,6 +116,9 @@ async function deleteJourney() {
     });
 }
 
+/**
+ * leave the journey
+ */
 async function leaveJourney() {
     await client(`/api/journey/${props.id}/leave`, {
         method: "DELETE",
@@ -126,8 +134,6 @@ async function leaveJourney() {
             }
         },
         async onResponseError({ response }) {
-            console.log(response);
-
             if (response.status === 403) {
                 toast.add({
                     severity: "error",
@@ -243,6 +249,8 @@ const onSave = handleSubmit(async (values) => {
     const journey = {
         name,
         destination,
+        mapbox_full_address: values.mapbox?.properties?.full_address,
+        mapbox_id: values.mapbox?.properties?.mapbox_id,
         from,
         to,
     };
@@ -271,13 +279,13 @@ const onSave = handleSubmit(async (values) => {
             });
         },
     });
+
     loadingEdit.value = false;
 });
 </script>
 
 <template>
     <div>
-        <Toast class="w-3/4 sm:w-auto" />
         <div
             id="journey-desktop"
             class="relative hidden hover:cursor-pointer lg:block"
@@ -437,11 +445,11 @@ const onSave = handleSubmit(async (values) => {
                     class: 'font-nunito text-text bg-input dark:bg-input-dark',
                 },
                 header: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white',
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-input',
                 },
                 title: { class: 'text-2xl' },
                 content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white',
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-input',
                 },
             }"
         >
@@ -469,12 +477,13 @@ const onSave = handleSubmit(async (values) => {
                         >
                             <T key-name="form.input.journey.destination" />
                         </label>
-                        <FormInput
+                        <FormAddressInput
                             id="journey-destination"
                             name="destination"
                             translation-key="form.input.journey.destination"
                             class="my-0 mb-1 w-2/3"
-                            :prefill="props.destination"
+                            custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 1rem; line-height: 1.5rem;}"
+                            :placeholder="props.destination"
                         />
                     </div>
                     <div class="flex flex-row items-center justify-between">

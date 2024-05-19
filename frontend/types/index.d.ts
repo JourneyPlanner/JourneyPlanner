@@ -1,6 +1,27 @@
 export {};
 
 declare global {
+    interface Activity {
+        address: string;
+        mapbox_full_address: string;
+        calendar_activities: [];
+        id: string;
+        cost: string;
+        created_at: string;
+        description: string;
+        email: string;
+        estimated_duration: string;
+        journey_id: string;
+        latitude: number;
+        longitude: number;
+        link: string;
+        mapbox_id: string;
+        name: string;
+        opening_hours: string;
+        phone: string;
+        updated_at: string;
+    }
+
     interface Feature {
         type: string;
         geometry: {

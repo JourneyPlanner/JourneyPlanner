@@ -48,4 +48,13 @@ class Activity extends Model
     {
         return $this->hasMany(CalendarActivity::class);
     }
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        "estimated_duration" => "datetime:H:i:s",
+    ];
 }

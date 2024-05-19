@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
 import { format } from "date-fns";
-import Toast from "primevue/toast";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
@@ -9,6 +8,9 @@ import * as yup from "yup";
 const { t } = useTranslate();
 const client = useSanctumClient();
 const toast = useToast();
+const store = useDashboardStore();
+const journeyStore = useJourneyStore();
+journeyStore.resetJourney();
 
 const journeyInvite = uuidv4();
 const journeyInviteLink = window.location.origin + "/invite/" + journeyInvite;
@@ -67,16 +69,19 @@ const onSubmit = handleSubmit(async (values) => {
     const from = format(values.journeyRange[0], "yyyy-MM-dd");
     const to = format(values.journeyRange[1], "yyyy-MM-dd");
     const invite = journeyInvite;
+    const mapbox_full_address = values.mapbox?.properties.full_address;
+    const mapbox_id = values.mapbox?.properties.mapbox_id;
 
     const journey = {
         name,
         destination,
+        mapbox_full_address: mapbox_full_address,
+        mapbox_id: mapbox_id,
         from,
         to,
         invite,
+        role: 1,
     };
-
-    console.log(journey);
 
     await client("/api/journey", {
         method: "POST",
@@ -87,8 +92,9 @@ const onSubmit = handleSubmit(async (values) => {
                     severity: "success",
                     summary: t.value("form.journey.toast.success.heading"),
                     detail: t.value("form.journey.toast.success"),
-                    life: 6000,
+                    life: 3000,
                 });
+                store.addJourney(journey);
                 await navigateTo("/dashboard");
             }
         },
@@ -117,7 +123,6 @@ function copyToClipboard() {
 <template>
     <div>
         <div class="z-10 flex min-h-screen flex-col justify-between">
-            <Toast class="w-3/4 sm:w-auto" />
             <div
                 class="z-50 mt-16 flex items-center justify-center font-nunito"
             >
@@ -137,17 +142,23 @@ function copyToClipboard() {
                             name="journeyName"
                             translation-key="form.input.journey.name"
                         />
-                        <FormInput
+                        <FormAddressInput
                             id="journey-destination"
                             name="journeyDestination"
-                            translation-key="form.input.journey.destination"
+                            :placeholder="t('form.input.journey.destination')"
+                            class="relative mb-5"
+                            :translation-key="
+                                t('form.input.journey.destination')
+                            "
+                            bg-light-key="surface"
+                            bg-dark-key="surface-dark"
+                            custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
                         />
                         <FormCalendar
                             id="journey-range-calendar"
                             name="journeyRange"
                             translation-key="form.input.journey.dates"
                         />
-
                         <Divider
                             type="solid"
                             class="border-10 border text-input-label"
@@ -160,7 +171,7 @@ function copyToClipboard() {
                                 type="text"
                                 name="journey-invite"
                                 disabled
-                                class="placeholder:text-transparent text-md peer w-[90%] rounded-lg border-2 border-border bg-input-disabled px-2.5 pb-1 pt-4 font-bold text-text-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark-grey dark:text-input-disabled-dark-gray"
+                                class="text-md peer w-[90%] rounded-lg border-2 border-border bg-input-disabled px-2.5 pb-1 pt-4 font-bold text-text-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark-grey dark:text-input-disabled-dark-gray"
                                 placeholder=" "
                             />
                             <label
