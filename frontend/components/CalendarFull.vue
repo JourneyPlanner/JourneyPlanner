@@ -553,7 +553,12 @@ async function editCalendarActivity(name: string) {
         <div
             class="flex w-[90%] flex-col items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
-            <div class="z-0 mt-20 h-[35rem] overflow-y-scroll pr-2">
+            <div class="mt-16 w-full justify-start">
+                <div class="-mb-2.5 text-2xl font-semibold lg:mb-3">
+                    <T key-name="journey.calendar" />
+                </div>
+            </div>
+            <div class="z-0 mt-1 h-[25rem] overflow-y-scroll pr-2 md:h-[35rem]">
                 <FullCalendar
                     ref="fullCalendar"
                     :options="calendarOptions"
@@ -594,11 +599,42 @@ async function editCalendarActivity(name: string) {
 <style>
 @media screen and (max-width: 640px) {
     .fc .fc-toolbar {
-        display: flex;
+        display: inline-grid;
         flex-direction: column;
         align-items: center;
         justify-content: center;
     }
+
+    .fc .fc-button {
+        height: 35px;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        flex-wrap: nowrap;
+    }
+
+    .fc .fc-button.fc-today-button {
+        width: 60%;
+    }
+
+    .fc .fc-button.fc-showAllHours-button {
+        margin-left: -30px;
+    }
+
+    .fc .fc-toolbar-chunk {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+    }
+    .fc .fc-toolbar-title {
+        grid-column: span 3 / span 3;
+        margin-left: -24px;
+    }
+}
+
+.fc-v-event .fc-event-title {
+    max-height: 85%;
 }
 
 .fc .fc-v-event .fc-event-main-frame {
