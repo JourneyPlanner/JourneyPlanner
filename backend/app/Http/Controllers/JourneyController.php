@@ -61,6 +61,8 @@ class JourneyController extends Controller
             ) {
                 $validated["mapbox_full_address"] =
                     $searchData["features"][0]["properties"]["full_address"];
+                $validated["mapbox_id"] =
+                    $searchData["features"][0]["properties"]["mapbox_id"];
             } else {
                 $validated["mapbox_full_address"] = $validated["destination"];
             }
@@ -147,11 +149,12 @@ class JourneyController extends Controller
         $previousMapboxFullAddress = $journey->mapbox_full_address;
         $previousDestination = $journey->destination;
 
-        if (
-            array_key_exists("mapbox_full_address", $validated) &&
-            $validated["mapbox_full_address"] !== $previousMapboxFullAddress
-        ) {
-            $validated["destination"] = "";
+        if (array_key_exists("mapbox_full_address", $validated)) {
+            if (
+                $validated["mapbox_full_address"] !== $previousMapboxFullAddress
+            ) {
+                $validated["destination"] = "";
+            }
         } elseif ($validated["destination"] !== $previousDestination) {
             $searchData = [];
             $searchResponse = Http::get(
@@ -168,16 +171,27 @@ class JourneyController extends Controller
             ) {
                 $validated["mapbox_full_address"] =
                     $searchData["features"][0]["properties"]["full_address"];
+                $validated["mapbox_id"] =
+                    $searchData["features"][0]["properties"]["mapbox_id"];
             } else {
                 $validated["mapbox_full_address"] = $validated["destination"];
             }
+        } else {
+            $validated["mapbox_full_address"] = $previousMapboxFullAddress;
         }
 
         $journey->update($validated);
 
+        if ($previousMapboxFullAddress !== $validated["mapbox_full_address"]) {
+            $journey->longitude = null;
+            $journey->latitude = null;
+            $journey->mapbox_full_address = null;
+        }
+
         // Get the longitude and latitude of the address if it exists
         if (
             array_key_exists("mapbox_full_address", $validated) &&
+            $validated["mapbox_full_address"] &&
             $validated["mapbox_full_address"] !== $previousMapboxFullAddress
         ) {
             $geocodingData = [];

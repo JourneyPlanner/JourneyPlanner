@@ -80,6 +80,8 @@ class ActivityController extends Controller
             ) {
                 $validated["mapbox_full_address"] =
                     $searchData["features"][0]["properties"]["full_address"];
+                $validated["mapbox_id"] =
+                    $searchData["features"][0]["properties"]["mapbox_id"];
             } else {
                 $validated["mapbox_full_address"] = $validated["address"];
             }
@@ -200,41 +202,53 @@ class ActivityController extends Controller
         $oldMapboxFullAddress = $activity->mapbox_full_address;
         $oldAddress = $activity->address;
 
-        if (
-            array_key_exists("mapbox_full_address", $validated) &&
-            $validated["mapbox_full_address"] !== $oldMapboxFullAddress
-        ) {
-            $validated["address"] = "";
-        } elseif (
-            array_key_exists("address", $validated) &&
-            $validated["address"] !== $oldAddress
-        ) {
-            $searchData = [];
-            $searchResponse = Http::get(
-                "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
-                    urlencode($validated["address"]) .
-                    "&proximity=" .
-                    ($journey->longitude ? $journey->longitude : 0) .
-                    "," .
-                    ($journey->latitude ? $journey->latitude : 0) .
-                    "&limit=1&access_token=" .
-                    config("map.mapbox_api_key")
-            );
-            $searchData = $searchResponse->json();
-
-            if (
-                array_key_exists("features", $searchData) &&
-                count($searchData["features"]) !== 0
-            ) {
-                $validated["mapbox_full_address"] =
-                    $searchData["features"][0]["properties"]["full_address"];
-            } else {
-                $validated["mapbox_full_address"] = $validated["address"];
+        if (array_key_exists("mapbox_full_address", $validated)) {
+            if ($validated["mapbox_full_address"] !== $oldMapboxFullAddress) {
+                $validated["address"] = "";
             }
+        } elseif (array_key_exists("address", $validated)) {
+            if ($validated["address"] !== $oldAddress) {
+                $searchData = [];
+                $searchResponse = Http::get(
+                    "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
+                        urlencode($validated["address"]) .
+                        "&proximity=" .
+                        ($journey->longitude ? $journey->longitude : 0) .
+                        "," .
+                        ($journey->latitude ? $journey->latitude : 0) .
+                        "&limit=1&access_token=" .
+                        config("map.mapbox_api_key")
+                );
+                $searchData = $searchResponse->json();
+
+                if (
+                    array_key_exists("features", $searchData) &&
+                    count($searchData["features"]) !== 0
+                ) {
+                    $validated["mapbox_full_address"] =
+                        $searchData["features"][0]["properties"][
+                            "full_address"
+                        ];
+                    $validated["mapbox_id"] =
+                        $searchData["features"][0]["properties"]["mapbox_id"];
+                } else {
+                    $validated["mapbox_full_address"] = $validated["address"];
+                }
+            } else {
+                $validated["mapbox_full_address"] = $oldMapboxFullAddress;
+            }
+        } else {
+            $validated["mapbox_full_address"] = $oldMapboxFullAddress;
         }
 
         // Update the activity
         $activity->update($validated);
+
+        if ($oldMapboxFullAddress !== $validated["mapbox_full_address"]) {
+            $activity->longitude = null;
+            $activity->latitude = null;
+            $activity->mapbox_full_address = null;
+        }
 
         // Update the longitude and latitude of the address if it exists and if they have changed
         if (
