@@ -3,7 +3,10 @@ import { T, useTranslate } from "@tolgee/vue";
 import { differenceInDays, format } from "date-fns";
 import JSConfetti from "js-confetti";
 import QRCode from "qrcode";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "~/tailwind.config.js";
 
+const fullConfig = resolveConfig(tailwindConfig);
 const confirm = useConfirm();
 const route = useRoute();
 const store = useJourneyStore();
@@ -88,15 +91,15 @@ useHead({
 
 const colorMode = useColorMode();
 const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-let darkColor = "#333333";
-let lightColor = "#fcfcfc";
+let darkColor = fullConfig.theme.accentColor["text"] as string;
+let lightColor = fullConfig.theme.accentColor["background"] as string;
 
 if (
     colorMode.preference === "dark" ||
     (darkThemeMq.matches && colorMode.preference === "system")
 ) {
-    darkColor = "#ffffff";
-    lightColor = "#353f44";
+    darkColor = fullConfig.theme.accentColor["white"] as string;
+    lightColor = fullConfig.theme.accentColor["card-dark"] as string;
 }
 
 const opts = {
