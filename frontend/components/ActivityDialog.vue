@@ -489,7 +489,6 @@ function setSelectedDate(date: Date) {
                             :default-time="new Array(0, 30)"
                         />
                         <div
-                            v-if="!onlyShowRef || createAddress"
                             class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
                         >
                             <label class="text-sm font-medium md:text-base">
@@ -497,18 +496,6 @@ function setSelectedDate(date: Date) {
                             </label>
                             <FormAddressInput name="address" />
                         </div>
-
-                        <FormClassicInputIcon
-                            v-if="onlyShowRef && !create"
-                            id="address"
-                            name="address"
-                            :value="address"
-                            :disabled="onlyShowRef && !create"
-                            translation-key="form.input.activity.address"
-                            icon="pi-map-marker"
-                            :icon-pos-is-left="true"
-                            class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
-                        />
 
                         <FormClassicInputIcon
                             id="costs"
