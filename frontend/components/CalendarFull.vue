@@ -586,7 +586,7 @@ async function editCalendarActivity(name: string) {
     });
 }
 
-function moveActivity(start, end) {
+function moveActivity(start: Date, end: Date) {
     const calApi = fullCalendar.value.getApi();
     calApi.getEventById(calendarId.value).setStart(start);
     calApi.getEventById(calendarId.value).setEnd(end);
