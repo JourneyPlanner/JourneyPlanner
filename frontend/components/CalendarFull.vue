@@ -527,7 +527,6 @@ function showData(info: EventObject) {
                 update.value = false;
                 onlyShow.value = true;
             }
-
             address.value = activity.address;
             cost.value = activity.cost;
             created_at.value = activity.created_at;
@@ -586,6 +585,12 @@ async function editCalendarActivity(name: string) {
         }
     });
 }
+
+function moveActivity(start, end) {
+    const calApi = fullCalendar.value.getApi();
+    calApi.getEventById(calendarId.value).setStart(start);
+    calApi.getEventById(calendarId.value).setEnd(end);
+}
 </script>
 <template>
     <div class="flex justify-center md:justify-start">
@@ -615,7 +620,7 @@ async function editCalendarActivity(name: string) {
                 :created-at="created_at"
                 :description="description"
                 :email="email"
-                :estimated_duration="estimated_duration"
+                :estimated-duration="estimated_duration"
                 :journey-id="journey_id"
                 :latitude="latitude"
                 :longitude="longitude"
@@ -631,6 +636,7 @@ async function editCalendarActivity(name: string) {
                 @delete-activity="deleteActivity"
                 @remove-from-calendar="removeFromCalendar"
                 @edit-calendar-activity="editCalendarActivity"
+                @calendar-moved="moveActivity"
             />
         </div>
     </div>

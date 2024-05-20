@@ -216,7 +216,6 @@ const itemsJourneyGuide = ref([
                         :key="activity.id"
                         class="empty:hidden"
                     >
-                        {{ console.log(activity.calendar_activities) }}
                         <div
                             v-if="activity.calendar_activities.length <= 0"
                             id="draggable-el"
@@ -331,6 +330,7 @@ const itemsJourneyGuide = ref([
             :only-show="onlyShow"
             :address="address"
             :cost="cost"
+            :create="true"
             :created-at="created_at"
             :description="description"
             :email="email"

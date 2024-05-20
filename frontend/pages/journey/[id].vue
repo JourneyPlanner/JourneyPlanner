@@ -826,7 +826,9 @@ async function changeRole(userid: string, selectedRole: number) {
         <ActivityDialog
             :id="journeyId.toString()"
             :visible="isActivityDialogVisible"
-            :update="true"
+            :only-show="false"
+            :create="true"
+            :create-address="true"
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />

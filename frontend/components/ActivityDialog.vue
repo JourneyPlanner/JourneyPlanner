@@ -30,6 +30,8 @@ const props = defineProps({
     update: { type: Boolean, default: false },
     calendarActivity: { type: Object, default: null },
     calendarClicked: { type: Boolean, default: false },
+    create: { type: Boolean, default: false },
+    createAddress: { type: Boolean, default: false },
 });
 
 const onlyShowRef = ref(props.onlyShow);
@@ -62,6 +64,7 @@ const emit = defineEmits([
     "deleteActivity",
     "removeFromCalendar",
     "editCalendarActivity",
+    "calendarMoved",
 ]);
 
 const isVisible = ref(props.visible);
@@ -251,9 +254,7 @@ async function onSuccess(values: ActivityForm) {
         };
     }
 
-    console.log(props.calendarClicked);
     if (updateRef.value) {
-        console.log(props.calendarClicked);
         await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
             method: "PATCH",
             body: activity,
@@ -300,54 +301,22 @@ async function onSuccess(values: ActivityForm) {
                 loadingSave.value = false;
             },
         });
-        console.log(props.calendarClicked);
-        if (props.calendarClicked) {
-            calendarActivity = props.calendarActivity;
+
+        if (props.calendarClicked && start && end) {
+            const calendarActivity = props.calendarActivity;
             calendarActivity.start = start;
             calendarActivity.end = end;
             await client(
                 `/api/journey/${props.id}/activity/${props.activityId}/calendarActivity/${props.calendarActivity.id}`,
                 {
                     method: "PATCH",
-                    body: props.calendarActivity,
+                    body: calendarActivity,
                     async onResponse({ response }) {
                         if (response.ok) {
-                            toast.add({
-                                severity: "success",
-                                summary: t.value(
-                                    "form.input.activity.edit.toast.success.heading",
-                                ),
-                                detail: t.value(
-                                    "form.input.activity.edit.toast.success.detail",
-                                ),
-                                life: 6000,
-                            });
                             close();
                             loadingSave.value = false;
-                            activityStore.updateActivity(
-                                response._data,
-                                props.activityId,
-                            );
-                            activityStore.setNewActivity(response._data);
+                            emit("calendarMoved", start, end);
                         }
-                    },
-                    async onRequestError() {
-                        toast.add({
-                            severity: "error",
-                            summary: t.value("common.toast.error.heading"),
-                            detail: t.value("common.error.unknown"),
-                            life: 6000,
-                        });
-                        loadingSave.value = false;
-                    },
-                    async onResponseError() {
-                        toast.add({
-                            severity: "error",
-                            summary: t.value("common.toast.error.heading"),
-                            detail: t.value("common.error.unknown"),
-                            life: 6000,
-                        });
-                        loadingSave.value = false;
                     },
                 },
             );
@@ -504,7 +473,7 @@ function setSelectedDate(date: Date) {
                             id="name"
                             name="name"
                             :value="name"
-                            :disabled="onlyShowRef"
+                            :disabled="onlyShowRef && !create"
                             translation-key="form.input.activity.name"
                             icon="pi-tag"
                             :icon-pos-is-left="true"
@@ -514,13 +483,13 @@ function setSelectedDate(date: Date) {
                             id="duration"
                             name="duration"
                             :value="estimatedDuration"
-                            :disabled="onlyShowRef"
+                            :disabled="onlyShowRef && !create"
                             translation-key="form.input.activity.duration"
                             class="order-2 col-span-1 w-full sm:col-span-2 sm:w-5/6 sm:justify-self-end"
                             :default-time="new Array(0, 30)"
                         />
                         <div
-                            v-if="!onlyShowRef"
+                            v-if="!onlyShowRef || createAddress"
                             class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
                         >
                             <label class="text-sm font-medium md:text-base">
@@ -530,11 +499,11 @@ function setSelectedDate(date: Date) {
                         </div>
 
                         <FormClassicInputIcon
-                            v-if="onlyShowRef"
+                            v-if="onlyShowRef && !create"
                             id="address"
                             name="address"
                             :value="address"
-                            :disabled="onlyShowRef"
+                            :disabled="onlyShowRef && !create"
                             translation-key="form.input.activity.address"
                             icon="pi-map-marker"
                             :icon-pos-is-left="true"
@@ -545,7 +514,7 @@ function setSelectedDate(date: Date) {
                             id="costs"
                             name="costs"
                             :value="cost"
-                            :disabled="onlyShowRef"
+                            :disabled="onlyShowRef && !create"
                             translation-key="form.input.activity.costs"
                             icon="pi-money-bill"
                             class="order-3 col-span-1 w-full sm:order-4 sm:col-span-2 sm:w-5/6 sm:justify-self-end"
@@ -554,7 +523,7 @@ function setSelectedDate(date: Date) {
                             id="description"
                             name="description"
                             :value="description"
-                            :disabled="onlyShowRef"
+                            :disabled="onlyShowRef && !create"
                             translation-key="form.input.activity.description"
                             class="order-5 col-span-full row-span-2"
                             custom-class="h-full"
@@ -583,7 +552,7 @@ function setSelectedDate(date: Date) {
                         <div>
                             <FormGroupInput
                                 id="link"
-                                :disabled="onlyShowRef"
+                                :disabled="onlyShowRef && !create"
                                 :value="link"
                                 name="link"
                                 translation-key="form.input.activity.link"
@@ -597,7 +566,7 @@ function setSelectedDate(date: Date) {
                             </label>
                             <FormGroupInput
                                 id="email"
-                                :disabled="onlyShowRef"
+                                :disabled="onlyShowRef && !create"
                                 :value="email"
                                 name="email"
                                 icon="pi-at"
@@ -605,7 +574,7 @@ function setSelectedDate(date: Date) {
                             />
                             <FormGroupInput
                                 id="phone"
-                                :disabled="onlyShowRef"
+                                :disabled="onlyShowRef && !create"
                                 :value="phone"
                                 name="phone"
                                 icon="pi-phone"
@@ -615,7 +584,7 @@ function setSelectedDate(date: Date) {
                         <FormClassicInputIcon
                             id="opening-hours"
                             name="open"
-                            :disabled="onlyShowRef"
+                            :disabled="onlyShowRef && !create"
                             :value="openingHours"
                             translation-key="form.input.activity.opening-hours"
                             input-type="textarea"
@@ -625,7 +594,7 @@ function setSelectedDate(date: Date) {
                     </div>
                 </TabPanel>
                 <TabPanel
-                    v-if="!onlyShowRef"
+                    v-if="!onlyShowRef || create"
                     :header="t('activity.manual.header')"
                     :pt="{
                         headerAction: () => ({
@@ -678,7 +647,7 @@ function setSelectedDate(date: Date) {
             </TabView>
 
             <div
-                v-if="!onlyShowRef && !updateRef"
+                v-if="(!onlyShowRef && !updateRef) || create"
                 class="mx-5 flex h-full flex-row justify-between gap-2 bg-background align-bottom font-nunito dark:bg-background-dark"
             >
                 <Button
