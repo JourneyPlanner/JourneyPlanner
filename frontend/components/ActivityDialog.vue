@@ -494,7 +494,11 @@ function setSelectedDate(date: Date) {
                             <label class="text-sm font-medium md:text-base">
                                 <T key-name="form.input.activity.address" />
                             </label>
-                            <FormAddressInput name="address" />
+                            <FormAddressInput
+                                name="address"
+                                :value="address"
+                                :disabled="onlyShow && !create"
+                            />
                         </div>
 
                         <FormClassicInputIcon

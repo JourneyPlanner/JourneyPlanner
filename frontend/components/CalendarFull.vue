@@ -7,6 +7,7 @@ import FullCalendar from "@fullcalendar/vue3";
 import { useTolgee, useTranslate } from "@tolgee/vue";
 import { add, differenceInMinutes } from "date-fns";
 import resolveConfig from "tailwindcss/resolveConfig";
+import { ref } from "vue";
 import tailwindConfig from "~/tailwind.config.js";
 
 const fullConfig = resolveConfig(tailwindConfig);
@@ -22,11 +23,11 @@ if (
 ) {
     text = fullConfig.theme.accentColor["natural-50"] as string;
     bg = fullConfig.theme.accentColor["dark"] as string;
-    border = fullConfig.theme.accentColor["calypso-600"] as string;
+    border = "#327597";
 } else {
     text = fullConfig.theme.accentColor["text"] as string;
     bg = fullConfig.theme.accentColor["light"] as string;
-    border = fullConfig.theme.accentColor["calypso-400"] as string;
+    border = "#50A1C0";
 }
 
 const fullCalendar = ref();
@@ -220,8 +221,6 @@ async function removeFromCalendar() {
 }
 
 let start = undefined;
-const beginDate = new Date(props.journeyStartdate);
-const endDate = new Date(props.journeyEnddate);
 if (props.duringJourney) {
     start = new Date();
 } else if (props.journeyEnded) {
@@ -291,10 +290,6 @@ const calendarOptions = reactive({
     timeZone: "local",
     droppable: true,
     initialDate: start,
-    validRange: {
-        start: beginDate,
-        end: endDate,
-    },
     editable: true,
     views: {
         fullweek: {
@@ -618,7 +613,7 @@ function moveActivity(start: Date, end: Date) {
         <div
             class="flex w-[90%] flex-col items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
-            <div class="mt-16 w-full justify-start">
+            <div class="mt-10 w-full justify-start">
                 <div class="-mb-2.5 text-2xl font-semibold lg:mb-3">
                     <T key-name="journey.calendar" />
                 </div>
@@ -695,7 +690,8 @@ function moveActivity(start: Date, end: Date) {
     }
     .fc .fc-toolbar-title {
         grid-column: span 3 / span 3;
-        margin-left: -24px;
+        margin-left: 0px;
+        font-size: 1rem !important;
     }
 }
 

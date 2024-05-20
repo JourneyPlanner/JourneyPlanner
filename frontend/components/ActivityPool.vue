@@ -330,7 +330,6 @@ const itemsJourneyGuide = ref([
             :only-show="onlyShow"
             :address="address"
             :cost="cost"
-            :create="true"
             :created-at="created_at"
             :description="description"
             :email="email"
