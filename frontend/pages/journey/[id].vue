@@ -2,7 +2,6 @@
 import { T, useTranslate } from "@tolgee/vue";
 import { differenceInDays, format } from "date-fns";
 import JSConfetti from "js-confetti";
-import Toast from "primevue/toast";
 import QRCode from "qrcode";
 
 const confirm = useConfirm();
@@ -10,6 +9,7 @@ const route = useRoute();
 const store = useJourneyStore();
 const activityStore = useActivityStore();
 const journeyId = route.params.id;
+const activityDataLoaded = ref(false);
 const qrcode = ref("");
 const duringJourney = ref(false);
 const journeyEnded = ref(false);
@@ -59,11 +59,14 @@ if (error.value) {
     });
 }
 
-const { data: activityData } = await useAsyncData("activity", () =>
-    client(`/api/journey/${journeyId}/activity`),
-);
-
-activityStore.setActivities(activityData);
+await client(`/api/journey/${journeyId}/activity`, {
+    async onResponse({ response }) {
+        if (response.ok) {
+            activityStore.setActivities(response._data);
+            activityDataLoaded.value = true;
+        }
+    },
+});
 
 const { data: users } = await useAsyncData("users", () =>
     client(`/api/journey/${journeyId}/user`),
@@ -133,8 +136,10 @@ const flip = () => {
 };
 
 const confirmLeave = (event: Event) => {
+    visibleSidebar.value = false;
     confirm.require({
         target: event.currentTarget as HTMLElement,
+        group: "journey",
         header: t.value("journey.leave.header"),
         message: t.value("journey.leave.message"),
         icon: "pi pi-exclamation-triangle",
@@ -155,6 +160,11 @@ const confirmLeave = (event: Event) => {
     });
 };
 
+/**
+ * API call to leave the journey
+ * success: toast message and redirect to dashboard
+ * error: toast message
+ */
 async function leaveJourney() {
     await client(`/api/journey/${journeyId}/leave`, {
         method: "DELETE",
@@ -189,6 +199,9 @@ async function leaveJourney() {
     });
 }
 
+/**
+ * copy the invite link to the clipboard
+ */
 function copyToClipboard() {
     navigator.clipboard.writeText(journeyData.value.invite);
     toast.add({
@@ -199,12 +212,16 @@ function copyToClipboard() {
     });
 }
 
+/*
+ * Change the role of a user
+ * @param userid - the id of the user
+ * @param selectedRole - the selected role
+ */
 async function changeRole(userid: string, selectedRole: number) {
     await client(`/api/journey/${journeyId}/user/${userid}`, {
         method: "PATCH",
         body: {
             role: selectedRole,
-            random: 1,
         },
         async onResponse() {
             users.value = users.value.map((user: User) => {
@@ -228,7 +245,21 @@ async function changeRole(userid: string, selectedRole: number) {
 
 <template>
     <div class="flex flex-col font-nunito text-text dark:text-white">
-        <Toast class="w-3/4 sm:w-auto" />
+        <ConfirmDialog
+            :draggable="false"
+            group="journey"
+            :pt="{
+                header: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                content: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                footer: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+            }"
+        />
         <Sidebar
             v-model:visible="visibleSidebar"
             position="right"
@@ -795,27 +826,18 @@ async function changeRole(userid: string, selectedRole: number) {
         <ActivityDialog
             :id="journeyId.toString()"
             :visible="isActivityDialogVisible"
+            :update="true"
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
         <CalendarFull
             :id="journeyId.toString()"
             :current-user-role="currUser.role"
+            :journey-ended="journeyEnded"
+            :during-journey="duringJourney"
+            :journey-startdate="journeyData.from"
+            :journey-enddate="journeyData.to"
         />
-        <ConfirmDialog
-            class="z-[500]"
-            :draggable="false"
-            :pt="{
-                header: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-                content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-                footer: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-            }"
-        />
+        <ActivityMap v-if="activityDataLoaded" />
     </div>
 </template>

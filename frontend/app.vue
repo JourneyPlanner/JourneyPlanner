@@ -2,6 +2,7 @@
     <TolgeeProvider>
         <NuxtLayout>
             <div>
+                <Toast class="w-3/4 sm:w-auto" />
                 <NuxtPage />
             </div>
         </NuxtLayout>

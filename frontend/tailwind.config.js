@@ -149,6 +149,7 @@ export default {
 
             dark: "#42484A",
             light: "#F6FAFB",
+            "marker-not-added": "#8CA5B0",
         },
     },
     plugins: [],

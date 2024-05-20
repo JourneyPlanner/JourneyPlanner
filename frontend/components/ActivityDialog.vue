@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
-import { format } from "date-fns";
+import { add, format } from "date-fns";
 import * as yup from "yup";
 
 const { t } = useTranslate();
@@ -14,21 +14,21 @@ const props = defineProps({
     address: { type: String, default: "" },
     onlyShow: { type: Boolean, default: false },
     cost: { type: String, default: "" },
-    created_at: { type: String, default: "" },
+    createdAt: { type: String, default: "" },
     description: { type: String, default: "" },
     email: { type: String, default: "" },
-    estimated_duration: { type: String, default: "" },
-    journey_id: { type: String, default: "" },
+    estimatedDuration: { type: String, default: "" },
+    journeyId: { type: String, default: "" },
     latitude: { type: String, default: "" },
     longitude: { type: String, default: "" },
     link: { type: String, default: "" },
-    mapbox_id: { type: String, default: "" },
+    mapboxId: { type: String, default: "" },
     name: { type: String, default: "" },
-    opening_hours: { type: String, default: "" },
+    openingHours: { type: String, default: "" },
     phone: { type: String, default: "" },
     updated_at: { type: String, default: "" },
     update: { type: Boolean, default: false },
-    calendarActivity: { type: Boolean, default: false },
+    calendarActivity: { type: Object, default: null },
     calendarClicked: { type: Boolean, default: false },
 });
 
@@ -187,38 +187,73 @@ const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 
 async function onSuccess(values: ActivityForm) {
     const durationDate = new Date(values.duration);
-    const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}`;
+    const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}:00`;
 
     let date = undefined;
     let time = undefined;
+    let start = undefined;
+    let end = undefined;
 
     if (values.date) {
         if (values.time) {
-            date = format(values.date, "yyyy-MM-dd");
-            const timeDate = new Date(values.time);
-            time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+            if (props.calendarClicked) {
+                date = format(values.date, "yyyy-MM-dd");
+                const timeDate = new Date(values.time);
+                time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+                start = `${date}T${time}`;
+                const timeZone = new Date().getTimezoneOffset() / -60;
+                end = add(new Date(start), {
+                    hours: parseInt(duration.split(":")[0]) + timeZone,
+                    minutes: parseInt(duration.split(":")[1]),
+                })
+                    .toISOString()
+                    .substring(0, 16);
+            } else {
+                date = format(values.date, "yyyy-MM-dd");
+                const timeDate = new Date(values.time);
+                time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+            }
         }
     }
 
     loadingSave.value = true;
 
-    const activity = {
-        name: values.name,
-        estimated_duration: duration,
-        address: values.address,
-        mapbox_full_address: values.mapbox?.properties?.full_address,
-        mapbox_id: values.mapbox?.properties?.mapbox_id,
-        cost: values.costs,
-        description: values.description,
-        link: values.link,
-        email: values.email,
-        phone: values.phone,
-        opening_hours: values.open,
-        date: date,
-        time: time,
-    };
+    let activity = undefined;
+    if (props.calendarClicked) {
+        activity = {
+            name: values.name,
+            estimated_duration: duration,
+            address: values.address,
+            mapbox_full_address: values.mapbox?.properties?.full_address,
+            mapbox_id: values.mapbox?.properties?.mapbox_id,
+            cost: values.costs,
+            description: values.description,
+            link: values.link,
+            email: values.email,
+            phone: values.phone,
+            opening_hours: values.open,
+        };
+    } else {
+        activity = {
+            name: values.name,
+            estimated_duration: duration,
+            address: values.address,
+            mapbox_full_address: values.mapbox?.properties?.full_address,
+            mapbox_id: values.mapbox?.properties?.mapbox_id,
+            cost: values.costs,
+            description: values.description,
+            link: values.link,
+            email: values.email,
+            phone: values.phone,
+            opening_hours: values.open,
+            date: date,
+            time: time,
+        };
+    }
 
+    console.log(props.calendarClicked);
     if (updateRef.value) {
+        console.log(props.calendarClicked);
         await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
             method: "PATCH",
             body: activity,
@@ -236,11 +271,10 @@ async function onSuccess(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
-                    const { data: activityData } = await useAsyncData(
-                        "activity",
-                        () => client(`/api/journey/${props.id}/activity`),
+                    activityStore.updateActivity(
+                        response._data,
+                        props.activityId,
                     );
-                    activityStore.setActivities(activityData.value);
                     activityStore.setNewActivity(response._data);
                     if (props.calendarActivity) {
                         emit("editCalendarActivity", activity.name);
@@ -266,6 +300,58 @@ async function onSuccess(values: ActivityForm) {
                 loadingSave.value = false;
             },
         });
+        console.log(props.calendarClicked);
+        if (props.calendarClicked) {
+            calendarActivity = props.calendarActivity;
+            calendarActivity.start = start;
+            calendarActivity.end = end;
+            await client(
+                `/api/journey/${props.id}/activity/${props.activityId}/calendarActivity/${props.calendarActivity.id}`,
+                {
+                    method: "PATCH",
+                    body: props.calendarActivity,
+                    async onResponse({ response }) {
+                        if (response.ok) {
+                            toast.add({
+                                severity: "success",
+                                summary: t.value(
+                                    "form.input.activity.edit.toast.success.heading",
+                                ),
+                                detail: t.value(
+                                    "form.input.activity.edit.toast.success.detail",
+                                ),
+                                life: 6000,
+                            });
+                            close();
+                            loadingSave.value = false;
+                            activityStore.updateActivity(
+                                response._data,
+                                props.activityId,
+                            );
+                            activityStore.setNewActivity(response._data);
+                        }
+                    },
+                    async onRequestError() {
+                        toast.add({
+                            severity: "error",
+                            summary: t.value("common.toast.error.heading"),
+                            detail: t.value("common.error.unknown"),
+                            life: 6000,
+                        });
+                        loadingSave.value = false;
+                    },
+                    async onResponseError() {
+                        toast.add({
+                            severity: "error",
+                            summary: t.value("common.toast.error.heading"),
+                            detail: t.value("common.error.unknown"),
+                            life: 6000,
+                        });
+                        loadingSave.value = false;
+                    },
+                },
+            );
+        }
     } else {
         await client(`/api/journey/${props.id}/activity`, {
             method: "POST",
@@ -284,11 +370,8 @@ async function onSuccess(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
-                    const { data: activityData } = await useAsyncData(
-                        "activity",
-                        () => client(`/api/journey/${props.id}/activity`),
-                    );
-                    activityStore.setActivities(activityData.value);
+                    activityStore.addActivity(response._data);
+                    activityStore.setNewActivity(response._data);
                 }
             },
             async onRequestError() {
@@ -430,7 +513,7 @@ function setSelectedDate(date: Date) {
                         <FormTimeInput
                             id="duration"
                             name="duration"
-                            :value="estimated_duration"
+                            :value="estimatedDuration"
                             :disabled="onlyShowRef"
                             translation-key="form.input.activity.duration"
                             class="order-2 col-span-1 w-full sm:col-span-2 sm:w-5/6 sm:justify-self-end"
@@ -533,7 +616,7 @@ function setSelectedDate(date: Date) {
                             id="opening-hours"
                             name="open"
                             :disabled="onlyShowRef"
-                            :value="opening_hours"
+                            :value="openingHours"
                             translation-key="form.input.activity.opening-hours"
                             input-type="textarea"
                             custom-class="h-full"

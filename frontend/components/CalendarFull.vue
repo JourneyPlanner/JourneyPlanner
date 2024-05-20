@@ -47,9 +47,26 @@ const props = defineProps({
         type: Number,
         required: true,
     },
+    journeyStartdate: {
+        type: String,
+        required: true,
+    },
+    journeyEnddate: {
+        type: String,
+        required: true,
+    },
+    duringJourney: {
+        type: Boolean,
+        required: true,
+    },
+    journeyEnded: {
+        type: Boolean,
+        required: true,
+    },
 });
 const activityId = ref("");
 const calendarId = ref("");
+const calendarActivity = ref();
 const onlyShow = ref(true);
 const update = ref(false);
 const calendarClicked = ref(false);
@@ -202,6 +219,16 @@ async function removeFromCalendar() {
     );
 }
 
+let start = undefined;
+const beginDate = new Date(props.journeyStartdate);
+const endDate = new Date(props.journeyEnddate);
+if (props.duringJourney) {
+    start = new Date();
+} else if (props.journeyEnded) {
+    start = new Date(props.journeyEnddate);
+} else {
+    start = new Date(props.journeyStartdate);
+}
 const calendarOptions = reactive({
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
     initialView: window.innerWidth < 765 ? "dayGridThreeWeek" : "fullweek",
@@ -263,6 +290,11 @@ const calendarOptions = reactive({
     allDaySlot: false,
     timeZone: "local",
     droppable: true,
+    initialDate: start,
+    validRange: {
+        start: beginDate,
+        end: endDate,
+    },
     editable: true,
     views: {
         fullweek: {
@@ -422,7 +454,8 @@ async function editDrop(info: EventObject) {
     const newDuration =
         hours.toString().padStart(2, "0") +
         ":" +
-        minutes.toString().padStart(2, "0");
+        minutes.toString().padStart(2, "0") +
+        ":00";
 
     await client(
         `/api/journey/${props.id}/activity/${activityId}/calendarActivity/${id.value}`,
@@ -511,6 +544,12 @@ function showData(info: EventObject) {
             phone.value = activity.phone;
             updated_at.value = activity.updated_at;
             isActivityInfoVisible.value = true;
+            calendarActivity.value = activities.value[
+                activities.value.indexOf(activity)
+            ].calendar_activities.filter(
+                (calendar_activity: CalendarActivity) =>
+                    calendar_activity.id === calendarId.value,
+            )[0];
         }
     });
 }
@@ -572,7 +611,7 @@ async function editCalendarActivity(name: string) {
                 :only-show="onlyShow"
                 :address="address"
                 :cost="cost"
-                :calendar-activity="true"
+                :calendar-activity="calendarActivity"
                 :created-at="created_at"
                 :description="description"
                 :email="email"

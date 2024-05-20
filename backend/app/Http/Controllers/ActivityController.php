@@ -38,7 +38,7 @@ class ActivityController extends Controller
         // Validate the request
         $validated = $request->validate([
             "name" => "required|string",
-            "estimated_duration" => "required|date_format:H:i",
+            "estimated_duration" => "required|date_format:H:i:s",
             "mapbox_id" => "nullable|string",
             "mapbox_full_address" => "nullable|string",
             "address" => "nullable|string",
@@ -61,7 +61,30 @@ class ActivityController extends Controller
             array_key_exists("address", $validated) &&
             $validated["address"]
         ) {
-            $validated["mapbox_full_address"] = $validated["address"];
+            $searchData = [];
+            $searchResponse = Http::get(
+                "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
+                    urlencode($validated["address"]) .
+                    "&proximity=" .
+                    ($journey->longitude ? $journey->longitude : 0) .
+                    "," .
+                    ($journey->latitude ? $journey->latitude : 0) .
+                    "&limit=1&access_token=" .
+                    config("map.mapbox_api_key")
+            );
+            $searchData = $searchResponse->json();
+
+            if (
+                array_key_exists("features", $searchData) &&
+                count($searchData["features"]) !== 0
+            ) {
+                $validated["mapbox_full_address"] =
+                    $searchData["features"][0]["properties"]["full_address"];
+                $validated["mapbox_id"] =
+                    $searchData["features"][0]["properties"]["mapbox_id"];
+            } else {
+                $validated["mapbox_full_address"] = $validated["address"];
+            }
         }
 
         // Create the activity
@@ -76,9 +99,13 @@ class ActivityController extends Controller
             $geocodingData = [];
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
-                    $validated["mapbox_full_address"] .
-                    "&permanent=true&autocomplete=false&limit=1&access_token=" .
-                    env("MAPBOX_API_KEY")
+                    urlencode($validated["mapbox_full_address"]) .
+                    "&proximity=" .
+                    ($journey->longitude ? $journey->longitude : 0) .
+                    "," .
+                    ($journey->latitude ? $journey->latitude : 0) .
+                    "&permanent=true&autocomplete=true&limit=1&access_token=" .
+                    config("map.mapbox_api_key")
             );
             $geocodingData = $geocodingResponse->json();
 
@@ -105,7 +132,7 @@ class ActivityController extends Controller
         // Create the calendar activity if the date is provided
         if (array_key_exists("date", $validated) && $validated["date"]) {
             if (!array_key_exists("time", $validated) || !$validated["time"]) {
-                $validated["time"] = "00:00";
+                $validated["time"] = "00:00:00";
             }
 
             $start = new DateTime(
@@ -115,10 +142,12 @@ class ActivityController extends Controller
             $end->add(
                 new DateInterval(
                     "PT" .
-                        substr($activity->estimated_duration, 0, 2) .
+                        substr($validated["estimated_duration"], 0, 2) .
                         "H" .
-                        substr($activity->estimated_duration, 3) .
-                        "M"
+                        substr($validated["estimated_duration"], 3, 2) .
+                        "M" .
+                        substr($validated["estimated_duration"], 6) .
+                        "S"
                 )
             );
 
@@ -156,7 +185,7 @@ class ActivityController extends Controller
         // Validate the request
         $validated = $request->validate([
             "name" => "required|string",
-            "estimated_duration" => "required|date_format:H:i",
+            "estimated_duration" => "required|date_format:H:i:s",
             "mapbox_id" => "nullable|string",
             "mapbox_full_address" => "nullable|string",
             "address" => "nullable|string",
@@ -171,21 +200,55 @@ class ActivityController extends Controller
         ]);
 
         $oldMapboxFullAddress = $activity->mapbox_full_address;
+        $oldAddress = $activity->address;
 
-        if (
-            array_key_exists("mapbox_full_address", $validated) &&
-            $validated["mapbox_full_address"] !== $oldMapboxFullAddress
-        ) {
-            $validated["address"] = "";
-        } elseif (
-            array_key_exists("address", $validated) &&
-            $validated["address"]
-        ) {
-            $validated["mapbox_full_address"] = $validated["address"];
+        if (array_key_exists("mapbox_full_address", $validated)) {
+            if ($validated["mapbox_full_address"] !== $oldMapboxFullAddress) {
+                $validated["address"] = "";
+            }
+        } elseif (array_key_exists("address", $validated)) {
+            if ($validated["address"] !== $oldAddress) {
+                $searchData = [];
+                $searchResponse = Http::get(
+                    "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
+                        urlencode($validated["address"]) .
+                        "&proximity=" .
+                        ($journey->longitude ? $journey->longitude : 0) .
+                        "," .
+                        ($journey->latitude ? $journey->latitude : 0) .
+                        "&limit=1&access_token=" .
+                        config("map.mapbox_api_key")
+                );
+                $searchData = $searchResponse->json();
+
+                if (
+                    array_key_exists("features", $searchData) &&
+                    count($searchData["features"]) !== 0
+                ) {
+                    $validated["mapbox_full_address"] =
+                        $searchData["features"][0]["properties"][
+                            "full_address"
+                        ];
+                    $validated["mapbox_id"] =
+                        $searchData["features"][0]["properties"]["mapbox_id"];
+                } else {
+                    $validated["mapbox_full_address"] = $validated["address"];
+                }
+            } else {
+                $validated["mapbox_full_address"] = $oldMapboxFullAddress;
+            }
+        } else {
+            $validated["mapbox_full_address"] = $oldMapboxFullAddress;
         }
 
         // Update the activity
         $activity->update($validated);
+
+        if ($oldMapboxFullAddress !== $validated["mapbox_full_address"]) {
+            $activity->longitude = null;
+            $activity->latitude = null;
+            $activity->mapbox_full_address = null;
+        }
 
         // Update the longitude and latitude of the address if it exists and if they have changed
         if (
@@ -196,9 +259,13 @@ class ActivityController extends Controller
             $geocodingData = [];
             $geocodingResponse = Http::get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
-                    $validated["mapbox_full_address"] .
-                    "&permanent=true&autocomplete=false&limit=1&access_token=" .
-                    env("MAPBOX_API_KEY")
+                    urlencode($validated["mapbox_full_address"]) .
+                    "&proximity=" .
+                    ($journey->longitude ? $journey->longitude : 0) .
+                    "," .
+                    ($journey->latitude ? $journey->latitude : 0) .
+                    "&permanent=true&autocomplete=true&limit=1&access_token=" .
+                    config("map.mapbox_api_key")
             );
             $geocodingData = $geocodingResponse->json();
 
@@ -213,8 +280,8 @@ class ActivityController extends Controller
                     $geocodingData["geometry"]["coordinates"][1];
                 $activity->mapbox_full_address =
                     $geocodingData["properties"]["full_address"];
-                if ($validated["address"] = "") {
-                    $activity->address ===
+                if ($validated["address"] === "") {
+                    $activity->address =
                         $geocodingData["properties"]["full_address"];
                 }
             }
@@ -225,7 +292,7 @@ class ActivityController extends Controller
         // Create the calendar activity if the date is provided
         if (array_key_exists("date", $validated) && $validated["date"]) {
             if (!array_key_exists("time", $validated) || !$validated["time"]) {
-                $validated["time"] = "00:00";
+                $validated["time"] = "00:00:00";
             }
 
             $start = new DateTime(
@@ -235,10 +302,12 @@ class ActivityController extends Controller
             $end->add(
                 new DateInterval(
                     "PT" .
-                        substr($activity->estimated_duration, 0, 2) .
+                        substr($validated["estimated_duration"], 0, 2) .
                         "H" .
-                        substr($activity->estimated_duration, 3) .
-                        "M"
+                        substr($validated["estimated_duration"], 3, 2) .
+                        "M" .
+                        substr($validated["estimated_duration"], 6) .
+                        "S"
                 )
             );
 
