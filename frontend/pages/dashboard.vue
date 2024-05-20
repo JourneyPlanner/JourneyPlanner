@@ -16,6 +16,7 @@ interface Journey {
     id: string;
     name: string;
     destination: string;
+    mapbox_full_address: string;
     from: Date;
     to: Date;
     role: number;
@@ -352,6 +353,7 @@ function editJourney(journey: Journey, id: string) {
         </TieredMenu>
         <ConfirmDialog
             :draggable="false"
+            group="dashboard"
             :pt="{
                 header: {
                     class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',

@@ -14,17 +14,17 @@ const props = defineProps({
     address: { type: String, default: "" },
     onlyShow: { type: Boolean, default: false },
     cost: { type: String, default: "" },
-    created_at: { type: String, default: "" },
+    createdAt: { type: String, default: "" },
     description: { type: String, default: "" },
     email: { type: String, default: "" },
-    estimated_duration: { type: String, default: "" },
-    journey_id: { type: String, default: "" },
+    estimatedDuration: { type: String, default: "" },
+    journeyId: { type: String, default: "" },
     latitude: { type: String, default: "" },
     longitude: { type: String, default: "" },
     link: { type: String, default: "" },
-    mapbox_id: { type: String, default: "" },
+    mapboxId: { type: String, default: "" },
     name: { type: String, default: "" },
-    opening_hours: { type: String, default: "" },
+    openingHours: { type: String, default: "" },
     phone: { type: String, default: "" },
     updated_at: { type: String, default: "" },
     update: { type: Boolean, default: false },
@@ -131,7 +131,7 @@ const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 
 async function onSuccess(values: ActivityForm) {
     const durationDate = new Date(values.duration);
-    const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}`;
+    const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}:00`;
 
     let date = undefined;
     let time = undefined;
@@ -180,11 +180,10 @@ async function onSuccess(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
-                    const { data: activityData } = await useAsyncData(
-                        "activity",
-                        () => client(`/api/journey/${props.id}/activity`),
+                    activityStore.updateActivity(
+                        response._data,
+                        props.activityId,
                     );
-                    activityStore.setActivities(activityData.value);
                 }
             },
             async onRequestError() {
@@ -224,11 +223,7 @@ async function onSuccess(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
-                    const { data: activityData } = await useAsyncData(
-                        "activity",
-                        () => client(`/api/journey/${props.id}/activity`),
-                    );
-                    activityStore.setActivities(activityData.value);
+                    activityStore.addActivity(response._data);
                 }
             },
             async onRequestError() {
@@ -357,33 +352,24 @@ function setSelectedDate(date: Date) {
                         <FormTimeInput
                             id="duration"
                             name="duration"
-                            :value="estimated_duration"
+                            :value="estimatedDuration"
                             :disabled="onlyShow"
                             translation-key="form.input.activity.duration"
                             class="order-2 col-span-1 w-full sm:col-span-2 sm:w-5/6 sm:justify-self-end"
                             :default-time="new Array(0, 30)"
                         />
                         <div
-                            v-if="!onlyShow"
                             class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
                         >
                             <label class="text-sm font-medium md:text-base">
                                 <T key-name="form.input.activity.address" />
                             </label>
-                            <FormAddressInput name="address" />
+                            <FormAddressInput
+                                name="address"
+                                :value="address"
+                                :disabled="onlyShow"
+                            />
                         </div>
-
-                        <FormClassicInputIcon
-                            v-if="onlyShow"
-                            id="address"
-                            name="address"
-                            :value="address"
-                            :disabled="onlyShow"
-                            translation-key="form.input.activity.address"
-                            icon="pi-map-marker"
-                            :icon-pos-is-left="true"
-                            class="order-4 col-span-full flex flex-col sm:order-3 sm:col-span-3"
-                        />
 
                         <FormClassicInputIcon
                             id="costs"
@@ -460,7 +446,7 @@ function setSelectedDate(date: Date) {
                             id="opening-hours"
                             name="open"
                             :disabled="onlyShow"
-                            :value="opening_hours"
+                            :value="openingHours"
                             translation-key="form.input.activity.opening-hours"
                             input-type="textarea"
                             custom-class="h-full"

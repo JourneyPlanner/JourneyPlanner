@@ -18,7 +18,15 @@ class Journey extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ["name", "destination", "from", "to", "invite"];
+    protected $fillable = [
+        "name",
+        "destination",
+        "from",
+        "to",
+        "invite",
+        "mapbox_id",
+        "mapbox_full_address",
+    ];
 
     /**
      * The attributes that should be cast.
@@ -57,6 +65,8 @@ class Journey extends Model
             "destination" => "required|string",
             "from" => "required|date",
             "to" => "required|date",
+            "mapbox_id" => "nullable|string",
+            "mapbox_full_address" => "nullable|string",
         ];
     }
 

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
-import Toast from "primevue/toast";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 
@@ -98,7 +97,6 @@ async function registerUser(userData: object) {
 
 <template>
     <div>
-        <Toast class="w-3/4 sm:w-auto" />
         <div
             class="flex w-full items-center justify-center font-nunito dark:bg-background-dark"
         >

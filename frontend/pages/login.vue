@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
-import Toast from "primevue/toast";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 
@@ -87,7 +86,6 @@ async function loginUser(userData: User) {
     <div
         class="flex w-full items-center justify-center font-nunito dark:bg-background-dark"
     >
-        <Toast class="w-3/4 sm:w-auto" />
         <div class="dark:background-dark h-[90vh] w-0 sm:w-0 md:w-1/4 xl:w-1/3">
             <SvgCloud
                 class="z-50 -ml-24 mt-[20vh] w-0 overflow-hidden object-none dark:fill-clouds-bg md:w-[80%] xl:w-[50%]"

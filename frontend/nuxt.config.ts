@@ -4,6 +4,9 @@ export default defineNuxtConfig({
     typescript: {
         typeCheck: true,
     },
+    future: {
+        typescriptBundlerResolution: false,
+    },
     app: {
         pageTransition: { name: "page", mode: "out-in" },
         layoutTransition: { name: "page", mode: "out-in" },
@@ -21,6 +24,7 @@ export default defineNuxtConfig({
         "nuxt-auth-sanctum",
         "@pinia/nuxt",
         "@nuxt/eslint",
+        "nuxt-mapbox",
     ],
     css: [
         "@/assets/css/fonts/fonts.css",
@@ -71,6 +75,8 @@ export default defineNuxtConfig({
                 "InputIcon",
                 "IconField",
                 "ProgressSpinner",
+                "DataTable",
+                "Column",
             ],
         },
     },
@@ -94,5 +100,9 @@ export default defineNuxtConfig({
             onAuthOnly: "/login",
             onGuestOnly: "/dashboard",
         },
+    },
+    mapbox: {
+        accessToken: process.env.NUXT_MAPBOX_API_KEY,
+        persistent: false,
     },
 });

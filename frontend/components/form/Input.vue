@@ -29,7 +29,7 @@ defineEmits(["input"]);
             :type="type || 'text'"
             :name="name"
             :autocomplete="autocomplete || 'off'"
-            class="placeholder:text-transparent text-md peer w-full rounded-lg border-2 border-border bg-input px-2.5 pb-1 pt-4 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-white"
+            class="placeholder:text-transparent peer w-full rounded-lg border-2 border-border bg-input px-2.5 pb-1 pt-4 text-base font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-white"
             placeholder=" "
             @focus="isFocused = true"
             @blur="isFocused = false"
