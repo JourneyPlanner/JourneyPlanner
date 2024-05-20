@@ -366,6 +366,10 @@ onMounted(() => {
     );
 });
 
+/**
+ * when activity is dragged into calendar or manually added this funciton will save it to the database
+ * @param info -- the event object with data about the activity
+ */
 async function initializeDrop(info: EventObject) {
     const calApi = fullCalendar.value.getApi();
     if (info.event._def.extendedProps.defId === undefined) {
@@ -433,6 +437,10 @@ async function initializeDrop(info: EventObject) {
     info.event.remove();
 }
 
+/**
+ * when event is resized this function will update the activity in the database
+ * @param info -- the event object with data about the activity
+ */
 async function editDrop(info: EventObject) {
     const activityId = info.event._def.extendedProps.activity_id;
     const id = ref(info.event._def.publicId);
@@ -514,6 +522,10 @@ async function editDrop(info: EventObject) {
     }
 }
 
+/**
+ * set the data of the activity in the dialog
+ * @param info -- the event object with data about the activity
+ */
 function showData(info: EventObject) {
     activityId.value = info.event._def.extendedProps.activity_id;
     calendarId.value = info.event._def.publicId;
@@ -553,6 +565,10 @@ function showData(info: EventObject) {
     });
 }
 
+/**
+ * when activity was edited in the dialog this function will update the activity in the calendar
+ * @param name -- the name of the activity
+ */
 async function editCalendarActivity(name: string) {
     const calApi = fullCalendar.value.getApi();
     activities.value.forEach((activity: Activity) => {
@@ -586,6 +602,11 @@ async function editCalendarActivity(name: string) {
     });
 }
 
+/**
+ * when activity was already in the calendar and then moved manually via the dialog this function will update the location of the activity in the calendar
+ * @param start -- the start date of the activity
+ * @param end -- the end date of the activity
+ */
 function moveActivity(start: Date, end: Date) {
     const calApi = fullCalendar.value.getApi();
     calApi.getEventById(calendarId.value).setStart(start);
