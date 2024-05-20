@@ -23,7 +23,7 @@ if (
 ) {
     text = fullConfig.theme.accentColor["natural-50"] as string;
     bg = fullConfig.theme.accentColor["dark"] as string;
-    border = "#327597";
+    border = "#50A1C0";
 } else {
     text = fullConfig.theme.accentColor["text"] as string;
     bg = fullConfig.theme.accentColor["light"] as string;

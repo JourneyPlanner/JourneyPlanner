@@ -497,7 +497,7 @@ function setSelectedDate(date: Date) {
                             <FormAddressInput
                                 name="address"
                                 :value="address"
-                                :disabled="onlyShow && !create"
+                                :disabled="onlyShowRef && !create"
                             />
                         </div>
 
