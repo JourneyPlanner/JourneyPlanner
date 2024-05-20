@@ -245,21 +245,6 @@ async function changeRole(userid: string, selectedRole: number) {
 
 <template>
     <div class="flex flex-col font-nunito text-text dark:text-white">
-        <ConfirmDialog
-            :draggable="false"
-            group="journey"
-            :pt="{
-                header: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-                content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-                footer: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-            }"
-        />
         <Sidebar
             v-model:visible="visibleSidebar"
             position="right"
@@ -841,5 +826,20 @@ async function changeRole(userid: string, selectedRole: number) {
             :journey-enddate="journeyData.to"
         />
         <ActivityMap v-if="activityDataLoaded" />
+        <ConfirmDialog
+            :draggable="false"
+            group="journey"
+            :pt="{
+                header: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                content: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                footer: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+            }"
+        />
     </div>
 </template>

@@ -108,6 +108,7 @@ const confirmDelete = () => {
     confirm.require({
         header: t.value("activity.delete.header"),
         message: t.value("activity.delete.confirm"),
+        group: "journey",
         icon: "pi pi-exclamation-triangle",
         rejectClass: "hover:underline",
         acceptClass:
@@ -132,6 +133,7 @@ const confirmRemoveFromCalendar = () => {
     confirm.require({
         header: t.value("activity.remove.header"),
         message: t.value("activity.remove.confirm"),
+        group: "journey",
         icon: "pi pi-exclamation-triangle",
         rejectClass: "hover:underline",
         acceptClass:

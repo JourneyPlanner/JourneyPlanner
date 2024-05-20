@@ -614,7 +614,7 @@ function moveActivity(start: Date, end: Date) {
             class="flex w-[90%] flex-col items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
             <div class="mt-10 w-full justify-start">
-                <div class="-mb-2.5 text-2xl font-semibold lg:mb-3">
+                <div class="text-2xl font-semibold lg:mb-3">
                     <T key-name="journey.calendar" />
                 </div>
             </div>
@@ -665,6 +665,9 @@ function moveActivity(start: Date, end: Date) {
         align-items: center;
         justify-content: center;
     }
+    .fc .fc-toolbar.fc-header-toolbar {
+        margin-bottom: 1rem;
+    }
 
     .fc .fc-button {
         height: 35px;
@@ -692,6 +695,10 @@ function moveActivity(start: Date, end: Date) {
         grid-column: span 3 / span 3;
         margin-left: 0px;
         font-size: 1rem !important;
+    }
+
+    .fc .fc-toolbar-chunk:has(.fc-button-primary) {
+        margin-top: 0.5rem;
     }
 }
 
