@@ -252,21 +252,6 @@ async function changeRole(userid: string, selectedRole: number) {
 
 <template>
     <div class="flex flex-col font-nunito text-text dark:text-white">
-        <ConfirmDialog
-            :draggable="false"
-            group="journey"
-            :pt="{
-                header: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-                content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-                footer: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-            }"
-        />
         <Sidebar
             v-model:visible="visibleSidebar"
             position="right"
@@ -833,9 +818,35 @@ async function changeRole(userid: string, selectedRole: number) {
         <ActivityDialog
             :id="journeyId.toString()"
             :visible="isActivityDialogVisible"
+            :only-show="false"
+            :create="true"
+            :create-address="true"
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
+        <CalendarFull
+            :id="journeyId.toString()"
+            :current-user-role="currUser.role"
+            :journey-ended="journeyEnded"
+            :during-journey="duringJourney"
+            :journey-startdate="journeyData.from"
+            :journey-enddate="journeyData.to"
+        />
         <ActivityMap v-if="activityDataLoaded" />
+        <ConfirmDialog
+            :draggable="false"
+            group="journey"
+            :pt="{
+                header: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                content: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                footer: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+            }"
+        />
     </div>
 </template>

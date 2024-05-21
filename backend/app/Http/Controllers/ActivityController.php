@@ -177,10 +177,9 @@ class ActivityController extends Controller
                 "end" => $end,
             ]);
             $calendarActivity->save();
-            return response()->json($activity->load("calendarActivities"), 201);
         }
 
-        return response()->json($activity, 201);
+        return response()->json($activity->load("calendarActivities"), 201);
     }
 
     /**
@@ -355,10 +354,9 @@ class ActivityController extends Controller
                 "end" => $end,
             ]);
             $calendarActivity->save();
-            return response()->json($activity->load("calendarActivities"), 201);
         }
 
-        return response()->json($activity, 201);
+        return response()->json($activity->load("calendarActivities"), 201);
     }
 
     /**
