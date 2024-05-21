@@ -31,7 +31,7 @@ const uppy = new Uppy({
     meta: { journey: journey.getId() },
     locale: locale,
 }).use(Tus, {
-    endpoint: config.public.NUXT_BACKEND_URL + "/upload",
+    endpoint: config.public.NUXT_BACKEND_URL + "/upload/files",
     headers: {
         Authorization: "Bearer " + token,
     },
