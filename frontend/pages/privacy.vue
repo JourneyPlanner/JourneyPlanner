@@ -9,7 +9,7 @@
             </button>
         </div>
         <div class="font-nunito text-text dark:text-natural-50">
-            <div class="mx-5 mt-7 flex flex-col sm:mx-20 lg:mx-52 xl:mx-96">
+            <div class="mx-5 mt-2 flex flex-col sm:mx-20 lg:mx-52 xl:mx-96">
                 <h4 class="mb-5 text-center text-3xl font-bold">
                     <T key-name="common.privacypolicy" />
                 </h4>
