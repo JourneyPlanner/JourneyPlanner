@@ -172,10 +172,12 @@ function editJourney(journey: Journey, id: string) {
 </script>
 
 <template>
-    <div class="px-2 font-nunito text-text dark:text-white md:px-8 lg:px-20">
+    <div
+        class="px-2 font-nunito text-text dark:text-natural-50 md:px-8 lg:px-20"
+    >
         <div
             id="header"
-            class="mt-5 flex items-center justify-between border-b-2 border-border pb-3 md:pb-5"
+            class="mt-5 flex items-center justify-between border-b-2 border-calypso-400 pb-3 md:pb-5"
         >
             <div class="flex flex-row items-center">
                 <SvgDashboardIcon class="mr-1 mt-0.5 md:h-9 md:w-9" />
@@ -186,7 +188,7 @@ function editJourney(journey: Journey, id: string) {
             <div id="right-header" class="flex flex-row items-center">
                 <div
                     id="search-and-filter"
-                    class="mr-4 hidden flex-row border-r-2 border-border-grey lg:flex"
+                    class="mr-4 hidden flex-row border-r-2 border-natural-200 lg:flex"
                 >
                     <div
                         id="search"
@@ -200,7 +202,7 @@ function editJourney(journey: Journey, id: string) {
                             ref="searchInput"
                             v-model="searchValue"
                             type="text"
-                            class="rounded-3xl border border-border-grey bg-input px-3 py-1.5 placeholder-input-placeholder focus:outline-none focus:ring-1 focus:ring-cta-border dark:border-input-dark dark:bg-input-dark dark:placeholder-text-light-dark"
+                            class="rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200"
                             :placeholder="t('dashboard.search')"
                             @input="searchJourneys"
                         />
@@ -224,7 +226,7 @@ function editJourney(journey: Journey, id: string) {
                     class="mr-2.5 hidden flex-row items-center lg:flex"
                 >
                     <button
-                        class="flex flex-row rounded-xl border-2 border-cta-border bg-cta-bg px-4 py-1 font-semibold text-text dark:border-cta-bg-fill dark:bg-cta-bg-fill"
+                        class="flex flex-row rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text dark:border-ronchi-300 dark:bg-ronchi-300"
                     >
                         <SvgCreateNewJourneyIcon
                             class="mr-1 h-5 w-5 fill-text"
@@ -255,7 +257,7 @@ function editJourney(journey: Journey, id: string) {
                         ref="searchInputMobile"
                         v-model="searchValue"
                         type="text"
-                        class="w-40 rounded-3xl border border-border-grey bg-input px-3 py-1.5 placeholder-input-placeholder focus:outline-none focus:ring-1 focus:ring-cta-border dark:border-input-dark dark:bg-input-dark dark:placeholder-text-light-dark md:w-52"
+                        class="w-40 rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200 md:w-52"
                         :placeholder="t('dashboard.search')"
                         @input="searchJourneys"
                     />
@@ -269,7 +271,7 @@ function editJourney(journey: Journey, id: string) {
                 class="flex flex-row items-center justify-center"
             >
                 <button
-                    class="flex flex-row items-center justify-center rounded-xl border-2 border-cta-border bg-cta-bg px-2 py-1 font-semibold text-text dark:border-cta-bg-fill dark:bg-cta-bg-fill md:px-4"
+                    class="flex flex-row items-center justify-center rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 font-semibold text-text dark:border-dandelion-300 dark:bg-ronchi-300 md:px-4"
                 >
                     <SvgCreateNewJourneyIcon class="mr-1 h-5 w-5 fill-text" />
                     <T key-name="dashboard.new" />
@@ -305,10 +307,10 @@ function editJourney(journey: Journey, id: string) {
                     />
                     <SvgCreateNewJourneyCardDark class="hidden dark:lg:block" />
                     <div
-                        class="flex h-32 min-w-36 flex-grow items-center justify-center rounded-md border border-cta-border bg-cta-bg-light dark:bg-cta-bg-dark lg:hidden"
+                        class="flex h-32 min-w-36 flex-grow items-center justify-center rounded-md border border-dandelion-300 bg-dandelion-100 dark:bg-pesto-600 lg:hidden"
                     >
                         <SvgCreateNewJourneyIcon
-                            class="h-14 w-14 fill-text dark:fill-white"
+                            class="h-14 w-14 fill-text dark:fill-natural-50"
                         />
                     </div>
                 </NuxtLink>
@@ -319,7 +321,7 @@ function editJourney(journey: Journey, id: string) {
             ref="menu"
             :model="items"
             popup
-            class="rounded-xl bg-input dark:bg-input-dark"
+            class="rounded-xl border-2 border-natural-200 bg-natural-50 dark:border-natural-900 dark:bg-natural-800"
             :pt="{
                 menuitem: {
                     class: 'bg-input dark:bg-input-dark hover:bg-cta-bg rounded-md',
@@ -329,20 +331,18 @@ function editJourney(journey: Journey, id: string) {
             }"
         >
             <template #start>
-                <h1
-                    class="ml-2 text-sm text-input-placeholder dark:text-text-light-dark"
-                >
+                <h1 class="ml-2 text-sm text-natural-400 dark:text-natural-200">
                     <T key-name="dashboard.sort.header" />
                 </h1>
                 <Divider
                     type="solid"
-                    class="mb-1 mt-1 border-b text-[#CCCCCC]"
+                    class="mb-1 mt-1 border-b text-[#E3E3E3]"
                 />
             </template>
             <template #item="{ item, props, hasSubmenu }">
                 <a
                     v-ripple
-                    class="align-items-center flex rounded-md bg-input text-sm text-text hover:bg-cta-bg-light dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
+                    class="align-items-center flex rounded-md bg-natural-50 text-sm text-text hover:bg-dandelion-100 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
                     v-bind="props.action"
                 >
                     <span :class="item.icon" />

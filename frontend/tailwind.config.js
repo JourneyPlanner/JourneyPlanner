@@ -70,11 +70,6 @@ export default {
             "border-green-save-dark": "#79AC38",
             "fill-green-save-dark": "rgba(131, 165, 119, 0.6)",
             "fill-green-save": "#DEF9BD",
-            "gradient-start": "#E3F1F6" /* gradient start */,
-            "gradient-end": "#C6E1EC" /* gradient end */,
-            "gradient-start-light": "#F2FCFF" /* light gradient start */,
-            "gradient-start-dark": "#95c0d2" /* dark gradient start */,
-            "gradient-end-dark": "#699fb4" /* dark gradient end */,
             "color-gray-200": "#373737",
             "chip-blue": "#B0D9EC" /* blue chip */,
             "chip-grey": "#E8E8E8" /* grey chip */,
@@ -90,6 +85,11 @@ export default {
             "background-dark": "#2c2c2c" /* dark background color */,
             "clouds-bg": "#f0f0f0" /* clouds background*/,
             "marker-not-added": "#8CA5B0",
+            "gradient-start": "#E3F1F6" /* gradient start */,
+            "gradient-end": "#C6E1EC" /* gradient end */,
+            "gradient-start-light": "#F2FCFF" /* light gradient start */,
+            "gradient-start-dark": "#95c0d2" /* dark gradient start */,
+            "gradient-end-dark": "#699fb4" /* dark gradient end */,
 
             calypso: {
                 50: "#F0F8FB",

@@ -244,19 +244,19 @@ async function changeRole(userid: string, selectedRole: number) {
 </script>
 
 <template>
-    <div class="flex flex-col font-nunito text-text dark:text-white">
+    <div class="flex flex-col font-nunito text-text dark:text-natural-50">
         <ConfirmDialog
             :draggable="false"
             group="journey"
             :pt="{
                 header: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 font-nunito',
                 },
                 content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 font-nunito',
                 },
                 footer: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 font-nunito',
                 },
             }"
         />
@@ -266,7 +266,7 @@ async function changeRole(userid: string, selectedRole: number) {
             :pt="{
                 closeButton: { class: 'w-9 h-9 dark:fill-white' },
                 closeIcon: {
-                    class: 'w-7 h-7 text-text-disabled dark:text-white',
+                    class: 'w-7 h-7 text-natural-600 dark:text-natural-50',
                 },
                 header: { class: 'p-2 flex items-center' },
                 content: { class: 'pl-3 pr-2 py-2' },
@@ -275,24 +275,24 @@ async function changeRole(userid: string, selectedRole: number) {
         >
             <template #header>
                 <span
-                    class="pi pi-sign-out order-1 pr-2 text-xl text-text hover:cursor-pointer hover:text-error dark:text-input dark:hover:text-error-dark"
+                    class="pi pi-sign-out order-1 pr-2 text-xl text-text hover:cursor-pointer hover:text-mahagony-600 dark:text-natural-50 dark:hover:text-mahagony-300"
                     @click="confirmLeave($event)"
                 />
             </template>
-            <div class="text-xl font-medium text-text dark:text-white">
+            <div class="text-xl font-medium text-text dark:text-natural-50">
                 <T key-name="sidebar.invite.link" />
             </div>
             <div
-                class="flex items-center border-b-2 border-border-grey pb-4 dark:border-text-disabled"
+                class="border-calypso-300-grey flex items-center border-b-2 pb-4 dark:border-text-disabled"
             >
                 <input
-                    class="w-5/6 rounded-md bg-input-disabled px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
+                    class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
                     disabled
                     :value="journeyData.invite"
                 />
                 <div class="flex w-1/5 justify-end">
                     <button
-                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-cta-border hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark"
+                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
                         @click="copyToClipboard"
                     >
                         <SvgCopy class="w-4" />
@@ -300,7 +300,7 @@ async function changeRole(userid: string, selectedRole: number) {
                 </div>
             </div>
             <div
-                class="flex flex-row items-center justify-center border-b border-border-grey pb-1 pt-1 dark:border-input-placeholder"
+                class="border-calypso-300-grey flex flex-row items-center justify-center border-b pb-1 pt-1 dark:border-natural-400"
             >
                 <h1 class="w-4/5 text-xl text-footer dark:text-border-grey">
                     <T key-name="journey.sidebar.list.header" />
@@ -308,7 +308,7 @@ async function changeRole(userid: string, selectedRole: number) {
                 <div class="mb-1 mt-1 flex w-1/5 items-center justify-end">
                     <button
                         v-if="currUser.role === 1"
-                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-cta-border hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark"
+                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
                         @click="editEnabled = !editEnabled"
                     >
                         <SvgEdit v-if="!editEnabled" class="w-4" />
@@ -354,12 +354,14 @@ async function changeRole(userid: string, selectedRole: number) {
                     >
                         <div class="bg-none md:w-2/5 lg:w-1/3">
                             <div
-                                class="relative flex h-10 items-center rounded-t-2xl border-x-2 border-t-2 border-border-darker bg-border dark:border-border-blue-dark dark:bg-ticket-top-dark-bg"
+                                class="relative flex h-10 items-center rounded-t-2xl border-x-2 border-t-2 border-calypso-400 bg-calypso-300 dark:border-gothic-500 dark:bg-gothic-400"
                             >
                                 <div
-                                    class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-border-gray"
+                                    class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-natural-200"
                                 />
-                                <p class="ml-16 text-xl font-bold text-white">
+                                <p
+                                    class="ml-16 text-xl font-bold text-natural-50"
+                                >
                                     JourneyPlanner
                                 </p>
                                 <div
@@ -370,7 +372,7 @@ async function changeRole(userid: string, selectedRole: number) {
                             </div>
                             <div class="flex h-5/6">
                                 <div
-                                    class="-mr-1 h-fit w-full rounded-b-2xl border-x-2 border-b-2 border-border-gray bg-background text-sm dark:border-form-input-dark dark:bg-border-dark"
+                                    class="dark:bg-calypso-300-dark -mr-1 h-fit w-full rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
                                 >
                                     <div
                                         class="mb-2 mt-1 grid w-full grid-cols-4"
@@ -382,7 +384,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                                 key-name="form.input.journey.name"
                                             />
                                             <input
-                                                class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
+                                                class="text-md mb-2 w-full rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
                                                 disabled
                                                 :value="journeyData.name"
                                             />
@@ -390,7 +392,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                                 key-name="form.input.journey.destination"
                                             />
                                             <input
-                                                class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
+                                                class="text-md mb-2 w-full rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
                                                 disabled
                                                 :value="journeyData.destination"
                                             />
@@ -398,7 +400,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                                 key-name="form.input.journey.date"
                                             />
                                             <input
-                                                class="text-md mb-2 w-5/6 rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white md:w-4/5"
+                                                class="text-md mb-2 w-5/6 rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50 md:w-4/5"
                                                 disabled
                                                 :value="
                                                     format(
@@ -415,7 +417,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                                 class="absolute right-0 z-0 w-[7.4rem]"
                                             />
                                             <div
-                                                class="absolute bottom-2 right-2 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-input-placeholder pl-1.5 pr-1.5 text-center text-xs text-input-placeholder dark:border-white dark:text-white"
+                                                class="absolute bottom-2 right-2 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-center text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
                                             >
                                                 <T key-name="journey.turn" />
                                             </div>
@@ -423,20 +425,22 @@ async function changeRole(userid: string, selectedRole: number) {
                                     </div>
                                 </div>
                                 <div
-                                    class="rounded-b-r-3xl h-[90%] w-0 border-r-2 border-dashed border-border-gray"
+                                    class="rounded-b-r-3xl h-[90%] w-0 border-r-2 border-dashed border-natural-200"
                                 />
                             </div>
                         </div>
                         <div
-                            class="absolute inset-0 h-full w-full rounded-xl bg-white text-center text-text [backface-visibility:hidden] [transform:rotateX(180deg)] dark:bg-background-dark"
+                            class="absolute inset-0 h-full w-full rounded-xl bg-natural-50 text-center text-text [backface-visibility:hidden] [transform:rotateX(180deg)] dark:bg-background-dark"
                         >
                             <div
-                                class="relative flex h-10 items-center rounded-t-2xl border-x-2 border-t-2 border-border-darker bg-border dark:border-border-blue-dark dark:bg-ticket-top-dark-bg"
+                                class="relative flex h-10 items-center rounded-t-2xl border-x-2 border-t-2 border-calypso-400 bg-calypso-300 dark:border-gothic-500 dark:bg-gothic-400"
                             >
                                 <div
-                                    class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-border-gray"
+                                    class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-natural-200"
                                 />
-                                <p class="ml-16 text-xl font-bold text-white">
+                                <p
+                                    class="ml-16 text-xl font-bold text-natural-50"
+                                >
                                     JourneyPlanner
                                 </p>
                                 <div
@@ -447,7 +451,7 @@ async function changeRole(userid: string, selectedRole: number) {
                             </div>
                             <div class="flex h-5/6">
                                 <div
-                                    class="flex h-full w-full justify-center rounded-b-2xl border-x-2 border-b-2 border-border-gray bg-background dark:border-form-input-dark dark:bg-border-dark"
+                                    class="dark:bg-calypso-300-dark flex h-full w-full justify-center rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
                                 >
                                     <div
                                         class="relative flex h-full w-full flex-col items-end"
@@ -458,7 +462,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                             alt="QR Code"
                                         />
                                         <div
-                                            class="absolute bottom-4 right-2 z-40 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-input-placeholder pl-1.5 pr-1.5 text-xs text-input-placeholder dark:border-white dark:text-white"
+                                            class="absolute bottom-4 right-2 z-40 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
                                         >
                                             <T key-name="journey.turn" />
                                         </div>
@@ -476,12 +480,12 @@ async function changeRole(userid: string, selectedRole: number) {
                 class="invisible ml-[10%] w-0 max-md:h-0 md:visible md:w-[50%] lg:ml-10 lg:w-1/3 xl:ml-[10%]"
             >
                 <div
-                    class="relative flex h-10 items-center rounded-t-3xl border-x-2 border-t-2 border-border-darker bg-border dark:border-border-blue-dark dark:bg-ticket-top-dark-bg"
+                    class="relative flex h-10 items-center rounded-t-3xl border-x-2 border-t-2 border-calypso-400 bg-calypso-300 dark:border-gothic-500 dark:bg-gothic-400"
                 >
                     <div
-                        class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-border-gray"
+                        class="bg-calypso-300-gray absolute ml-5 inline-block h-7 w-7 self-center rounded-full"
                     />
-                    <p class="ml-14 text-xl font-bold text-white">
+                    <p class="ml-14 text-xl font-bold text-natural-50">
                         JourneyPlanner
                     </p>
                     <div class="flex h-full w-full items-center justify-end">
@@ -490,7 +494,7 @@ async function changeRole(userid: string, selectedRole: number) {
                 </div>
                 <div class="flex h-[13.5rem] lg:h-[15.5rem]">
                     <div
-                        class="w-full rounded-b-3xl border-b-2 border-l-2 border-border-gray bg-background dark:border-form-input-dark dark:bg-border-dark"
+                        class="dark:bg-calypso-300-dark w-full rounded-b-3xl border-b-2 border-l-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
                     >
                         <div class="relative grid w-full grid-cols-4">
                             <div
@@ -498,19 +502,19 @@ async function changeRole(userid: string, selectedRole: number) {
                             >
                                 <T key-name="form.input.journey.name" />
                                 <input
-                                    class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
+                                    class="text-md mb-2 w-full rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
                                     disabled
                                     :value="journeyData.name"
                                 />
                                 <T key-name="form.input.journey.destination" />
                                 <input
-                                    class="text-md mb-2 w-full rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white"
+                                    class="text-md mb-2 w-full rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
                                     disabled
                                     :value="journeyData.destination"
                                 />
                                 <T key-name="form.input.journey.date" />
                                 <input
-                                    class="text-md mb-2 rounded-md bg-input-gray px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-input-disabled-dark dark:text-white md:w-5/6 lg:w-2/3"
+                                    class="text-md mb-2 rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50 md:w-5/6 lg:w-2/3"
                                     disabled
                                     :value="
                                         format(fromDate, 'dd/MM/yyyy') +
@@ -529,15 +533,15 @@ async function changeRole(userid: string, selectedRole: number) {
                         </div>
                     </div>
                     <div
-                        class="rounded-b-r-3xl h-[90%] w-0 border-r-2 border-dashed border-border-gray"
+                        class="rounded-b-r-3xl h-[90%] w-0 border-r-2 border-dashed border-natural-200"
                     />
                 </div>
             </div>
             <div
-                class="invisible w-0 rounded-3xl border-solid bg-background dark:bg-border-dark max-md:h-0 md:visible md:h-64 md:w-64 lg:h-72 lg:w-72"
+                class="dark:bg-calypso-300-dark invisible w-0 rounded-3xl border-solid bg-background dark:bg-dark max-md:h-0 md:visible md:h-64 md:w-64 lg:h-72 lg:w-72"
             >
                 <div
-                    class="h-10 rounded-t-3xl border-x-2 border-t-2 border-border-darker bg-border dark:border-border-blue-dark dark:bg-ticket-top-dark-bg"
+                    class="h-10 rounded-t-3xl border-x-2 border-t-2 border-calypso-400 bg-calypso-300 dark:border-gothic-500 dark:bg-gothic-400"
                 >
                     <div class="flex h-full w-full items-center justify-end">
                         <SvgAirplaneIcon class="mr-5 w-7" />
@@ -545,10 +549,10 @@ async function changeRole(userid: string, selectedRole: number) {
                 </div>
                 <div class="flex h-[13.5rem] lg:h-[15.5rem]">
                     <div
-                        class="rounded-b-l-3xl h-[90%] w-0 border-l-2 border-dashed border-border-gray"
+                        class="rounded-b-l-3xl h-[90%] w-0 border-l-2 border-dashed border-natural-200"
                     />
                     <div
-                        class="flex h-full w-full justify-center rounded-b-3xl border-b-2 border-r-2 border-border-gray dark:border-form-input-dark"
+                        class="flex h-full w-full justify-center rounded-b-3xl border-b-2 border-r-2 border-natural-200 dark:border-gothic-600 dark:bg-dark"
                     >
                         <div
                             class="relative flex h-full w-full flex-col items-end"
@@ -562,7 +566,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 alt="QR Code"
                             />
                             <button
-                                class="absolute right-[50%] top-[80%] flex h-1/6 w-2/5 translate-x-[50%] items-center justify-center rounded-xl border-2 border-cta-border bg-background font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark md:-translate-y-[30%] lg:-translate-y-[2%]"
+                                class="absolute right-[50%] top-[80%] flex h-1/6 w-2/5 translate-x-[50%] items-center justify-center rounded-xl border-2 border-dandelion-300 bg-background font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:-translate-y-[30%] lg:-translate-y-[2%]"
                                 @click="toggle"
                             >
                                 <T key-name="journey.button.invite" />
@@ -570,7 +574,7 @@ async function changeRole(userid: string, selectedRole: number) {
                             </button>
                             <OverlayPanel
                                 ref="op"
-                                class="rounded-lg bg-input font-nunito text-text dark:bg-input-dark dark:text-white"
+                                class="rounded-lg bg-natural-50 font-nunito text-text dark:bg-natural-800 dark:text-natural-50"
                             >
                                 <div class="flex-column w-25rem flex gap-3">
                                     <div>
@@ -581,12 +585,12 @@ async function changeRole(userid: string, selectedRole: number) {
                                         </span>
                                         <div class="flex">
                                             <input
-                                                class="w-full rounded-l-md border-2 border-border-gray bg-input-disabled pb-1 pl-2.5 pt-1 text-base font-medium text-text shadow-sm focus:outline-none focus:ring-1 dark:border-input-disabled-dark-grey dark:bg-color-gray-200 dark:text-white"
+                                                class="w-full rounded-l-md border-2 border-natural-200 bg-natural-100 pb-1 pl-2.5 pt-1 text-base font-medium text-text shadow-sm focus:outline-none focus:ring-1 dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50"
                                                 disabled
                                                 :value="journeyData.invite"
                                             />
                                             <button
-                                                class="flex h-9 w-9 items-center justify-center rounded-r-md border-2 border-y-2 border-r-2 border-cta-border bg-input-disabled shadow-sm hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark"
+                                                class="flex h-9 w-9 items-center justify-center rounded-r-md border-2 border-y-2 border-r-2 border-dandelion-300 bg-natural-100 shadow-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
                                                 @click="copyToClipboard"
                                             >
                                                 <SvgCopy class="w-4" />
@@ -604,7 +608,7 @@ async function changeRole(userid: string, selectedRole: number) {
                 class="flex w-full justify-center md:justify-start lg:ml-10 lg:w-72 xl:ml-32"
             >
                 <div
-                    class="w-[90%] rounded-2xl border-2 border-solid border-border bg-countdown-bg dark:bg-surface-dark max-lg:mt-5 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
+                    class="w-[90%] rounded-2xl border-2 border-solid border-calypso-300 bg-calypso-50 bg-opacity-20 dark:bg-gothic-300 dark:bg-opacity-20 max-lg:mt-5 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
                 >
                     <div
                         class="from-indigo-500 to-indigo-800 flex h-full flex-wrap items-center justify-center bg-gradient-to-br xs:justify-start lg:flex-col lg:justify-center"
@@ -612,7 +616,7 @@ async function changeRole(userid: string, selectedRole: number) {
                         <!-- flip clock container -->
                         <div
                             v-if="hundredsDays <= 0"
-                            class="relative mx-3 my-2 grid grid-cols-2 gap-x-1 text-4xl font-bold text-text dark:text-white lg:text-6xl"
+                            class="relative mx-3 my-2 grid grid-cols-2 gap-x-1 text-4xl font-bold text-text dark:text-natural-50 lg:text-6xl"
                         >
                             <div class="bg-black relative rounded-xl p-1 py-2">
                                 <!-- background grid of black squares -->
@@ -633,7 +637,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 <!-- line across the middle -->
                                 <div class="absolute inset-0 flex items-center">
                                     <div
-                                        class="h-px w-full bg-border dark:bg-countdown-stroke-dark"
+                                        class="h-px w-full bg-calypso-300 dark:bg-countdown-stroke-dark"
                                     />
                                 </div>
                             </div>
@@ -654,7 +658,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 <!-- line across the middle -->
                                 <div class="absolute inset-0 flex items-center">
                                     <div
-                                        class="h-px w-full bg-border dark:bg-countdown-stroke-dark"
+                                        class="h-px w-full bg-calypso-300 dark:bg-countdown-stroke-dark"
                                     />
                                 </div>
                             </div>
@@ -662,7 +666,7 @@ async function changeRole(userid: string, selectedRole: number) {
 
                         <div
                             v-else
-                            class="relative mx-3 my-2 grid grid-cols-3 gap-x-1 text-4xl font-bold text-text dark:text-white lg:gap-x-2 lg:text-6xl"
+                            class="relative mx-3 my-2 grid grid-cols-3 gap-x-1 text-4xl font-bold text-text dark:text-natural-50 lg:gap-x-2 lg:text-6xl"
                         >
                             <!-- left side -->
                             <div
@@ -686,7 +690,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 <!-- line across the middle -->
                                 <div class="absolute inset-0 flex items-center">
                                     <div
-                                        class="h-px w-full bg-border dark:bg-countdown-stroke-dark"
+                                        class="h-px w-full bg-calypso-300 dark:bg-countdown-stroke-dark"
                                     />
                                 </div>
                             </div>
@@ -712,7 +716,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 <!-- line across the middle -->
                                 <div class="absolute inset-0 flex items-center">
                                     <div
-                                        class="h-px w-full bg-border dark:bg-countdown-stroke-dark"
+                                        class="h-px w-full bg-calypso-300 dark:bg-countdown-stroke-dark"
                                     />
                                 </div>
                             </div>
@@ -735,7 +739,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 <!-- line across the middle -->
                                 <div class="absolute inset-0 flex items-center">
                                     <div
-                                        class="h-px w-full bg-border dark:bg-countdown-stroke-dark"
+                                        class="h-px w-full bg-calypso-300 dark:bg-countdown-stroke-dark"
                                     />
                                 </div>
                             </div>
@@ -766,7 +770,7 @@ async function changeRole(userid: string, selectedRole: number) {
                             </p>
                             <button
                                 v-if="duringJourney"
-                                class="mt-6 h-0 w-0 rounded-xl border-2 border-cta-border bg-background py-2 font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
+                                class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
                             >
                                 <T
                                     key-name="journey.button.countdown.calendar"
@@ -774,7 +778,7 @@ async function changeRole(userid: string, selectedRole: number) {
                             </button>
                             <button
                                 v-else-if="journeyEnded"
-                                class="mt-6 h-0 w-0 rounded-xl border-2 border-cta-border bg-background py-2 font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
+                                class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
                                 @click="jsConfetti.addConfetti()"
                             >
                                 <T
@@ -783,7 +787,7 @@ async function changeRole(userid: string, selectedRole: number) {
                             </button>
                             <button
                                 v-else
-                                class="mt-6 h-0 w-0 rounded-xl border-2 border-cta-border bg-background py-2 font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
+                                class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
                             >
                                 <T
                                     key-name="journey.button.countdown.planning"
@@ -815,7 +819,7 @@ async function changeRole(userid: string, selectedRole: number) {
                     <T key-name="journey.activities" />
                 </div>
                 <button
-                    class="-mb-3 ml-auto flex rounded-xl border-2 border-cta-border bg-input px-2 py-1 text-base font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark lg:mb-4"
+                    class="-mb-3 ml-auto flex rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-base font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 lg:mb-4"
                     @click="isActivityDialogVisible = !isActivityDialogVisible"
                 >
                     <SvgAddLocation class="h-6 w-6" />
