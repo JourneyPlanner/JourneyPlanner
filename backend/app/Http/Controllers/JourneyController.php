@@ -47,7 +47,10 @@ class JourneyController extends Controller
             $validated["destination"] = "";
         } else {
             $searchData = [];
-            $searchResponse = Http::get(
+            $searchResponse = Http::withHeaders([
+                "Origin" => config("app.url"),
+                "Referer" => config("app.url"),
+            ])->get(
                 "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
                     urlencode($validated["destination"]) .
                     "&limit=1&access_token=" .
@@ -59,8 +62,22 @@ class JourneyController extends Controller
                 array_key_exists("features", $searchData) &&
                 count($searchData["features"]) !== 0
             ) {
-                $validated["mapbox_full_address"] =
-                    $searchData["features"][0]["properties"]["full_address"];
+                if (
+                    array_key_exists(
+                        "full_address",
+                        $searchData["features"][0]["properties"]
+                    )
+                ) {
+                    $validated["mapbox_full_address"] =
+                        $searchData["features"][0]["properties"][
+                            "full_address"
+                        ];
+                } else {
+                    $validated["mapbox_full_address"] =
+                        $searchData["features"][0]["properties"][
+                            "place_formatted"
+                        ];
+                }
                 $validated["mapbox_id"] =
                     $searchData["features"][0]["properties"]["mapbox_id"];
             } else {
@@ -76,7 +93,10 @@ class JourneyController extends Controller
             $validated["mapbox_full_address"]
         ) {
             $geocodingData = [];
-            $geocodingResponse = Http::get(
+            $geocodingResponse = Http::withHeaders([
+                "Origin" => config("app.url"),
+                "Referer" => config("app.url"),
+            ])->get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     urlencode($validated["mapbox_full_address"]) .
                     "&permanent=true&autocomplete=true&limit=1&access_token=" .
@@ -157,7 +177,10 @@ class JourneyController extends Controller
             }
         } elseif ($validated["destination"] !== $previousDestination) {
             $searchData = [];
-            $searchResponse = Http::get(
+            $searchResponse = Http::withHeaders([
+                "Origin" => config("app.url"),
+                "Referer" => config("app.url"),
+            ])->get(
                 "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
                     urlencode($validated["destination"]) .
                     "&limit=1&access_token=" .
@@ -169,8 +192,22 @@ class JourneyController extends Controller
                 array_key_exists("features", $searchData) &&
                 count($searchData["features"]) !== 0
             ) {
-                $validated["mapbox_full_address"] =
-                    $searchData["features"][0]["properties"]["full_address"];
+                if (
+                    array_key_exists(
+                        "full_address",
+                        $searchData["features"][0]["properties"]
+                    )
+                ) {
+                    $validated["mapbox_full_address"] =
+                        $searchData["features"][0]["properties"][
+                            "full_address"
+                        ];
+                } else {
+                    $validated["mapbox_full_address"] =
+                        $searchData["features"][0]["properties"][
+                            "place_formatted"
+                        ];
+                }
                 $validated["mapbox_id"] =
                     $searchData["features"][0]["properties"]["mapbox_id"];
             } else {
@@ -195,7 +232,10 @@ class JourneyController extends Controller
             $validated["mapbox_full_address"] !== $previousMapboxFullAddress
         ) {
             $geocodingData = [];
-            $geocodingResponse = Http::get(
+            $geocodingResponse = Http::withHeaders([
+                "Origin" => config("app.url"),
+                "Referer" => config("app.url"),
+            ])->get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     urlencode($validated["mapbox_full_address"]) .
                     "&permanent=true&autocomplete=true&limit=1&access_token=" .

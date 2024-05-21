@@ -62,7 +62,10 @@ class ActivityController extends Controller
             $validated["address"]
         ) {
             $searchData = [];
-            $searchResponse = Http::get(
+            $searchResponse = Http::withHeaders([
+                "Origin" => config("app.url"),
+                "Referer" => config("app.url"),
+            ])->get(
                 "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
                     urlencode($validated["address"]) .
                     "&proximity=" .
@@ -78,8 +81,22 @@ class ActivityController extends Controller
                 array_key_exists("features", $searchData) &&
                 count($searchData["features"]) !== 0
             ) {
-                $validated["mapbox_full_address"] =
-                    $searchData["features"][0]["properties"]["full_address"];
+                if (
+                    array_key_exists(
+                        "full_address",
+                        $searchData["features"][0]["properties"]
+                    )
+                ) {
+                    $validated["mapbox_full_address"] =
+                        $searchData["features"][0]["properties"][
+                            "full_address"
+                        ];
+                } else {
+                    $validated["mapbox_full_address"] =
+                        $searchData["features"][0]["properties"][
+                            "place_formatted"
+                        ];
+                }
                 $validated["mapbox_id"] =
                     $searchData["features"][0]["properties"]["mapbox_id"];
             } else {
@@ -97,7 +114,10 @@ class ActivityController extends Controller
             $validated["mapbox_full_address"]
         ) {
             $geocodingData = [];
-            $geocodingResponse = Http::get(
+            $geocodingResponse = Http::withHeaders([
+                "Origin" => config("app.url"),
+                "Referer" => config("app.url"),
+            ])->get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     urlencode($validated["mapbox_full_address"]) .
                     "&proximity=" .
@@ -209,7 +229,10 @@ class ActivityController extends Controller
         } elseif (array_key_exists("address", $validated)) {
             if ($validated["address"] !== $oldAddress) {
                 $searchData = [];
-                $searchResponse = Http::get(
+                $searchResponse = Http::withHeaders([
+                    "Origin" => config("app.url"),
+                    "Referer" => config("app.url"),
+                ])->get(
                     "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
                         urlencode($validated["address"]) .
                         "&proximity=" .
@@ -225,10 +248,22 @@ class ActivityController extends Controller
                     array_key_exists("features", $searchData) &&
                     count($searchData["features"]) !== 0
                 ) {
-                    $validated["mapbox_full_address"] =
-                        $searchData["features"][0]["properties"][
-                            "full_address"
-                        ];
+                    if (
+                        array_key_exists(
+                            "full_address",
+                            $searchData["features"][0]["properties"]
+                        )
+                    ) {
+                        $validated["mapbox_full_address"] =
+                            $searchData["features"][0]["properties"][
+                                "full_address"
+                            ];
+                    } else {
+                        $validated["mapbox_full_address"] =
+                            $searchData["features"][0]["properties"][
+                                "place_formatted"
+                            ];
+                    }
                     $validated["mapbox_id"] =
                         $searchData["features"][0]["properties"]["mapbox_id"];
                 } else {
@@ -257,7 +292,10 @@ class ActivityController extends Controller
             $oldMapboxFullAddress !== $validated["mapbox_full_address"]
         ) {
             $geocodingData = [];
-            $geocodingResponse = Http::get(
+            $geocodingResponse = Http::withHeaders([
+                "Origin" => config("app.url"),
+                "Referer" => config("app.url"),
+            ])->get(
                 "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     urlencode($validated["mapbox_full_address"]) .
                     "&proximity=" .
