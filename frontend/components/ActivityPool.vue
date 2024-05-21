@@ -214,7 +214,7 @@ const itemsJourneyGuide = ref([
                     <div
                         v-for="activity in activities"
                         :key="activity.id"
-                        class="empty:hidden"
+                        class="cursor-pointer empty:hidden"
                     >
                         <div
                             v-if="activity.calendar_activities.length <= 0"
