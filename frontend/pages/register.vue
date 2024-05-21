@@ -167,7 +167,7 @@ async function registerUser(userData: object) {
                         </form>
                         <NuxtLink
                             to="/login"
-                            class="my-1 mt-auto font-nunito font-semibold underline dark:text-white"
+                            class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-white"
                         >
                             <T key-name="form.text.already_account" />
                         </NuxtLink>

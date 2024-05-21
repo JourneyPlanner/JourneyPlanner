@@ -143,7 +143,7 @@ async function loginUser(userData: User) {
                     </form>
                     <NuxtLink
                         to="/register"
-                        class="my-1 mt-auto font-nunito font-semibold underline dark:text-white"
+                        class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-white"
                     >
                         <T key-name="form.text.no_account" />
                     </NuxtLink>

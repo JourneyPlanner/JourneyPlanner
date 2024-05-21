@@ -36,12 +36,12 @@ const { value, errorMessage } = useField<string>(() => props.name);
         <Password
             :id="id"
             v-model="value"
-            panel-class="dark:bg-background-dark dark:text-white"
+            panel-class="dark:bg-natural-800 dark:text-natural-50"
             :name="name"
             toggle-mask
             class="w-full"
             :feedback="feedback"
-            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-white bg-input border-2 border-border focus:outline-none focus:ring-1 dark:bg-input-dark"
+            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-natural-50 bg-natural-50 border-2 border-calypso-400 focus:outline-none focus:ring-1 dark:bg-natural-800"
             :prompt-label="$t('form.input.password.label.prompt')"
             :weak-label="$t('form.input.password.label.weak')"
             :medium-label="$t('form.input.password.label.medium')"
@@ -59,7 +59,7 @@ const { value, errorMessage } = useField<string>(() => props.name);
             <template #footer>
                 <Divider
                     type="solid"
-                    class="border-10 border text-input-placeholder"
+                    class="border-10 border text-natural-200"
                 />
                 <p class="mt-2">
                     <T key-name="form.input.password.prompt.suggestion" />
@@ -90,7 +90,7 @@ const { value, errorMessage } = useField<string>(() => props.name);
         </Password>
         <div class="h-3 text-left">
             <span
-                class="ml-3 text-left text-xs text-error dark:font-bold dark:text-error-dark"
+                class="ml-3 text-left text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
                 >{{ errorMessage }}</span
             >
         </div>
@@ -98,8 +98,8 @@ const { value, errorMessage } = useField<string>(() => props.name);
             :for="id"
             class="pointer-events-none absolute left-0 top-0 py-4 pl-3 text-sm transition-all duration-300"
             :class="{
-                'text-input-placeholder': !isFocused,
-                'text-input-label': isFocused,
+                'text-natural-400': !isFocused,
+                'text-calypso-600': isFocused,
                 '-translate-y-4  scale-75': isFocused || value,
                 'translate-y-0 scale-100': !isFocused && !value,
                 '-translate-x-2':
