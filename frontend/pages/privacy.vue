@@ -32,11 +32,11 @@
                     <T key-name="privacyPolicy.mapBox" />
                 </p>
                 <a
-                    href="https://www.mapbox.com/legal/privacy#product-privacy-policy. "
+                    href="https://www.mapbox.com/legal/privacy#product-privacy-policy"
                     target="_blank"
                     class="hover:text-calypso-400 hover:underline"
                 >
-                    https://www.mapbox.com/legal/privacy#product-privacy-policy.
+                    https://www.mapbox.com/legal/privacy#product-privacy-policy
                 </a>
                 <p class="mb-2 mt-1">
                     <T key-name="privacyPolicy.mapBox.EU" />
@@ -81,11 +81,11 @@
                     <T key-name="privacy.cloudflare.cookies" />
                 </p>
                 <a
-                    href="https://www.mapbox.com/legal/privacy#product-privacy-policy. "
+                    href="https://www.cloudflare.com/privacypolicy/"
                     target="_blank"
                     class="mb-2 hover:text-calypso-400 hover:underline"
                 >
-                    https://www.mapbox.com/legal/privacy#product-privacy-policy
+                    https://www.cloudflare.com/privacypolicy/
                 </a>
                 <p>
                     <T key-name="privacy.cloudflare.cookies.extended" />
