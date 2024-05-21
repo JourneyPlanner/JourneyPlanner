@@ -128,7 +128,7 @@ function copyToClipboard() {
             >
                 <fieldset
                     id="create-journey"
-                    class="w-full rounded-2xl border-2 border-border bg-calypso-300 bg-opacity-30 px-5 shadow-sm sm:w-1/4 md:w-1/3"
+                    class="w-full rounded-2xl border-2 border-border bg-calypso-200 bg-opacity-30 px-5 shadow-sm dark:bg-gothic-300 dark:bg-opacity-20 sm:w-1/4 md:w-1/3"
                 >
                     <legend
                         for="create-journey"
@@ -150,8 +150,6 @@ function copyToClipboard() {
                             :translation-key="
                                 t('form.input.journey.destination')
                             "
-                            bg-light-key="surface"
-                            bg-dark-key="surface-dark"
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
                         />
                         <FormCalendar
@@ -195,7 +193,7 @@ function copyToClipboard() {
                             <NuxtLink to="/dashboard">
                                 <button
                                     type="button"
-                                    class="dark:hover:bg-mahagony-400 rounded-xl border-2 border-mahagony-500 bg-input px-7 py-1 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-800 dark:text-natural-50"
+                                    class="rounded-xl border-2 border-mahagony-500 bg-input px-7 py-1 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-mahagony-500 dark:hover:bg-opacity-30"
                                 >
                                     <T key-name="common.button.cancel" />
                                 </button>
