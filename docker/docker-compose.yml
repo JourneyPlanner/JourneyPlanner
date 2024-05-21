@@ -62,7 +62,7 @@ services:
     restart: unless-stopped
     volumes:
       - uploads:/tusd-data
-    command: tusd -hooks-http http://backend:8000/api/upload -hooks-http-forward-headers Authorization -hooks-enabled-events pre-create,post-finish -behind-proxy -upload-dir /tusd-data
+    command: -hooks-http http://backend:8000/api/upload -hooks-http-forward-headers Authorization -hooks-enabled-events pre-create,post-finish -behind-proxy -upload-dir /tusd-data
 
 volumes:
   dbdata:
