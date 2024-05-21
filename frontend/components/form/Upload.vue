@@ -13,6 +13,9 @@ const tolgee = useTolgee(["language"]);
 const journey = useJourneyStore();
 const config = useRuntimeConfig();
 
+const client = useSanctumClient();
+const { token } = await client("/api/user/tokens/upload");
+
 let locale: Locale = English;
 // TODO dont work
 const restrictions = {
@@ -24,22 +27,15 @@ if (tolgee.value.getLanguage() == "de") {
     locale = German;
 }
 
-function getCookieValue(a: string): string {
-    const b = document.cookie.match("(^|;)\\s*" + a + "\\s*=\\s*([^;]+)");
-    return b ? (b.pop() as string) : "";
-}
-
 const uppy = new Uppy({
     meta: { journey: journey.getId() },
     locale: locale,
 }).use(Tus, {
-    endpoint: config.public.NUXT_BACKEND_URL + "/tus/",
+    endpoint: config.public.NUXT_BACKEND_URL + "/upload",
     headers: {
-        "X-XSRF-TOKEN": decodeURIComponent(getCookieValue("XSRF-TOKEN")),
+        Authorization: "Bearer " + token,
     },
-    withCredentials: true,
     removeFingerprintOnSuccess: true,
-    chunkSize: 5 * 1024 * 1024,
 });
 </script>
 
@@ -66,11 +62,11 @@ const uppy = new Uppy({
             }"
         />
         <div class="flex justify-center md:hidden">
-            <h7
+            <h6
                 class="absolute bottom-12 text-xs text-input-placeholder dark:text-input-gray"
             >
                 <T key-name="journey.upload.info" />
-            </h7>
+            </h6>
         </div>
     </div>
 </template>

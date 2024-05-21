@@ -15,7 +15,7 @@ return [
     |
     */
 
-    "name" => env("APP_NAME", "Laravel"),
+    "name" => env("APP_NAME", "JourneyPlanner"),
 
     /*
     |--------------------------------------------------------------------------
@@ -170,7 +170,6 @@ return [
             // App\Providers\BroadcastServiceProvider::class,
             App\Providers\EventServiceProvider::class,
             App\Providers\RouteServiceProvider::class,
-            App\Providers\TusServiceProvider::class,
         ])
         ->toArray(),
 

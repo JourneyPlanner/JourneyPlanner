@@ -40,6 +40,11 @@ services:
     environment:
       - INFISICAL_API_URL=$BACKEND_INFISICAL_API_URL
       - INFISICAL_TOKEN=$BACKEND_INFISICAL_TOKEN
+    depends_on:
+      - db
+      - tusd
+    volumes:
+      - uploads:/tusd-data
   db:
     image: mariadb:latest
     pull_policy: always
@@ -51,14 +56,17 @@ services:
       - MYSQL_DATABASE=$MYSQL_DATABASE
       - MYSQL_USER=$MYSQL_USER
       - MYSQL_PASSWORD=$MYSQL_PASSWORD
-  redis:
-    image: redis:latest
+  tusd:
+    image: tusproject/tusd:latest
     pull_policy: always
     restart: unless-stopped
+    ports:
+      - "1080:1080"
     volumes:
-      - redisdata:/data
+      - uploads:/tusd-data
+    command: tusd -hooks-http http://backend:8000/api/upload -hooks-http-forward-headers Authorization -hooks-enabled-events pre-create,post-finish -behind-proxy -upload-dir /tusd-data
 
 volumes:
   dbdata:
-  redisdata:
+  uploads:
   i18n:
