@@ -60,8 +60,6 @@ services:
     image: tusproject/tusd:latest
     pull_policy: always
     restart: unless-stopped
-    ports:
-      - "1080:1080"
     volumes:
       - uploads:/tusd-data
     command: tusd -hooks-http http://backend:8000/api/upload -hooks-http-forward-headers Authorization -hooks-enabled-events pre-create,post-finish -behind-proxy -upload-dir /tusd-data
