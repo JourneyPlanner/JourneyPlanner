@@ -131,6 +131,14 @@ async function deleteActivity() {
                 });
                 activities.value.forEach((activity: Activity) => {
                     if (activity.id === activityId.value) {
+                        activity.calendar_activities.forEach(
+                            (calendar_activity: CalendarActivity) => {
+                                fullCalendar.value
+                                    .getApi()
+                                    .getEventById(calendar_activity.id)
+                                    .remove();
+                            },
+                        );
                         activities.value.splice(
                             activities.value.indexOf(activity),
                             1,
