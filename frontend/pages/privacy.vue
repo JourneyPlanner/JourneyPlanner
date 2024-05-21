@@ -2,18 +2,18 @@
     <div>
         <div class="flex justify-end">
             <button
-                class="mr-2 mt-5 rounded-xl border-2 border-cta-border bg-input px-2 py-1 text-base font-semibold hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark md:mr-10 md:px-6"
+                class="mr-2 mt-5 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-base font-semibold hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 md:mr-10 md:px-6"
                 @click="$router.back()"
             >
                 <T key-name="common.back" />
             </button>
         </div>
-        <div class="-mt-8 font-nunito text-text dark:text-input">
+        <div class="font-nunito text-text dark:text-natural-50">
             <div class="mx-5 mt-7 flex flex-col sm:mx-20 lg:mx-52 xl:mx-96">
-                <h4 class="mb-2 text-center text-3xl font-bold">
-                    <T key-name="common.privacyPolicy" />
+                <h4 class="mb-5 text-center text-3xl font-bold">
+                    <T key-name="common.privacypolicy" />
                 </h4>
-                <h2 class="mt-5 text-2xl font-semibold">
+                <h2 class="mt-1 text-2xl font-semibold">
                     <T key-name="privacy.informationDuty.title" />
                 </h2>
                 <p class="mb-2 mt-1">
@@ -34,7 +34,7 @@
                 <a
                     href="https://www.mapbox.com/legal/privacy#product-privacy-policy. "
                     target="_blank"
-                    class="hover:text-link hover:underline"
+                    class="hover:text-calypso-400 hover:underline"
                 >
                     https://www.mapbox.com/legal/privacy#product-privacy-policy.
                 </a>
@@ -44,7 +44,7 @@
                 <a
                     href="https://www.dataprivacyframework.gov "
                     target="_blank"
-                    class="hover:text-link hover:underline"
+                    class="hover:text-calypso-400 hover:underline"
                 >
                     https://www.dataprivacyframework.gov
                 </a>
@@ -54,105 +54,113 @@
                 <p class="mb-2 mt-1">
                     <T key-name="privacyPolicy.cloudFlare" />
                 </p>
+                <ol>
+                    <li>
+                        <T key-name="privacy.cloudflare.ip" />
+                    </li>
+                    <li>
+                        <T key-name="privacy.cloudflare.website" />
+                    </li>
+                    <li>
+                        <T key-name="privacy.cloudflare.browser" />
+                    </li>
+                    <li>
+                        <T key-name="privacy.cloudflare.os" />
+                    </li>
+                    <li>
+                        <T key-name="privacy.cloudflare.referrer" />
+                    </li>
+                    <li>
+                        <T key-name="privacy.cloudflare.time" />
+                    </li>
+                    <li>
+                        <T key-name="privacy.cloudflare.frequency" />
+                    </li>
+                </ol>
+                <p class="mb-1 mt-2">
+                    <T key-name="privacy.cloudflare.cookies" />
+                </p>
                 <a
                     href="https://www.mapbox.com/legal/privacy#product-privacy-policy. "
                     target="_blank"
-                    class="hover:text-link hover:underline"
+                    class="mb-2 hover:text-calypso-400 hover:underline"
                 >
-                    https://www.mapbox.com/legal/privacy#product-privacy-policy.
+                    https://www.mapbox.com/legal/privacy#product-privacy-policy
                 </a>
+                <p>
+                    <T key-name="privacy.cloudflare.cookies.extended" />
+                </p>
                 <p class="mb-2 mt-1">
-                    <T key-name="privacyPolicy.cloudFlare.EU" />
+                    <T key-name="privacy.cloudflare.eu" />
                 </p>
                 <a
                     href="https://www.dataprivacyframework.gov "
                     target="_blank"
-                    class="hover:text-link hover:underline"
+                    class="hover:text-calypso-400 hover:underline"
                 >
                     https://www.dataprivacyframework.gov
                 </a>
-
+                <h2 class="mt-5 text-2xl font-semibold">
+                    <T key-name="privacy.rights.title" />
+                </h2>
+                <p class="mb-2 mt-1">
+                    <T key-name="privacy.rights.text" />
+                </p>
+                <ol>
+                    <li>
+                        <T key-name="privacy.rights.information" />
+                    </li>
+                    <li>
+                        <T key-name="privacy.rights.deletion" />
+                    </li>
+                    <li>
+                        <T key-name="privacy.rights.correction" />
+                    </li>
+                    <li>
+                        <T key-name="privacy.rights.portability" />
+                    </li>
+                    <li>
+                        <T key-name="privacy.rights.revocation" />
+                    </li>
+                    <li>
+                        <T key-name="privacy.rights.restriction" />
+                    </li>
+                </ol>
+                <p class="mt-2">
+                    <T key-name="privacy.rights.complaint" />
+                </p>
+                <h2 class="mt-5 text-2xl font-semibold">
+                    <T key-name="privacy.contact.title" />
+                </h2>
                 <p class="mt-1">
                     <b> <T key-name="imprint.operator.title" />: </b>
                     <T key-name="imprint.operator.value" />
                 </p>
-                <p class="mt-1">
-                    <b> <T key-name="imprint.address.title" />: </b>
-                    <T key-name="imprint.address.value" />
-                </p>
-                <p class="mt-1">
-                    <b> <T key-name="imprint.contact.title" />: </b> <br />
-                    <T key-name="imprint.contact.phone.title" />:
+                <p>
+                    <b> <T key-name="imprint.contact.phone.title" />: </b>
                     <a
-                        class="hover:text-link hover:underline"
+                        class="hover:text-calypso-400 hover:underline"
                         href="tel:+43 681 20301077"
                     >
                         +43 681 20301077
                     </a>
                     <br />
-                    <T key-name="imprint.contact.email.title" />:
+                    <b> <T key-name="imprint.contact.email.title" />: </b>
                     <a
-                        class="hover:text-link hover:underline"
+                        class="hover:text-calypso-400 hover:underline"
                         href="mailto:raven.burkard@journeyplanner.io"
                     >
                         raven.burkard@journeyplanner.io
                     </a>
                 </p>
-
-                <p class="mt-1">
-                    <b> <T key-name="imprint.legislation.title" />: </b>
+                <p class="mt-5 text-sm">
+                    <T key-name="privacy.source" />
                     <a
-                        href="https://www.ris.bka.gv.at"
+                        href="https://www.ortner-rechtsanwalt.at/strafrecht-festnahme-verhaftung/"
                         target="_blank"
-                        class="hover:text-link hover:underline"
+                        class="ml-1 hover:text-calypso-400 hover:underline"
+                        >Rechtsanwalt Wien Strafrecht</a
                     >
-                        https://www.ris.bka.gv.at
-                    </a>
-                </p>
-                <p class="mt-1">
-                    <b> <T key-name="imprint.dispute.title" />: </b><br />
-                    <T key-name="imprint.dispute.value" />:
-                    <a
-                        href="https://ec.europa.eu/odr"
-                        target="_blank"
-                        class="hover:text-link hover:underline"
-                        >https://ec.europa.eu/odr
-                    </a>
-                </p>
-                <p class="mt-1">
-                    <b> <T key-name="imprint.disclaimer.title" />: </b><br />
-                    <T key-name="imprint.disclaimer.value" />
-                </p>
-                <p class="mt-1">
-                    <b> <T key-name="imprint.purpose.title" /> </b>:
-                    <T key-name="imprint.purpose.value" />
-                </p>
-                <p class="mt-3">
-                    <T key-name="imprint.thirdparty.fonts" />
-                    <a
-                        href="https://fonts.google.com/"
-                        target="_blank"
-                        class="hover:text-link hover:underline"
-                        >Google Fonts
-                    </a>
-                </p>
-                <p>
-                    <T key-name="imprint.thirdparty.icons" />
-                    <a
-                        href="https://github.com/primefaces/primeicons"
-                        target="_blank"
-                        class="hover:text-link hover:underline"
-                        >PrimeIcons
-                    </a>
-                </p>
-                <p>
-                    <T key-name="imprint.thirdparty.illustrations" />
-                    <a
-                        href="https://undraw.co/"
-                        target="_blank"
-                        class="hover:text-link hover:underline"
-                        >undraw.co
-                    </a>
                 </p>
             </div>
         </div>
