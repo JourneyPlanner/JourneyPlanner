@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
-import { format } from "date-fns";
+import { add, format } from "date-fns";
 import * as yup from "yup";
 
 const { t } = useTranslate();
@@ -28,9 +28,44 @@ const props = defineProps({
     phone: { type: String, default: "" },
     updated_at: { type: String, default: "" },
     update: { type: Boolean, default: false },
+    calendarActivity: { type: Object, default: null },
+    calendarClicked: { type: Boolean, default: false },
+    create: { type: Boolean, default: false },
+    createAddress: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(["close", "deleteActivity"]);
+const onlyShowRef = ref(props.onlyShow);
+const updateRef = ref(props.update);
+const calendarClickedRef = ref(props.calendarClicked);
+
+watch(
+    () => props.onlyShow,
+    (value) => {
+        onlyShowRef.value = value;
+    },
+);
+
+watch(
+    () => props.update,
+    (value) => {
+        updateRef.value = value;
+    },
+);
+
+watch(
+    () => props.calendarClicked,
+    (value) => {
+        calendarClickedRef.value = value;
+    },
+);
+
+const emit = defineEmits([
+    "close",
+    "deleteActivity",
+    "removeFromCalendar",
+    "editCalendarActivity",
+    "calendarMoved",
+]);
 
 const isVisible = ref(props.visible);
 const loadingSave = ref(false);
@@ -73,6 +108,7 @@ const confirmDelete = () => {
     confirm.require({
         header: t.value("activity.delete.header"),
         message: t.value("activity.delete.confirm"),
+        group: "journey",
         icon: "pi pi-exclamation-triangle",
         rejectClass: "hover:underline",
         acceptClass:
@@ -88,6 +124,31 @@ const confirmDelete = () => {
                 life: 3000,
             });
             emit("deleteActivity");
+            close();
+        },
+    });
+};
+
+const confirmRemoveFromCalendar = () => {
+    confirm.require({
+        header: t.value("activity.remove.header"),
+        message: t.value("activity.remove.confirm"),
+        group: "journey",
+        icon: "pi pi-exclamation-triangle",
+        rejectClass: "hover:underline",
+        acceptClass:
+            "text-error dark:text-error-dark hover:underline font-bold",
+        rejectLabel: t.value("common.button.cancel"),
+        acceptLabel: t.value("activity.remove"),
+
+        accept: () => {
+            toast.add({
+                severity: "info",
+                summary: t.value("activity.remove"),
+                detail: t.value("activity.remove.detail"),
+                life: 3000,
+            });
+            emit("removeFromCalendar");
             close();
         },
     });
@@ -135,34 +196,67 @@ async function onSuccess(values: ActivityForm) {
 
     let date = undefined;
     let time = undefined;
+    let start = undefined;
+    let end = undefined;
 
     if (values.date) {
         if (values.time) {
-            date = format(values.date, "yyyy-MM-dd");
-            const timeDate = new Date(values.time);
-            time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+            if (props.calendarClicked) {
+                date = format(values.date, "yyyy-MM-dd");
+                const timeDate = new Date(values.time);
+                time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+                start = `${date}T${time}`;
+                const timeZone = new Date().getTimezoneOffset() / -60;
+                end = add(new Date(start), {
+                    hours: parseInt(duration.split(":")[0]) + timeZone,
+                    minutes: parseInt(duration.split(":")[1]),
+                })
+                    .toISOString()
+                    .substring(0, 16);
+            } else {
+                date = format(values.date, "yyyy-MM-dd");
+                const timeDate = new Date(values.time);
+                time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+            }
         }
     }
 
     loadingSave.value = true;
 
-    const activity = {
-        name: values.name,
-        estimated_duration: duration,
-        address: values.address,
-        mapbox_full_address: values.mapbox?.properties?.full_address,
-        mapbox_id: values.mapbox?.properties?.mapbox_id,
-        cost: values.costs,
-        description: values.description,
-        link: values.link,
-        email: values.email,
-        phone: values.phone,
-        opening_hours: values.open,
-        date: date,
-        time: time,
-    };
+    let activity = undefined;
+    if (props.calendarClicked) {
+        activity = {
+            name: values.name,
+            estimated_duration: duration,
+            address: values.address,
+            mapbox_full_address: values.mapbox?.properties?.full_address,
+            mapbox_id: values.mapbox?.properties?.mapbox_id,
+            cost: values.costs,
+            description: values.description,
+            link: values.link,
+            email: values.email,
+            phone: values.phone,
+            opening_hours: values.open,
+        };
+    } else {
+        activity = {
+            name: values.name,
+            estimated_duration: duration,
+            address: values.address,
+            mapbox_full_address: values.mapbox?.properties?.full_address,
+            mapbox_id: values.mapbox?.properties?.mapbox_id,
+            cost: values.costs,
+            description: values.description,
+            link: values.link,
+            email: values.email,
+            phone: values.phone,
+            opening_hours: values.open,
+            date: date,
+            time: time,
+        };
+    }
 
-    if (props.update) {
+    if (updateRef.value) {
         await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
             method: "PATCH",
             body: activity,
@@ -184,6 +278,10 @@ async function onSuccess(values: ActivityForm) {
                         response._data,
                         props.activityId,
                     );
+                    activityStore.setNewActivity(response._data);
+                    if (props.calendarActivity) {
+                        emit("editCalendarActivity", activity.name);
+                    }
                 }
             },
             async onRequestError() {
@@ -205,6 +303,26 @@ async function onSuccess(values: ActivityForm) {
                 loadingSave.value = false;
             },
         });
+
+        if (props.calendarClicked && start && end) {
+            const calendarActivity = props.calendarActivity;
+            calendarActivity.start = start;
+            calendarActivity.end = end;
+            await client(
+                `/api/journey/${props.id}/activity/${props.activityId}/calendarActivity/${props.calendarActivity.id}`,
+                {
+                    method: "PATCH",
+                    body: calendarActivity,
+                    async onResponse({ response }) {
+                        if (response.ok) {
+                            close();
+                            loadingSave.value = false;
+                            emit("calendarMoved", start, end);
+                        }
+                    },
+                },
+            );
+        }
     } else {
         await client(`/api/journey/${props.id}/activity`, {
             method: "POST",
@@ -224,6 +342,7 @@ async function onSuccess(values: ActivityForm) {
                     close();
                     loadingSave.value = false;
                     activityStore.addActivity(response._data);
+                    activityStore.setNewActivity(response._data);
                 }
             },
             async onRequestError() {
@@ -259,6 +378,19 @@ function onInvalidSubmit({ errors }: { errors: ActivityFormErrors }) {
 }
 
 const close = () => {
+    if (props.update) {
+        updateRef.value = true;
+    } else {
+        updateRef.value = false;
+    }
+
+    if (props.calendarClicked) {
+        calendarClickedRef.value = true;
+    } else {
+        calendarClickedRef.value = false;
+    }
+
+    onlyShowRef.value = true;
     selectedDate.value = null;
     timeDisabled.value = true;
     loadingSave.value = false;
@@ -294,29 +426,29 @@ function setSelectedDate(date: Date) {
             },
             footer: { class: 'h-0' },
             closeButtonIcon: {
-                class: 'z-20 text-input-placeholder hover:text-text dark:text-input-placeholder dark:hover:text-input h-10 w-10',
+                class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-text h-10 w-10',
             },
         }"
         @hide="close"
     >
         <form
-            class="flex h-full flex-col justify-between bg-background font-nunito text-text dark:bg-background-dark dark:text-input"
+            class="flex h-full flex-col justify-between bg-background font-nunito text-text dark:bg-background-dark dark:text-natural-50"
             @submit="onSubmit"
         >
             <TabView
                 v-model:active-index="activeIndex"
                 :pt="{
                     root: {
-                        class: 'font-nunito bg-background dark:bg-background-dark text-text dark:text-input',
+                        class: 'font-nunito bg-background dark:bg-background-dark text-text dark:text-natural-50',
                     },
                     panelContainer: {
-                        class: 'text-text dark:text-input font-nunito bg-background dark:bg-background-dark',
+                        class: 'text-text dark:text-natural-50 font-nunito bg-background dark:bg-background-dark',
                     },
                     nav: {
                         class: 'font-nunito bg-background dark:bg-background-dark text-lg',
                     },
                     navContainer: {
-                        class: 'border-b-2 border-border-gray dark:border-input-placeholder',
+                        class: 'border-b-2 border-natural-200 dark:border-natural-500',
                     },
                     inkbar: { class: 'pt-0.5 bg-border' },
                 }"
@@ -328,9 +460,9 @@ function setSelectedDate(date: Date) {
                             class: [
                                 'font-nunito bg-background dark:bg-background-dark',
                                 {
-                                    'text-border border-b-2 border-border':
+                                    'text-calypso-300 border-b-2 border-calypso-300':
                                         activeIndex === 0,
-                                    'text-input-placeholder': activeIndex !== 0,
+                                    'text-natural-500': activeIndex !== 0,
                                 },
                             ],
                         }),
@@ -343,7 +475,7 @@ function setSelectedDate(date: Date) {
                             id="name"
                             name="name"
                             :value="name"
-                            :disabled="onlyShow"
+                            :disabled="onlyShowRef && !create"
                             translation-key="form.input.activity.name"
                             icon="pi-tag"
                             :icon-pos-is-left="true"
@@ -353,7 +485,7 @@ function setSelectedDate(date: Date) {
                             id="duration"
                             name="duration"
                             :value="estimatedDuration"
-                            :disabled="onlyShow"
+                            :disabled="onlyShowRef && !create"
                             translation-key="form.input.activity.duration"
                             class="order-2 col-span-1 w-full sm:col-span-2 sm:w-5/6 sm:justify-self-end"
                             :default-time="new Array(0, 30)"
@@ -367,7 +499,7 @@ function setSelectedDate(date: Date) {
                             <FormAddressInput
                                 name="address"
                                 :value="address"
-                                :disabled="onlyShow"
+                                :disabled="onlyShowRef && !create"
                             />
                         </div>
 
@@ -375,7 +507,7 @@ function setSelectedDate(date: Date) {
                             id="costs"
                             name="costs"
                             :value="cost"
-                            :disabled="onlyShow"
+                            :disabled="onlyShowRef && !create"
                             translation-key="form.input.activity.costs"
                             icon="pi-money-bill"
                             class="order-3 col-span-1 w-full sm:order-4 sm:col-span-2 sm:w-5/6 sm:justify-self-end"
@@ -384,7 +516,7 @@ function setSelectedDate(date: Date) {
                             id="description"
                             name="description"
                             :value="description"
-                            :disabled="onlyShow"
+                            :disabled="onlyShowRef && !create"
                             translation-key="form.input.activity.description"
                             class="order-5 col-span-full row-span-2"
                             custom-class="h-full"
@@ -399,9 +531,9 @@ function setSelectedDate(date: Date) {
                             class: [
                                 'font-nunito bg-background dark:bg-background-dark',
                                 {
-                                    'text-border border-b-2 border-border':
+                                    'text-calypso-300 border-b-2 border-calypso-300':
                                         activeIndex === 1,
-                                    'text-input-placeholder': activeIndex !== 1,
+                                    'text-natural-500': activeIndex !== 1,
                                 },
                             ],
                         }),
@@ -413,7 +545,7 @@ function setSelectedDate(date: Date) {
                         <div>
                             <FormGroupInput
                                 id="link"
-                                :disabled="onlyShow"
+                                :disabled="onlyShowRef && !create"
                                 :value="link"
                                 name="link"
                                 translation-key="form.input.activity.link"
@@ -427,7 +559,7 @@ function setSelectedDate(date: Date) {
                             </label>
                             <FormGroupInput
                                 id="email"
-                                :disabled="onlyShow"
+                                :disabled="onlyShowRef && !create"
                                 :value="email"
                                 name="email"
                                 icon="pi-at"
@@ -435,7 +567,7 @@ function setSelectedDate(date: Date) {
                             />
                             <FormGroupInput
                                 id="phone"
-                                :disabled="onlyShow"
+                                :disabled="onlyShowRef && !create"
                                 :value="phone"
                                 name="phone"
                                 icon="pi-phone"
@@ -445,7 +577,7 @@ function setSelectedDate(date: Date) {
                         <FormClassicInputIcon
                             id="opening-hours"
                             name="open"
-                            :disabled="onlyShow"
+                            :disabled="onlyShowRef && !create"
                             :value="openingHours"
                             translation-key="form.input.activity.opening-hours"
                             input-type="textarea"
@@ -455,16 +587,16 @@ function setSelectedDate(date: Date) {
                     </div>
                 </TabPanel>
                 <TabPanel
-                    v-if="!onlyShow"
+                    v-if="!onlyShowRef || create"
                     :header="t('activity.manual.header')"
                     :pt="{
                         headerAction: () => ({
                             class: [
                                 'font-nunito bg-background dark:bg-background-dark',
                                 {
-                                    'text-border border-b-2 border-border':
+                                    'text-calypso-300 border-b-2 border-calypso-300':
                                         activeIndex === 2,
-                                    'text-input-placeholder': activeIndex !== 2,
+                                    'text-natural-500': activeIndex !== 2,
                                 },
                             ],
                         }),
@@ -508,14 +640,14 @@ function setSelectedDate(date: Date) {
             </TabView>
 
             <div
-                v-if="!onlyShow && !update"
+                v-if="(!onlyShowRef && !updateRef) || create"
                 class="mx-5 flex h-full flex-row justify-between gap-2 bg-background align-bottom font-nunito dark:bg-background-dark"
             >
                 <Button
                     type="button"
                     :label="t('common.button.cancel')"
                     icon="pi pi-times"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
+                    class="dark:bg-backgorund-dark mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:text-natural-50 dark:hover:bg-pesto-600"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
                         label: {
@@ -535,17 +667,53 @@ function setSelectedDate(date: Date) {
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-cta-border bg-input text-center text-text hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
+                    class="dark:bg-backgorund-dark mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:bg-dandelion-200 dark:text-natural-50 dark:hover:bg-pesto-600"
                 />
             </div>
             <div
-                v-else-if="update"
-                class="mx-5 flex h-full flex-row justify-between gap-2 bg-background align-bottom font-nunito dark:bg-background-dark"
+                v-else-if="calendarClickedRef"
+                class="mx-5 flex h-full flex-row justify-between gap-1.5 bg-background align-bottom font-nunito dark:bg-background-dark"
+            >
+                <Button
+                    v-if="calendarActivity"
+                    type="button"
+                    :label="t('calendar.options.remove')"
+                    class="dark:bg-backgorund-dark mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                    icon="pi pi-calendar-times"
+                    :pt="{
+                        root: { class: 'flex items-center justify-center' },
+                        label: {
+                            class: 'display-block flex-none font-bold font-nunito',
+                        },
+                    }"
+                    @click="confirmRemoveFromCalendar"
+                />
+                <Button
+                    type="button"
+                    :label="t('dashboard.options.edit')"
+                    class="dark:bg-backgorund-dark mt-auto h-9 w-40 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 font-bold text-text hover:bg-dandelion-200 dark:text-natural-50 dark:hover:bg-pesto-600"
+                    icon="pi pi-pencil"
+                    :pt="{
+                        root: { class: 'flex items-center justify-center' },
+                        label: {
+                            class: 'display-block flex-none font-bold font-nunito',
+                        },
+                    }"
+                    @click="
+                        onlyShowRef = false;
+                        updateRef = true;
+                        calendarClickedRef = false;
+                    "
+                />
+            </div>
+            <div
+                v-else-if="updateRef"
+                class="mx-5 flex h-full flex-row justify-between gap-1.5 bg-background align-bottom font-nunito dark:bg-background-dark"
             >
                 <Button
                     type="button"
                     :label="t('dashboard.options.delete')"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
+                    class="dark:bg-backgorund-dark mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                     icon="pi pi-trash"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
@@ -566,7 +734,7 @@ function setSelectedDate(date: Date) {
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-border-green-save bg-input text-center text-text hover:bg-fill-green-save dark:bg-input-dark dark:text-input dark:hover:bg-fill-green-save-dark"
+                    class="dark:bg-backgorund-dark mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-atlantis-400 bg-natural-50 text-center text-text hover:bg-atlantis-200 dark:text-natural-50 dark:hover:bg-atlantis-30040"
                 />
             </div>
         </form>

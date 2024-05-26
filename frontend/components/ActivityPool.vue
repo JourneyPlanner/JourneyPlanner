@@ -42,8 +42,15 @@ const phone = ref("");
 const updated_at = ref("");
 
 const isActivityInfoVisible = ref(false);
-const activities = ref(store.activityData as Activity[]);
-const activityCount = computed(() => activities.value.length);
+const activities = computed(() => store.activityData as Activity[]);
+const activityCount = computed(
+    () =>
+        activities.value.length -
+        activities.value.filter(
+            (activity) => activity.calendar_activities.length > 0,
+        ).length,
+);
+
 const client = useSanctumClient();
 const toast = useToast();
 const confirm = useConfirm();
@@ -53,14 +60,6 @@ onMounted(() => {
         itemSelector: ".fc-event",
     });
 });
-
-watch(
-    store.activityData,
-    () => {
-        activities.value = store.activityData;
-    },
-    { immediate: true },
-);
 
 /**
  * set values for activity info dialog
@@ -214,85 +213,91 @@ const itemsJourneyGuide = ref([
                 >
                     <div
                         v-for="activity in activities"
-                        id="draggable-el"
                         :key="activity.id"
-                        class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-calypso-300 bg-light px-2 py-1 text-base font-normal dark:bg-dark sm:h-16 sm:text-base lg:rounded-xl"
-                        :data-event="
-                            JSON.stringify({
-                                title: activity.name,
-                                duration: activity.estimated_duration,
-                                editable: true,
-                                defId: activity.id,
-                                timeZone: 'local',
-                            })
-                        "
-                        @click="activityId = activity.id"
+                        class="cursor-pointer empty:hidden"
                     >
-                        <div class="flex sm:pt-1">
-                            <p
-                                v-tooltip.top="{
-                                    value: activity.name,
-                                    pt: { root: 'font-nunito' },
-                                }"
-                                class="w-[98%] overflow-hidden truncate overflow-ellipsis"
+                        <div
+                            v-if="activity.calendar_activities.length <= 0"
+                            id="draggable-el"
+                            :key="activity.id"
+                            class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-calypso-300 bg-light px-2 py-1 text-base font-normal dark:bg-dark sm:h-16 sm:text-base lg:rounded-xl"
+                            :data-event="
+                                JSON.stringify({
+                                    title: activity.name,
+                                    duration: activity.estimated_duration,
+                                    editable: true,
+                                    defId: activity.id,
+                                    timeZone: 'local',
+                                })
+                            "
+                            @click="activityId = activity.id"
+                        >
+                            <div class="flex sm:pt-1">
+                                <p
+                                    v-tooltip.top="{
+                                        value: activity.name,
+                                        pt: { root: 'font-nunito' },
+                                    }"
+                                    class="w-[98%] overflow-hidden truncate overflow-ellipsis"
+                                    @click="showInfo(activity.id)"
+                                >
+                                    {{ activity.name }}
+                                </p>
+                                <button
+                                    class="pi pi-ellipsis-v"
+                                    aria-haspopup="true"
+                                    aria-controls="overlay_menu"
+                                    @click="toggle"
+                                />
+                            </div>
+                            <div
+                                class="flex items-center pb-4"
                                 @click="showInfo(activity.id)"
                             >
-                                {{ activity.name }}
-                            </p>
-                            <button
-                                class="pi pi-ellipsis-v"
-                                aria-haspopup="true"
-                                aria-controls="overlay_menu"
-                                @click="toggle"
-                            />
-                        </div>
-                        <div
-                            class="flex items-center pb-4"
-                            @click="showInfo(activity.id)"
-                        >
-                            <SvgClock class="mr-2 h-4 w-4" />
-                            {{
-                                format(
-                                    parse(
-                                        activity.estimated_duration,
-                                        "HH:mm:ss",
-                                        new Date(),
-                                    ),
-                                    "H:mm",
-                                )
-                            }}
-                        </div>
-                        <div class="absolute overflow-hidden">
-                            <Menu
-                                id="overlay_menu"
-                                ref="menu"
-                                :model="itemsJourneyGuide"
-                                class="relative -ml-5 rounded-xl border-2 border-natural-200 bg-natural-50 dark:border-natural-900"
-                                :popup="true"
-                                :pt="{
-                                    root: {
-                                        class: 'relative font-nunito bg-natural-50 dark:bg-natural-800 overflow-hidden',
-                                    },
-                                    menu: {
-                                        class: 'bg-natural-50 dark:bg-natural-800',
-                                    },
-                                    menuitem: {
-                                        class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
-                                    },
-                                    content: {
-                                        class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
-                                    },
-                                    submenuHeader: {
-                                        class: 'text-natural-500 dark:text-text-light-dark bg-natural-50 dark:bg-natural-800',
-                                    },
-                                    label: {
-                                        class: 'text-text dark:text-natural-50',
-                                    },
-                                    icon: {
-                                        class: 'text-text dark:text-natural-50',
-                                    },
-                                }"
-                            />
+                                <SvgClock class="mr-2 h-4 w-4" />
+                                {{
+                                    format(
+                                        parse(
+                                            activity.estimated_duration,
+                                            "HH:mm:ss",
+                                            new Date(),
+                                        ),
+                                        "H:mm",
+                                    )
+                                }}
+                            </div>
+                            <div class="absolute overflow-hidden">
+                                <Menu
+                                    id="overlay_menu"
+                                    ref="menu"
+                                    :model="itemsJourneyGuide"
+                                    class="relative -ml-5 rounded-xl border-2 border-natural-200 bg-natural-50 dark:border-natural-900"
+                                    :popup="true"
+                                    :pt="{
+                                        root: {
+                                            class: 'relative font-nunito bg-natural-50 dark:bg-natural-800 overflow-hidden',
+                                        },
+                                        menu: {
+                                            class: 'bg-natural-50 dark:bg-natural-800',
+                                        },
+                                        menuitem: {
+                                            class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
+                                        },
+                                        content: {
+                                            class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
+                                        },
+                                        submenuHeader: {
+                                            class: 'text-natural-500 dark:text-text-light-dark bg-natural-50 dark:bg-natural-800',
+                                        },
+                                        label: {
+                                            class: 'text-text dark:text-natural-50',
+                                        },
+                                        icon: {
+                                            class: 'text-text dark:text-natural-50',
+                                        },
+                                    }"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

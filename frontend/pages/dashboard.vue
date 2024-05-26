@@ -324,10 +324,10 @@ function editJourney(journey: Journey, id: string) {
             class="rounded-xl border-2 border-natural-200 bg-natural-50 dark:border-natural-900 dark:bg-natural-800"
             :pt="{
                 menuitem: {
-                    class: 'bg-input dark:bg-input-dark hover:bg-cta-bg rounded-md',
+                    class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-300 rounded-md',
                 },
-                content: { class: 'hover:bg-cta-bg rounded-md' },
-                submenu: { class: 'bg-input dark:bg-input-dark' },
+                content: { class: 'hover:bg-dandelion-300 rounded-md' },
+                submenu: { class: 'bg-natural-50 dark:bg-natural-800' },
             }"
         >
             <template #start>

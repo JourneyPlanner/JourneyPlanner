@@ -3,7 +3,10 @@ import { T, useTranslate } from "@tolgee/vue";
 import { differenceInDays, format } from "date-fns";
 import JSConfetti from "js-confetti";
 import QRCode from "qrcode";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "~/tailwind.config.js";
 
+const fullConfig = resolveConfig(tailwindConfig);
 const confirm = useConfirm();
 const route = useRoute();
 const store = useJourneyStore();
@@ -87,12 +90,16 @@ useHead({
 });
 
 const colorMode = useColorMode();
-let darkColor = "#333333";
-let lightColor = "#fcfcfc";
+const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+let darkColor = fullConfig.theme.accentColor["text"] as string;
+let lightColor = fullConfig.theme.accentColor["background"] as string;
 
-if (colorMode.preference === "dark") {
-    darkColor = "#ffffff";
-    lightColor = "#353f44";
+if (
+    colorMode.preference === "dark" ||
+    (darkThemeMq.matches && colorMode.preference === "system")
+) {
+    darkColor = fullConfig.theme.accentColor["white"] as string;
+    lightColor = fullConfig.theme.accentColor["card-dark"] as string;
 }
 
 const opts = {
@@ -245,21 +252,6 @@ async function changeRole(userid: string, selectedRole: number) {
 
 <template>
     <div class="flex flex-col font-nunito text-text dark:text-natural-50">
-        <ConfirmDialog
-            :draggable="false"
-            group="journey"
-            :pt="{
-                header: {
-                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 font-nunito',
-                },
-                content: {
-                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 font-nunito',
-                },
-                footer: {
-                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 font-nunito',
-                },
-            }"
-        />
         <Sidebar
             v-model:visible="visibleSidebar"
             position="right"
@@ -283,7 +275,7 @@ async function changeRole(userid: string, selectedRole: number) {
                 <T key-name="sidebar.invite.link" />
             </div>
             <div
-                class="border-calypso-300-grey flex items-center border-b-2 pb-4 dark:border-text-disabled"
+                class="border-calypso-300-grey dark:border-text-disabled flex items-center border-b-2 pb-4"
             >
                 <input
                     class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
@@ -302,7 +294,9 @@ async function changeRole(userid: string, selectedRole: number) {
             <div
                 class="border-calypso-300-grey flex flex-row items-center justify-center border-b pb-1 pt-1 dark:border-natural-400"
             >
-                <h1 class="w-4/5 text-xl text-footer dark:text-border-grey">
+                <h1
+                    class="w-4/5 text-xl text-natural-600 dark:text-natural-200"
+                >
                     <T key-name="journey.sidebar.list.header" />
                 </h1>
                 <div class="mb-1 mt-1 flex w-1/5 items-center justify-end">
@@ -637,7 +631,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 <!-- line across the middle -->
                                 <div class="absolute inset-0 flex items-center">
                                     <div
-                                        class="h-px w-full bg-calypso-300 dark:bg-countdown-stroke-dark"
+                                        class="dark:bg-countdown-stroke-dark h-px w-full bg-calypso-300"
                                     />
                                 </div>
                             </div>
@@ -658,7 +652,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 <!-- line across the middle -->
                                 <div class="absolute inset-0 flex items-center">
                                     <div
-                                        class="h-px w-full bg-calypso-300 dark:bg-countdown-stroke-dark"
+                                        class="dark:bg-countdown-stroke-dark h-px w-full bg-calypso-300"
                                     />
                                 </div>
                             </div>
@@ -690,7 +684,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 <!-- line across the middle -->
                                 <div class="absolute inset-0 flex items-center">
                                     <div
-                                        class="h-px w-full bg-calypso-300 dark:bg-countdown-stroke-dark"
+                                        class="dark:bg-countdown-stroke-dark h-px w-full bg-calypso-300"
                                     />
                                 </div>
                             </div>
@@ -716,7 +710,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 <!-- line across the middle -->
                                 <div class="absolute inset-0 flex items-center">
                                     <div
-                                        class="h-px w-full bg-calypso-300 dark:bg-countdown-stroke-dark"
+                                        class="dark:bg-countdown-stroke-dark h-px w-full bg-calypso-300"
                                     />
                                 </div>
                             </div>
@@ -739,7 +733,7 @@ async function changeRole(userid: string, selectedRole: number) {
                                 <!-- line across the middle -->
                                 <div class="absolute inset-0 flex items-center">
                                     <div
-                                        class="h-px w-full bg-calypso-300 dark:bg-countdown-stroke-dark"
+                                        class="dark:bg-countdown-stroke-dark h-px w-full bg-calypso-300"
                                     />
                                 </div>
                             </div>
@@ -804,7 +798,7 @@ async function changeRole(userid: string, selectedRole: number) {
             >
                 <Divider
                     type="solid"
-                    class="border text-surface md:hidden md:w-0"
+                    class="text-surface border md:hidden md:w-0"
                 />
             </div>
         </div>
@@ -830,9 +824,35 @@ async function changeRole(userid: string, selectedRole: number) {
         <ActivityDialog
             :id="journeyId.toString()"
             :visible="isActivityDialogVisible"
+            :only-show="false"
+            :create="true"
+            :create-address="true"
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
+        <CalendarFull
+            :id="journeyId.toString()"
+            :current-user-role="currUser.role"
+            :journey-ended="journeyEnded"
+            :during-journey="duringJourney"
+            :journey-startdate="journeyData.from"
+            :journey-enddate="journeyData.to"
+        />
         <ActivityMap v-if="activityDataLoaded" />
+        <ConfirmDialog
+            :draggable="false"
+            group="journey"
+            :pt="{
+                header: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-natural-50 font-nunito',
+                },
+                content: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-natural-50 font-nunito',
+                },
+                footer: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-natural-50 font-nunito',
+                },
+            }"
+        />
     </div>
 </template>

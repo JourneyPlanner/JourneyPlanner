@@ -21,7 +21,8 @@ defineProps({
         </label>
         <InputGroup>
             <InputGroupAddon
-                class="border-2 border-calypso-300 bg-natural-50 dark:bg-natural-900"
+                :disabled="disabled"
+                class="border-2 border-calypso-300 bg-natural-50 disabled:bg-natural-100 dark:bg-natural-900"
             >
                 <i class="pi text-calypso-300" :class="icon" />
             </InputGroupAddon>

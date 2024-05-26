@@ -46,6 +46,9 @@ defineEmits(["input"]);
                 header: {
                     class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-800 dark:text-natural-50',
                 },
+                title: {
+                    class: 'text-text dark:text-input flex gap-1 font-nunito',
+                },
                 dayLabel: { class: 'text-calypso-400' },
                 datepickerMask: { class: 'text-text bg-natural-800' },
             }"

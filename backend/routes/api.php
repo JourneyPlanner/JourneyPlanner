@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\JourneyUserController;
+use App\Http\Controllers\CalendarActivityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +44,11 @@ Route::get("journey/{journey}/user/me", [
     JourneyUserController::class,
     "currentUserDetails",
 ])->middleware("auth:sanctum");
+
+Route::apiResource(
+    "journey/{journey}/activity/{activity}/calendarActivity",
+    CalendarActivityController::class
+)->middleware("auth:sanctum");
 
 Route::post("invite/{id}", [JourneyUserController::class, "store"])->middleware(
     "auth:sanctum"

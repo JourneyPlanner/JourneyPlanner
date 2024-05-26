@@ -128,7 +128,7 @@ function copyToClipboard() {
             >
                 <fieldset
                     id="create-journey"
-                    class="w-full rounded-2xl border-2 border-border bg-calypso-200 bg-opacity-30 px-5 shadow-sm dark:bg-gothic-300 dark:bg-opacity-20 sm:w-1/4 md:w-1/3"
+                    class="w-full rounded-2xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-5 shadow-sm dark:bg-gothic-300 dark:bg-opacity-20 sm:w-1/4 md:w-1/3"
                 >
                     <legend
                         for="create-journey"
@@ -193,7 +193,7 @@ function copyToClipboard() {
                             <NuxtLink to="/dashboard">
                                 <button
                                     type="button"
-                                    class="rounded-xl border-2 border-mahagony-500 bg-input px-7 py-1 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-mahagony-500 dark:hover:bg-opacity-30"
+                                    class="rounded-xl border-2 border-mahagony-500 bg-natural-50 px-7 py-1 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-mahagony-500 dark:hover:bg-opacity-30"
                                 >
                                     <T key-name="common.button.cancel" />
                                 </button>

@@ -188,7 +188,6 @@ const itemsJourneyMember = ref([
         label: t.value("dashboard.options.header"),
 
         items: [
-            { label: "No options available yet" },
             {
                 label: t.value("dashboard.options.leave"),
                 icon: "pi pi-sign-out",
@@ -326,24 +325,24 @@ const onSave = handleSubmit(async (values) => {
                         {{ destination }}
                     </h2>
                     <div
-                        class="mt-1.5 w-56 border-b-2 border-dashed border-border-grey text-sm dark:border-input-placeholder"
+                        class="mt-1.5 w-56 border-b-2 border-dashed border-natural-200 text-sm dark:border-natural-400"
                     >
-                        <span class="mr-1 text-border">
+                        <span class="mr-1 text-calypso-400">
                             <T key-name="dashboard.date" />
                         </span>
-                        <span class="-mb-1 text-text dark:text-white"
+                        <span class="-mb-1 text-text dark:text-natural-50"
                             >{{ format(from, "dd/MM/yyyy") }}-{{
                                 format(to, "dd/MM/yyyy")
                             }}</span
                         >
                     </div>
                     <h3
-                        class="mt-1 w-56 border-b-2 border-dashed border-border-grey text-sm dark:border-input-placeholder"
+                        class="mt-1 w-56 border-b-2 border-dashed border-natural-200 text-sm dark:border-natural-400"
                     >
-                        <span class="mr-1 text-border">
+                        <span class="mr-1 text-calypso-400">
                             <T key-name="dashboard.role" />
                         </span>
-                        <span class="text-text dark:text-white">
+                        <span class="text-text dark:text-natural-50">
                             <T :key-name="roleType" />
                         </span>
                     </h3>
@@ -352,7 +351,7 @@ const onSave = handleSubmit(async (values) => {
         </div>
         <div
             id="journey-mobile"
-            class="h-32 min-w-36 rounded-md border border-border bg-card p-1 dark:bg-card-dark md:p-2 lg:hidden"
+            class="h-32 min-w-36 rounded-md border border-calypso-300 bg-natural-200 p-1 dark:bg-gothic-800 md:p-2 lg:hidden"
         >
             <div class="flex justify-between">
                 <NuxtLink
@@ -389,24 +388,25 @@ const onSave = handleSubmit(async (values) => {
                     {{ destination }}
                 </h2>
                 <h3
-                    class="mt-1.5 border-b-2 border-dashed border-border-grey text-xs dark:border-input-placeholder md:text-sm"
+                    class="mt-1.5 border-b-2 border-dashed border-natural-200 text-xs dark:border-natural-400 md:text-sm"
                 >
-                    <span class="mr-0.5 text-border">
+                    <span class="mr-0.5 text-calypso-400">
                         <T key-name="dashboard.date" />
                     </span>
                     <br class="sm:hidden" />
-                    <span class="whitespace-nowrap text-text dark:text-white"
+                    <span
+                        class="whitespace-nowrap text-text dark:text-natural-50"
                         >{{ format(from, "dd/MM/yyyy") }} -
                         {{ format(to, "dd/MM/yyyy") }}</span
                     >
                 </h3>
                 <h3
-                    class="mt-1 border-b-2 border-dashed border-border-grey text-xs dark:border-input-placeholder md:text-sm"
+                    class="mt-1 border-b-2 border-dashed border-natural-200 text-xs dark:border-natural-400 md:text-sm"
                 >
-                    <span class="mr-0.5 text-border">
+                    <span class="mr-0.5 text-calypso-400">
                         <T key-name="dashboard.role" />
                     </span>
-                    <span class="text-text dark:text-white">
+                    <span class="text-text dark:text-natural-50">
                         <T :key-name="roleType" />
                     </span>
                 </h3>
@@ -416,21 +416,23 @@ const onSave = handleSubmit(async (values) => {
             id="overlay_menu"
             ref="menu"
             :model="props.role === 1 ? itemsJourneyGuide : itemsJourneyMember"
-            class="bg-input dark:bg-input-dark"
+            class="bg-natural-50 dark:bg-natural-800"
             :popup="true"
             :pt="{
-                root: { class: 'font-nunito bg-input dark:bg-input-dark' },
+                root: {
+                    class: 'font-nunito bg-natural-50 dark:bg-natural-800',
+                },
                 menuitem: {
-                    class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                    class: 'bg-natural-50 dark:bg-natural-800 hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-natural-50',
                 },
                 content: {
-                    class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                    class: 'bg-natural-50 dark:bg-natural-800 hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-natural-50',
                 },
                 submenuHeader: {
-                    class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark',
+                    class: 'text-natural-200 dark:text-text-light-dark bg-natural-50 dark:bg-natural-800',
                 },
-                label: { class: 'text-text dark:text-white' },
-                icon: { class: 'text-text dark:text-white' },
+                label: { class: 'text-text dark:text-natural-50' },
+                icon: { class: 'text-text dark:text-natural-50' },
             }"
         />
 
@@ -439,17 +441,17 @@ const onSave = handleSubmit(async (values) => {
             modal
             :header="t('dashboard.edit.header')"
             :style="{ width: '30rem' }"
-            class="bg-input dark:bg-input-dark"
+            class="bg-natural-50 dark:bg-natural-800"
             :pt="{
                 root: {
-                    class: 'font-nunito text-text bg-input dark:bg-input-dark',
+                    class: 'font-nunito text-text bg-natural-50 dark:bg-natural-800',
                 },
                 header: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-input',
+                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50',
                 },
                 title: { class: 'text-2xl' },
                 content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-input',
+                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50',
                 },
             }"
         >
@@ -510,7 +512,7 @@ const onSave = handleSubmit(async (values) => {
                         type="button"
                         :label="t('common.delete')"
                         icon="pi pi-trash"
-                        class="h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-white dark:hover:bg-cancel-bg-dark"
+                        class="h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                         :pt="{
                             root: { class: 'flex items-center justify-center' },
                             label: { class: 'display-block flex-none' },
@@ -526,7 +528,7 @@ const onSave = handleSubmit(async (values) => {
                             root: { class: 'flex items-center justify-center' },
                             label: { class: 'display-block flex-none' },
                         }"
-                        class="flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-border-green-save bg-input text-center font-bold text-text hover:bg-fill-green-save dark:border-border-green-save-dark dark:bg-input-dark dark:text-white dark:hover:bg-fill-green-save-dark"
+                        class="flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-atlantis-400 bg-natural-50 text-center font-bold text-text hover:bg-atlantis-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-atlantis-30040"
                     />
                 </div>
             </form>

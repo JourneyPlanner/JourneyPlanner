@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
-import resolveConfig from "tailwindcss/resolveConfig";
-import tailwindConfig from "~/tailwind.config.js";
 
-const fullConfig = resolveConfig(tailwindConfig);
 const { t } = useTranslate();
 
 const journey = useJourneyStore();
@@ -85,7 +82,7 @@ const style = computed(() =>
                     value: t('journey.map.notfound.tooltip'),
                     pt: { root: 'font-nunito' },
                 }"
-                class="pi pi-exclamation-circle -mb-2.5 ml-auto text-xl text-cancel-border hover:cursor-pointer"
+                class="pi pi-exclamation-circle text-cancel-border -mb-2.5 ml-auto text-xl hover:cursor-pointer"
                 @click="isNotFoundActivitiesDialogVisible = true"
             />
         </div>
@@ -119,7 +116,7 @@ const style = computed(() =>
                         }"
                     >
                         <div
-                            class="flex flex-col font-nunito text-text dark:text-input"
+                            class="dark:text-input flex flex-col font-nunito text-text"
                         >
                             <h1 class="font-bold">
                                 {{ activity.name }}
@@ -159,7 +156,7 @@ const style = computed(() =>
                 }"
             >
                 <p
-                    class="border-b-2 border-border-gray pb-3 dark:border-input-placeholder"
+                    class="border-border-gray dark:border-input-placeholder border-b-2 pb-3"
                 >
                     <T key-name="journey.map.notfound.description" />
                 </p>
@@ -172,13 +169,13 @@ const style = computed(() =>
                     }"
                 >
                     <div
-                        class="mx-4 font-nunito text-text dark:text-input lg:mx-8"
+                        class="dark:text-input mx-4 font-nunito text-text lg:mx-8"
                     >
                         <table
                             class="w-full table-fixed text-left text-sm md:text-base"
                         >
                             <thead
-                                class="border-b border-text text-xs uppercase dark:border-input"
+                                class="dark:border-input border-b border-text text-xs uppercase"
                             >
                                 <tr>
                                     <th scope="col" class="w-10 py-3 pr-5">
