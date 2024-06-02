@@ -75,7 +75,7 @@ class UploadController extends Controller
             !in_array($filetype, $allowedTypes) &&
             !in_array($filetypeParts[0], $allowedTypes)
         ) {
-            return $this->rejectWithReason("Invalid file type", 400);
+            return $this->rejectWithReason("Invalid file type", 415);
         }
 
         // Check if the journey exists and the user is a member
