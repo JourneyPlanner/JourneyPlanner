@@ -8,7 +8,7 @@ useHead({
     <div class="font-nunito">
         <div class="min-h-screen">
             <div class="">
-                <SvgStartpagePlane class="absolute -right-80" />
+                <SvgStartpagePlane class="absolute -right-32" />
             </div>
             <header
                 class="mx-5 mt-3 flex flex-row justify-between text-base font-medium text-text"
@@ -47,7 +47,7 @@ useHead({
             </header>
             <div class="ml-20 mt-24">
                 <h1 class="text-5xl font-bold">JourneyPlanner</h1>
-                <h2 class="mt-1 text-2xl font-medium">
+                <h2 class="mt-1 text-3xl font-bold text-calypso-500">
                     <T key-name="startpage.subheading" />
                 </h2>
                 <p class="mt-2 w-96 text-lg">
@@ -58,7 +58,7 @@ useHead({
         <div class="min-h-screen">
             <div class="relative mt-96 flex flex-row">
                 <div class="">
-                    <SvgStartpagePeople class="" />
+                    <SvgStartpageGlobe class="absolute" />
                 </div>
                 <div class="ml-20">
                     <div class="flex flex-row">
@@ -84,7 +84,6 @@ useHead({
                         </div>
                     </div>
                     <div class="ml-20 mt-10 flex flex-row">
-                        <SvgStartpageGlobe class="w-24" />
                         <div class="ml-4 flex flex-col">
                             <h4 class="text-lg font-semibold">
                                 <T key-name="startpage.experience.header" />
