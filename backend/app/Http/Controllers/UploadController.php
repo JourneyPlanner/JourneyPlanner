@@ -123,10 +123,19 @@ class UploadController extends Controller
         }
 
         // Move file to journey folder.
-        rename($path, $journeyFolder . "/" . hrtime(true) . "_" . $filename);
+        try {
+            rename(
+                $path,
+                $journeyFolder . "/" . hrtime(true) . "_" . $filename
+            );
+        } catch (\Exception $ignored) {
+        }
 
         // Remove .info file.
-        unlink($path . ".info");
+        try {
+            unlink($path . ".info");
+        } catch (\Exception $ignored) {
+        }
 
         // Allow the upload (doesn't actually do anything, just for good measure)
         return response()->json([
