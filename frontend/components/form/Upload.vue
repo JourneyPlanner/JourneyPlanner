@@ -61,7 +61,6 @@ const uppy = new Uppy({
             :props="{
                 showProgressDetails: true,
                 locale: locale,
-                restrictions: restrictions,
             }"
         />
         <div class="flex justify-center md:hidden">
