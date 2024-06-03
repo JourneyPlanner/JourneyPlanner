@@ -46,6 +46,7 @@ services:
       - tusd
     volumes:
       - uploads:/tusd-data
+      - journey_media:/app/storage/app/journey_media
   db:
     image: mariadb:latest
     pull_policy: always
@@ -68,4 +69,5 @@ services:
 volumes:
   dbdata:
   uploads:
+  journey_media:
   i18n:

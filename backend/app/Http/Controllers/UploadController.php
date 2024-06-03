@@ -118,7 +118,7 @@ class UploadController extends Controller
         $journeyId = $request->all()["Event"]["Upload"]["MetaData"]["journey"];
 
         // Create journey folder if it doesn't exist.
-        $journeyFolder = storage_path("app/public/journeys/" . $journeyId);
+        $journeyFolder = storage_path("app/journey_media/" . $journeyId);
         if (!file_exists($journeyFolder)) {
             mkdir($journeyFolder, 0777, true);
         }
