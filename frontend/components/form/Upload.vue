@@ -80,7 +80,7 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard .uppy-Dashboard-inner {
-    @apply h-40 w-full rounded-2xl border-[3px] border-dashed border-border text-text dark:bg-text dark:text-input sm:h-[13rem] md:h-[17rem] lg:rounded-3xl !important;
+    @apply h-40 w-full rounded-2xl border-[3px] border-dashed border-calypso-300 text-text dark:bg-text dark:text-natural-50 sm:h-[13rem] md:h-[17rem] lg:rounded-3xl !important;
 }
 
 .uppy-Dashboard-AddFiles {
@@ -97,15 +97,15 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard-browse {
-    @apply text-link hover:font-bold hover:underline hover:decoration-link !important;
+    @apply text-calypso-500 hover:font-bold hover:underline hover:decoration-calypso-500 dark:text-calypso-600 dark:hover:decoration-calypso-600 !important;
 }
 
 .uppy-c-btn-primary {
-    @apply border-2 border-cta-border bg-cta-bg font-bold text-text dark:border-cta-bg-fill dark:bg-cta-bg-fill !important;
+    @apply border-2 border-dandelion-400 bg-dandelion-200 text-text dark:border-dandelion-300 dark:bg-dandelion-400 !important;
 }
 
 .uppy-DashboardContent-bar {
-    @apply rounded-t-2xl border-b border-input-placeholder bg-background dark:bg-text lg:rounded-t-3xl !important;
+    @apply rounded-t-2xl border-b border-natural-600 bg-background dark:bg-text lg:rounded-t-3xl !important;
 }
 
 .uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
@@ -113,14 +113,14 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard-progressindicators {
-    @apply border-t border-input-placeholder !important;
+    @apply border-t border-natural-600 !important;
 }
 
 .uppy-StatusBar.is-waiting,
 .uppy-StatusBar.is-uploading,
 .uppy-StatusBar.is-complete,
 .uppy-StatusBar.is-error {
-    @apply rounded-b-2xl border-input-placeholder bg-background text-text dark:bg-text dark:text-input lg:rounded-b-3xl !important;
+    @apply rounded-b-2xl border-natural-600 bg-background text-text dark:bg-text dark:text-natural-50 lg:rounded-b-3xl !important;
 }
 
 .uppy-DashboardContent-addMore,
@@ -129,7 +129,7 @@ const uppy = new Uppy({
 }
 
 .uppy-StatusBar-actionBtn {
-    @apply border-2 border-cta-border bg-cta-bg font-semibold text-text dark:border-cta-bg-fill dark:bg-cta-bg-fill !important;
+    @apply border-2 border-dandelion-300 bg-dandelion-200 font-semibold text-text dark:border-dandelion-300 dark:bg-dandelion-400 !important;
 }
 
 .uppy-StatusBar-actionBtn--done {
