@@ -14,7 +14,13 @@ const journey = useJourneyStore();
 const config = useRuntimeConfig();
 
 const client = useSanctumClient();
-const { token } = await client("/api/user/tokens/upload");
+
+let upload_token = localStorage.getItem("upload_token");
+
+if (!upload_token) {
+    upload_token = await client("/api/user/tokens/upload");
+    localStorage.setItem("upload_token", upload_token || "");
+}
 
 let locale: Locale = English;
 // TODO dont work
@@ -33,7 +39,7 @@ const uppy = new Uppy({
 }).use(Tus, {
     endpoint: config.public.NUXT_UPLOAD_URL as string,
     headers: {
-        Authorization: "Bearer " + token,
+        Authorization: "Bearer " + upload_token,
     },
     removeFingerprintOnSuccess: true,
 });
