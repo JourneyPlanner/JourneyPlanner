@@ -18,8 +18,9 @@ const client = useSanctumClient();
 let upload_token = localStorage.getItem("upload_token");
 
 if (!upload_token) {
-    upload_token = await client("/api/user/tokens/upload");
-    localStorage.setItem("upload_token", upload_token || "");
+    const { token } = await client("/api/user/tokens/upload");
+    localStorage.setItem("upload_token", token || "");
+    upload_token = token;
 }
 
 let locale: Locale = English;
