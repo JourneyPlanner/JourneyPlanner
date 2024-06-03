@@ -145,6 +145,6 @@ const uppy = new Uppy({
 
 .uppy-Dashboard-AddFilesPanel,
 .uppy-Dashboard-innerWrap {
-    @apply rounded-2xl lg:rounded-3xl !important;
+    @apply rounded-2xl bg-background dark:bg-text lg:rounded-3xl !important;
 }
 </style>
