@@ -77,4 +77,12 @@ class Journey extends Model
     {
         return $this->hasMany(Activity::class);
     }
+
+    /**
+     * The uploads that are a part of the journey.
+     */
+    public function media(): HasMany
+    {
+        return $this->hasMany(Media::class);
+    }
 }

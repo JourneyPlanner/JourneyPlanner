@@ -139,17 +139,19 @@ class JourneyUserController extends Controller
         // Remove the journey if the user was the last member
         if ($journey->users()->count() === 0) {
             // Delete journey uploads
-            $journeyFolder = storage_path(
-                "app/public/journeys/" . $journey->id
-            );
-            if (file_exists($journeyFolder)) {
-                $files = scandir($journeyFolder);
-                foreach ($files as $file) {
-                    if ($file !== "." && $file !== "..") {
-                        unlink($journeyFolder . "/" . $file);
-                    }
+            $files = $journey->media()->get();
+            foreach ($files as $file) {
+                $file["path"] = storage_path($file["path"]);
+                if (file_exists($file["path"])) {
+                    unlink($file["path"]);
                 }
-                rmdir($journeyFolder);
+                $file->delete();
+            }
+
+            // Delete folder
+            $folder = storage_path("app/journey_media/" . $journey->id);
+            if (file_exists($folder)) {
+                rmdir($folder);
             }
 
             $journey->delete();
