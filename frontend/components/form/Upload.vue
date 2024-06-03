@@ -20,7 +20,6 @@ let upload_token = localStorage.getItem("upload_token");
 if (!upload_token) {
     const { token } = await client("/api/user/tokens/upload");
     localStorage.setItem("upload_token", token || "");
-    console.log(localStorage.getItem("upload_token"));
     upload_token = token;
 }
 
@@ -33,6 +32,10 @@ if (tolgee.value.getLanguage() == "de") {
 const uppy = new Uppy({
     meta: { journey: journey.getID() },
     locale: locale,
+    restrictions: {
+        maxFileSize: 1000000000,
+        allowedFileTypes: ["image/*", "video/*", ".pdf", ".txt"],
+    },
 }).use(Tus, {
     endpoint: config.public.NUXT_UPLOAD_URL as string,
     headers: {
@@ -45,12 +48,12 @@ const uppy = new Uppy({
 <template>
     <div class="w-full flex-col">
         <div class="mb-3 flex flex-row justify-between">
-            <h1 class="text-2xl font-semibold">
+            <h1 class="text-2xl font-semibold text-text dark:text-natural-50">
                 <T key-name="journey.upload.title" />
             </h1>
             <div class="hidden items-end md:flex">
                 <h6
-                    class="-mb-3 text-base text-input-placeholder dark:text-input-gray"
+                    class="-mb-3 text-base text-natural-600 dark:text-natural-200"
                 >
                     <T key-name="journey.upload.info" />
                 </h6>
@@ -65,7 +68,7 @@ const uppy = new Uppy({
         />
         <div class="flex justify-center md:hidden">
             <h6
-                class="absolute bottom-12 text-xs text-input-placeholder dark:text-input-gray"
+                class="absolute bottom-12 text-xs text-natural-600 dark:text-natural-200"
             >
                 <T key-name="journey.upload.info" />
             </h6>
@@ -79,7 +82,7 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard .uppy-Dashboard-inner {
-    @apply h-40 w-full rounded-2xl border-[3px] border-dashed border-calypso-300 text-text dark:bg-text dark:text-natural-50 sm:h-[13rem] md:h-[17rem] lg:rounded-3xl !important;
+    @apply h-40 w-full rounded-2xl border-[3px] border-dashed border-calypso-300 text-text dark:bg-none dark:text-natural-50 sm:h-[13rem] md:h-[17rem] lg:rounded-3xl !important;
 }
 
 .uppy-Dashboard-AddFiles {
@@ -87,20 +90,19 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard-AddFiles-title {
-    @apply mt-8 text-base;
+    @apply mt-8 font-nunito text-lg text-natural-600 !important;
 }
 
-.uppy-Dashboard-AddFiles-title,
 .uppy-StatusBar-status {
-    @apply font-nunito text-text dark:text-input !important;
+    @apply font-nunito text-text dark:text-natural-50 !important;
 }
 
 .uppy-Dashboard-browse {
-    @apply text-calypso-500 hover:font-bold hover:underline hover:decoration-calypso-500 dark:text-calypso-600 dark:hover:decoration-calypso-600 !important;
+    @apply text-calypso-500 hover:font-semibold hover:underline hover:decoration-calypso-500 dark:text-calypso-600 dark:hover:decoration-calypso-600 !important;
 }
 
 .uppy-c-btn-primary {
-    @apply border-2 border-dandelion-400 bg-dandelion-200 text-text dark:border-dandelion-300 dark:bg-dandelion-400 !important;
+    @apply bg-dandelion-200 font-nunito text-text dark:bg-natural-900 !important;
 }
 
 .uppy-DashboardContent-bar {
@@ -119,7 +121,7 @@ const uppy = new Uppy({
 .uppy-StatusBar.is-uploading,
 .uppy-StatusBar.is-complete,
 .uppy-StatusBar.is-error {
-    @apply rounded-b-2xl border-natural-600 bg-background text-text dark:bg-text dark:text-natural-50 lg:rounded-b-3xl !important;
+    @apply rounded-b-2xl border-natural-600 bg-natural-50 text-text dark:bg-text dark:text-natural-50 lg:rounded-b-3xl !important;
 }
 
 .uppy-DashboardContent-addMore,
@@ -128,7 +130,7 @@ const uppy = new Uppy({
 }
 
 .uppy-StatusBar-actionBtn {
-    @apply border-2 border-dandelion-300 bg-dandelion-200 font-semibold text-text dark:border-dandelion-300 dark:bg-dandelion-400 !important;
+    @apply bg-dandelion-200 font-semibold text-text opacity-100 dark:bg-dandelion-300 !important;
 }
 
 .uppy-StatusBar-actionBtn--done {
@@ -140,7 +142,13 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard-AddFilesPanel,
-.uppy-Dashboard-innerWrap {
-    @apply rounded-2xl bg-background dark:bg-text lg:rounded-3xl !important;
+.uppy-Dashboard-innerWrap,
+.uppy-Dashboard-inner {
+    @apply rounded-2xl bg-natural-50 dark:bg-text lg:rounded-3xl !important;
+}
+
+.uppy-Dashboard-AddFilesPanel {
+    background: unset !important;
+    @apply bg-natural-50 dark:bg-text !important;
 }
 </style>
