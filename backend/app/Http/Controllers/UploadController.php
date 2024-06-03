@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Journey;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Journey;
+use App\Models\Media;
 
 class UploadController extends Controller
 {
@@ -123,11 +124,9 @@ class UploadController extends Controller
         }
 
         // Move file to journey folder.
+        $filename = $journeyFolder . "/" . hrtime(true) . "_" . $filename;
         try {
-            rename(
-                $path,
-                $journeyFolder . "/" . hrtime(true) . "_" . $filename
-            );
+            rename($path, $filename);
         } catch (\Exception $ignored) {
         }
 
@@ -136,6 +135,13 @@ class UploadController extends Controller
             unlink($path . ".info");
         } catch (\Exception $ignored) {
         }
+
+        // Create media record in database.
+        $media = new Media();
+        $media->path = $filename;
+        $media->journey_id = $journeyId;
+        $media->user_id = $request->user()->id;
+        $media->save();
 
         // Allow the upload (doesn't actually do anything, just for good measure)
         return response()->json([
