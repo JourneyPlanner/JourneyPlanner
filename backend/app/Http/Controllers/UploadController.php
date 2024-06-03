@@ -117,16 +117,17 @@ class UploadController extends Controller
         $filename = $request->all()["Event"]["Upload"]["MetaData"]["filename"];
         $journeyId = $request->all()["Event"]["Upload"]["MetaData"]["journey"];
 
+        $subfolder = "app/journey_media/" . $journeyId;
         // Create journey folder if it doesn't exist.
-        $journeyFolder = storage_path("app/journey_media/" . $journeyId);
+        $journeyFolder = storage_path($subfolder);
         if (!file_exists($journeyFolder)) {
             mkdir($journeyFolder, 0777, true);
         }
 
         // Move file to journey folder.
-        $filename = $journeyFolder . "/" . hrtime(true) . "_" . $filename;
+        $filename = hrtime(true) . "_" . $filename;
         try {
-            rename($path, $filename);
+            rename($path, $journeyFolder . "/" . $filename);
         } catch (\Exception $ignored) {
         }
 
@@ -138,7 +139,7 @@ class UploadController extends Controller
 
         // Create media record in database.
         $media = new Media();
-        $media->path = $filename;
+        $media->path = $subfolder . "/" . $filename;
         $media->journey_id = $journeyId;
         $media->user_id = $request->user()->id;
         $media->save();
