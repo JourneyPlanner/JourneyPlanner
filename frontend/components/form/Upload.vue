@@ -18,8 +18,9 @@ const client = useSanctumClient();
 let upload_token = localStorage.getItem("upload_token");
 
 if (!upload_token) {
-    upload_token = await client("/api/user/tokens/upload");
-    localStorage.setItem("upload_token", upload_token || "");
+    const { token } = await client("/api/user/tokens/upload");
+    localStorage.setItem("upload_token", token || "");
+    upload_token = token;
 }
 
 let locale: Locale = English;
@@ -145,7 +146,6 @@ const uppy = new Uppy({
 
 .uppy-Dashboard-AddFilesPanel,
 .uppy-Dashboard-innerWrap {
-    @apply rounded-2xl lg:rounded-3xl !important;
-    @apply font-nunit bg-background dark:bg-text !important;
+    @apply rounded-2xl bg-background dark:bg-text lg:rounded-3xl !important;
 }
 </style>
