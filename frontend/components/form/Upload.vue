@@ -34,7 +34,7 @@ if (tolgee.value.getLanguage() == "de") {
 }
 
 const uppy = new Uppy({
-    meta: { journey: journey.getId() },
+    meta: { journey: journey.getID() },
     locale: locale,
 }).use(Tus, {
     endpoint: config.public.NUXT_UPLOAD_URL as string,

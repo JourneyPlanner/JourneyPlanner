@@ -1,8 +1,8 @@
 {
     "tabWidth": 4,
+    "endOfLine": "auto",
     "importOrder": ["^@core/(.*)$", "^@server/(.*)$", "^@ui/(.*)$", "^[./]"],
     "importOrderSeparation": true,
-    "endOfLine": "auto",
     "importOrderSortSpecifiers": true,
     "plugins": [
         "@trivago/prettier-plugin-sort-imports",

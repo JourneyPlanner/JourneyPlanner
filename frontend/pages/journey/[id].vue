@@ -2,14 +2,17 @@
 import { T, useTranslate } from "@tolgee/vue";
 import { differenceInDays, format } from "date-fns";
 import JSConfetti from "js-confetti";
-import Toast from "primevue/toast";
 import QRCode from "qrcode";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "~/tailwind.config.js";
 
+const fullConfig = resolveConfig(tailwindConfig);
 const confirm = useConfirm();
 const route = useRoute();
 const store = useJourneyStore();
 const activityStore = useActivityStore();
 const journeyId = route.params.id;
+const activityDataLoaded = ref(false);
 const qrcode = ref("");
 const duringJourney = ref(false);
 const journeyEnded = ref(false);
@@ -59,11 +62,14 @@ if (error.value) {
     });
 }
 
-const { data: activityData } = await useAsyncData("activity", () =>
-    client(`/api/journey/${journeyId}/activity`),
-);
-
-activityStore.setActivities(activityData);
+await client(`/api/journey/${journeyId}/activity`, {
+    async onResponse({ response }) {
+        if (response.ok) {
+            activityStore.setActivities(response._data);
+            activityDataLoaded.value = true;
+        }
+    },
+});
 
 const { data: users } = await useAsyncData("users", () =>
     client(`/api/journey/${journeyId}/user`),
@@ -84,12 +90,16 @@ useHead({
 });
 
 const colorMode = useColorMode();
-let darkColor = "#333333";
-let lightColor = "#fcfcfc";
+const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+let darkColor = fullConfig.theme.accentColor["text"] as string;
+let lightColor = fullConfig.theme.accentColor["background"] as string;
 
-if (colorMode.preference === "dark") {
-    darkColor = "#ffffff";
-    lightColor = "#353f44";
+if (
+    colorMode.preference === "dark" ||
+    (darkThemeMq.matches && colorMode.preference === "system")
+) {
+    darkColor = fullConfig.theme.accentColor["white"] as string;
+    lightColor = fullConfig.theme.accentColor["card-dark"] as string;
 }
 
 const opts = {
@@ -133,8 +143,10 @@ const flip = () => {
 };
 
 const confirmLeave = (event: Event) => {
+    visibleSidebar.value = false;
     confirm.require({
         target: event.currentTarget as HTMLElement,
+        group: "journey",
         header: t.value("journey.leave.header"),
         message: t.value("journey.leave.message"),
         icon: "pi pi-exclamation-triangle",
@@ -155,6 +167,11 @@ const confirmLeave = (event: Event) => {
     });
 };
 
+/**
+ * API call to leave the journey
+ * success: toast message and redirect to dashboard
+ * error: toast message
+ */
 async function leaveJourney() {
     await client(`/api/journey/${journeyId}/leave`, {
         method: "DELETE",
@@ -189,6 +206,9 @@ async function leaveJourney() {
     });
 }
 
+/**
+ * copy the invite link to the clipboard
+ */
 function copyToClipboard() {
     navigator.clipboard.writeText(journeyData.value.invite);
     toast.add({
@@ -199,12 +219,16 @@ function copyToClipboard() {
     });
 }
 
+/*
+ * Change the role of a user
+ * @param userid - the id of the user
+ * @param selectedRole - the selected role
+ */
 async function changeRole(userid: string, selectedRole: number) {
     await client(`/api/journey/${journeyId}/user/${userid}`, {
         method: "PATCH",
         body: {
             role: selectedRole,
-            random: 1,
         },
         async onResponse() {
             users.value = users.value.map((user: User) => {
@@ -228,7 +252,6 @@ async function changeRole(userid: string, selectedRole: number) {
 
 <template>
     <div class="flex flex-col font-nunito text-text dark:text-white">
-        <Toast class="w-3/4 sm:w-auto" />
         <Sidebar
             v-model:visible="visibleSidebar"
             position="right"
@@ -795,9 +818,21 @@ async function changeRole(userid: string, selectedRole: number) {
         <ActivityDialog
             :id="journeyId.toString()"
             :visible="isActivityDialogVisible"
+            :only-show="false"
+            :create="true"
+            :create-address="true"
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
+        <CalendarFull
+            :id="journeyId.toString()"
+            :current-user-role="currUser.role"
+            :journey-ended="journeyEnded"
+            :during-journey="duringJourney"
+            :journey-startdate="journeyData.from"
+            :journey-enddate="journeyData.to"
+        />
+        <ActivityMap v-if="activityDataLoaded" />
         <div class="flex items-center justify-center md:justify-start">
             <div
                 class="relative mt-5 flex w-[90%] items-center sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
@@ -806,8 +841,8 @@ async function changeRole(userid: string, selectedRole: number) {
             </div>
         </div>
         <ConfirmDialog
-            class="z-[500]"
             :draggable="false"
+            group="journey"
             :pt="{
                 header: {
                     class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',

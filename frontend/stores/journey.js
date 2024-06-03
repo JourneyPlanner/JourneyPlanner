@@ -8,8 +8,16 @@ export const useJourneyStore = defineStore("journey", () => {
         this.journey = journey;
     }
 
-    function getId() {
+    function resetJourney() {
+        this.journey = {};
+    }
+
+    function getID() {
         return this.journey.id;
+    }
+
+    function getName() {
+        return this.journey.name;
     }
 
     function getFromDate() {
@@ -20,5 +28,23 @@ export const useJourneyStore = defineStore("journey", () => {
         return this.journey.to;
     }
 
-    return { journey, setJourney, getId, getFromDate, getToDate };
+    function getLong() {
+        return this.journey.longitude;
+    }
+
+    function getLat() {
+        return this.journey.latitude;
+    }
+
+    return {
+        journey,
+        setJourney,
+        resetJourney,
+        getID,
+        getName,
+        getFromDate,
+        getToDate,
+        getLong,
+        getLat,
+    };
 });

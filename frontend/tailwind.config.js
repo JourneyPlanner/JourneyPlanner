@@ -37,9 +37,8 @@ export default {
             surface: "rgba(228, 239, 244, 0.8)" /* form surface with opacity */,
             "surface-dark":
                 "rgba(228, 239, 244, 0.22)" /* dark form surface with opacity */,
-            card: "#rgba(228, 239, 244, 0.2)" /* card background */,
+            card: "rgba(228, 239, 244, 0.2)" /* card background */,
             "card-dark": "#353F44",
-            text: "#333333" /* grey text */,
             "text-disabled": "#686868" /* disabled text */,
             "text-light-dark":
                 "#DEDEDE" /* light dark text e.g. search text dashboard */,
@@ -89,6 +88,82 @@ export default {
             "grey-text": "#6B6565",
             "blue-text-dark": "#7FAAC0",
             "grey-text-dark": "#ADACAC",
+
+            calypso: {
+                50: "#F0F8FB",
+                100: "#DAEDF3",
+                200: "#B9DCE8",
+                300: "#88C4D8",
+                400: "#50A1C0",
+                500: "#3485A6",
+                600: "#327597",
+                700: "#2B5973",
+                800: "#2B4C5F",
+                900: "#274052",
+                950: "#182C39",
+            },
+
+            gothic: {
+                50: "#F3F7F8",
+                100: "#E0EAED",
+                200: "#C4D7DD",
+                300: "#9BBAC5",
+                400: "#6A95A6",
+                500: "#4F798B",
+                600: "#446476",
+                700: "#3C5462",
+                800: "#374853",
+                900: "#313F48",
+                950: "#1D272F",
+            },
+
+            text: "#333333",
+
+            natural: {
+                50: "#FCFCFC",
+                100: "#EFEFEF",
+                200: "#DCDCDC",
+                300: "#BDBDBD",
+                400: "#989898",
+                500: "#7C7C7C",
+                600: "#656565",
+                700: "#525252",
+                800: "#464646",
+                900: "#3D3D3D",
+                950: "#292929",
+            },
+
+            dandelion: {
+                100: "#FDF3C8",
+                200: "#FAE58D",
+                300: "#F8D351",
+                400: "#F6C029",
+            },
+
+            "pesto-600": "#7B713F",
+
+            mahagony: {
+                300: "#EFB2B2",
+                500: "#D65D5D",
+                500_030: "#6E4F50",
+                600: "#C13E3E",
+            },
+
+            atlantis: {
+                200: "#D2F0A6",
+                300_40: "#627548",
+                400: "#96D446",
+            },
+
+            ronchi: {
+                300: "#E3C454",
+                400: "#DFB640",
+                500: "#D79929",
+            },
+
+            dark: "#42484A",
+            light: "#F6FAFB",
+            "marker-not-added": "#8CA5B0",
         },
     },
     plugins: [],
