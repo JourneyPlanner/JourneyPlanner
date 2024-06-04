@@ -48,12 +48,14 @@ const uppy = new Uppy({
 <template>
     <div class="w-full flex-col">
         <div class="mb-3 flex flex-row justify-between">
-            <h1 class="text-2xl font-semibold text-text dark:text-natural-50">
+            <h1
+                class="mt-2 text-2xl font-semibold text-text dark:text-natural-50"
+            >
                 <T key-name="journey.upload.title" />
             </h1>
             <div class="hidden items-end md:flex">
                 <h6
-                    class="-mb-3 text-base text-natural-600 dark:text-natural-200"
+                    class="-mb-3 text-base text-natural-600 dark:text-natural-300"
                 >
                     <T key-name="journey.upload.info" />
                 </h6>
@@ -68,7 +70,7 @@ const uppy = new Uppy({
         />
         <div class="flex justify-center md:hidden">
             <h6
-                class="absolute bottom-12 text-xs text-natural-600 dark:text-natural-200"
+                class="absolute bottom-12 text-xs text-natural-600 dark:text-natural-300"
             >
                 <T key-name="journey.upload.info" />
             </h6>
@@ -82,7 +84,7 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard .uppy-Dashboard-inner {
-    @apply h-40 w-full rounded-2xl border-[3px] border-dashed border-calypso-300 text-text dark:bg-none dark:text-natural-50 sm:h-[13rem] md:h-[17rem] lg:rounded-3xl !important;
+    @apply h-40 w-full rounded-2xl border-[3px] border-dashed border-calypso-400 text-text dark:border-calypso-600 dark:bg-none dark:text-natural-50 sm:h-[13rem] md:h-[17rem] lg:rounded-3xl !important;
 }
 
 .uppy-Dashboard-AddFiles {
@@ -150,5 +152,9 @@ const uppy = new Uppy({
 .uppy-Dashboard-AddFilesPanel {
     background: unset !important;
     @apply bg-natural-50 dark:bg-text !important;
+}
+
+.uppy-DashboardContent-back {
+    @apply text-text hover:text-mahagony-600 hover:underline dark:text-natural-50 dark:hover:text-mahagony-300 !important;
 }
 </style>
