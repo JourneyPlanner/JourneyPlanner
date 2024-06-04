@@ -7,7 +7,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="font-nunito text-text dark:text-white">
+    <div class="dark:text-white font-nunito text-text">
         <h1 v-if="error">There was an error.</h1>
         <h1 v-if="error">{{ error.statusCode }}</h1>
         <NuxtLink to="/">Go back home</NuxtLink>
