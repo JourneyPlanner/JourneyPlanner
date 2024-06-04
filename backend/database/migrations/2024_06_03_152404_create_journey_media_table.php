@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create("journey_media", function (Blueprint $table) {
             $table->uuid("id")->primary();
             $table->foreignUuid("journey_id")->constrained()->cascadeOnDelete();
-            $table->foreignUuid("user_id");//->constrained()->cascadeOnDelete();
+            $table->foreignUuid("user_id"); //->constrained()->cascadeOnDelete();
             $table->string("path");
             $table->timestamps();
         });

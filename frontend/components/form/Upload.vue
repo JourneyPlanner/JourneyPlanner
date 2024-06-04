@@ -33,7 +33,7 @@ const uppy = new Uppy({
     meta: { journey: journey.getID() },
     locale: locale,
     restrictions: {
-        maxFileSize: 1000000000,
+        maxFileSize: 1024 * 1024 * 1024,
         allowedFileTypes: ["image/*", "video/*", ".pdf", ".txt"],
     },
 }).use(Tus, {

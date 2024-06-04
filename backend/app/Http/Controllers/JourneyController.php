@@ -51,11 +51,11 @@ class JourneyController extends Controller
                 "Origin" => config("app.url"),
                 "Referer" => config("app.url"),
             ])->get(
-                    "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
+                "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
                     urlencode($validated["destination"]) .
                     "&limit=1&access_token=" .
                     config("map.mapbox_api_key")
-                );
+            );
             $searchData = $searchResponse->json();
 
             if (
@@ -97,11 +97,11 @@ class JourneyController extends Controller
                 "Origin" => config("app.url"),
                 "Referer" => config("app.url"),
             ])->get(
-                    "https://api.mapbox.com/search/geocode/v6/forward?q=" .
+                "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     urlencode($validated["mapbox_full_address"]) .
                     "&permanent=true&autocomplete=true&limit=1&access_token=" .
                     config("map.mapbox_api_key")
-                );
+            );
             $geocodingData = $geocodingResponse->json();
 
             if (
@@ -181,11 +181,11 @@ class JourneyController extends Controller
                 "Origin" => config("app.url"),
                 "Referer" => config("app.url"),
             ])->get(
-                    "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
+                "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
                     urlencode($validated["destination"]) .
                     "&limit=1&access_token=" .
                     config("map.mapbox_api_key")
-                );
+            );
             $searchData = $searchResponse->json();
 
             if (
@@ -236,11 +236,11 @@ class JourneyController extends Controller
                 "Origin" => config("app.url"),
                 "Referer" => config("app.url"),
             ])->get(
-                    "https://api.mapbox.com/search/geocode/v6/forward?q=" .
+                "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                     urlencode($validated["mapbox_full_address"]) .
                     "&permanent=true&autocomplete=true&limit=1&access_token=" .
                     config("map.mapbox_api_key")
-                );
+            );
             $geocodingData = $geocodingResponse->json();
 
             if (
@@ -278,7 +278,11 @@ class JourneyController extends Controller
     public function destroy(Request $request, Journey $journey)
     {
         Gate::authorize("journeyGuide", $journey);
+        $this::deleteJourney($journey);
+    }
 
+    public static function deleteJourney(Journey $journey)
+    {
         // Delete journey uploads
         $files = $journey->media()->get();
         foreach ($files as $file) {

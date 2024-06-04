@@ -62,6 +62,7 @@ class UploadController extends Controller
             "Event.Upload.MetaData.journey" => "required",
             "Event.Upload.MetaData.filename" => "required",
             "Event.Upload.MetaData.filetype" => "required",
+            "Event.Upload.Size" => "required",
         ]);
 
         if ($validator->fails()) {
@@ -77,6 +78,13 @@ class UploadController extends Controller
             !in_array($filetypeParts[0], $allowedTypes)
         ) {
             return $this->rejectWithReason("Invalid file type", 415);
+        }
+
+        // Validate filesize
+        $maxFileSize = 1024 * 1024 * 1024; // 1 GB
+        $size = $request->all()["Event"]["Upload"]["Size"];
+        if ($size > $maxFileSize) {
+            return $this->rejectWithReason("Upload too big", 413);
         }
 
         // Check if the journey exists and the user is a member
@@ -121,7 +129,7 @@ class UploadController extends Controller
         // Create journey folder if it doesn't exist.
         $journeyFolder = storage_path($subfolder);
         if (!file_exists($journeyFolder)) {
-            mkdir($journeyFolder, 0777, true);
+            mkdir($journeyFolder, 0750, true);
         }
 
         // Move file to journey folder.
