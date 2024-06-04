@@ -12,7 +12,7 @@
         </NuxtLayout>
         <template #fallback>
             <div
-                class="dark:text-input flex h-screen flex-col items-center justify-center gap-5 text-text"
+                class="flex h-screen flex-col items-center justify-center gap-5 text-text dark:text-natural-50"
             >
                 <ProgressSpinner class="w-14" />
                 <h1 class="text-lg font-medium">

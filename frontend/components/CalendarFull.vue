@@ -21,7 +21,7 @@ if (
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
 ) {
-    text = fullConfig.theme.accentColor["natural-50"] as string;
+    text = "#FCFCFC";
     bg = fullConfig.theme.accentColor["dark"] as string;
     border = "#50A1C0";
 } else {

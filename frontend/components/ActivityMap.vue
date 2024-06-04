@@ -46,10 +46,8 @@ watch(
 const colorMode = useColorMode();
 const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
 
-const colorAdded = fullConfig.theme.accentColor["input-label"] as string;
-const colorNotAdded = fullConfig.theme.accentColor[
-    "marker-not-added"
-] as string;
+const colorAdded = "#50A1C0";
+const colorNotAdded = "#9BBAC5";
 
 function markerColor(activity: Activity) {
     return activity.calendar_activities?.length > 0
@@ -82,7 +80,7 @@ const style = computed(() =>
                     value: t('journey.map.notfound.tooltip'),
                     pt: { root: 'font-nunito' },
                 }"
-                class="pi pi-exclamation-circle text-cancel-border -mb-2.5 ml-auto text-xl hover:cursor-pointer"
+                class="pi pi-exclamation-circle -mb-2.5 ml-auto text-xl text-mahagony-400 hover:cursor-pointer"
                 @click="isNotFoundActivitiesDialogVisible = true"
             />
         </div>
@@ -116,7 +114,7 @@ const style = computed(() =>
                         }"
                     >
                         <div
-                            class="dark:text-input flex flex-col font-nunito text-text"
+                            class="flex flex-col font-nunito text-text dark:text-natural-50"
                         >
                             <h1 class="font-bold">
                                 {{ activity.name }}
@@ -151,12 +149,12 @@ const style = computed(() =>
                         class: 'bg-input dark:bg-input-dark text-text dark:text-input',
                     },
                     closeButtonIcon: {
-                        class: 'text-input-placeholder hover:text-text dark:text-input-placeholder dark:hover:text-input h-5 w-5',
+                        class: 'text-natural-600 hover:text-text dark:text-natural-600 dark:hover:text-input h-5 w-5',
                     },
                 }"
             >
                 <p
-                    class="border-border-gray dark:border-input-placeholder border-b-2 pb-3"
+                    class="border-b-2 border-natural-300 pb-3 dark:border-natural-600"
                 >
                     <T key-name="journey.map.notfound.description" />
                 </p>
@@ -164,18 +162,18 @@ const style = computed(() =>
                 <ScrollPanel
                     class="relative h-[15rem]"
                     :pt="{
-                        barY: 'w-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
-                        barX: 'h-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
+                        barY: 'w-1.5 bg-natural-300 hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
+                        barX: 'h-1.5 bg-natural-300 hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
                     }"
                 >
                     <div
-                        class="dark:text-input mx-4 font-nunito text-text lg:mx-8"
+                        class="mx-4 font-nunito text-text dark:text-natural-50 lg:mx-8"
                     >
                         <table
                             class="w-full table-fixed text-left text-sm md:text-base"
                         >
                             <thead
-                                class="dark:border-input border-b border-text text-xs uppercase"
+                                class="border-b border-text text-xs uppercase dark:border-natural-50"
                             >
                                 <tr>
                                     <th scope="col" class="w-10 py-3 pr-5">

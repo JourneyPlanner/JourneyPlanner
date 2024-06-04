@@ -113,7 +113,7 @@ async function loginUser(userData: User) {
             >
                 <fieldset
                     id="outerBlock"
-                    class="focus:ring-indigo-500 focus:border-indigo-500 dark:bg-surface-dark flex h-auto w-full flex-col items-center rounded-3xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-3 py-2 pl-2 shadow-sm focus:outline-none dark:border-calypso-400 dark:bg-gothic-300 dark:bg-opacity-20"
+                    class="focus:ring-indigo-500 focus:border-indigo-500 flex h-auto w-full flex-col items-center rounded-3xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-3 py-2 pl-2 shadow-sm focus:outline-none dark:border-calypso-400 dark:bg-gothic-300 dark:bg-opacity-20"
                 >
                     <legend
                         for="outerBlock"

@@ -98,8 +98,8 @@ if (
     colorMode.preference === "dark" ||
     (darkThemeMq.matches && colorMode.preference === "system")
 ) {
-    darkColor = fullConfig.theme.accentColor["white"] as string;
-    lightColor = fullConfig.theme.accentColor["card-dark"] as string;
+    darkColor = "#FFFFFF";
+    lightColor = fullConfig.theme.accentColor["dark"] as string;
 }
 
 const opts = {
@@ -275,7 +275,7 @@ async function changeRole(userid: string, selectedRole: number) {
                 <T key-name="sidebar.invite.link" />
             </div>
             <div
-                class="border-calypso-300-grey dark:border-text-disabled flex items-center border-b-2 pb-4"
+                class="border-natural-00 flex items-center border-b-2 pb-4 dark:border-natural-400"
             >
                 <input
                     class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
@@ -292,7 +292,7 @@ async function changeRole(userid: string, selectedRole: number) {
                 </div>
             </div>
             <div
-                class="border-calypso-300-grey flex flex-row items-center justify-center border-b pb-1 pt-1 dark:border-natural-400"
+                class="flex flex-row items-center justify-center border-b border-natural-600 pb-1 pt-1 dark:border-natural-400"
             >
                 <h1
                     class="w-4/5 text-xl text-natural-600 dark:text-natural-200"
@@ -532,7 +532,7 @@ async function changeRole(userid: string, selectedRole: number) {
                 </div>
             </div>
             <div
-                class="dark:bg-calypso-300-dark invisible w-0 rounded-3xl border-solid bg-background dark:bg-dark max-md:h-0 md:visible md:h-64 md:w-64 lg:h-72 lg:w-72"
+                class="invisible w-0 rounded-3xl border-solid bg-background dark:bg-dark max-md:h-0 md:visible md:h-64 md:w-64 lg:h-72 lg:w-72"
             >
                 <div
                     class="h-10 rounded-t-3xl border-x-2 border-t-2 border-calypso-400 bg-calypso-300 dark:border-gothic-500 dark:bg-gothic-400"
@@ -798,7 +798,7 @@ async function changeRole(userid: string, selectedRole: number) {
             >
                 <Divider
                     type="solid"
-                    class="text-surface border md:hidden md:w-0"
+                    class="border text-natural-100 md:hidden md:w-0"
                 />
             </div>
         </div>
@@ -844,13 +844,13 @@ async function changeRole(userid: string, selectedRole: number) {
             group="journey"
             :pt="{
                 header: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-natural-50 font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
                 content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-natural-50 font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
                 footer: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-natural-50 font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
             }"
         />
