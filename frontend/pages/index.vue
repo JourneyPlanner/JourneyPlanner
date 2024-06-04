@@ -5,13 +5,15 @@ useHead({
 </script>
 
 <template>
-    <div class="font-nunito">
-        <div class="min-h-screen">
+    <div class="relative overflow-hidden font-nunito">
+        <div class="min-h-56 md:min-h-72 xl:min-h-[34rem]">
             <div class="">
-                <SvgStartpagePlane class="absolute -right-32" />
+                <SvgStartpagePlane
+                    class="absolute -right-40 top-40 -z-10 w-[170%] sm:-right-48 md:top-16 md:w-[110%] lg:-right-20 lg:top-10 lg:w-full"
+                />
             </div>
             <header
-                class="mx-5 mt-3 flex flex-row justify-between text-base font-medium text-text"
+                class="relative z-10 mx-5 mt-3 flex flex-row justify-between text-base font-medium text-text"
             >
                 <h3 class="font-bold text-calypso-400">JourneyPlanner</h3>
                 <nav>
@@ -45,50 +47,55 @@ useHead({
                     </ul>
                 </nav>
             </header>
-            <div class="ml-20 mt-24">
-                <h1 class="text-5xl font-bold">JourneyPlanner</h1>
-                <h2 class="mt-1 text-3xl font-bold text-calypso-500">
+            <div class="ml-5 mt-14 lg:ml-20 lg:mt-24">
+                <h1 class="text-3xl font-bold lg:text-5xl">JourneyPlanner</h1>
+                <h2 class="mt-1 text-xl font-bold text-calypso-500 lg:text-3xl">
                     <T key-name="startpage.subheading" />
                 </h2>
-                <p class="mt-2 w-96 text-lg">
+                <p class="mt-2 w-64 text-base md:w-80 lg:w-96 lg:text-lg">
                     <T key-name="startpage.text" />
                 </p>
             </div>
         </div>
-        <div class="min-h-screen">
-            <div class="relative mt-96 flex flex-row">
-                <div class="">
-                    <SvgStartpageGlobe class="absolute" />
+        <div class="mb-20">
+            <div class="relative mt-96 flex flex-row sm:mt-[32rem] md:mt-96">
+                <div class="w-[40rem] max-lg:hidden">
+                    <SvgStartpagePeople class="" />
                 </div>
-                <div class="ml-20">
-                    <div class="flex flex-row">
+                <div class="max-lg:w-full lg:ml-20">
+                    <div class="flex flex-col max-lg:items-center lg:flex-row">
                         <SvgStartpageCalendar class="w-24" />
-                        <div class="ml-4 flex flex-col">
+                        <div class="flex flex-col max-lg:text-center lg:ml-4">
                             <h4 class="text-lg font-semibold">
                                 <T key-name="startpage.calendar.header" />
                             </h4>
-                            <p class="mt-0.5">
+                            <p class="mt-0.5 max-lg:w-[22rem]">
                                 <T key-name="startpage.calendar.text" />
                             </p>
                         </div>
                     </div>
-                    <div class="ml-10 mt-10 flex flex-row">
+                    <div
+                        class="mt-10 flex flex-col max-lg:items-center lg:ml-10 lg:flex-row"
+                    >
                         <SvgStartpageShare class="w-24" />
-                        <div class="ml-4 flex flex-col">
+                        <div class="ml-4 flex flex-col max-lg:text-center">
                             <h4 class="text-lg font-semibold">
                                 <T key-name="startpage.share.header" />
                             </h4>
-                            <p class="mt-0.5">
+                            <p class="mt-0.5 max-lg:w-[22rem]">
                                 <T key-name="startpage.share.text" />
                             </p>
                         </div>
                     </div>
-                    <div class="ml-20 mt-10 flex flex-row">
-                        <div class="ml-4 flex flex-col">
+                    <div
+                        class="mt-10 flex flex-col max-lg:items-center lg:ml-20 lg:flex-row"
+                    >
+                        <SvgStartpageGlobe class="w-24" />
+                        <div class="ml-4 flex flex-col max-lg:text-center">
                             <h4 class="text-lg font-semibold">
                                 <T key-name="startpage.experience.header" />
                             </h4>
-                            <p class="mt-0.5">
+                            <p class="mt-0.5 max-lg:w-[22rem]">
                                 <T key-name="startpage.experience.text" />
                             </p>
                         </div>
@@ -97,14 +104,89 @@ useHead({
             </div>
         </div>
 
-        <div class="min-h-screen">
-            <div class="flex">
-                <div>
-                    <div>
+        <div class="mb-20">
+            <div class="flex items-center justify-center max-lg:hidden">
+                <div
+                    class="align-center grid w-full grid-cols-4 items-center gap-4"
+                >
+                    <div
+                        class="flex w-72 flex-col items-center justify-center lg:w-full"
+                    >
                         <SvgStartpageSeverin class="w-72" />
+                        <p class="text-xl">Severin Rosner</p>
+                        <div class="text-xl font-bold text-calypso-500">
+                            <T key-name="startpage.people.scrummaster" />
+                        </div>
+                    </div>
+                    <div
+                        class="flex w-72 flex-col items-center justify-center lg:w-full"
+                    >
+                        <SvgStartpageSeverin class="w-72" />
+                        <p class="text-xl">Raven Burkard</p>
+                        <div class="text-xl font-bold text-calypso-500">
+                            <T key-name="startpage.people.prodcutowner" />
+                        </div>
+                    </div>
+                    <div
+                        class="flex w-72 flex-col items-center justify-center lg:w-full"
+                    >
+                        <SvgStartpageSeverin class="w-72" />
+                        <p class="text-xl">Roman Krebs</p>
+                        <div class="text-xl font-bold text-calypso-500">
+                            <T key-name="startpage.people.developer" />
+                        </div>
+                    </div>
+                    <div
+                        class="flex w-72 flex-col items-center justify-center lg:w-full"
+                    >
+                        <SvgStartpageSeverin class="w-72" />
+                        <p class="text-xl">Stefania Manastirska</p>
+                        <div class="text-xl font-bold text-calypso-500">
+                            <T key-name="startpage.people.designer" />
+                        </div>
                     </div>
                 </div>
             </div>
+            <ScrollPanel class="lg:hidden">
+                <div class="flex items-center">
+                    <div
+                        class="flex w-72 flex-col items-center justify-center lg:w-full"
+                    >
+                        <SvgStartpageSeverin class="w-72" />
+                        <p class="text-xl">Severin Rosner</p>
+                        <div class="text-xl font-bold text-calypso-500">
+                            <T key-name="startpage.people.scrummaster" />
+                        </div>
+                    </div>
+                    <div
+                        class="flex w-72 flex-col items-center justify-center lg:w-full"
+                    >
+                        <SvgStartpageSeverin class="w-72" />
+                        <p class="text-xl">Raven Burkard</p>
+                        <div class="text-xl font-bold text-calypso-500">
+                            <T key-name="startpage.people.prodcutowner" />
+                        </div>
+                    </div>
+                    <div
+                        class="flex w-72 flex-col items-center justify-center lg:w-full"
+                    >
+                        <SvgStartpageSeverin class="w-72" />
+                        <p class="text-xl">Roman Krebs</p>
+                        <div class="text-xl font-bold text-calypso-500">
+                            <T key-name="startpage.people.developer" />
+                        </div>
+                    </div>
+                    <div
+                        class="flex w-72 flex-col items-center justify-center lg:w-full"
+                    >
+                        <SvgStartpageSeverin class="w-72" />
+                        <p class="text-xl">Stefania Manastirska</p>
+                        <div class="text-xl font-bold text-calypso-500">
+                            <T key-name="startpage.people.designer" />
+                        </div>
+                    </div>
+                </div>
+            </ScrollPanel>
         </div>
     </div>
 </template>
