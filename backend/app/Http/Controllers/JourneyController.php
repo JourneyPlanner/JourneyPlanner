@@ -283,20 +283,21 @@ class JourneyController extends Controller
 
     public static function deleteJourney(Journey $journey)
     {
-        // Delete journey uploads
-        $files = $journey->media()->get();
-        foreach ($files as $file) {
-            $file["path"] = storage_path($file["path"]);
-            if (file_exists($file["path"])) {
-                unlink($file["path"]);
+        // Delete journey uploads in folder
+        $journeyFolder = storage_path("app/journey_media/" . $journey->id);
+        if (file_exists($journeyFolder)) {
+            $files = scandir($journeyFolder);
+            foreach ($files as $file) {
+                if ($file !== "." && $file !== "..") {
+                    unlink($journeyFolder . "/" . $file);
+                }
             }
-            $file->delete();
+            rmdir($journeyFolder);
         }
 
         // Delete folder
-        $folder = storage_path("app/journey_media/" . $journey->id);
-        if (file_exists($folder)) {
-            rmdir($folder);
+        if (file_exists($journeyFolder)) {
+            rmdir($journeyFolder);
         }
 
         $journey->delete();
