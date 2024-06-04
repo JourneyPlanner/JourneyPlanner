@@ -5,7 +5,9 @@ useHead({
 </script>
 
 <template>
-    <div class="relative overflow-hidden font-nunito">
+    <div
+        class="relative overflow-hidden font-nunito text-text dark:text-natural-50"
+    >
         <div class="min-h-56 md:min-h-72 xl:min-h-[34rem]">
             <div class="">
                 <SvgStartpagePlane
@@ -15,7 +17,9 @@ useHead({
             <header
                 class="relative z-10 mx-5 mt-3 flex flex-row justify-between text-base font-medium text-text"
             >
-                <h3 class="font-bold text-calypso-400">JourneyPlanner</h3>
+                <h3 class="font-bold text-calypso-400 dark:text-gothic-400">
+                    JourneyPlanner
+                </h3>
                 <nav>
                     <ul class="flex flex-row gap-4">
                         <li>
@@ -49,7 +53,9 @@ useHead({
             </header>
             <div class="ml-5 mt-14 lg:ml-20 lg:mt-24">
                 <h1 class="text-3xl font-bold lg:text-5xl">JourneyPlanner</h1>
-                <h2 class="mt-1 text-xl font-bold text-calypso-500 lg:text-3xl">
+                <h2
+                    class="mt-1 text-xl font-bold text-calypso-500 dark:text-gothic-400 lg:text-3xl"
+                >
                     <T key-name="startpage.subheading" />
                 </h2>
                 <p class="mt-2 w-64 text-base md:w-80 lg:w-96 lg:text-lg">
@@ -103,86 +109,55 @@ useHead({
                 </div>
             </div>
         </div>
-
         <div class="mb-20">
-            <div class="flex items-center justify-center max-lg:hidden">
-                <div
-                    class="align-center grid w-full grid-cols-4 items-center gap-4"
-                >
+            <ScrollPanel>
+                <div class="flex items-center justify-center">
                     <div
-                        class="flex w-72 flex-col items-center justify-center lg:w-full"
+                        class="align-center flex w-full items-center gap-4 lg:grid lg:grid-cols-4"
                     >
-                        <SvgStartpageSeverin class="w-72" />
-                        <p class="text-xl">Severin Rosner</p>
-                        <div class="text-xl font-bold text-calypso-500">
-                            <T key-name="startpage.people.scrummaster" />
+                        <div
+                            class="flex w-72 flex-col items-center justify-center lg:w-full"
+                        >
+                            <SvgStartpageSeverin class="w-72" />
+                            <p class="text-xl">Severin Rosner</p>
+                            <div
+                                class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
+                            >
+                                <T key-name="startpage.people.scrummaster" />
+                            </div>
                         </div>
-                    </div>
-                    <div
-                        class="flex w-72 flex-col items-center justify-center lg:w-full"
-                    >
-                        <SvgStartpageSeverin class="w-72" />
-                        <p class="text-xl">Raven Burkard</p>
-                        <div class="text-xl font-bold text-calypso-500">
-                            <T key-name="startpage.people.prodcutowner" />
+                        <div
+                            class="flex w-72 flex-col items-center justify-center lg:w-full"
+                        >
+                            <SvgStartpageSeverin class="w-72" />
+                            <p class="text-xl">Raven Burkard</p>
+                            <div
+                                class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
+                            >
+                                <T key-name="startpage.people.prodcutowner" />
+                            </div>
                         </div>
-                    </div>
-                    <div
-                        class="flex w-72 flex-col items-center justify-center lg:w-full"
-                    >
-                        <SvgStartpageSeverin class="w-72" />
-                        <p class="text-xl">Roman Krebs</p>
-                        <div class="text-xl font-bold text-calypso-500">
-                            <T key-name="startpage.people.developer" />
+                        <div
+                            class="flex w-72 flex-col items-center justify-center lg:w-full"
+                        >
+                            <SvgStartpageSeverin class="w-72" />
+                            <p class="text-xl">Roman Krebs</p>
+                            <div
+                                class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
+                            >
+                                <T key-name="startpage.people.developer" />
+                            </div>
                         </div>
-                    </div>
-                    <div
-                        class="flex w-72 flex-col items-center justify-center lg:w-full"
-                    >
-                        <SvgStartpageSeverin class="w-72" />
-                        <p class="text-xl">Stefania Manastirska</p>
-                        <div class="text-xl font-bold text-calypso-500">
-                            <T key-name="startpage.people.designer" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <ScrollPanel class="lg:hidden">
-                <div class="flex items-center">
-                    <div
-                        class="flex w-72 flex-col items-center justify-center lg:w-full"
-                    >
-                        <SvgStartpageSeverin class="w-72" />
-                        <p class="text-xl">Severin Rosner</p>
-                        <div class="text-xl font-bold text-calypso-500">
-                            <T key-name="startpage.people.scrummaster" />
-                        </div>
-                    </div>
-                    <div
-                        class="flex w-72 flex-col items-center justify-center lg:w-full"
-                    >
-                        <SvgStartpageSeverin class="w-72" />
-                        <p class="text-xl">Raven Burkard</p>
-                        <div class="text-xl font-bold text-calypso-500">
-                            <T key-name="startpage.people.prodcutowner" />
-                        </div>
-                    </div>
-                    <div
-                        class="flex w-72 flex-col items-center justify-center lg:w-full"
-                    >
-                        <SvgStartpageSeverin class="w-72" />
-                        <p class="text-xl">Roman Krebs</p>
-                        <div class="text-xl font-bold text-calypso-500">
-                            <T key-name="startpage.people.developer" />
-                        </div>
-                    </div>
-                    <div
-                        class="flex w-72 flex-col items-center justify-center lg:w-full"
-                    >
-                        <SvgStartpageSeverin class="w-72" />
-                        <p class="text-xl">Stefania Manastirska</p>
-                        <div class="text-xl font-bold text-calypso-500">
-                            <T key-name="startpage.people.designer" />
+                        <div
+                            class="flex w-72 flex-col items-center justify-center lg:w-full"
+                        >
+                            <SvgStartpageSeverin class="w-72" />
+                            <p class="text-xl">Stefania Manastirska</p>
+                            <div
+                                class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
+                            >
+                                <T key-name="startpage.people.designer" />
+                            </div>
                         </div>
                     </div>
                 </div>
