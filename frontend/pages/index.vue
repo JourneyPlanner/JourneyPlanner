@@ -2,13 +2,30 @@
 useHead({
     title: "JourneyPlanner",
 });
+
+const colorMode = useColorMode();
+const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+const icon = computed(() =>
+    colorMode.preference === "dark" ||
+    (darkTheme.matches && colorMode.preference === "system")
+        ? "sun"
+        : "moon",
+);
+
+const changeColorMode = () => {
+    if (icon.value === "moon") {
+        colorMode.preference = "dark";
+    } else {
+        colorMode.preference = "light";
+    }
+};
 </script>
 
 <template>
     <div
-        class="relative overflow-hidden font-nunito text-text dark:text-natural-50"
+        class="relative cursor-default overflow-hidden font-nunito text-text dark:text-natural-50"
     >
-        <div class="min-h-56 md:min-h-72 xl:min-h-[34rem]">
+        <div class="mb-72 min-h-56 md:min-h-72 xl:mb-96 xl:min-h-[40rem]">
             <div class="">
                 <SvgStartpagePlane
                     class="absolute -right-40 top-40 -z-10 w-[170%] sm:-right-48 md:top-16 md:w-[110%] lg:-right-20 lg:top-10 lg:w-full"
@@ -17,33 +34,58 @@ useHead({
             <header
                 class="relative z-10 mx-5 mt-3 flex flex-row justify-between text-base font-medium text-text"
             >
-                <h3 class="font-bold text-calypso-400 dark:text-gothic-400">
-                    JourneyPlanner
-                </h3>
-                <nav>
-                    <ul class="flex flex-row gap-4">
+                <NuxtLink to="/">
+                    <h3 class="font-bold text-calypso-400 dark:text-gothic-400">
+                        JourneyPlanner
+                    </h3>
+                </NuxtLink>
+                <nav class="flex flex-row gap-4">
+                    <ul
+                        class="flex flex-row gap-4 text-natural-500 dark:text-natural-600"
+                    >
                         <li>
-                            <a>Start</a>
+                            <NuxtLink
+                                to="/#features"
+                                class="hover:text-calypso-500 dark:hover:text-calypso-500"
+                            >
+                                <a>
+                                    <T key-name="startpage.features" />
+                                </a>
+                            </NuxtLink>
                         </li>
                         <li>
-                            <a>Funktionen</a>
-                        </li>
-                        <li>
-                            <a>Team</a>
+                            <NuxtLink
+                                to="/#team"
+                                class="hover:text-calypso-500 dark:hover:text-calypso-500"
+                            >
+                                <a>
+                                    <T key-name="startpage.team" />
+                                </a>
+                            </NuxtLink>
                         </li>
                     </ul>
-                </nav>
-                <nav class="border-l-2 border-natural-300 pl-2">
-                    <ul class="flex flex-row gap-4">
-                        <li>
-                            <NuxtLink to="/login" class="hover:underline">
+                    <ul class="flex flex-row gap-4 pl-5">
+                        <li class="flex">
+                            <button class="group" @click="changeColorMode()">
+                                <SvgMoon
+                                    v-if="icon === 'moon'"
+                                    class="group w-4"
+                                />
+                                <SvgSun v-else class="group w-4" />
+                            </button>
+                        </li>
+                        <li class="border-l-2 border-natural-300 pl-2">
+                            <NuxtLink
+                                to="/login"
+                                class="text-text hover:underline dark:text-natural-50"
+                            >
                                 <T key-name="form.button.login" />
                             </NuxtLink>
                         </li>
                         <li>
                             <NuxtLink
                                 to="/register"
-                                class="rounded-lg border-2 border-dandelion-300 p-1 hover:bg-dandelion-200"
+                                class="rounded-lg border-2 border-dandelion-300 p-1 text-text hover:bg-dandelion-200 dark:text-natural-50 dark:hover:bg-pesto-600"
                             >
                                 <T key-name="form.button.register" />
                             </NuxtLink>
@@ -63,45 +105,47 @@ useHead({
                 </p>
             </div>
         </div>
-        <div class="mb-20">
-            <div class="relative mt-96 flex flex-row sm:mt-[32rem] md:mt-96">
+        <div id="features" class="mb-20 pt-14">
+            <div class="relative flex flex-row">
                 <div class="w-[40rem] max-lg:hidden">
-                    <SvgStartpagePeople class="" />
+                    <SvgStartpagePeople />
                 </div>
                 <div class="max-lg:w-full lg:ml-20">
                     <div class="flex flex-col max-lg:items-center lg:flex-row">
-                        <SvgStartpageCalendar class="w-24" />
+                        <SvgStartpageCalendar
+                            class="w-24 hover:animate-wiggle"
+                        />
                         <div class="flex flex-col max-lg:text-center lg:ml-4">
-                            <h4 class="text-lg font-semibold">
+                            <h4 class="text-2xl font-semibold">
                                 <T key-name="startpage.calendar.header" />
                             </h4>
-                            <p class="mt-0.5 max-lg:w-[22rem]">
+                            <p class="mt-0.5 w-[30rem] text-lg">
                                 <T key-name="startpage.calendar.text" />
                             </p>
                         </div>
                     </div>
                     <div
-                        class="mt-10 flex flex-col max-lg:items-center lg:ml-10 lg:flex-row"
+                        class="mt-16 flex flex-col max-lg:items-center lg:ml-16 lg:flex-row"
                     >
-                        <SvgStartpageShare class="w-24" />
+                        <SvgStartpageShare class="w-24 hover:animate-wiggle" />
                         <div class="ml-4 flex flex-col max-lg:text-center">
-                            <h4 class="text-lg font-semibold">
+                            <h4 class="text-2xl font-semibold">
                                 <T key-name="startpage.share.header" />
                             </h4>
-                            <p class="mt-0.5 max-lg:w-[22rem]">
+                            <p class="mt-0.5 w-[30rem] text-lg">
                                 <T key-name="startpage.share.text" />
                             </p>
                         </div>
                     </div>
                     <div
-                        class="mt-10 flex flex-col max-lg:items-center lg:ml-20 lg:flex-row"
+                        class="mt-16 flex flex-col max-lg:items-center lg:ml-32 lg:flex-row"
                     >
-                        <SvgStartpageGlobe class="w-24" />
+                        <SvgStartpageGlobe class="w-24 hover:animate-wiggle" />
                         <div class="ml-4 flex flex-col max-lg:text-center">
-                            <h4 class="text-lg font-semibold">
+                            <h4 class="text-2xl font-semibold">
                                 <T key-name="startpage.experience.header" />
                             </h4>
-                            <p class="mt-0.5 max-lg:w-[22rem]">
+                            <p class="mt-0.5 w-[30rem] text-lg">
                                 <T key-name="startpage.experience.text" />
                             </p>
                         </div>
@@ -109,7 +153,7 @@ useHead({
                 </div>
             </div>
         </div>
-        <div class="mb-20">
+        <div id="team" class="mb-20">
             <ScrollPanel>
                 <div class="flex items-center justify-center">
                     <div
@@ -140,7 +184,7 @@ useHead({
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
-                            <SvgStartpageSeverin class="w-72" />
+                            <SvgStartpageRoman class="w-72" />
                             <p class="text-xl">Roman Krebs</p>
                             <div
                                 class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
