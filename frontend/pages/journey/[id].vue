@@ -807,7 +807,7 @@ async function changeRole(userid: string, selectedRole: number) {
                     <T key-name="journey.activities" />
                 </div>
                 <button
-                    class="-mb-3 ml-auto flex rounded-xl border-2 border-cta-border bg-input px-2 py-1 text-base font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark lg:mb-4"
+                    class="-mb-3 ml-auto flex items-center rounded-xl border-2 border-cta-border bg-input px-2 py-1 text-sm font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark sm:text-base lg:mb-4"
                     @click="isActivityDialogVisible = !isActivityDialogVisible"
                 >
                     <SvgAddLocation class="h-6 w-6" />
@@ -835,7 +835,7 @@ async function changeRole(userid: string, selectedRole: number) {
         <ActivityMap v-if="activityDataLoaded" />
         <div class="flex items-center justify-center md:justify-start">
             <div
-                class="relative mt-5 flex w-[90%] items-center sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+                class="relative mt-7 flex w-[90%] items-center sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
             >
                 <FormUpload />
             </div>

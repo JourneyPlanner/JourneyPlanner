@@ -303,21 +303,21 @@ const itemsJourneyGuide = ref([
                 </div>
                 <div
                     v-if="activityCount <= 0"
-                    class="invisible col-span-full flex h-[92%] items-center justify-center text-input-placeholder md:visible"
+                    class="invisible col-span-full flex h-[92%] items-center justify-center font-nunito text-input-placeholder md:visible"
                 >
                     <T key-name="activityPool.placeholder" />
                 </div>
 
                 <div
                     v-else-if="activityCount <= 3"
-                    class="invisible col-span-full flex items-center justify-center text-input-placeholder md:visible lg:pt-4"
+                    class="invisible col-span-full flex items-center justify-center font-nunito text-input-placeholder md:visible lg:pt-4"
                 >
                     <T key-name="activityPool.placeholder" />
                 </div>
 
                 <div
                     v-else-if="activityCount <= 5"
-                    class="invisible col-span-full flex items-center justify-center text-input-placeholder lg:visible lg:pt-4"
+                    class="invisible col-span-full flex items-center justify-center font-nunito text-input-placeholder lg:visible lg:pt-4"
                 >
                     <T key-name="activityPool.placeholder" />
                 </div>

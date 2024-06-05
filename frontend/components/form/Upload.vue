@@ -53,7 +53,7 @@ const uppy = new Uppy({
             >
                 <T key-name="journey.upload.title" />
             </h1>
-            <div class="hidden items-end md:flex">
+            <div class="hidden items-end lg:flex">
                 <h6
                     class="-mb-3 text-base text-natural-600 dark:text-natural-300"
                 >
@@ -68,7 +68,7 @@ const uppy = new Uppy({
                 locale: locale,
             }"
         />
-        <div class="flex justify-center md:hidden">
+        <div class="flex justify-center lg:hidden">
             <h6
                 class="absolute bottom-12 text-xs text-natural-600 dark:text-natural-300"
             >
@@ -92,7 +92,11 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard-AddFiles-title {
-    @apply mt-8 font-nunito text-lg text-natural-600 !important;
+    @apply mt-8 font-nunito text-base text-natural-600 lg:text-lg !important;
+}
+
+.uppy-DashboardContent-addMore {
+    @apply hover:font-bold !important;
 }
 
 .uppy-StatusBar-status {
