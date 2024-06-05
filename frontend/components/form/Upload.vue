@@ -130,7 +130,7 @@ const uppy = new Uppy({
 }
 
 .uppy-StatusBar-actionBtn {
-    @apply bg-dandelion-200 font-semibold text-text opacity-100 dark:bg-dandelion-300 !important;
+    @apply rounded-xl border-2 border-solid border-dandelion-300 bg-natural-50 font-semibold text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600 !important;
 }
 
 .uppy-StatusBar-actionBtn--done {
