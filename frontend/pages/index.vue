@@ -22,6 +22,7 @@ const changeColorMode = () => {
 </script>
 
 <template>
+    <!-- TODO xl-->
     <div
         class="relative cursor-default overflow-hidden font-nunito text-text dark:text-natural-50"
     >
@@ -171,6 +172,7 @@ const changeColorMode = () => {
             </div>
         </div>
         <div id="team" class="mb-20">
+            <!--TODO scrollbar-->
             <ScrollPanel>
                 <div class="flex items-center justify-center font-nunito">
                     <div
