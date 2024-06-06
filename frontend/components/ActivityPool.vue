@@ -41,29 +41,16 @@ const opening_hours = ref("");
 const phone = ref("");
 const updated_at = ref("");
 
-interface Activity {
-    address: string;
-    mapbox_full_address: string;
-    calendar_activities: [];
-    id: string;
-    cost: string;
-    created_at: string;
-    description: string;
-    email: string;
-    estimated_duration: string;
-    journey_id: string;
-    latitude: string;
-    longitude: string;
-    link: string;
-    mapbox_id: string;
-    name: string;
-    opening_hours: string;
-    phone: string;
-    updated_at: string;
-}
 const isActivityInfoVisible = ref(false);
 const activities = computed(() => store.activityData as Activity[]);
-const activityCount = computed(() => activities.value.length);
+const activityCount = computed(
+    () =>
+        activities.value.length -
+        activities.value.filter(
+            (activity) => activity.calendar_activities.length > 0,
+        ).length,
+);
+
 const client = useSanctumClient();
 const toast = useToast();
 const confirm = useConfirm();
@@ -73,6 +60,12 @@ onMounted(() => {
         itemSelector: ".fc-event",
     });
 });
+
+/**
+ * set values for activity info dialog
+ * @param id - activity id
+ * @param showOnly - if dialog should just display info or allow editing
+ */
 function showInfo(id: string, showOnly: boolean = true) {
     activities.value.forEach((activity: Activity) => {
         if (activity.id === id) {
@@ -90,8 +83,8 @@ function showInfo(id: string, showOnly: boolean = true) {
             email.value = activity.email;
             estimated_duration.value = activity.estimated_duration;
             journey_id.value = activity.journey_id;
-            latitude.value = activity.latitude;
-            longitude.value = activity.longitude;
+            latitude.value = activity.latitude?.toString();
+            longitude.value = activity.longitude?.toString();
             link.value = activity.link;
             mapbox_id.value = activity.mapbox_id;
             name.value = activity.name;
@@ -106,6 +99,7 @@ function showInfo(id: string, showOnly: boolean = true) {
 const confirmDelete = (event: Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
+        group: "journey",
         header: t.value("activity.delete.header"),
         message: t.value("activity.delete.confirm"),
         icon: "pi pi-exclamation-triangle",
@@ -126,10 +120,12 @@ const confirmDelete = (event: Event) => {
     });
 };
 
+/*
+ * delete activity
+ */
 async function deleteActivity() {
     await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
         method: "delete",
-        body: {},
         async onResponse({ response }) {
             if (response.ok) {
                 toast.add({
@@ -200,7 +196,6 @@ const itemsJourneyGuide = ref([
     <div
         class="flex w-full justify-center overflow-x-hidden md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
     >
-        <Toast />
         <div
             class="h-40 w-[90%] rounded-2xl border-[3px] border-dashed border-border dark:bg-text max-lg:mt-5 sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
         >
@@ -218,105 +213,111 @@ const itemsJourneyGuide = ref([
                 >
                     <div
                         v-for="activity in activities"
-                        id="draggable-el"
                         :key="activity.id"
-                        class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-2 py-1 text-base font-normal dark:bg-card-dark sm:h-16 sm:text-base lg:rounded-xl"
-                        :data-event="
-                            JSON.stringify({
-                                title: activity.name,
-                                duration: activity.estimated_duration,
-                                editable: true,
-                                defId: activity.id,
-                                timeZone: 'local',
-                            })
-                        "
-                        @click="activityId = activity.id"
+                        class="cursor-pointer empty:hidden"
                     >
-                        <div class="flex sm:pt-1">
-                            <p
-                                v-tooltip.top="{
-                                    value: activity.name,
-                                    pt: { root: 'font-nunito' },
-                                }"
-                                class="w-[98%] overflow-hidden truncate overflow-ellipsis"
+                        <div
+                            v-if="activity.calendar_activities.length <= 0"
+                            id="draggable-el"
+                            :key="activity.id"
+                            class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-2 py-1 text-base font-normal dark:bg-card-dark sm:h-16 sm:text-base lg:rounded-xl"
+                            :data-event="
+                                JSON.stringify({
+                                    title: activity.name,
+                                    duration: activity.estimated_duration,
+                                    editable: true,
+                                    defId: activity.id,
+                                    timeZone: 'local',
+                                })
+                            "
+                            @click="activityId = activity.id"
+                        >
+                            <div class="flex sm:pt-1">
+                                <p
+                                    v-tooltip.top="{
+                                        value: activity.name,
+                                        pt: { root: 'font-nunito' },
+                                    }"
+                                    class="w-[98%] overflow-hidden truncate overflow-ellipsis"
+                                    @click="showInfo(activity.id)"
+                                >
+                                    {{ activity.name }}
+                                </p>
+                                <button
+                                    class="pi pi-ellipsis-v"
+                                    aria-haspopup="true"
+                                    aria-controls="overlay_menu"
+                                    @click="toggle"
+                                />
+                            </div>
+                            <div
+                                class="flex items-center pb-4"
                                 @click="showInfo(activity.id)"
                             >
-                                {{ activity.name }}
-                            </p>
-                            <button
-                                class="pi pi-ellipsis-v"
-                                aria-haspopup="true"
-                                aria-controls="overlay_menu"
-                                @click="toggle"
-                            />
-                        </div>
-                        <div
-                            class="flex items-center pb-4"
-                            @click="showInfo(activity.id)"
-                        >
-                            <SvgClock class="mr-2 h-4 w-4" />
-                            {{
-                                format(
-                                    parse(
-                                        activity.estimated_duration,
-                                        "HH:mm:ss",
-                                        new Date(),
-                                    ),
-                                    "H:mm",
-                                )
-                            }}
-                        </div>
-                        <div class="absolute overflow-hidden">
-                            <Menu
-                                id="overlay_menu"
-                                ref="menu"
-                                :model="itemsJourneyGuide"
-                                class="relative -ml-5 rounded-xl border-2 border-border-light bg-input dark:border-input-dark"
-                                :popup="true"
-                                :pt="{
-                                    root: {
-                                        class: 'relative font-nunito bg-input dark:bg-input-dark overflow-hidden',
-                                    },
-                                    menu: {
-                                        class: 'bg-input dark:bg-input-dark',
-                                    },
-                                    menuitem: {
-                                        class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
-                                    },
-                                    content: {
-                                        class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
-                                    },
-                                    submenuHeader: {
-                                        class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark',
-                                    },
-                                    label: {
-                                        class: 'text-text dark:text-white',
-                                    },
-                                    icon: {
-                                        class: 'text-text dark:text-white',
-                                    },
-                                }"
-                            />
+                                <SvgClock class="mr-2 h-4 w-4" />
+                                {{
+                                    format(
+                                        parse(
+                                            activity.estimated_duration,
+                                            "HH:mm:ss",
+                                            new Date(),
+                                        ),
+                                        "H:mm",
+                                    )
+                                }}
+                            </div>
+                            <div class="absolute overflow-hidden">
+                                <Menu
+                                    id="overlay_menu"
+                                    ref="menu"
+                                    :model="itemsJourneyGuide"
+                                    class="relative -ml-5 rounded-xl border-2 border-border-light bg-input dark:border-input-dark"
+                                    :popup="true"
+                                    :pt="{
+                                        root: {
+                                            class: 'relative font-nunito bg-input dark:bg-input-dark overflow-hidden',
+                                        },
+                                        menu: {
+                                            class: 'bg-input dark:bg-input-dark',
+                                        },
+                                        menuitem: {
+                                            class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                                        },
+                                        content: {
+                                            class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                                        },
+                                        submenuHeader: {
+                                            class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark',
+                                        },
+                                        label: {
+                                            class: 'text-text dark:text-white',
+                                        },
+                                        icon: {
+                                            class: 'text-text dark:text-white',
+                                        },
+                                    }"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div
                     v-if="activityCount <= 0"
-                    class="invisible col-span-full flex h-[92%] items-center justify-center text-input-placeholder md:visible"
+                    class="invisible col-span-full flex h-[92%] items-center justify-center font-nunito text-input-placeholder md:visible"
                 >
                     <T key-name="activityPool.placeholder" />
                 </div>
 
                 <div
                     v-else-if="activityCount <= 3"
-                    class="invisible col-span-full flex items-center justify-center text-input-placeholder md:visible lg:pt-4"
+                    class="invisible col-span-full flex items-center justify-center font-nunito text-input-placeholder md:visible lg:pt-4"
                 >
                     <T key-name="activityPool.placeholder" />
                 </div>
 
                 <div
                     v-else-if="activityCount <= 5"
-                    class="invisible col-span-full flex items-center justify-center text-input-placeholder lg:visible lg:pt-4"
+                    class="invisible col-span-full flex items-center justify-center font-nunito text-input-placeholder lg:visible lg:pt-4"
                 >
                     <T key-name="activityPool.placeholder" />
                 </div>
@@ -332,14 +333,14 @@ const itemsJourneyGuide = ref([
             :created-at="created_at"
             :description="description"
             :email="email"
-            :estimated_duration="estimated_duration"
+            :estimated-duration="estimated_duration"
             :journey-id="journey_id"
             :latitude="latitude"
             :longitude="longitude"
             :link="link"
             :mapbox-id="mapbox_id"
             :name="name"
-            :opening_hours="opening_hours"
+            :opening-hours="opening_hours"
             :phone="phone"
             :updated-at="updated_at"
             :update="update"

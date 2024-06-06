@@ -74,4 +74,34 @@ declare global {
             attribution: string;
         };
     }
+
+    interface Activity {
+        address: string;
+        mapbox_full_address: string;
+        calendar_activities: CalendarActivity[];
+        id: string;
+        cost: string;
+        created_at: string;
+        description: string;
+        email: string;
+        estimated_duration: string;
+        journey_id: string;
+        latitude: string;
+        longitude: string;
+        link: string;
+        mapbox_id: string;
+        name: string;
+        opening_hours: string;
+        phone: string;
+        updated_at: string;
+    }
+
+    interface CalendarActivity {
+        id: string;
+        title: string;
+        start: string;
+        end: string;
+        allDay: boolean;
+        activity_id: string;
+    }
 }

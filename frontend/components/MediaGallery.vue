@@ -4,6 +4,10 @@ import lgZoom from "lightgallery/plugins/zoom/lg-zoom.umd.js";
 import Lightgallery from "lightgallery/vue/LightGalleryVue.umd.js";
 
 const plugins = [lgZoom, lgVideo];
+
+const client = useSanctumClient();
+const { data } = await useAsyncData("media", () => client("/api/journey"));
+console.log(data);
 </script>
 
 <template>
@@ -12,7 +16,7 @@ const plugins = [lgZoom, lgVideo];
             <h1 class="text-2xl font-semibold">
                 <T key-name="journey.media.overview" />
             </h1>
-            <!--
+            <!-- download button
             <button
                 class=" ml-auto flex rounded-xl border-2 border-cta-border bg-input px-2 py-1 text-base font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
                 @click="">
