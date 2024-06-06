@@ -22,14 +22,17 @@ const changeColorMode = () => {
 </script>
 
 <template>
-    <!-- TODO xl-->
+    <!-- TODO xl, small plane, abstand nach zwischen plane und features, bilder-->
     <div
         class="relative cursor-default overflow-hidden font-nunito text-text dark:text-natural-50"
     >
-        <div class="mb-52 min-h-20 sm:mb-80 md:mb-72 xl:min-h-[40rem]">
+        <div class="mb-52 min-h-72 sm:mb-80 md:mb-72 xl:min-h-[40rem]">
             <div>
+                <SvgStartpagePlaneSmall
+                    class="absolute top-48 -z-10 sm:hidden"
+                />
                 <SvgStartpagePlane
-                    class="absolute -right-28 top-48 -z-10 sm:-right-48 sm:top-20 sm:w-[130%] md:top-16 md:w-[110%] lg:-right-20 lg:top-10 lg:w-full"
+                    class="absolute -right-28 top-48 -z-10 hidden sm:-right-48 sm:top-20 sm:block sm:w-[130%] md:top-16 md:w-[110%] lg:-right-20 lg:top-10 lg:w-full"
                 />
             </div>
             <header
