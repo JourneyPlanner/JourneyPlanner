@@ -188,7 +188,6 @@ const itemsJourneyMember = ref([
         label: t.value("dashboard.options.header"),
 
         items: [
-            { label: "No options available yet" },
             {
                 label: t.value("dashboard.options.leave"),
                 icon: "pi pi-sign-out",

@@ -54,7 +54,7 @@ const { value, errorMessage } = useField(() => props.name);
         >
             <T key-name="form.input.text.privacypolicy" />
             <NuxtLink
-                to="/privacy-policy"
+                to="/privacy"
                 class="text-input-label underline dark:text-border"
             >
                 <T key-name="common.privacypolicy" />

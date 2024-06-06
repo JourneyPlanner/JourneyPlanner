@@ -74,7 +74,7 @@ const style = computed(() =>
 <template>
     <div class="flex items-center justify-center md:justify-start">
         <div
-            class="relative mt-5 flex w-[90%] items-center sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            class="relative -mb-1 mt-5 flex w-[90%] items-center sm:-mb-0 sm:mt-10 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
             <div class="-mb-2.5 text-2xl font-semibold">
                 <T key-name="journey.map" />

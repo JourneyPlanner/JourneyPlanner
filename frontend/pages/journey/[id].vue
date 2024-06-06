@@ -3,7 +3,10 @@ import { T, useTranslate } from "@tolgee/vue";
 import { differenceInDays, format } from "date-fns";
 import JSConfetti from "js-confetti";
 import QRCode from "qrcode";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "~/tailwind.config.js";
 
+const fullConfig = resolveConfig(tailwindConfig);
 const confirm = useConfirm();
 const route = useRoute();
 const store = useJourneyStore();
@@ -87,12 +90,16 @@ useHead({
 });
 
 const colorMode = useColorMode();
-let darkColor = "#333333";
-let lightColor = "#fcfcfc";
+const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+let darkColor = fullConfig.theme.accentColor["text"] as string;
+let lightColor = fullConfig.theme.accentColor["background"] as string;
 
-if (colorMode.preference === "dark") {
-    darkColor = "#ffffff";
-    lightColor = "#353f44";
+if (
+    colorMode.preference === "dark" ||
+    (darkThemeMq.matches && colorMode.preference === "system")
+) {
+    darkColor = fullConfig.theme.accentColor["white"] as string;
+    lightColor = fullConfig.theme.accentColor["card-dark"] as string;
 }
 
 const opts = {
@@ -245,21 +252,6 @@ async function changeRole(userid: string, selectedRole: number) {
 
 <template>
     <div class="flex flex-col font-nunito text-text dark:text-white">
-        <ConfirmDialog
-            :draggable="false"
-            group="journey"
-            :pt="{
-                header: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-                content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-                footer: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
-                },
-            }"
-        />
         <Sidebar
             v-model:visible="visibleSidebar"
             position="right"
@@ -815,7 +807,7 @@ async function changeRole(userid: string, selectedRole: number) {
                     <T key-name="journey.activities" />
                 </div>
                 <button
-                    class="-mb-3 ml-auto flex rounded-xl border-2 border-cta-border bg-input px-2 py-1 text-base font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark lg:mb-4"
+                    class="-mb-3 ml-auto flex items-center rounded-xl border-2 border-cta-border bg-input px-2 py-1 text-sm font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark sm:text-base lg:mb-4"
                     @click="isActivityDialogVisible = !isActivityDialogVisible"
                 >
                     <SvgAddLocation class="h-6 w-6" />
@@ -826,9 +818,42 @@ async function changeRole(userid: string, selectedRole: number) {
         <ActivityDialog
             :id="journeyId.toString()"
             :visible="isActivityDialogVisible"
+            :only-show="false"
+            :create="true"
+            :create-address="true"
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
+        <CalendarFull
+            :id="journeyId.toString()"
+            :current-user-role="currUser.role"
+            :journey-ended="journeyEnded"
+            :during-journey="duringJourney"
+            :journey-startdate="journeyData.from"
+            :journey-enddate="journeyData.to"
+        />
         <ActivityMap v-if="activityDataLoaded" />
+        <div class="flex items-center justify-center md:justify-start">
+            <div
+                class="relative mt-4 flex w-[90%] items-center sm:mt-7 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            >
+                <FormUpload />
+            </div>
+        </div>
+        <ConfirmDialog
+            :draggable="false"
+            group="journey"
+            :pt="{
+                header: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                content: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                footer: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+            }"
+        />
     </div>
 </template>

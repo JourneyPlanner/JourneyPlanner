@@ -1,14 +1,25 @@
+<script setup lang="ts">
+import { useTranslate } from "@tolgee/vue";
+
+const { t } = useTranslate();
+const title = t.value("common.imprint");
+
+useHead({
+    title: `${title} | JourneyPlanner`,
+});
+</script>
+
 <template>
     <div>
         <div class="flex justify-end">
             <button
-                class="mr-2 mt-5 rounded-xl border-2 border-cta-border bg-input px-2 py-1 text-base font-semibold hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark md:mr-10 md:px-6"
+                class="mr-2 mt-5 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-base font-semibold hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-cta-bg-dark md:mr-10 md:px-6"
                 @click="$router.back()"
             >
                 <T key-name="common.back" />
             </button>
         </div>
-        <div class="-mt-8 font-nunito text-text dark:text-input">
+        <div class="-mt-8 font-nunito text-text dark:text-natural-50">
             <div class="mx-5 mt-7 flex flex-col sm:mx-20 lg:mx-52 xl:mx-96">
                 <h4 class="mb-2 text-center text-3xl font-bold">
                     <T key-name="common.imprint" />
@@ -28,7 +39,7 @@
                     <b> <T key-name="imprint.contact.title" />: </b> <br />
                     <T key-name="imprint.contact.phone.title" />:
                     <a
-                        class="hover:text-link hover:underline"
+                        class="hover:text-calypso-400 hover:underline"
                         href="tel:+43 681 20301077"
                     >
                         +43 681 20301077
@@ -36,7 +47,7 @@
                     <br />
                     <T key-name="imprint.contact.email.title" />:
                     <a
-                        class="hover:text-link hover:underline"
+                        class="hover:text-calypso-400 hover:underline"
                         href="mailto:raven.burkard@journeyplanner.io"
                     >
                         raven.burkard@journeyplanner.io
@@ -48,7 +59,7 @@
                     <a
                         href="https://www.ris.bka.gv.at"
                         target="_blank"
-                        class="hover:text-link hover:underline"
+                        class="hover:text-calypso-400 hover:underline"
                     >
                         https://www.ris.bka.gv.at
                     </a>
@@ -59,7 +70,7 @@
                     <a
                         href="https://ec.europa.eu/odr"
                         target="_blank"
-                        class="hover:text-link hover:underline"
+                        class="hover:text-calypso-400 hover:underline"
                         >https://ec.europa.eu/odr
                     </a>
                 </p>
@@ -76,7 +87,7 @@
                     <a
                         href="https://fonts.google.com/"
                         target="_blank"
-                        class="hover:text-link hover:underline"
+                        class="hover:text-calypso-400 hover:underline"
                         >Google Fonts
                     </a>
                 </p>
@@ -85,7 +96,7 @@
                     <a
                         href="https://github.com/primefaces/primeicons"
                         target="_blank"
-                        class="hover:text-link hover:underline"
+                        class="hover:text-calypso-400 hover:underline"
                         >PrimeIcons
                     </a>
                 </p>
@@ -94,7 +105,7 @@
                     <a
                         href="https://undraw.co/"
                         target="_blank"
-                        class="hover:text-link hover:underline"
+                        class="hover:text-calypso-400 hover:underline"
                         >undraw.co
                     </a>
                 </p>

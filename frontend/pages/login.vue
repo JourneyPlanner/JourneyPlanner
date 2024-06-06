@@ -59,8 +59,8 @@ async function loginUser(userData: User) {
         await login(userCredentials);
         toast.add({
             severity: "success",
-            summary: t.value("form.registration.toast.success.heading"),
-            detail: t.value("form.registration.toast.success"),
+            summary: t.value("common.toast.success.heading"),
+            detail: t.value("form.login.toast.success"),
             life: 3000,
         });
         await navigateTo("/dashboard");
