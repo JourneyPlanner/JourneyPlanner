@@ -138,7 +138,7 @@ class JourneyUserController extends Controller
 
         // Remove the journey if the user was the last member
         if ($journey->users()->count() === 0) {
-            $journey->delete();
+            JourneyController::deleteJourney($journey);
 
             return response()->json(
                 [
