@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\JourneyRequest;
 use App\Models\Journey;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -292,11 +291,6 @@ class JourneyController extends Controller
                     unlink($journeyFolder . "/" . $file);
                 }
             }
-            rmdir($journeyFolder);
-        }
-
-        // Delete folder
-        if (file_exists($journeyFolder)) {
             rmdir($journeyFolder);
         }
 
