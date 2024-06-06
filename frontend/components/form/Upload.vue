@@ -92,7 +92,7 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard-AddFiles-title {
-    @apply dark:natural-400 mt-8 font-nunito text-base text-natural-600 lg:text-lg !important;
+    @apply mt-8 font-nunito text-base text-natural-600 dark:text-natural-400 lg:text-lg !important;
 }
 
 .uppy-DashboardContent-addMore {
