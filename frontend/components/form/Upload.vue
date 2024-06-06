@@ -47,7 +47,7 @@ const uppy = new Uppy({
 
 <template>
     <div class="w-full flex-col">
-        <div class="mb-3 flex flex-row justify-between">
+        <div class="mb-1.5 flex flex-row justify-between sm:mb-3">
             <h1
                 class="mt-2 text-2xl font-semibold text-text dark:text-natural-50"
             >
