@@ -255,6 +255,7 @@ async function changeRole(userid: string, selectedRole: number) {
         <Sidebar
             v-model:visible="visibleSidebar"
             position="right"
+            :block-scroll="true"
             :pt="{
                 closeButton: { class: 'w-9 h-9 dark:fill-white' },
                 closeIcon: {
