@@ -20,8 +20,6 @@ if (data) {
             docs.value.push(media);
         }
     });
-    console.log(multimedia.value);
-    console.log(docs.value);
 }
 
 const downloadMedia = async () => {
@@ -82,6 +80,7 @@ const setVideo = (media) => {
                         :data-video="setVideo(media)"
                     >
                         <img
+                            loading="lazy"
                             class="img-responsive rounded-lg"
                             :src="media.link"
                         />
