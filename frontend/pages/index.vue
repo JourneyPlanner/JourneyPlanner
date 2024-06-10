@@ -1,7 +1,16 @@
 <script setup lang="ts">
+import { T, useTranslate } from "@tolgee/vue";
+
+const { t } = useTranslate();
+
+const title = t.value("startpage.subheading");
+
 useHead({
-    title: "JourneyPlanner",
+    title: `JourneyPlanner | ${title}`,
 });
+
+const features = ref();
+const team = ref();
 
 const colorMode = useColorMode();
 const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
@@ -19,13 +28,24 @@ const changeColorMode = () => {
         colorMode.preference = "light";
     }
 };
+
+function scroll(target: {
+    scrollIntoView: (arg0: { behavior: string; block: string }) => void;
+}) {
+    target.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+    });
+}
 </script>
 
 <template>
     <div
         class="relative cursor-default overflow-hidden font-nunito text-text dark:text-natural-50"
     >
-        <div class="mb-40 min-h-72 sm:mb-80 md:mb-72 xl:min-h-[40rem]">
+        <div
+            class="mb-40 min-h-72 sm:mb-80 md:mb-72 lg:mb-52 xl:mb-96 xl:pb-72"
+        >
             <div>
                 <SvgStartpagePlaneSmall
                     class="absolute top-48 -z-10 sm:hidden"
@@ -39,7 +59,7 @@ const changeColorMode = () => {
             >
                 <NuxtLink to="/">
                     <h3
-                        class="text-sm font-bold text-calypso-400 dark:text-gothic-400 sm:text-base"
+                        class="text-sm font-bold text-calypso-400 dark:text-gothic-400 sm:text-base md:text-lg"
                     >
                         JourneyPlanner
                     </h3>
@@ -49,24 +69,20 @@ const changeColorMode = () => {
                         class="hidden flex-row items-center gap-4 text-natural-500 dark:text-natural-600 md:flex"
                     >
                         <li>
-                            <NuxtLink
-                                to="/#features"
-                                class="hover:text-calypso-500 dark:hover:text-calypso-500"
+                            <button
+                                class="text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-lg"
+                                @click="scroll(features)"
                             >
-                                <a>
-                                    <T key-name="startpage.features" />
-                                </a>
-                            </NuxtLink>
+                                <T key-name="startpage.features" />
+                            </button>
                         </li>
                         <li>
-                            <NuxtLink
-                                to="/#team"
-                                class="hover:text-calypso-500 dark:hover:text-calypso-500"
+                            <button
+                                class="text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-lg"
+                                @click="scroll(team)"
                             >
-                                <a>
-                                    <T key-name="startpage.team" />
-                                </a>
-                            </NuxtLink>
+                                <T key-name="startpage.team" />
+                            </button>
                         </li>
                     </ul>
                     <ul
@@ -87,7 +103,7 @@ const changeColorMode = () => {
                         <li class="border-l-2 border-natural-300 pl-2">
                             <NuxtLink
                                 to="/login"
-                                class="text-sm text-text hover:underline dark:text-natural-50 md:text-base"
+                                class="text-sm text-text hover:underline dark:text-natural-50 md:text-lg"
                             >
                                 <T key-name="form.button.login" />
                             </NuxtLink>
@@ -95,7 +111,7 @@ const changeColorMode = () => {
                         <li>
                             <NuxtLink
                                 to="/register"
-                                class="rounded-lg border-2 border-dandelion-300 p-1 text-sm text-text hover:bg-dandelion-200 dark:text-natural-50 dark:hover:bg-pesto-600 md:text-base"
+                                class="rounded-lg border-2 border-dandelion-300 p-1 px-2 text-sm text-text hover:bg-dandelion-200 dark:text-natural-50 dark:hover:bg-pesto-600 md:text-lg"
                             >
                                 <T key-name="form.button.register" />
                             </NuxtLink>
@@ -115,16 +131,36 @@ const changeColorMode = () => {
                 <p class="mt-2 w-64 text-base sm:w-96 md:text-lg">
                     <T key-name="startpage.text" />
                 </p>
+                <div class="mt-2 hidden md:mt-5 lg:flex">
+                    <NuxtLink
+                        to="/journey/new"
+                        class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-64 lg:text-base lg:font-semibold"
+                    >
+                        <T key-name="startpage.button.create.journey" />
+                    </NuxtLink>
+                </div>
             </div>
         </div>
-        <div id="features" class="mb-10 xs:pt-[25vw] sm:pt-0 md:pt-10">
+        <div
+            id="features"
+            ref="features"
+            class="mb-16 xs:pt-[25vw] sm:pt-0 md:pt-10 lg:mb-32"
+        >
             <div class="relative flex flex-row">
                 <div class="w-[40rem] max-lg:hidden">
-                    <SvgStartpagePeople class="mt-10" />
+                    <SvgStartpagePeople class="mt-20" />
                 </div>
                 <div
                     class="flex flex-col max-lg:w-full sm:flex-row sm:justify-center sm:gap-6 lg:ml-20 lg:w-auto lg:flex-col"
                 >
+                    <div class="-mt-[1vw] mb-10 flex justify-center sm:hidden">
+                        <NuxtLink
+                            to="/journey/new"
+                            class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-64 lg:text-base lg:font-semibold"
+                        >
+                            <T key-name="startpage.button.create.journey" />
+                        </NuxtLink>
+                    </div>
                     <div class="flex flex-col max-lg:items-center lg:flex-row">
                         <SvgStartpageCalendar
                             class="w-24 hover:animate-wiggle"
@@ -141,7 +177,7 @@ const changeColorMode = () => {
                         </div>
                     </div>
                     <div
-                        class="mt-8 flex flex-col max-lg:items-center md:mt-16 lg:ml-16 lg:flex-row"
+                        class="mt-8 flex flex-col max-lg:items-center md:mt-6 lg:ml-16 lg:flex-row"
                     >
                         <SvgStartpageShare class="w-24 hover:animate-wiggle" />
                         <div class="flex flex-col max-lg:text-center lg:ml-4">
@@ -156,7 +192,7 @@ const changeColorMode = () => {
                         </div>
                     </div>
                     <div
-                        class="mt-8 flex flex-col max-lg:items-center md:mt-0 lg:ml-32 lg:mt-16 lg:flex-row"
+                        class="mt-8 flex flex-col max-lg:items-center sm:-mt-0 md:mt-0 lg:ml-32 lg:mt-6 lg:flex-row"
                     >
                         <SvgStartpageGlobe class="w-24 hover:animate-wiggle" />
                         <div class="flex flex-col max-lg:text-center lg:ml-4">
@@ -172,29 +208,31 @@ const changeColorMode = () => {
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="mb-10 flex justify-center lg:mb-20 lg:justify-end">
-            <NuxtLink
-                to="/journey/new"
-                class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-4 py-2 text-sm font-bold text-text dark:bg-pesto-600 dark:text-natural-50 md:text-base lg:mr-64 lg:text-lg"
+            <div
+                class="mt-10 justify-center max-sm:hidden sm:flex lg:hidden lg:justify-end"
             >
-                <T key-name="startpage.button.create.journey" />
-            </NuxtLink>
+                <NuxtLink
+                    to="/journey/new"
+                    class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-[20vw] lg:text-base lg:font-semibold"
+                >
+                    <T key-name="startpage.button.create.journey" />
+                </NuxtLink>
+            </div>
         </div>
-        <div id="team" class="mb-20">
+        <div id="team" ref="team">
             <ScrollPanel
                 :pt="{
                     barX: 'hidden',
                 }"
             >
-                <div class="flex items-center justify-center font-nunito">
+                <div class="mx-5 flex items-center justify-center font-nunito">
                     <div
-                        class="align-center flex w-full items-center gap-0 lg:grid lg:grid-cols-4 lg:gap-4"
+                        class="align-center flex w-full items-center gap-4 lg:grid lg:grid-cols-4 lg:gap-4"
                     >
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
-                            <SvgStartpageSeverin class="w-72" />
+                            <SvgStartpageSeverin class="w-56 md:w-72" />
                             <p class="mt-3 text-xl">Severin Rosner</p>
                             <div
                                 class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
@@ -205,7 +243,7 @@ const changeColorMode = () => {
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
-                            <SvgStartpageRaven class="w-72" />
+                            <SvgStartpageRaven class="w-56 md:w-72" />
                             <p class="mt-3 text-xl">Raven Burkard</p>
                             <div
                                 class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
@@ -216,7 +254,7 @@ const changeColorMode = () => {
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
-                            <SvgStartpageRoman class="w-72" />
+                            <SvgStartpageRoman class="w-56 md:w-72" />
                             <p class="mt-3 text-xl">Roman Krebs</p>
                             <div
                                 class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
@@ -227,7 +265,7 @@ const changeColorMode = () => {
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
-                            <SvgStartpageStefi class="w-72" />
+                            <SvgStartpageStefi class="w-56 md:w-72" />
                             <p class="mt-3 text-xl">Stefania Manastirska</p>
                             <div
                                 class="text-xl font-bold text-calypso-500 dark:text-gothic-400"

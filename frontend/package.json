@@ -10,7 +10,7 @@
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
         "prepare": "cd .. && husky frontend/.husky",
-        "start": "concurrently \"infisical run --env=dev -- nuxt dev -o\" \"cd ../backend && infisical run --env=dev -- php artisan serve\""
+        "start": "concurrently \"infisical run --env=dev -- nuxt dev --host 0 --port 3000 -o\" \"cd ../backend && infisical run --env=dev -- php artisan serve\""
     },
     "dependencies": {
         "@fullcalendar/core": "^6.1.11",
