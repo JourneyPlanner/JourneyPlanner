@@ -34,10 +34,23 @@ const name = (media) => {
     }
 };
 
+const setImage = (media) => {
+    if (media.type.startsWith("image")) {
+        return media.link;
+    }
+    return "";
+};
+
 const setVideo = (media) => {
     if (media.type.startsWith("video")) {
-        console.log(media.link);
         return `{ "source": [{ "src": "${media.link}", "type": "video/mp4" }], "attributes": { "preload": false, "controls": true } }`;
+    }
+    return "";
+};
+
+const setThumbnail = (media) => {
+    if (media.type.startsWith("video")) {
+        return media.link + "?thumbnail";
     }
     return "";
 };
@@ -75,9 +88,10 @@ const setVideo = (media) => {
                         v-for="media in multimedia"
                         :key="media.link"
                         class="gallery-item"
-                        :data-src="media.link"
+                        :data-src="setImage(media)"
                         :data-sub-html="'By ' + name(media)"
                         :data-video="setVideo(media)"
+                        :data-poster="setThumbnail(media)"
                     >
                         <img
                             loading="lazy"
