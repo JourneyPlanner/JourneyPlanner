@@ -163,8 +163,9 @@ const changeColorMode = () => {
                         <SvgStartpageGlobe class="w-24 hover:animate-wiggle" />
                         <div class="flex flex-col max-lg:text-center lg:ml-4">
                             <h4 class="text-2xl font-semibold">
-                                <T key-name="startpage.experience.header" />
+                                <T key-name="startpage.experience.header" />f
                             </h4>
+                            y
                             <p
                                 class="mt-0.5 w-[15rem] text-base sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
                             >
