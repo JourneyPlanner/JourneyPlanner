@@ -44,18 +44,18 @@ function scroll(target: {
         class="relative cursor-default overflow-hidden font-nunito text-text dark:text-natural-50"
     >
         <div
-            class="mb-40 min-h-72 sm:mb-80 md:mb-72 lg:mb-52 xl:mb-96 xl:pb-72"
+            class="mb-10 min-h-72 xs:mb-[30vw] sm:mb-60 md:mb-64 lg:mb-72 xl:mb-96 xl:pb-72"
         >
             <div>
                 <SvgStartpagePlaneSmall
-                    class="absolute top-48 -z-10 sm:hidden"
+                    class="absolute top-36 -z-10 sm:hidden"
                 />
                 <SvgStartpagePlane
                     class="absolute -right-28 top-48 -z-10 hidden sm:-right-48 sm:top-20 sm:block sm:w-[130%] md:top-16 md:w-[110%] lg:-right-20 lg:top-10 lg:w-full"
                 />
             </div>
             <header
-                class="relative z-10 mx-5 mt-3 flex flex-row items-center justify-between text-base font-medium text-text"
+                class="relative z-10 mx-2 mt-3 flex flex-row items-center justify-between text-base font-medium text-text md:mx-5"
             >
                 <NuxtLink to="/">
                     <h3
@@ -119,22 +119,26 @@ function scroll(target: {
                     </ul>
                 </nav>
             </header>
-            <div class="ml-5 mt-8 md:mt-14 lg:ml-20 lg:mt-24">
-                <h1 class="text-3xl font-bold sm:text-4xl lg:text-5xl">
+            <div class="ml-5 mt-8 md:mt-14 lg:ml-16 lg:mt-24">
+                <h1
+                    class="text-2xl font-bold xs:text-3xl sm:text-4xl lg:text-5xl"
+                >
                     JourneyPlanner
                 </h1>
                 <h2
-                    class="mt-1 text-xl font-bold text-calypso-500 dark:text-gothic-400 sm:text-2xl lg:text-3xl"
+                    class="mt-1 text-lg font-bold text-calypso-500 dark:text-gothic-400 xs:text-xl sm:text-2xl lg:text-3xl"
                 >
                     <T key-name="startpage.subheading" />
                 </h2>
-                <p class="mt-2 w-64 text-base sm:w-96 md:text-lg">
+                <p
+                    class="mt-2 w-[75%] text-sm xs:w-[60%] xs:text-base sm:w-96 sm:text-base md:text-lg"
+                >
                     <T key-name="startpage.text" />
                 </p>
                 <div class="mt-2 hidden md:mt-5 lg:flex">
                     <NuxtLink
                         to="/journey/new"
-                        class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-64 lg:text-base lg:font-semibold"
+                        class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-64 lg:text-base lg:font-semibold"
                     >
                         <T key-name="startpage.button.create.journey" />
                     </NuxtLink>
@@ -144,7 +148,7 @@ function scroll(target: {
         <div
             id="features"
             ref="features"
-            class="mb-16 xs:pt-[25vw] sm:pt-0 md:pt-10 lg:mb-32"
+            class="mb-16 pt-[10vw] lg:mb-32 lg:pt-10"
         >
             <div class="relative flex flex-row">
                 <div class="w-[40rem] max-lg:hidden">
@@ -153,15 +157,17 @@ function scroll(target: {
                 <div
                     class="flex flex-col max-lg:w-full sm:flex-row sm:justify-center sm:gap-6 lg:ml-20 lg:w-auto lg:flex-col"
                 >
-                    <div class="-mt-[1vw] mb-10 flex justify-center sm:hidden">
+                    <div class="mb-16 mt-14 flex justify-center sm:hidden">
                         <NuxtLink
                             to="/journey/new"
-                            class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-64 lg:text-base lg:font-semibold"
+                            class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400"
                         >
                             <T key-name="startpage.button.create.journey" />
                         </NuxtLink>
                     </div>
-                    <div class="flex flex-col max-lg:items-center lg:flex-row">
+                    <div
+                        class="-mt-3 flex flex-col max-lg:items-center xs:-mt-0 lg:flex-row"
+                    >
                         <SvgStartpageCalendar
                             class="w-24 hover:animate-wiggle"
                         />
@@ -170,7 +176,7 @@ function scroll(target: {
                                 <T key-name="startpage.calendar.header" />
                             </h4>
                             <p
-                                class="mt-0.5 w-[15rem] text-base sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
+                                class="mt-0.5 w-[15rem] text-sm sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
                             >
                                 <T key-name="startpage.calendar.text" />
                             </p>
@@ -181,11 +187,11 @@ function scroll(target: {
                     >
                         <SvgStartpageShare class="w-24 hover:animate-wiggle" />
                         <div class="flex flex-col max-lg:text-center lg:ml-4">
-                            <h4 class="text-2xl font-semibold">
+                            <h4 class="text-xl font-semibold">
                                 <T key-name="startpage.share.header" />
                             </h4>
                             <p
-                                class="mt-0.5 w-[15rem] text-base sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
+                                class="mt-0.5 w-[15rem] text-sm sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
                             >
                                 <T key-name="startpage.share.text" />
                             </p>
@@ -196,11 +202,11 @@ function scroll(target: {
                     >
                         <SvgStartpageGlobe class="w-24 hover:animate-wiggle" />
                         <div class="flex flex-col max-lg:text-center lg:ml-4">
-                            <h4 class="text-2xl font-semibold">
+                            <h4 class="text-xl font-semibold">
                                 <T key-name="startpage.experience.header" />
                             </h4>
                             <p
-                                class="mt-0.5 w-[15rem] text-base sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
+                                class="mt-0.5 w-[15rem] text-sm sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
                             >
                                 <T key-name="startpage.experience.text" />
                             </p>
@@ -213,7 +219,7 @@ function scroll(target: {
             >
                 <NuxtLink
                     to="/journey/new"
-                    class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-[20vw] lg:text-base lg:font-semibold"
+                    class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-[20vw] lg:text-base lg:font-semibold"
                 >
                     <T key-name="startpage.button.create.journey" />
                 </NuxtLink>
@@ -232,10 +238,12 @@ function scroll(target: {
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
-                            <SvgStartpageSeverin class="w-56 md:w-72" />
-                            <p class="mt-3 text-xl">Severin Rosner</p>
+                            <SvgStartpageSeverin class="w-40 xs:w-56 lg:w-72" />
+                            <p class="mt-3 text-base md:text-xl">
+                                Severin Rosner
+                            </p>
                             <div
-                                class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
+                                class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
                             >
                                 <T key-name="startpage.people.scrummaster" />
                             </div>
@@ -243,10 +251,12 @@ function scroll(target: {
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
-                            <SvgStartpageRaven class="w-56 md:w-72" />
-                            <p class="mt-3 text-xl">Raven Burkard</p>
+                            <SvgStartpageRaven class="w-40 xs:w-56 lg:w-72" />
+                            <p class="mt-3 text-base md:text-xl">
+                                Raven Burkard
+                            </p>
                             <div
-                                class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
+                                class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
                             >
                                 <T key-name="startpage.people.prodcutowner" />
                             </div>
@@ -254,10 +264,10 @@ function scroll(target: {
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
-                            <SvgStartpageRoman class="w-56 md:w-72" />
-                            <p class="mt-3 text-xl">Roman Krebs</p>
+                            <SvgStartpageRoman class="w-40 xs:w-56 lg:w-72" />
+                            <p class="textbase mt-3 md:text-xl">Roman Krebs</p>
                             <div
-                                class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
+                                class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
                             >
                                 <T key-name="startpage.people.developer" />
                             </div>
@@ -265,10 +275,12 @@ function scroll(target: {
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
-                            <SvgStartpageStefi class="w-56 md:w-72" />
-                            <p class="mt-3 text-xl">Stefania Manastirska</p>
+                            <SvgStartpageStefi class="w-40 xs:w-56 lg:w-72" />
+                            <p class="mt-3 text-base md:text-xl">
+                                Stefania Manastirska
+                            </p>
                             <div
-                                class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
+                                class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
                             >
                                 <T key-name="startpage.people.designer" />
                             </div>
@@ -276,9 +288,6 @@ function scroll(target: {
                     </div>
                 </div>
             </ScrollPanel>
-            <h5 class="ml-14 block text-sm text-natural-400 lg:hidden">
-                <T key-name="startpage.team.info" />
-            </h5>
         </div>
     </div>
 </template>
