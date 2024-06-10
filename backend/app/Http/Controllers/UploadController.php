@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Journey;
 use App\Models\Media;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class UploadController extends Controller
 {
@@ -151,6 +152,22 @@ class UploadController extends Controller
         $media->journey_id = $journeyId;
         $media->user_id = $request->user()->id;
         $media->save();
+
+        // Add thumbnail if it's a video.
+        $filetype = mime_content_type(storage_path($media->path));
+        if (strpos($filetype, "video/") === 0) {
+            $mediaPath = substr($media->path, strlen("app/"));
+            $thumbnailPath = $mediaPath . "_thumbnail.jpg";
+
+            $ffmpeg = FFMpeg::fromDisk('')
+                ->open($mediaPath);
+            $duration = $ffmpeg
+                ->getDurationInMiliseconds();
+            $ffmpeg->getFrameFromSeconds($duration / 2000)
+                ->export()
+                ->toDisk('')
+                ->save($thumbnailPath);
+        }
 
         // Allow the upload (doesn't actually do anything, just for good measure)
         return response()->json([

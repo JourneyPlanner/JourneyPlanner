@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Media;
 use Illuminate\Http\Request;
 use App\Models\Journey;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\File;
 
@@ -39,6 +38,11 @@ class MediaController extends Controller
     {
         $journey = Journey::findOrFail($journey);
         //Gate::authorize("journeyMember", $journey);
+        if ($request->has('thumbnail')) {
+            $media = Media::findOrFail($media);
+            $thumbnail = $media->path . '_thumbnail.jpg';
+            return response()->file(storage_path($thumbnail));
+        }
         $media = Media::findOrFail($media);
 
         return response()->file(storage_path($media->path));
