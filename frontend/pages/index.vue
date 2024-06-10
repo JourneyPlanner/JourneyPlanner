@@ -19,15 +19,13 @@ const changeColorMode = () => {
         colorMode.preference = "light";
     }
 };
-
-//TODO xl, abstand nach zwischen plane und features
 </script>
 
 <template>
     <div
         class="relative cursor-default overflow-hidden font-nunito text-text dark:text-natural-50"
     >
-        <div class="mb-52 min-h-72 sm:mb-80 md:mb-72 xl:min-h-[40rem]">
+        <div class="mb-40 min-h-72 sm:mb-80 md:mb-72 xl:min-h-[40rem]">
             <div>
                 <SvgStartpagePlaneSmall
                     class="absolute top-48 -z-10 sm:hidden"
@@ -119,7 +117,7 @@ const changeColorMode = () => {
                 </p>
             </div>
         </div>
-        <div id="features" class="mb-10 pt-5 md:pt-10">
+        <div id="features" class="mb-10 xs:pt-[25vw] sm:pt-0 md:pt-10">
             <div class="relative flex flex-row">
                 <div class="w-[40rem] max-lg:hidden">
                     <SvgStartpagePeople class="mt-10" />
@@ -163,9 +161,8 @@ const changeColorMode = () => {
                         <SvgStartpageGlobe class="w-24 hover:animate-wiggle" />
                         <div class="flex flex-col max-lg:text-center lg:ml-4">
                             <h4 class="text-2xl font-semibold">
-                                <T key-name="startpage.experience.header" />f
+                                <T key-name="startpage.experience.header" />
                             </h4>
-                            y
                             <p
                                 class="mt-0.5 w-[15rem] text-base sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
                             >
@@ -192,7 +189,7 @@ const changeColorMode = () => {
             >
                 <div class="flex items-center justify-center font-nunito">
                     <div
-                        class="align-center flex w-full items-center gap-4 lg:grid lg:grid-cols-4"
+                        class="align-center flex w-full items-center gap-0 lg:grid lg:grid-cols-4 lg:gap-4"
                     >
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
