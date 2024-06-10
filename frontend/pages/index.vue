@@ -19,10 +19,11 @@ const changeColorMode = () => {
         colorMode.preference = "light";
     }
 };
+
+//TODO xl, abstand nach zwischen plane und features
 </script>
 
 <template>
-    <!-- TODO xl, small plane, abstand nach zwischen plane und features, bilder-->
     <div
         class="relative cursor-default overflow-hidden font-nunito text-text dark:text-natural-50"
     >
@@ -118,7 +119,7 @@ const changeColorMode = () => {
                 </p>
             </div>
         </div>
-        <div id="features" class="mb-20 pt-5 md:pt-10">
+        <div id="features" class="mb-10 pt-5 md:pt-10">
             <div class="relative flex flex-row">
                 <div class="w-[40rem] max-lg:hidden">
                     <SvgStartpagePeople class="mt-10" />
@@ -174,9 +175,20 @@ const changeColorMode = () => {
                 </div>
             </div>
         </div>
+        <div class="mb-10 flex justify-center lg:mb-20 lg:justify-end">
+            <NuxtLink
+                to="/journey/new"
+                class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-4 py-2 text-sm font-bold text-text dark:bg-pesto-600 dark:text-natural-50 md:text-base lg:mr-64 lg:text-lg"
+            >
+                <T key-name="startpage.button.create.journey" />
+            </NuxtLink>
+        </div>
         <div id="team" class="mb-20">
-            <!--TODO scrollbar-->
-            <ScrollPanel>
+            <ScrollPanel
+                :pt="{
+                    barX: 'hidden',
+                }"
+            >
                 <div class="flex items-center justify-center font-nunito">
                     <div
                         class="align-center flex w-full items-center gap-4 lg:grid lg:grid-cols-4"
@@ -185,7 +197,7 @@ const changeColorMode = () => {
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
                             <SvgStartpageSeverin class="w-72" />
-                            <p class="text-xl">Severin Rosner</p>
+                            <p class="mt-3 text-xl">Severin Rosner</p>
                             <div
                                 class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
                             >
@@ -195,8 +207,8 @@ const changeColorMode = () => {
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
-                            <SvgStartpageSeverin class="w-72" />
-                            <p class="text-xl">Raven Burkard</p>
+                            <SvgStartpageRaven class="w-72" />
+                            <p class="mt-3 text-xl">Raven Burkard</p>
                             <div
                                 class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
                             >
@@ -207,7 +219,7 @@ const changeColorMode = () => {
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
                             <SvgStartpageRoman class="w-72" />
-                            <p class="text-xl">Roman Krebs</p>
+                            <p class="mt-3 text-xl">Roman Krebs</p>
                             <div
                                 class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
                             >
@@ -217,8 +229,8 @@ const changeColorMode = () => {
                         <div
                             class="flex w-72 flex-col items-center justify-center lg:w-full"
                         >
-                            <SvgStartpageSeverin class="w-72" />
-                            <p class="text-xl">Stefania Manastirska</p>
+                            <SvgStartpageStefi class="w-72" />
+                            <p class="mt-3 text-xl">Stefania Manastirska</p>
                             <div
                                 class="text-xl font-bold text-calypso-500 dark:text-gothic-400"
                             >
@@ -228,6 +240,9 @@ const changeColorMode = () => {
                     </div>
                 </div>
             </ScrollPanel>
+            <h5 class="ml-14 block text-sm text-natural-400 lg:hidden">
+                <T key-name="startpage.team.info" />
+            </h5>
         </div>
     </div>
 </template>
