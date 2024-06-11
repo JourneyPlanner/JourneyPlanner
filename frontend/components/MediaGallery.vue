@@ -12,7 +12,8 @@ const { data } = await useAsyncData("media", () =>
     client(`/api/journey/${journey.getID()}/media`),
 );
 
-if (data) {
+if (data && data.value !== null) {
+    console.log(data);
     data.value.forEach((media) => {
         if (media.type.startsWith("image") || media.type.startsWith("video")) {
             multimedia.value.push(media);
