@@ -44,7 +44,7 @@ function scroll(target: {
         class="relative cursor-default overflow-hidden font-nunito text-text dark:text-natural-50"
     >
         <div
-            class="mb-10 min-h-72 xs:mb-[30vw] sm:mb-60 md:mb-64 lg:mb-72 xl:mb-96 xl:pb-72"
+            class="mb-10 min-h-72 xs:mb-[30vw] sm:mb-60 md:mb-64 lg:mb-72 xl:mb-[10vw] xl:pb-72"
         >
             <div>
                 <SvgStartpagePlaneSmall
@@ -157,7 +157,9 @@ function scroll(target: {
                 <div
                     class="flex flex-col max-lg:w-full sm:flex-row sm:justify-center sm:gap-6 lg:ml-20 lg:w-auto lg:flex-col"
                 >
-                    <div class="mb-16 mt-14 flex justify-center sm:hidden">
+                    <div
+                        class="mb-16 mt-14 flex justify-center xs:mt-5 sm:hidden"
+                    >
                         <NuxtLink
                             to="/journey/new"
                             class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400"
@@ -258,7 +260,7 @@ function scroll(target: {
                             <div
                                 class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
                             >
-                                <T key-name="startpage.people.prodcutowner" />
+                                <T key-name="startpage.people.productowner" />
                             </div>
                         </div>
                         <div
@@ -269,7 +271,7 @@ function scroll(target: {
                             <div
                                 class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
                             >
-                                <T key-name="startpage.people.developer" />
+                                <T key-name="startpage.people.member" />
                             </div>
                         </div>
                         <div
@@ -282,7 +284,7 @@ function scroll(target: {
                             <div
                                 class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
                             >
-                                <T key-name="startpage.people.designer" />
+                                <T key-name="startpage.people.member" />
                             </div>
                         </div>
                     </div>
