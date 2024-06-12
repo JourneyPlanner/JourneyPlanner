@@ -1,35 +1,21 @@
 <script setup lang="ts">
-import {
-    MapboxGeolocateControl,
-    MapboxMap,
-    MapboxMarker,
-    MapboxNavigationControl,
-} from "@studiometa/vue-mapbox-gl";
+/*
 import { useTranslate } from "@tolgee/vue";
-import "mapbox-gl/dist/mapbox-gl.css";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "~/tailwind.config.js";
 
-const journey = useJourneyStore();
-const activitiesStore = useActivityStore();
-
-const config = useRuntimeConfig();
 const fullConfig = resolveConfig(tailwindConfig);
 const { t } = useTranslate();
 
-const colorMode = useColorMode();
-const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
-
-const colorAdded = fullConfig.theme.accentColor["input-label"] as string;
-const colorNotAdded = fullConfig.theme.accentColor[
-    "marker-not-added"
-] as string;
+const journey = useJourneyStore();
+const activitiesStore = useActivityStore();
 
 const activities = ref();
 const activitiesWithLocation = ref();
 const activitiesWithoutLocation = ref();
 const isNotFoundActivitiesDialogVisible = ref(false);
-
+*/
+/*
 watch(
     activitiesStore.activityData,
     () => {
@@ -39,6 +25,22 @@ watch(
             (activity: Activity) => activity.latitude && activity.longitude,
         );
 
+        activitiesWithLocation.value.forEach((activity: Activity) => {
+            useMapboxPopup(activity.id, (popup) => {
+                popup.remove();
+            });
+
+            useMapboxMarker(activity.id, (marker) => {
+                const markerEl = marker.getElement();
+                const elements = markerEl.querySelectorAll("svg path");
+                elements.forEach(function (element) {
+                    if (element.getAttribute("fill")) {
+                        element.setAttribute("fill", markerColor(activity));
+                    }
+                });
+            });
+        });
+
         activitiesWithoutLocation.value = activities.value.filter(
             (activity: Activity) => !activity.latitude || !activity.longitude,
         );
@@ -46,25 +48,35 @@ watch(
     { immediate: true },
 );
 
+const colorMode = useColorMode();
+const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+const colorAdded = fullConfig.theme.accentColor["input-label"] as string;
+const colorNotAdded = fullConfig.theme.accentColor[
+    "marker-not-added"
+] as string;
+
 function markerColor(activity: Activity) {
     return activity.calendar_activities?.length > 0
         ? colorAdded
         : colorNotAdded;
 }
 
-const lat = Number(journey.getLat());
-const long = Number(journey.getLong());
-const zoom = computed(() => ((long || lat) === null ? 1 : 8));
+const lat = computed(() => journey.getLat());
+const long = computed(() => journey.getLong());
+const zoom = computed(() => ((long.value || lat.value) === null ? 1 : 8));
 const style = computed(() =>
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
         ? "mapbox://styles/mathematti/clw4z6v0s028p01o0askbhfh9"
         : "mapbox://styles/mathematti/clw4znxzh02mh01qz5hgk3qb6",
 );
+*/
 </script>
 
 <template>
     <div class="flex items-center justify-center md:justify-start">
+        <!--
         <div
             class="relative -mb-1 mt-5 flex w-[90%] items-center sm:-mb-0 sm:mt-10 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
@@ -86,37 +98,47 @@ const style = computed(() =>
         <div
             class="relative mt-5 flex h-44 w-[90%] items-end sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:h-96 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
-            <div>
-                <MapboxMap
-                    style="position: absolute; top: 0; bottom: 0"
-                    class="h-full w-full rounded-xl"
-                    :access-token="config.public.NUXT_MAPBOX_API_KEY"
-                    :zoom="zoom"
-                    :map-style="style"
-                    :center="[long, lat]"
+            <MapboxMap
+                :map-id="journey.getID()"
+                style="position: absolute; top: 0; bottom: 0"
+                class="rounded-xl"
+                :options="{
+                    style: style,
+                    center: [long, lat],
+                    zoom: zoom,
+                }"
+            >
+                <MapboxDefaultMarker
+                    v-for="activity in activitiesWithLocation"
+                    :key="activity.id"
+                    :marker-id="activity.id"
+                    :lnglat="[activity.longitude, activity.latitude]"
                 >
-                    <MapboxMarker
-                        v-for="activity in activitiesWithLocation"
-                        :key="activity.id"
-                        :lng-lat="[activity.longitude, activity.latitude]"
-                        :color="markerColor(activity)"
-                        popup
+                    <MapboxDefaultPopup
+                        :popup-id="activity.id"
+                        :lnglat="[activity.longitude, activity.latitude]"
+                        :options="{
+                            closeOnClick: true,
+                            focusAfterOpen: false,
+                        }"
                     >
-                        <template #popup>
-                            <div
-                                class="flex flex-col font-nunito text-text dark:text-input"
-                            >
-                                <h1 class="font-bold">
-                                    {{ activity.name }}
-                                </h1>
-                                <p>{{ activity.mapbox_full_address }}</p>
-                            </div>
-                        </template>
-                    </MapboxMarker>
-                    <MapboxGeolocateControl />
-                    <MapboxNavigationControl position="top-left" />
-                </MapboxMap>
-            </div>
+                        <div
+                            class="flex flex-col font-nunito text-text dark:text-input"
+                        >
+                            <h1 class="font-bold">
+                                {{ activity.name }}
+                            </h1>
+                            <p>{{ activity.mapbox_full_address }}</p>
+                        </div>
+                    </MapboxDefaultPopup>
+                </MapboxDefaultMarker>
+
+                <MapboxScaleControl position="top-left" />
+                <MapboxGeolocateControl />
+                <MapboxFullscreenControl />
+                <MapboxNavigationControl position="top-left" />
+            </MapboxMap>
+
             <Dialog
                 v-model:visible="isNotFoundActivitiesDialogVisible"
                 modal
@@ -199,6 +221,7 @@ const style = computed(() =>
                 </ScrollPanel>
             </Dialog>
         </div>
+        -->
     </div>
 </template>
 
