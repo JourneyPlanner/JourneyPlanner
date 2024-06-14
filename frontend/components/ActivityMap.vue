@@ -7,23 +7,29 @@ import {
 } from "@studiometa/vue-mapbox-gl";
 import { useTranslate } from "@tolgee/vue";
 import "mapbox-gl/dist/mapbox-gl.css";
-import resolveConfig from "tailwindcss/resolveConfig";
-import tailwindConfig from "~/tailwind.config.js";
 
 const journey = useJourneyStore();
 const activitiesStore = useActivityStore();
 
 const config = useRuntimeConfig();
-const fullConfig = resolveConfig(tailwindConfig);
 const { t } = useTranslate();
 
 const colorMode = useColorMode();
 const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
 
-const colorAdded = fullConfig.theme.accentColor["input-label"] as string;
-const colorNotAdded = fullConfig.theme.accentColor[
-    "marker-not-added"
-] as string;
+let colorAdded = "#50A1C0";
+let colorNotAdded = "#9BBAC5";
+
+if (
+    colorMode.preference === "dark" ||
+    (darkTheme.matches && colorMode.preference === "system")
+) {
+    colorAdded = "#50A1C0";
+    colorNotAdded = "#9BBAC5";
+} else {
+    colorAdded = "#3485A6";
+    colorNotAdded = "#6A95A6";
+}
 
 const activities = ref();
 const activitiesWithLocation = ref();
@@ -104,7 +110,7 @@ const style = computed(() =>
                     >
                         <template #popup>
                             <div
-                                class="flex flex-col font-nunito text-text dark:text-input"
+                                class="flex flex-col font-nunito text-text dark:text-natural-50"
                             >
                                 <h1 class="font-bold">
                                     {{ activity.name }}
