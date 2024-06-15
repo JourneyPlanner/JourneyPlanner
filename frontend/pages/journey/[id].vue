@@ -55,9 +55,9 @@ const { data, error } = await useAsyncData("journey", () =>
 );
 
 if (error.value) {
-    throw showError({
+    throw createError({
         statusCode: 404,
-        statusMessage: "Page Not Found",
+        statusMessage: "Journey not found",
         fatal: true,
     });
 }

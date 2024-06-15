@@ -1,15 +1,33 @@
-<script setup lang="ts">
-import type { NuxtError } from "#app";
-
-defineProps({
-    error: { type: Object as () => NuxtError, required: true },
+<script setup>
+useHead({
+    title: "Error | JourneyPlanner",
 });
+
+const error = useError();
+
+const handleError = () => {
+    clearError({
+        redirect: "/dashboard",
+    });
+};
 </script>
 
 <template>
-    <div class="font-nunito text-text dark:text-white">
-        <h1 v-if="error">There was an error.</h1>
-        <h1 v-if="error">{{ error.statusCode }}</h1>
-        <NuxtLink to="/">Go back home</NuxtLink>
-    </div>
+    <NuxtLayout>
+        <div class="mt-16 flex flex-col items-center">
+            <h1 class="text-xl">Error</h1>
+            <p>
+                <strong>{{ error?.message }}</strong>
+            </p>
+            <p>
+                <button class="m-3 rounded-lg border p-1" @click="handleError">
+                    Back to dashboard
+                </button>
+            </p>
+            <span class="text-sm">--- Site is still in development ---</span>
+            <a class="text-xs" href="mailto:contact@journeyplanner.io"
+                >Report issues to: contact@journeyplanner.io</a
+            >
+        </div>
+    </NuxtLayout>
 </template>

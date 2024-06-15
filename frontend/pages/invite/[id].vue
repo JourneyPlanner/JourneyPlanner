@@ -18,14 +18,14 @@ const { data, error } = await useAsyncData("journey", () =>
 );
 
 if (error.value) {
-    showError({
+    throw createError({
         message: "No journey found for this invite",
         status: 404,
         fatal: true,
     });
+} else {
+    await navigateTo(`/journey/${data.value.journey.id}`);
 }
-
-await navigateTo(`/journey/${data.value.journey.id}`);
 </script>
 
 <template>
