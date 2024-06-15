@@ -28,15 +28,6 @@ const changeColorMode = () => {
         colorMode.preference = "light";
     }
 };
-
-function scroll(target: {
-    scrollIntoView: (arg0: { behavior: string; block: string }) => void;
-}) {
-    target.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-    });
-}
 </script>
 
 <template>
