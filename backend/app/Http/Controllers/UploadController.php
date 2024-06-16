@@ -137,6 +137,29 @@ class UploadController extends Controller
         $filename = hrtime(true) . "_" . $filename;
         try {
             rename($path, $journeyFolder . "/" . $filename);
+
+            // Create media record in database.
+            $media = new Media();
+            $media->path = $subfolder . "/" . $filename;
+            $media->journey_id = $journeyId;
+            $media->user_id = $request->user()->id;
+            $media->save();
+
+            // Add thumbnail if it's a video.
+            $filetype = mime_content_type(storage_path($media->path));
+            if (strpos($filetype, "video/") === 0) {
+                $mediaPath = substr($media->path, strlen("app/"));
+                $thumbnailPath = $mediaPath . "_thumbnail.jpg";
+
+                $ffmpeg = FFMpeg::fromDisk('')
+                    ->open($mediaPath);
+                $duration = $ffmpeg
+                    ->getDurationInMiliseconds();
+                $ffmpeg->getFrameFromSeconds($duration / 2000)
+                    ->export()
+                    ->toDisk('')
+                    ->save($thumbnailPath);
+            }
         } catch (\Exception $ignored) {
         }
 
@@ -144,29 +167,6 @@ class UploadController extends Controller
         try {
             unlink($path . ".info");
         } catch (\Exception $ignored) {
-        }
-
-        // Create media record in database.
-        $media = new Media();
-        $media->path = $subfolder . "/" . $filename;
-        $media->journey_id = $journeyId;
-        $media->user_id = $request->user()->id;
-        $media->save();
-
-        // Add thumbnail if it's a video.
-        $filetype = mime_content_type(storage_path($media->path));
-        if (strpos($filetype, "video/") === 0) {
-            $mediaPath = substr($media->path, strlen("app/"));
-            $thumbnailPath = $mediaPath . "_thumbnail.jpg";
-
-            $ffmpeg = FFMpeg::fromDisk('')
-                ->open($mediaPath);
-            $duration = $ffmpeg
-                ->getDurationInMiliseconds();
-            $ffmpeg->getFrameFromSeconds($duration / 2000)
-                ->export()
-                ->toDisk('')
-                ->save($thumbnailPath);
         }
 
         // Allow the upload (doesn't actually do anything, just for good measure)
