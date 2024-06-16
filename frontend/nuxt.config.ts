@@ -78,6 +78,8 @@ export default defineNuxtConfig({
                 "ProgressSpinner",
                 "DataTable",
                 "Column",
+                "Skeleton",
+                "DeferredContent",
             ],
         },
     },
