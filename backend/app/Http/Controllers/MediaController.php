@@ -18,15 +18,15 @@ class MediaController extends Controller
     {
         $journey = Journey::findOrFail($journey);
         Gate::authorize("journeyMember", $journey);
-        $media = $journey->media()->map(function ($media) {
+        $media = $journey->media->map(function ($media) {
             return [
-                'id' => $media->id,
-                'user_id' => $media->user_id,
-                'user_first_name' => $media->user->firstName,
-                'user_last_name' => $media->user->lastName,
-                'name' => $media->name,
-                'link' => route('media.show', [$media->journey_id, $media->id]),
-                'type' => mime_content_type(storage_path($media->path)),
+                "id" => $media->id,
+                "user_id" => $media->user_id,
+                "user_first_name" => $media->user->firstName,
+                "user_last_name" => $media->user->lastName,
+                "name" => $media->name,
+                "link" => route("media.show", [$media->journey_id, $media->id]),
+                "type" => mime_content_type(storage_path($media->path)),
             ];
         });
 
@@ -40,7 +40,7 @@ class MediaController extends Controller
     {
         $journey = Journey::findOrFail($journey);
         //Gate::authorize("journeyMember", $journey);
-        if ($request->has('thumbnail')) {
+        if ($request->has("thumbnail")) {
             $media = Media::findOrFail($media);
             $thumbnailPath = $media->getThumbnailPath();
             if (file_exists($thumbnailPath)) {
@@ -69,7 +69,9 @@ class MediaController extends Controller
         // Create a zip file
         $zip = new \ZipArchive();
 
-        $zipFileName = storage_path("/app/journey_media/JourneyPlanner_{$journey->name}_media.zip");
+        $zipFileName = storage_path(
+            "/app/journey_media/JourneyPlanner_{$journey->name}_media.zip"
+        );
         $zip->open($zipFileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
         $files = File::files($mediaFolder);

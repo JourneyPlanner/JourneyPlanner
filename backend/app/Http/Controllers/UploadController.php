@@ -150,13 +150,12 @@ class UploadController extends Controller
                 $mediaPath = $media->getMediaSubPath();
                 $thumbnailPath = $mediaPath . "_thumbnail.jpg";
 
-                $ffmpeg = FFMpeg::fromDisk('')
-                    ->open($mediaPath);
-                $duration = $ffmpeg
-                    ->getDurationInMiliseconds();
-                $ffmpeg->getFrameFromSeconds($duration / 2000)
+                $ffmpeg = FFMpeg::fromDisk("")->open($mediaPath);
+                $duration = $ffmpeg->getDurationInMiliseconds();
+                $ffmpeg
+                    ->getFrameFromSeconds($duration / 2000)
                     ->export()
-                    ->toDisk('')
+                    ->toDisk("")
                     ->save($thumbnailPath);
             }
         } catch (\Exception $ignored) {

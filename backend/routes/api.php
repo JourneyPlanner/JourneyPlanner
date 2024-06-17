@@ -73,10 +73,10 @@ Route::get("journey/{journey}/media/download", [
     "download",
 ])->middleware("auth:sanctum");
 
-Route::apiResource(
-    "journey/{journey}/media",
-    MediaController::class
-)->only("index", "show"); /*->middleware(
+Route::apiResource("journey/{journey}/media", MediaController::class)->only(
+    "index",
+    "show"
+); /*->middleware(
 "auth:sanctum"
 )->only("index", "view");
 */

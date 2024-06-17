@@ -45,7 +45,7 @@ class Media extends Model
         return $this->getBasePath() . $this->journey()->id . "/" . $this->name;
     }
 
-    /** 
+    /**
      * Get the media subpath.
      */
     public function getMediaSubpath(): string
