@@ -42,7 +42,7 @@ class Media extends Model
      */
     public function getMediaPath(): string
     {
-        return $this->getBasePath() . $this->journey()->first()->id . "/" . $this->name;
+        return $this->getBasePath() . $this->getMediaSubpath();
     }
 
     /**
@@ -50,7 +50,15 @@ class Media extends Model
      */
     public function getMediaSubpath(): string
     {
-        return $this->getSubfolder() . $this->journey()->id . "/" . $this->name;
+        return $this->getSubfolder() . $this->journey->id . "/" . $this->name;
+    }
+
+    /**
+     * Get the thumbnail subpath.
+     */
+    public function getThumbnailSubpath(): string
+    {
+        return $this->getMediaSubpath() . "_thumbnail.jpg";
     }
 
     /**
@@ -58,7 +66,7 @@ class Media extends Model
      */
     public function getThumbnailPath(): string
     {
-        return $this->getMediaPath() . "_thumbnail.jpg";
+        return $this->getBasePath() . $this->getThumbnailSubpath();
     }
 
     /**
@@ -66,7 +74,7 @@ class Media extends Model
      */
     public static function getJourneyFolder(string $journeyId): string
     {
-        return Media::getBasePath() . $journeyId;
+        return Media::getBasePath() . Media::getSubfolder() . $journeyId;
     }
 
     /**
@@ -74,7 +82,7 @@ class Media extends Model
      */
     public static function getBasePath(): string
     {
-        return storage_path("app/" . Media::getSubfolder());
+        return storage_path("app/");
     }
 
     /**

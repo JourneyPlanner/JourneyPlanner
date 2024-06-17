@@ -5,9 +5,11 @@ use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\JourneyUserController;
 use App\Http\Controllers\CalendarActivityController;
 use App\Http\Controllers\MediaController;
+use App\Models\Media;
 use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,3 +82,17 @@ Route::apiResource("journey/{journey}/media", MediaController::class)->only(
 "auth:sanctum"
 )->only("index", "view");
 */
+
+Route::get("test", function () {
+    if (true) {
+        $media = Media::findOrFail("9c4f0846-0690-4482-8d4b-b77cffa571bb");
+        //ddd($media->getMediaPath());
+        $ffmpeg = FFMpeg::fromDisk("")->open($media->getMediaSubpath());
+        $duration = $ffmpeg->getDurationInMiliseconds();
+        $ffmpeg
+            ->getFrameFromSeconds($duration / 2000)
+            ->export()
+            ->toDisk("")
+            ->save("test.jpg");
+    }
+});
