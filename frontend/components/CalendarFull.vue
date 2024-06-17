@@ -5,7 +5,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/vue3";
 import { useTolgee, useTranslate } from "@tolgee/vue";
-import { add, differenceInMinutes } from "date-fns";
+import { add, differenceInMinutes, startOfWeek } from "date-fns";
 import resolveConfig from "tailwindcss/resolveConfig";
 import { ref } from "vue";
 import tailwindConfig from "~/tailwind.config.js";
@@ -230,11 +230,11 @@ async function removeFromCalendar() {
 
 let start = undefined;
 if (props.duringJourney) {
-    start = new Date();
+    start = startOfWeek(new Date(), { weekStartsOn: 1 });
 } else if (props.journeyEnded) {
-    start = new Date(props.journeyEnddate);
+    start = startOfWeek(new Date(props.journeyEnddate), { weekStartsOn: 1 });
 } else {
-    start = new Date(props.journeyStartdate);
+    start = startOfWeek(new Date(props.journeyStartdate), { weekStartsOn: 1 });
 }
 const calendarOptions = reactive({
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -298,6 +298,7 @@ const calendarOptions = reactive({
     timeZone: "local",
     droppable: true,
     initialDate: start,
+    firstDay: 1,
     editable: true,
     views: {
         fullweek: {
