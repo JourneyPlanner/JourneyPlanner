@@ -139,13 +139,13 @@ class UploadController extends Controller
 
             // Create media record in database.
             $media = new Media();
-            $media->path = $filename;
+            $media->name = $filename;
             $media->journey_id = $journeyId;
             $media->user_id = $request->user()->id;
             $media->save();
 
             // Add thumbnail if it's a video.
-            $filetype = mime_content_type(storage_path($media->path));
+            $filetype = mime_content_type($media->getMediaPath());
             if (strpos($filetype, "video/") === 0) {
                 $mediaPath = $media->getMediaSubPath();
                 $thumbnailPath = $mediaPath . "_thumbnail.jpg";
