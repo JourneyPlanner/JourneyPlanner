@@ -475,7 +475,7 @@ function setSelectedDate(date: Date) {
                             id="name"
                             name="name"
                             :value="name"
-                            :disabled="onlyShowRef && !create"
+                            :disabled="onlyShowRef && !create && !updateRef"
                             translation-key="form.input.activity.name"
                             icon="pi-tag"
                             :icon-pos-is-left="true"
@@ -485,7 +485,7 @@ function setSelectedDate(date: Date) {
                             id="duration"
                             name="duration"
                             :value="estimatedDuration"
-                            :disabled="onlyShowRef && !create"
+                            :disabled="onlyShowRef && !create && !updateRef"
                             translation-key="form.input.activity.duration"
                             class="order-2 col-span-1 w-full sm:col-span-2 sm:w-5/6 sm:justify-self-end"
                             :default-time="new Array(0, 30)"
@@ -499,7 +499,7 @@ function setSelectedDate(date: Date) {
                             <FormAddressInput
                                 name="address"
                                 :value="address"
-                                :disabled="onlyShowRef && !create"
+                                :disabled="onlyShowRef && !create && !updateRef"
                             />
                         </div>
 
@@ -507,7 +507,7 @@ function setSelectedDate(date: Date) {
                             id="costs"
                             name="costs"
                             :value="cost"
-                            :disabled="onlyShowRef && !create"
+                            :disabled="onlyShowRef && !create && !updateRef"
                             translation-key="form.input.activity.costs"
                             icon="pi-money-bill"
                             class="order-3 col-span-1 w-full sm:order-4 sm:col-span-2 sm:w-5/6 sm:justify-self-end"
@@ -516,7 +516,7 @@ function setSelectedDate(date: Date) {
                             id="description"
                             name="description"
                             :value="description"
-                            :disabled="onlyShowRef && !create"
+                            :disabled="onlyShowRef && !create && !updateRef"
                             translation-key="form.input.activity.description"
                             class="order-5 col-span-full row-span-2"
                             custom-class="h-full"
@@ -545,7 +545,7 @@ function setSelectedDate(date: Date) {
                         <div>
                             <FormGroupInput
                                 id="link"
-                                :disabled="onlyShowRef && !create"
+                                :disabled="onlyShowRef && !create && !updateRef"
                                 :value="link"
                                 name="link"
                                 translation-key="form.input.activity.link"
@@ -559,7 +559,7 @@ function setSelectedDate(date: Date) {
                             </label>
                             <FormGroupInput
                                 id="email"
-                                :disabled="onlyShowRef && !create"
+                                :disabled="onlyShowRef && !create && !updateRef"
                                 :value="email"
                                 name="email"
                                 icon="pi-at"
@@ -567,7 +567,7 @@ function setSelectedDate(date: Date) {
                             />
                             <FormGroupInput
                                 id="phone"
-                                :disabled="onlyShowRef && !create"
+                                :disabled="onlyShowRef && !create && !updateRef"
                                 :value="phone"
                                 name="phone"
                                 icon="pi-phone"
@@ -577,7 +577,7 @@ function setSelectedDate(date: Date) {
                         <FormClassicInputIcon
                             id="opening-hours"
                             name="open"
-                            :disabled="onlyShowRef && !create"
+                            :disabled="onlyShowRef && !create && !updateRef"
                             :value="openingHours"
                             translation-key="form.input.activity.opening-hours"
                             input-type="textarea"
