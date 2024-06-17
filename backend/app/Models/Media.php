@@ -28,4 +28,60 @@ class Media extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the journey that the media belongs to.
+     */
+    public function journey(): BelongsTo
+    {
+        return $this->belongsTo(Journey::class);
+    }
+
+    /**
+     * Get the media path.
+     */
+    public function getMediaPath(): string
+    {
+        return $this->getBasePath() . $this->journey()->id . "/" . $this->name;
+    }
+
+    /** 
+     * Get the media subpath.
+     */
+    public function getMediaSubpath(): string
+    {
+        return $this->getSubfolder() . $this->journey()->id . "/" . $this->name;
+    }
+
+    /**
+     * Get the thumbnail path.
+     */
+    public function getThumbnailPath(): string
+    {
+        return $this->getMediaPath() . "_thumbnail.jpg";
+    }
+
+    /**
+     * Get the journey folder.
+     */
+    public static function getJourneyFolder(string $journeyId): string
+    {
+        return Media::getBasePath() . $journeyId;
+    }
+
+    /**
+     * Get the base path for media.
+     */
+    public static function getBasePath(): string
+    {
+        return storage_path("app/" . Media::getSubfolder());
+    }
+
+    /**
+     * Get the subfolder for media of the default disk.
+     */
+    public static function getSubfolder(): string
+    {
+        return "journey_media/";
+    }
 }

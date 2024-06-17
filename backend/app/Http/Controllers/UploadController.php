@@ -126,9 +126,8 @@ class UploadController extends Controller
         $filename = $request->all()["Event"]["Upload"]["MetaData"]["filename"];
         $journeyId = $request->all()["Event"]["Upload"]["MetaData"]["journey"];
 
-        $subfolder = "app/journey_media/" . $journeyId;
         // Create journey folder if it doesn't exist.
-        $journeyFolder = storage_path($subfolder);
+        $journeyFolder = Media::getBasePath() . $journeyId;
         if (!file_exists($journeyFolder)) {
             mkdir($journeyFolder, 0750, true);
         }
@@ -140,7 +139,7 @@ class UploadController extends Controller
 
             // Create media record in database.
             $media = new Media();
-            $media->path = $subfolder . "/" . $filename;
+            $media->path = $filename;
             $media->journey_id = $journeyId;
             $media->user_id = $request->user()->id;
             $media->save();
@@ -148,7 +147,7 @@ class UploadController extends Controller
             // Add thumbnail if it's a video.
             $filetype = mime_content_type(storage_path($media->path));
             if (strpos($filetype, "video/") === 0) {
-                $mediaPath = substr($media->path, strlen("app/"));
+                $mediaPath = $media->getMediaSubPath();
                 $thumbnailPath = $mediaPath . "_thumbnail.jpg";
 
                 $ffmpeg = FFMpeg::fromDisk('')
