@@ -15,6 +15,7 @@ const docs = ref([]);
 const { data } = await useAsyncData("media", () =>
     client(`/api/journey/${journey.getID()}/media`),
 );
+console.log(data);
 
 if (data && data.value !== null) {
     data.value.forEach((media) => {
@@ -25,6 +26,8 @@ if (data && data.value !== null) {
         }
     });
 }
+
+console.log(multimedia.value);
 
 const downloadMedia = async () => {
     await client(`/api/journey/${journey.getID()}/media/download`);
@@ -72,7 +75,7 @@ const setImage = (media) => {
     return "";
 };
 
-//TODO scroll bar, responsive, dokumente, no files yet, download, download name, loading images..., dark mode
+//TODO scroll bar, responsive, dokumente, no files yet, download, download name, loading images..., dark mode; wenn upload dann gallery refresh
 </script>
 
 <template>
@@ -90,10 +93,10 @@ const setImage = (media) => {
             </button>
         </div>
         <div
-            class="w-full rounded-2xl border-[3px] border-calypso-400 lg:rounded-3xl"
+            class="h-[9.7rem] w-full rounded-2xl border-[3px] border-calypso-400 sm:h-[12.7rem] md:h-[16.7rem] lg:rounded-3xl"
         >
             <ScrollPanel
-                class="h-[9.7rem] w-full sm:h-[12.7rem] md:h-[16.7rem]"
+                class="w-full"
                 :pt="{
                     barY: 'w-1.5 bg-natural-200 hover:bg-natural-300 dark:bg-[#888] dark:hover:bg-[#555]',
                 }"
