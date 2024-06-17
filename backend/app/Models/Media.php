@@ -42,7 +42,7 @@ class Media extends Model
      */
     public function getMediaPath(): string
     {
-        return $this->getBasePath() . $this->journey()->id . "/" . $this->name;
+        return $this->getBasePath() . $this->journey()->first()->id . "/" . $this->name;
     }
 
     /**
