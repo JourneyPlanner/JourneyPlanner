@@ -26,7 +26,9 @@ class MediaController extends Controller
                 "user_last_name" => $media->user->lastName,
                 "name" => $media->name,
                 "link" => route("media.show", [$media->journey_id, $media->id]),
-                "type" => file_exists($media->getMediaPath()) ? mime_content_type($media->getMediaPath()) : "unknown",
+                "type" => file_exists($media->getMediaPath())
+                    ? mime_content_type($media->getMediaPath())
+                    : "unknown",
             ];
         });
 
