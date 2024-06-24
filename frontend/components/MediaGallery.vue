@@ -17,20 +17,58 @@ const downloading = ref(false);
 const toast = useToast();
 const isDocDialogOpen = ref(false);
 
-const { data } = await useAsyncData("media", () =>
-    client(`/api/journey/${journey.getID()}/media`),
+const props = defineProps({
+    uploadData: { type: String, default: "" },
+});
+
+watch(
+    () => props.uploadData,
+    () => {
+        fetchMedia();
+    },
 );
 
-if (data && data.value !== null) {
-    data.value.forEach((media) => {
-        if (media.type.startsWith("image") || media.type.startsWith("video")) {
-            multimedia.value.push(media);
-        } else {
-            docs.value.push(media);
-        }
+onMounted(() => {
+    fetchMedia();
+});
+
+/**
+ * Fetches all media for the current journey
+ * and sorts them into multimedia and docs
+ */
+async function fetchMedia() {
+    let data = null;
+
+    await client(`/api/journey/${journey.getID()}/media`, {
+        method: "GET",
+        async onResponse({ response }) {
+            if (response.ok) {
+                data = response._data;
+            }
+        },
     });
+
+    if (data && data !== null) {
+        data.forEach((media) => {
+            if (
+                media.type.startsWith("image") ||
+                media.type.startsWith("video")
+            ) {
+                if (!multimedia.value.some((item) => item.id === media.id)) {
+                    multimedia.value.push(media);
+                }
+            } else {
+                if (!docs.value.some((item) => item.id === media.id)) {
+                    docs.value.push(media);
+                }
+            }
+        });
+    }
 }
 
+/**
+ * Downloads all media as a zip file
+ */
 const downloadMedia = async () => {
     downloading.value = true;
     toast.add({
@@ -56,9 +94,17 @@ const downloadMedia = async () => {
     zip.generateAsync({ type: "blob" }).then((content) => {
         saveAs(content, `JourneyPlanner_${journey.getName()}.zip`);
     });
+
     downloading.value = false;
 };
 
+/**
+ * Sets the name of the media
+ * @param {Object} media - The media object
+ * @param {Boolean} asHtml - Whether to return the name as HTML
+ * @param {Boolean} withText - Whether to include the text "Uploaded by"
+ * @returns {String} The name of the media
+ */
 const setName = (media, asHtml, withText = true) => {
     let name = media.user_first_name;
 
@@ -75,6 +121,11 @@ const setName = (media, asHtml, withText = true) => {
     }
 };
 
+/**
+ * Sets the source of the media
+ * @param {Object} media - The media object
+ * @returns {String} The source of the media
+ */
 const setSrc = (media) => {
     if (media.type.startsWith("image")) {
         return media.link;
@@ -82,6 +133,11 @@ const setSrc = (media) => {
     return "";
 };
 
+/**
+ * Sets the video of the media
+ * @param {Object} media - The media object
+ * @returns {String} The video of the media
+ */
 const setVideo = (media) => {
     if (media.type.startsWith("video")) {
         return `{ "source": [{ "src": "${media.link}", "type": "video/mp4" }], "attributes": { "preload": false, "controls": true } }`;
@@ -89,6 +145,11 @@ const setVideo = (media) => {
     return "";
 };
 
+/**
+ * Sets the thumbnail of the media
+ * @param {Object} media - The media object
+ * @returns {String} The thumbnail of the media
+ */
 const setThumbnail = (media) => {
     if (media.type.startsWith("video")) {
         return media.link + "?thumbnail";
@@ -96,6 +157,11 @@ const setThumbnail = (media) => {
     return "";
 };
 
+/**
+ * Sets the image of the media
+ * @param {Object} media - The media object
+ * @returns {String} The image of the media
+ */
 const setImage = (media) => {
     if (media.type.startsWith("image")) {
         return media.link;
@@ -104,24 +170,37 @@ const setImage = (media) => {
     }
     return "";
 };
-
-console.log(docs.value);
-
-//TODO responsive, dark mode; wenn upload dann gallery refresh
 </script>
 
 <template>
     <div class="w-full flex-col">
-        <div class="mb-3 flex flex-row justify-between">
-            <h1 class="text-2xl font-semibold">
-                <T key-name="journey.media.overview" />
-            </h1>
+        <div class="mb-3 flex flex-row items-center justify-between">
+            <div class="flex flex-row items-center gap-2">
+                <h1 class="text-2xl font-semibold">
+                    <T key-name="journey.media.overview" />
+                </h1>
+                <Badge
+                    v-if="multimedia.length > 0"
+                    :value="multimedia.length"
+                    severity="secondary"
+                />
+            </div>
             <div class="flex items-center gap-5">
-                <span
-                    class="pi pi-file-pdf text-xl hover:cursor-pointer"
+                <i
+                    v-badge.info="docs.length"
+                    v-tooltip.top="{
+                        value: t('journey.media.docs.tooltip'),
+                        pt: { root: 'font-nunito' },
+                    }"
+                    class="pi pi-file-pdf text-2xl hover:cursor-pointer"
                     @click="isDocDialogOpen = true"
                 />
+
                 <Button
+                    v-tooltip.top="{
+                        value: t('journey.media.download.tooltip'),
+                        pt: { root: 'font-nunito text-nowrap' },
+                    }"
                     :label="t('journey.media.download')"
                     icon="pi pi-download"
                     :loading="downloading"
@@ -131,7 +210,7 @@ console.log(docs.value);
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="ml-auto flex rounded-xl border-2 border-cta-border bg-input px-2 py-1 text-base font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
+                    class="ml-auto flex items-center rounded-xl border-2 border-cta-border bg-natural-50 px-2 py-1 text-sm font-bold hover:bg-cta-bg dark:bg-background-dark dark:text-input dark:hover:bg-cta-bg-dark sm:text-base lg:mb-4"
                     @click="downloadMedia"
                 />
             </div>
@@ -153,7 +232,7 @@ console.log(docs.value);
                         plugins: plugins,
                         closeOnTap: true,
                     }"
-                    class="grid grid-cols-5 gap-2 p-3"
+                    class="grid grid-cols-2 gap-2 p-3 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5"
                 >
                     <a
                         v-for="media in multimedia"
@@ -167,7 +246,7 @@ console.log(docs.value);
                     >
                         <img
                             loading="lazy"
-                            class="img-responsive h-32 w-64 rounded-lg object-cover hover:cursor-zoom-in"
+                            class="img-responsive h-16 w-32 rounded-lg object-cover hover:cursor-zoom-in sm:h-24 sm:w-52 lg:h-32 lg:w-64"
                             :src="setImage(media)"
                             :alt="setName(media, false)"
                         />
@@ -181,31 +260,34 @@ console.log(docs.value);
                 </div>
             </ScrollPanel>
         </div>
-
-        <!-- TODO farben -->
         <Dialog
             v-model:visible="isDocDialogOpen"
             modal
             :header="t('journey.media.docs')"
             :draggable="false"
             :style="{ width: '35rem' }"
-            class="bg-input dark:bg-input-dark"
+            class="bg-natural-50 dark:bg-background-dark"
             :pt="{
                 root: {
-                    class: 'font-nunito text-text bg-input dark:bg-input-dark',
+                    class: 'font-nunito text-text bg-natural-50 dark:bg-background-dark',
                 },
                 header: {
-                    class: 'pb-2 h-15 bg-input dark:bg-input-dark text-text dark:text-input',
+                    class: 'pb-2 h-15 bg-natural-50 dark:bg-background-dark text-text dark:text-input',
                 },
                 title: { class: 'text-xl mt-0.5' },
                 content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-input',
+                    class: 'bg-natural-50 dark:bg-background-dark text-text dark:text-input',
                 },
                 closeButtonIcon: {
-                    class: 'text-input-placeholder hover:text-text dark:text-input-placeholder dark:hover:text-input h-5 w-5',
+                    class: 'text-natural-500 hover:text-text dark:text-input-placeholder dark:hover:text-input h-5 w-5',
                 },
             }"
         >
+            <p
+                class="mb-2 border-b-2 border-natural-300 pb-0.5 dark:border-input-placeholder"
+            >
+                <T key-name="journey.media.docs.info" />
+            </p>
             <ScrollPanel
                 class="relative h-[15rem]"
                 :pt="{
@@ -215,43 +297,43 @@ console.log(docs.value);
             >
                 <div class="font-nunito text-text dark:text-natural-50">
                     <table
+                        v-if="docs.length > 0"
                         class="w-full table-fixed text-left text-sm md:text-base"
                     >
                         <thead
                             class="border-b border-text text-xs uppercase dark:border-input"
                         >
                             <tr>
-                                <th scope="col" class="">
+                                <th scope="col" class="w-2/3">
                                     <T key-name="journey.media.name" />
                                 </th>
                                 <th scrop="col" class="text-center">
                                     <T key-name="journey.media.uploadedby" />
-                                </th>
-                                <th scope="col" class="">
-                                    <T key-name="journey.media.link" />
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="doc in docs" :key="doc.id">
                                 <th scope="row" class="truncate">
-                                    {{ doc.name.replace(/^\d+_/, "") }}
-                                </th>
-                                <td class="text-center">
-                                    {{ setName(doc, false, false) }}
-                                </td>
-                                <td class="">
                                     <a
                                         :href="doc.link"
                                         target="_blank"
-                                        class="truncate hover:underline"
+                                        class="hover:underline"
                                     >
-                                        {{ doc.link }}
+                                        {{ doc.name.replace(/^\d+_/, "") }}
                                     </a>
+                                </th>
+                                <td class="truncate text-center">
+                                    {{ setName(doc, false, false) }}
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                    <div v-else>
+                        <h6 class="text-center">
+                            <T key-name="journey.media.docs.empty" />
+                        </h6>
+                    </div>
                 </div>
             </ScrollPanel>
         </Dialog>

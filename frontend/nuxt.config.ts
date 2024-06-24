@@ -51,6 +51,7 @@ export default defineNuxtConfig({
             unstyled: false,
             zIndex: {
                 modal: 500,
+                tooltip: 1100,
             },
         },
         components: {
@@ -80,6 +81,7 @@ export default defineNuxtConfig({
                 "Column",
                 "Skeleton",
                 "DeferredContent",
+                "Badge",
             ],
         },
     },

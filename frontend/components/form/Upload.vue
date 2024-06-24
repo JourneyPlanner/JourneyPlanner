@@ -12,6 +12,7 @@ import { Dashboard } from "@uppy/vue";
 const tolgee = useTolgee(["language"]);
 const journey = useJourneyStore();
 const config = useRuntimeConfig();
+const emit = defineEmits(["uploaded"]);
 
 const client = useSanctumClient();
 
@@ -36,13 +37,17 @@ const uppy = new Uppy({
         maxFileSize: 1024 * 1024 * 1024,
         allowedFileTypes: ["image/*", "video/*", ".pdf", ".txt"],
     },
-}).use(Tus, {
-    endpoint: config.public.NUXT_UPLOAD_URL as string,
-    headers: {
-        Authorization: "Bearer " + upload_token,
-    },
-    removeFingerprintOnSuccess: true,
-});
+})
+    .use(Tus, {
+        endpoint: config.public.NUXT_UPLOAD_URL as string,
+        headers: {
+            Authorization: "Bearer " + upload_token,
+        },
+        removeFingerprintOnSuccess: true,
+    })
+    .on("complete", () => {
+        emit("uploaded", "finished");
+    });
 </script>
 
 <template>
