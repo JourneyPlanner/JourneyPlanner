@@ -166,4 +166,9 @@ const uppy = new Uppy({
 .uppy-DashboardContent-back {
     @apply text-text hover:text-mahagony-600 hover:underline dark:text-natural-50 dark:hover:text-mahagony-300 !important;
 }
+
+.uppy-StatusBar-actions,
+.uppy-StatusBar {
+    @apply z-50 !important;
+}
 </style>
