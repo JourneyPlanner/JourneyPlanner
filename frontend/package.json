@@ -59,7 +59,7 @@
         "lint-staged": "^15.2.2",
         "mapbox-gl": "^3.4.0",
         "nuxt-auth-sanctum": "^0.3.4",
-        "nuxt-primevue": "^0.3.1",
+        "nuxt-primevue": "^3.0.0",
         "prettier": "^3.3.2",
         "prettier-plugin-tailwindcss": "^0.5.13",
         "typescript": "^5.4.5",
