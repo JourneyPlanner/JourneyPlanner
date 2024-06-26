@@ -60,30 +60,4 @@ class MediaController extends Controller
             return abort(404);
         }
     }
-
-    public function download(Request $request, $journey)
-    {
-        $journey = Journey::findOrFail($journey);
-        //Gate::authorize("journeyMember", $journey);
-
-        $mediaFolder = $journey->getMediaFolder();
-
-        // Create a zip file
-        $zip = new \ZipArchive();
-
-        $zipFileName = storage_path(
-            "/app/journey_media/JourneyPlanner_{$journey->name}_media.zip"
-        );
-        $zip->open($zipFileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
-
-        $files = File::files($mediaFolder);
-
-        foreach ($files as $file) {
-            $zip->addFile($file, basename($file));
-        }
-
-        $zip->close();
-
-        return response()->download($zipFileName)->deleteFileAfterSend(true);
-    }
 }

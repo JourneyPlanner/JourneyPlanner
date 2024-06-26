@@ -146,7 +146,7 @@ class UploadController extends Controller
 
             // Add thumbnail if it's a video.
             $filetype = mime_content_type($media->getMediaPath());
-            if (true) {
+            if (strpos($filetype, "video") !== false) {
                 $ffmpeg = FFMpeg::fromDisk("")->open($media->getMediaSubpath());
                 $duration = $ffmpeg->getDurationInMiliseconds();
                 $ffmpeg
