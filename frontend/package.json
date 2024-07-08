@@ -25,7 +25,7 @@
         "@studiometa/vue-mapbox-gl": "^2.5.0",
         "@tolgee/vue": "^5.28.2",
         "@uppy/core": "^3.11.2",
-        "@uppy/dashboard": "^3.8.2",
+        "@uppy/dashboard": "^3.9.1",
         "@uppy/drag-drop": "^3.1.0",
         "@uppy/file-input": "^3.1.2",
         "@uppy/locales": "^3.5.4",
