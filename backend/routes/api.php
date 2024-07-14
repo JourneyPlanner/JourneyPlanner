@@ -5,11 +5,9 @@ use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\JourneyUserController;
 use App\Http\Controllers\CalendarActivityController;
 use App\Http\Controllers\MediaController;
-use App\Models\Media;
 use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 /*
 |--------------------------------------------------------------------------
