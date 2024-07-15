@@ -48,7 +48,7 @@
         "yup": "^1.4.0"
     },
     "devDependencies": {
-        "@nuxtjs/color-mode": "^3.4.1",
+        "@nuxtjs/color-mode": "^3.4.2",
         "@nuxtjs/tailwindcss": "^6.12.1",
         "@trivago/prettier-plugin-sort-imports": "^4.3.0",
         "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
