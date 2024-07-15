@@ -33,7 +33,7 @@
         "@uppy/tus": "^3.5.4",
         "@uppy/vue": "^1.1.2",
         "@vee-validate/nuxt": "^4.13.2",
-        "@vee-validate/yup": "^4.12.8",
+        "@vee-validate/yup": "^4.13.2",
         "concurrently": "^8.2.2",
         "date-fns": "^3.6.0",
         "js-confetti": "^0.12.0",
