@@ -26,7 +26,7 @@
         "@tolgee/vue": "^5.28.6",
         "@uppy/core": "^3.11.2",
         "@uppy/dashboard": "^3.9.1",
-        "@uppy/drag-drop": "^3.1.0",
+        "@uppy/drag-drop": "^3.1.1",
         "@uppy/file-input": "^3.1.2",
         "@uppy/locales": "^4.0.0",
         "@uppy/progress-bar": "^3.1.1",
