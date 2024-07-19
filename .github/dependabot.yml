@@ -19,6 +19,7 @@ updates:
   - package-ecosystem: "composer" # See documentation for possible values
     directory: "/backend/" # Location of package manifests
     open-pull-requests-limit: 100
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "monday"
