@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+    environment {
+        I18N_IMAGE = 'journeyplanner/i18n:latest'
+    }
+    stages {
+        stage('Build i18n Image') {
+            steps {
+                dir('docker/i18n') {
+                    script {
+                        docker.build(env.I18N_IMAGE)
+                    }
+                }
+            }
+        }
+    }
+}
