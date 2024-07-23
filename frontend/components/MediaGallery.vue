@@ -2,13 +2,20 @@
 import { T, useTranslate } from "@tolgee/vue";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
-import lightGallery from "lightgallery";
+import "lightgallery/css/lg-autoplay.css";
+import "lightgallery/css/lg-fullscreen.css";
+import "lightgallery/css/lg-rotate.css";
 import "lightgallery/css/lg-video.css";
+import "lightgallery/css/lg-zoom.css";
 import "lightgallery/css/lightgallery.css";
-import lgVideo from "lightgallery/plugins/video/lg-video.umd.js";
+import lgAutoplay from "lightgallery/plugins/autoplay";
+import lgFullscreen from "lightgallery/plugins/fullscreen";
+import lgRotate from "lightgallery/plugins/rotate";
+import lgVideo from "lightgallery/plugins/video";
+import lgZoom from "lightgallery/plugins/zoom";
 import LightGallery from "lightgallery/vue/LightGalleryVue.umd.js";
 
-const plugins = [lgVideo];
+const plugins = [lgVideo, lgZoom, lgAutoplay, lgRotate, lgFullscreen];
 const journey = useJourneyStore();
 const client = useSanctumClient();
 const config = useRuntimeConfig();
@@ -19,23 +26,21 @@ const downloading = ref(false);
 const toast = useToast();
 const isDocDialogOpen = ref(false);
 
+let lightGallery = null;
+
 const props = defineProps({
     uploadData: { type: String, default: "" },
 });
 
+/**
+ * Watcher for the uploadData prop
+ * refetches and refreshes the gallery after a new upload
+ */
 watch(
     () => props.uploadData,
     async () => {
-        const lg = document.getElementById("lg");
-        const plugin = lightGallery(lg, {
-            speed: 300,
-            controls: true,
-            plugins: plugins,
-            closeOnTap: true,
-            licenseKey: config.public.NUXT_LIGHTGALLERY_KEY,
-        });
         await fetchMedia();
-        plugin.refresh();
+        lightGallery.refresh();
     },
 );
 
@@ -44,6 +49,10 @@ onMounted(() => {
     docs.value = journey.getDocs();
     fetchMedia();
 });
+
+const onInit = (detail) => {
+    lightGallery = detail.instance;
+};
 
 /**
  * Fetches all media for the current journey
@@ -244,7 +253,7 @@ const setImage = (media) => {
             >
                 <LightGallery
                     v-if="multimedia.length > 0"
-                    id="lg"
+                    :on-init="onInit"
                     :settings="{
                         speed: 300,
                         controls: true,
