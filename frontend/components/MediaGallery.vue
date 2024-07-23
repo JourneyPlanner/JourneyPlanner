@@ -2,14 +2,16 @@
 import { T, useTranslate } from "@tolgee/vue";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
+import lightGallery from "lightgallery";
 import "lightgallery/css/lg-video.css";
 import "lightgallery/css/lightgallery.css";
 import lgVideo from "lightgallery/plugins/video/lg-video.umd.js";
-import Lightgallery from "lightgallery/vue/LightGalleryVue.umd.js";
+import LightGallery from "lightgallery/vue/LightGalleryVue.umd.js";
 
 const plugins = [lgVideo];
 const journey = useJourneyStore();
 const client = useSanctumClient();
+const config = useRuntimeConfig();
 const { t } = useTranslate();
 const multimedia = ref([]);
 const docs = ref([]);
@@ -23,12 +25,23 @@ const props = defineProps({
 
 watch(
     () => props.uploadData,
-    () => {
-        fetchMedia();
+    async () => {
+        const lg = document.getElementById("lg");
+        const plugin = lightGallery(lg, {
+            speed: 300,
+            controls: true,
+            plugins: plugins,
+            closeOnTap: true,
+            licenseKey: config.public.NUXT_LIGHTGALLERY_KEY,
+        });
+        await fetchMedia();
+        plugin.refresh();
     },
 );
 
 onMounted(() => {
+    multimedia.value = journey.getMedia();
+    docs.value = journey.getDocs();
     fetchMedia();
 });
 
@@ -64,6 +77,9 @@ async function fetchMedia() {
             }
         });
     }
+
+    journey.setMedia(multimedia.value);
+    journey.setDocs(docs.value);
 }
 
 /**
@@ -80,9 +96,11 @@ const downloadMedia = async () => {
 
     const zip = new JSZip();
     const fetchImage = async (url, name) => {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        zip.file(name, blob);
+        const response = await client(url, { method: "GET" });
+
+        if (response) {
+            zip.file(name, response);
+        }
     };
 
     const promises = multimedia.value.map((media) =>
@@ -99,7 +117,7 @@ const downloadMedia = async () => {
 };
 
 /**
- * Sets the name of the media
+ * Sets the description (name of the person who uploaded) of the media
  * @param {Object} media - The media object
  * @param {Boolean} asHtml - Whether to return the name as HTML
  * @param {Boolean} withText - Whether to include the text "Uploaded by"
@@ -224,13 +242,15 @@ const setImage = (media) => {
                     barY: 'w-1.5 bg-natural-200 hover:bg-natural-300 dark:bg-[#888] dark:hover:bg-[#555]',
                 }"
             >
-                <lightgallery
+                <LightGallery
                     v-if="multimedia.length > 0"
+                    id="lg"
                     :settings="{
                         speed: 300,
                         controls: true,
                         plugins: plugins,
                         closeOnTap: true,
+                        licenseKey: config.public.NUXT_LIGHTGALLERY_KEY,
                     }"
                     class="grid grid-cols-2 gap-2 p-3 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5"
                 >
@@ -244,19 +264,22 @@ const setImage = (media) => {
                         :data-poster="setThumbnail(media)"
                         :data-download="media.name"
                     >
-                        <img
+                        <NuxtImg
+                            placeholder="./placeholder.png"
                             loading="lazy"
                             class="img-responsive h-16 w-32 rounded-lg object-cover hover:cursor-zoom-in sm:h-24 sm:w-52 lg:h-32 lg:w-64"
                             :src="setImage(media)"
                             :alt="setName(media, false)"
                         />
                     </a>
-                </lightgallery>
+                </LightGallery>
                 <div
                     v-else
                     class="flex h-full items-center justify-center font-nunito text-text dark:text-natural-50"
                 >
-                    <h6>No media uploaded yet.</h6>
+                    <h6>
+                        <T key-name="journey.media.multimedia.empty" />
+                    </h6>
                 </div>
             </ScrollPanel>
         </div>

@@ -25,6 +25,7 @@ export default defineNuxtConfig({
         "@pinia/nuxt",
         "@nuxt/eslint",
         "nuxt-mapbox",
+        "@nuxt/image",
     ],
     css: [
         "@/assets/css/fonts/fonts.css",
@@ -43,6 +44,7 @@ export default defineNuxtConfig({
             NUXT_BACKEND_URL: process.env.NUXT_BACKEND_URL,
             NUXT_MAPBOX_API_KEY: process.env.NUXT_MAPBOX_API_KEY,
             NUXT_UPLOAD_URL: process.env.NUXT_UPLOAD_URL,
+            NUXT_LIGHTGALLERY_KEY: process.env.NUXT_LIGHTGALLERY_KEY,
         },
     },
     primevue: {

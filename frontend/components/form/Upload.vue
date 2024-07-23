@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTolgee } from "@tolgee/vue";
 import Uppy from "@uppy/core";
-import type { Locale } from "@uppy/core";
+import type { Locale, UploadResult } from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
 import German from "@uppy/locales/lib/de_DE";
@@ -13,8 +13,11 @@ const tolgee = useTolgee(["language"]);
 const journey = useJourneyStore();
 const config = useRuntimeConfig();
 const emit = defineEmits(["uploaded"]);
-
 const client = useSanctumClient();
+
+interface ExtendedUploadResult extends UploadResult {
+    uploadID: string;
+}
 
 let upload_token = localStorage.getItem("upload_token");
 
@@ -45,8 +48,8 @@ const uppy = new Uppy({
         },
         removeFingerprintOnSuccess: true,
     })
-    .on("complete", () => {
-        emit("uploaded", "finished");
+    .on("complete", (response) => {
+        emit("uploaded", (response as ExtendedUploadResult).uploadID);
     });
 </script>
 

@@ -251,7 +251,6 @@ async function changeRole(userid: string, selectedRole: number) {
 }
 
 const handleUpload = (result: string) => {
-    console.log("handleUpload", result);
     uploadResult.value = result;
 };
 </script>
