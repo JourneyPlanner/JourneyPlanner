@@ -30,6 +30,8 @@ const toggle = (event: Event) => {
 const editEnabled = ref(false);
 const isActivityDialogVisible = ref(false);
 const uploadResult = ref();
+const upload = ref();
+const calendar = ref();
 
 definePageMeta({
     middleware: ["sanctum:auth"],
@@ -56,9 +58,9 @@ const { data, error } = await useAsyncData("journey", () =>
 );
 
 if (error.value) {
-    throw showError({
+    throw createError({
         statusCode: 404,
-        statusMessage: "Page Not Found",
+        statusMessage: "Journey not found",
         fatal: true,
     });
 }
@@ -765,6 +767,7 @@ const handleUpload = (result: string) => {
                             <button
                                 v-if="duringJourney"
                                 class="mt-6 h-0 w-0 rounded-xl border-2 border-cta-border bg-background py-2 font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
+                                @click="scroll(calendar)"
                             >
                                 <T
                                     key-name="journey.button.countdown.calendar"
@@ -773,7 +776,10 @@ const handleUpload = (result: string) => {
                             <button
                                 v-else-if="journeyEnded"
                                 class="mt-6 h-0 w-0 rounded-xl border-2 border-cta-border bg-background py-2 font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
-                                @click="jsConfetti.addConfetti()"
+                                @click="
+                                    scroll(upload);
+                                    jsConfetti.addConfetti();
+                                "
                             >
                                 <T
                                     key-name="journey.button.countdown.celebrate"
@@ -782,10 +788,12 @@ const handleUpload = (result: string) => {
                             <button
                                 v-else
                                 class="mt-6 h-0 w-0 rounded-xl border-2 border-cta-border bg-background py-2 font-bold hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
+                                @click="
+                                    isActivityDialogVisible =
+                                        !isActivityDialogVisible
+                                "
                             >
-                                <T
-                                    key-name="journey.button.countdown.planning"
-                                />
+                                <T key-name="journey.button.create.activity" />
                             </button>
                         </div>
                     </div>
@@ -830,16 +838,21 @@ const handleUpload = (result: string) => {
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
-        <CalendarFull
-            :id="journeyId.toString()"
-            :current-user-role="currUser.role"
-            :journey-ended="journeyEnded"
-            :during-journey="duringJourney"
-            :journey-startdate="journeyData.from"
-            :journey-enddate="journeyData.to"
-        />
+        <div ref="calendar">
+            <CalendarFull
+                :id="journeyId.toString()"
+                :current-user-role="currUser.role"
+                :journey-ended="journeyEnded"
+                :during-journey="duringJourney"
+                :journey-startdate="journeyData.from"
+                :journey-enddate="journeyData.to"
+            />
+        </div>
         <ActivityMap v-if="activityDataLoaded" />
-        <div class="flex items-center justify-center md:justify-start">
+        <div
+            ref="upload"
+            class="flex items-center justify-center md:justify-start"
+        >
             <div
                 class="relative mt-4 flex w-[90%] items-center sm:mt-7 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
             >

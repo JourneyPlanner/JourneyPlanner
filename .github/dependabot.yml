@@ -7,6 +7,7 @@ version: 2
 updates:
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/frontend/" # Location of package manifests
+    open-pull-requests-limit: 100
     schedule:
       interval: "weekly"
       day: "monday"
@@ -17,6 +18,8 @@ updates:
       prefix: "build(deps)"
   - package-ecosystem: "composer" # See documentation for possible values
     directory: "/backend/" # Location of package manifests
+    open-pull-requests-limit: 100
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "monday"
