@@ -44,6 +44,7 @@
         "qrcode": "^1.5.3",
         "uuid": "^10.0.0",
         "vue": "^3.4.29",
+        "vue-animated-counter": "^0.3.0",
         "vue-router": "^4.4.0",
         "yup": "^1.4.0"
     },

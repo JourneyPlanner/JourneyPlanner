@@ -42,6 +42,9 @@ export default defineNuxtConfig({
             NUXT_BACKEND_URL: process.env.NUXT_BACKEND_URL,
             NUXT_MAPBOX_API_KEY: process.env.NUXT_MAPBOX_API_KEY,
             NUXT_UPLOAD_URL: process.env.NUXT_UPLOAD_URL,
+            NUXT_CLOCKIFY_API_KEY: process.env.NUXT_CLOCKIFY_API_KEY,
+            NUXT_CLOCKIFY_WORKSPACE_ID: process.env.NUXT_CLOCKIFY_WORKSPACE_ID,
+            NUXT_CLOCKIFY_PROJECT_ID: process.env.NUXT_CLOCKIFY_PROJECT_ID,
         },
     },
     primevue: {

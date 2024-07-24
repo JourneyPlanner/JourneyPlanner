@@ -10,7 +10,6 @@ useHead({
 });
 
 const features = ref();
-const team = ref();
 
 const colorMode = useColorMode();
 const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
@@ -68,12 +67,12 @@ const changeColorMode = () => {
                             </button>
                         </li>
                         <li>
-                            <button
+                            <NuxtLink
+                                to="/about"
                                 class="text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-lg"
-                                @click="scroll(team)"
                             >
-                                <T key-name="startpage.team" />
-                            </button>
+                                <T key-name="startpage.about" />
+                            </NuxtLink>
                         </li>
                     </ul>
                     <ul
@@ -217,70 +216,6 @@ const changeColorMode = () => {
                     <T key-name="startpage.button.create.journey" />
                 </NuxtLink>
             </div>
-        </div>
-        <div id="team" ref="team">
-            <ScrollPanel
-                :pt="{
-                    barX: 'hidden',
-                }"
-            >
-                <div class="mx-5 flex items-center justify-center font-nunito">
-                    <div
-                        class="align-center flex w-full items-center gap-4 lg:grid lg:grid-cols-4 lg:gap-4"
-                    >
-                        <div
-                            class="flex w-72 flex-col items-center justify-center lg:w-full"
-                        >
-                            <SvgStartpageSeverin class="w-40 xs:w-56 lg:w-72" />
-                            <p class="mt-3 text-base md:text-xl">
-                                Severin Rosner
-                            </p>
-                            <div
-                                class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
-                            >
-                                <T key-name="startpage.people.scrummaster" />
-                            </div>
-                        </div>
-                        <div
-                            class="flex w-72 flex-col items-center justify-center lg:w-full"
-                        >
-                            <SvgStartpageRaven class="w-40 xs:w-56 lg:w-72" />
-                            <p class="mt-3 text-base md:text-xl">
-                                Raven Burkard
-                            </p>
-                            <div
-                                class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
-                            >
-                                <T key-name="startpage.people.productowner" />
-                            </div>
-                        </div>
-                        <div
-                            class="flex w-72 flex-col items-center justify-center lg:w-full"
-                        >
-                            <SvgStartpageRoman class="w-40 xs:w-56 lg:w-72" />
-                            <p class="textbase mt-3 md:text-xl">Roman Krebs</p>
-                            <div
-                                class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
-                            >
-                                <T key-name="startpage.people.member" />
-                            </div>
-                        </div>
-                        <div
-                            class="flex w-72 flex-col items-center justify-center lg:w-full"
-                        >
-                            <SvgStartpageStefi class="w-40 xs:w-56 lg:w-72" />
-                            <p class="mt-3 text-base md:text-xl">
-                                Stefania Manastirska
-                            </p>
-                            <div
-                                class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
-                            >
-                                <T key-name="startpage.people.member" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ScrollPanel>
         </div>
     </div>
 </template>
