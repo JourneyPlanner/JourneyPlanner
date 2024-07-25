@@ -100,7 +100,7 @@ const { value, errorMessage } = useField<string>(() => props.name);
             :class="{
                 'text-natural-400': !isFocused,
                 'text-calypso-600': isFocused,
-                '-translate-y-4  scale-75': isFocused || value,
+                '-translate-y-4 scale-75': isFocused || value,
                 'translate-y-0 scale-100': !isFocused && !value,
                 '-translate-x-2':
                     (feedbackStyle && isFocused) || (feedbackStyle && value),
