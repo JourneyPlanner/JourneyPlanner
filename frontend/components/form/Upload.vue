@@ -132,7 +132,7 @@ const uppy = new Uppy({
 
 .uppy-DashboardContent-addMore,
 .uppy-DashboardContent-back {
-    @apply text-link !important;
+    @apply text-calypso-400 !important;
 }
 
 .uppy-StatusBar-actionBtn {
