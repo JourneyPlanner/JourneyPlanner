@@ -177,7 +177,7 @@ function editJourney(journey: Journey, id: string) {
     >
         <div
             id="header"
-            class="mt-5 flex items-center justify-between border-b-2 border-calypso-400 pb-3 md:pb-5"
+            class="mt-5 flex items-center justify-between border-b-2 border-calypso-300 pb-3 dark:border-calypso-400 md:pb-4"
         >
             <div class="flex flex-row items-center">
                 <SvgDashboardIcon class="mr-1 mt-0.5 md:h-9 md:w-9" />
@@ -356,13 +356,13 @@ function editJourney(journey: Journey, id: string) {
             group="dashboard"
             :pt="{
                 header: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
                 content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
                 footer: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
             }"
         />

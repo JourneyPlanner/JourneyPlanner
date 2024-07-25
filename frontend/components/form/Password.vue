@@ -41,7 +41,7 @@ const { value, errorMessage } = useField<string>(() => props.name);
             toggle-mask
             class="w-full"
             :feedback="feedback"
-            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-natural-50 bg-natural-50 border-2 border-calypso-400 focus:outline-none focus:ring-1 dark:bg-natural-800"
+            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-natural-50 bg-natural-50 border-2 border-calypso-300 dark:border-calypso-400 focus:outline-none focus:ring-1 dark:bg-natural-800"
             :prompt-label="$t('form.input.password.label.prompt')"
             :weak-label="$t('form.input.password.label.weak')"
             :medium-label="$t('form.input.password.label.medium')"

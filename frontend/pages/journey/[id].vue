@@ -258,7 +258,7 @@ async function changeRole(userid: string, selectedRole: number) {
             :pt="{
                 closeButton: { class: 'w-9 h-9 dark:fill-white' },
                 closeIcon: {
-                    class: 'w-7 h-7 text-natural-600 dark:text-natural-50',
+                    class: 'w-7 h-7 text-natural-400 hover:text-text dark:text-natural-300 dark:hover:text-natural-50',
                 },
                 header: { class: 'p-2 flex items-center' },
                 content: { class: 'pl-3 pr-2 py-2' },
@@ -275,7 +275,7 @@ async function changeRole(userid: string, selectedRole: number) {
                 <T key-name="sidebar.invite.link" />
             </div>
             <div
-                class="border-natural-00 flex items-center border-b-2 pb-4 dark:border-natural-400"
+                class="flex items-center border-b-2 border-natural-200 pb-4 dark:border-natural-900"
             >
                 <input
                     class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
@@ -292,7 +292,7 @@ async function changeRole(userid: string, selectedRole: number) {
                 </div>
             </div>
             <div
-                class="flex flex-row items-center justify-center border-b border-natural-600 pb-1 pt-1 dark:border-natural-400"
+                class="flex flex-row items-center justify-center border-b-2 border-natural-200 pb-1 pt-1 dark:border-natural-900"
             >
                 <h1
                     class="w-4/5 text-xl text-natural-600 dark:text-natural-200"
@@ -492,7 +492,7 @@ async function changeRole(userid: string, selectedRole: number) {
                     >
                         <div class="relative grid w-full grid-cols-4">
                             <div
-                                class="col-span-3 flex h-[120%] w-full flex-col justify-center pl-10 font-semibold"
+                                class="col-span-3 flex h-[120%] w-full flex-col justify-center pl-10 text-base font-semibold"
                             >
                                 <T key-name="form.input.journey.name" />
                                 <input
@@ -602,7 +602,7 @@ async function changeRole(userid: string, selectedRole: number) {
                 class="flex w-full justify-center md:justify-start lg:ml-10 lg:w-72 xl:ml-32"
             >
                 <div
-                    class="w-[90%] rounded-2xl border-2 border-solid border-calypso-300 bg-calypso-50 bg-opacity-20 dark:bg-gothic-300 dark:bg-opacity-20 max-lg:mt-5 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
+                    class="w-[90%] rounded-2xl border-2 border-solid border-calypso-300 bg-calypso-50 bg-opacity-20 dark:border-calypso-600 dark:bg-gothic-300 dark:bg-opacity-20 max-lg:mt-5 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
                 >
                     <div
                         class="from-indigo-500 to-indigo-800 flex h-full flex-wrap items-center justify-center bg-gradient-to-br xs:justify-start lg:flex-col lg:justify-center"

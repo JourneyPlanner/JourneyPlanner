@@ -450,7 +450,7 @@ function setSelectedDate(date: Date) {
                     navContainer: {
                         class: 'border-b-2 border-natural-200 dark:border-natural-500',
                     },
-                    inkbar: { class: 'pt-0.5 bg-border' },
+                    inkbar: { class: 'pt-0.5 bg-calypso-300' },
                 }"
             >
                 <TabPanel

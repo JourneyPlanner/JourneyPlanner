@@ -46,9 +46,9 @@ const confirmDelete = (event: Event) => {
         header: t.value("dashboard.delete.header"),
         message: t.value("dashboard.delete.confirm"),
         icon: "pi pi-exclamation-triangle",
-        rejectClass: "hover:underline",
+        rejectClass: "hover:underline dark:text-natural-200",
         acceptClass:
-            "text-error dark:text-error-dark hover:underline font-bold",
+            "text-mahagony-500 dark:text-mahagony-400 hover:underline font-bold",
         rejectLabel: t.value("common.button.cancel"),
         acceptLabel: t.value("common.delete"),
         accept: () => {
@@ -73,7 +73,7 @@ const confirmLeave = (event: Event) => {
         icon: "pi pi-exclamation-triangle",
         rejectClass: "hover:underline",
         acceptClass:
-            "text-error dark:text-error-dark hover:underline font-bold",
+            "text-mahagony-500 dark:text-mahagony-400 hover:underline font-bold",
         rejectLabel: t.value("common.button.cancel"),
         acceptLabel: t.value("journey.leave"),
         accept: () => {
@@ -160,7 +160,7 @@ const itemsJourneyGuide = ref([
             {
                 label: t.value("dashboard.options.edit"),
                 icon: "pi pi-pencil",
-                className: "text-cta-border",
+                className: "text-natural-50",
                 command: () => {
                     isEditMenuVisible.value = true;
                 },
@@ -351,7 +351,7 @@ const onSave = handleSubmit(async (values) => {
         </div>
         <div
             id="journey-mobile"
-            class="h-32 min-w-36 rounded-md border border-calypso-300 bg-natural-200 p-1 dark:bg-gothic-800 md:p-2 lg:hidden"
+            class="h-32 min-w-36 rounded-md border border-calypso-300 bg-calypso-50 bg-opacity-20 p-1 dark:bg-gothic-800 md:p-2 lg:hidden"
         >
             <div class="flex justify-between">
                 <NuxtLink
@@ -423,13 +423,13 @@ const onSave = handleSubmit(async (values) => {
                     class: 'font-nunito bg-natural-50 dark:bg-natural-800',
                 },
                 menuitem: {
-                    class: 'bg-natural-50 dark:bg-natural-800 hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-natural-50',
+                    class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
                 },
                 content: {
-                    class: 'bg-natural-50 dark:bg-natural-800 hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-natural-50',
+                    class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
                 },
                 submenuHeader: {
-                    class: 'text-natural-200 dark:text-text-light-dark bg-natural-50 dark:bg-natural-800',
+                    class: 'text-natural-500 dark:text-natural-100 bg-natural-50 dark:bg-natural-800',
                 },
                 label: { class: 'text-text dark:text-natural-50' },
                 icon: { class: 'text-text dark:text-natural-50' },
