@@ -24,9 +24,14 @@ export default {
                     "0%, 100%": { transform: "rotate(-3deg)" },
                     "50%": { transform: "rotate(3deg)" },
                 },
+                blink: {
+                    "0%, 50%, 100%": { opacity: 1 },
+                    "25%, 75%": { opacity: 0 },
+                },
             },
             animation: {
                 wiggle: "wiggle 0.5s ease-in-out 2",
+                blink: "blink 2.75s infinite",
             },
         },
         colors: {

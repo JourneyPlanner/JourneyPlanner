@@ -8,6 +8,7 @@ import {
     addDays,
     addHours,
     addMinutes,
+    compareAsc,
     differenceInDays,
     differenceInHours,
     differenceInMinutes,
@@ -17,6 +18,10 @@ import {
 function countdown(start, end) {
     let x = start;
     let y = end;
+
+    if (compareAsc(x, y) === 0 || compareAsc(x, y) === 1) {
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    }
 
     let output = {};
     let temp;
