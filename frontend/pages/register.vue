@@ -98,9 +98,9 @@ async function registerUser(userData: object) {
 <template>
     <div>
         <div
-            class="flex w-full items-center justify-center font-nunito dark:bg-background-dark"
+            class="flex w-full items-center justify-center bg-background font-nunito dark:bg-background-dark"
         >
-            <div class="dark:background-dark h-[90vh] sm:w-0 md:w-1/4 xl:w-1/3">
+            <div class="h-[90vh] sm:w-0 md:w-1/4 xl:w-1/3">
                 <SvgAircraft
                     class="z-0 -ml-[20vw] mt-6 w-0 overflow-hidden object-none md:w-[350%] lg:mt-20 xl:mt-32 xl:w-[230%]"
                 />
@@ -111,11 +111,11 @@ async function registerUser(userData: object) {
                 <div class="z-20 -mt-20 h-3/4 w-full text-center sm:w-3/4">
                     <fieldset
                         id="outerBlock"
-                        class="focus:ring-indigo-500 focus:border-indigo-500 flex h-auto flex-col items-center rounded-3xl border-2 border-border bg-surface px-3 py-2 shadow-sm focus:outline-none dark:bg-surface-dark"
+                        class="focus:ring-indigo-500 focus:border-indigo-500 flex h-auto flex-col items-center rounded-3xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-3 py-2 shadow-sm focus:outline-none dark:border-calypso-400 dark:bg-gothic-300 dark:bg-opacity-20"
                     >
                         <legend
                             for="outerBlock"
-                            class="px-2 text-center text-3xl font-bold text-text dark:text-white lg:ml-7 lg:text-left"
+                            class="px-2 text-center text-3xl font-bold text-text dark:text-natural-50 lg:ml-7 lg:text-left"
                         >
                             <T key-name="form.header.register" />
                         </legend>
@@ -160,14 +160,14 @@ async function registerUser(userData: object) {
                             </div>
 
                             <button
-                                class="text-md my-4 mt-4 rounded-2xl border-2 border-cta-border bg-input px-6 py-2.5 font-nunito font-bold hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
+                                class="text-md my-4 mt-4 rounded-2xl border-2 border-dandelion-300 bg-natural-50 px-6 py-2.5 font-nunito font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
                             >
                                 <T key-name="form.button.register" />
                             </button>
                         </form>
                         <NuxtLink
                             to="/login"
-                            class="my-1 mt-auto font-nunito font-semibold underline dark:text-white"
+                            class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"
                         >
                             <T key-name="form.text.already_account" />
                         </NuxtLink>

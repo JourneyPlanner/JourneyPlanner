@@ -105,7 +105,7 @@ const confirmDelete = (event: Event) => {
         icon: "pi pi-exclamation-triangle",
         rejectClass: "hover:underline",
         acceptClass:
-            "text-error dark:text-error-dark hover:underline font-bold",
+            "text-mahagony-400 dark:text-mahagony-600 hover:underline font-bold",
         rejectLabel: t.value("common.button.cancel"),
         acceptLabel: t.value("journey.delete"),
         accept: () => {
@@ -175,7 +175,7 @@ const itemsJourneyGuide = ref([
             {
                 label: t.value("dashboard.options.edit"),
                 icon: "pi pi-pencil",
-                className: "text-cta-border",
+                className: "text-dandelion-300",
                 command: () => {
                     showInfo(activityId.value, false);
                 },
@@ -197,7 +197,7 @@ const itemsJourneyGuide = ref([
         class="flex w-full justify-center overflow-x-hidden md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
     >
         <div
-            class="h-40 w-[90%] rounded-2xl border-[3px] border-dashed border-border dark:bg-text max-lg:mt-5 sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
+            class="h-40 w-[90%] rounded-2xl border-[3px] border-dashed border-calypso-300 dark:border-calypso-600 dark:bg-background-dark max-lg:mt-5 sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
         >
             <ScrollPanel
                 class="h-[9.7rem] w-full sm:h-[12.7rem] md:h-[16.7rem]"
@@ -220,7 +220,7 @@ const itemsJourneyGuide = ref([
                             v-if="activity.calendar_activities.length <= 0"
                             id="draggable-el"
                             :key="activity.id"
-                            class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-border bg-input-grey px-2 py-1 text-base font-normal dark:bg-card-dark sm:h-16 sm:text-base lg:rounded-xl"
+                            class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-calypso-300 bg-light px-2 py-1 text-base font-normal dark:border-calypso-600 dark:bg-dark sm:h-16 sm:text-base lg:rounded-xl"
                             :data-event="
                                 JSON.stringify({
                                     title: activity.name,
@@ -271,29 +271,29 @@ const itemsJourneyGuide = ref([
                                     id="overlay_menu"
                                     ref="menu"
                                     :model="itemsJourneyGuide"
-                                    class="relative -ml-5 rounded-xl border-2 border-border-light bg-input dark:border-input-dark"
+                                    class="relative -ml-5 rounded-xl border-2 border-natural-200 bg-natural-50 dark:border-natural-900"
                                     :popup="true"
                                     :pt="{
                                         root: {
-                                            class: 'relative font-nunito bg-input dark:bg-input-dark overflow-hidden',
+                                            class: 'relative font-nunito bg-natural-50 dark:bg-natural-800 overflow-hidden',
                                         },
                                         menu: {
-                                            class: 'bg-input dark:bg-input-dark',
+                                            class: 'bg-natural-50 dark:bg-natural-800',
                                         },
                                         menuitem: {
-                                            class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                                            class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
                                         },
                                         content: {
-                                            class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                                            class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
                                         },
                                         submenuHeader: {
-                                            class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark',
+                                            class: 'text-natural-500 dark:text-natural-100 bg-natural-50 dark:bg-natural-800',
                                         },
                                         label: {
-                                            class: 'text-text dark:text-white',
+                                            class: 'text-text dark:text-natural-50',
                                         },
                                         icon: {
-                                            class: 'text-text dark:text-white',
+                                            class: 'text-text dark:text-natural-50',
                                         },
                                     }"
                                 />
@@ -303,21 +303,21 @@ const itemsJourneyGuide = ref([
                 </div>
                 <div
                     v-if="activityCount <= 0"
-                    class="invisible col-span-full flex h-[92%] items-center justify-center font-nunito text-input-placeholder md:visible"
+                    class="invisible col-span-full flex h-[92%] items-center justify-center font-nunito text-natural-500 md:visible"
                 >
                     <T key-name="activityPool.placeholder" />
                 </div>
 
                 <div
                     v-else-if="activityCount <= 3"
-                    class="invisible col-span-full flex items-center justify-center font-nunito text-input-placeholder md:visible lg:pt-4"
+                    class="invisible col-span-full flex items-center justify-center font-nunito text-natural-500 md:visible lg:pt-4"
                 >
                     <T key-name="activityPool.placeholder" />
                 </div>
 
                 <div
                     v-else-if="activityCount <= 5"
-                    class="invisible col-span-full flex items-center justify-center font-nunito text-input-placeholder lg:visible lg:pt-4"
+                    class="invisible col-span-full flex items-center justify-center font-nunito text-natural-500 lg:visible lg:pt-4"
                 >
                     <T key-name="activityPool.placeholder" />
                 </div>

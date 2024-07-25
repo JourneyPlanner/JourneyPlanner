@@ -128,11 +128,11 @@ function copyToClipboard() {
             >
                 <fieldset
                     id="create-journey"
-                    class="w-full rounded-2xl border-2 border-border bg-surface px-5 shadow-sm dark:bg-surface-dark sm:w-1/4 md:w-1/3"
+                    class="w-full rounded-2xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-5 shadow-sm dark:bg-gothic-300 dark:bg-opacity-20 sm:w-1/4 md:w-1/3"
                 >
                     <legend
                         for="create-journey"
-                        class="ml-4 px-2 text-center text-2xl font-bold text-text dark:text-white lg:text-left lg:text-3xl"
+                        class="ml-4 px-2 text-center text-2xl font-bold text-text dark:text-natural-50 lg:text-left lg:text-3xl"
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>
@@ -150,8 +150,6 @@ function copyToClipboard() {
                             :translation-key="
                                 t('form.input.journey.destination')
                             "
-                            bg-light-key="surface"
-                            bg-dark-key="surface-dark"
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
                         />
                         <FormCalendar
@@ -161,7 +159,7 @@ function copyToClipboard() {
                         />
                         <Divider
                             type="solid"
-                            class="border-10 border text-input-label"
+                            class="border-10 border text-calypso-300"
                         />
 
                         <div class="relative my-2 flex">
@@ -171,19 +169,19 @@ function copyToClipboard() {
                                 type="text"
                                 name="journey-invite"
                                 disabled
-                                class="text-md peer w-[90%] rounded-lg border-2 border-border bg-input-disabled px-2.5 pb-1 pt-4 font-bold text-text-disabled focus:outline-none focus:ring-1 dark:bg-input-disabled-dark-grey dark:text-input-disabled-dark-gray"
+                                class="text-md peer w-[90%] rounded-lg border-2 border-calypso-300 bg-natural-100 px-2.5 pb-1 pt-4 font-bold text-natural-500 focus:outline-none focus:ring-1 dark:bg-natural-900 dark:text-natural-300"
                                 placeholder=" "
                             />
                             <label
                                 for="journey-invite"
-                                class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-link transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-input-placeholder peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-input-label dark:text-border"
+                                class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-calypso-500 transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-natural-400 peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-calypso-500 dark:text-calypso-300"
                             >
                                 <T key-name="form.input.journey.invite" />
                             </label>
                             <div class="flex items-center justify-center">
                                 <button
                                     type="button"
-                                    class="ml-2 flex h-10 w-10 items-center justify-center rounded-full border-2 border-cta-border bg-white hover:bg-cta-bg dark:bg-input-dark dark:hover:bg-cta-bg-dark"
+                                    class="ml-2 flex h-10 w-10 items-center justify-center rounded-full border-2 border-dandelion-300 bg-natural-50 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
                                     @click="copyToClipboard"
                                 >
                                     <SvgCopy class="w-4" />
@@ -195,7 +193,7 @@ function copyToClipboard() {
                             <NuxtLink to="/dashboard">
                                 <button
                                     type="button"
-                                    class="rounded-xl border-2 border-cancel-border bg-input px-7 py-1 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-white dark:hover:bg-cancel-bg-dark"
+                                    class="rounded-xl border-2 border-mahagony-500 bg-natural-50 px-7 py-1 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-mahagony-500 dark:hover:bg-opacity-30"
                                 >
                                     <T key-name="common.button.cancel" />
                                 </button>
@@ -203,7 +201,7 @@ function copyToClipboard() {
 
                             <button
                                 type="submit"
-                                class="rounded-xl border-2 border-cta-border bg-input px-7 py-1 font-bold text-text hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
+                                class="rounded-xl border-2 border-dandelion-300 bg-natural-50 px-7 py-1 font-bold text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
                             >
                                 <T key-name="common.button.create" />
                             </button>
@@ -213,7 +211,7 @@ function copyToClipboard() {
             </div>
             <div class="z-10">
                 <div
-                    class="relative flex flex-row items-end justify-between border-b border-border-grey"
+                    class="relative flex flex-row items-end justify-between border-b border-natural-200"
                 >
                     <SvgPeopleBackpackMap class="hidden h-full lg:flex" />
                     <div
