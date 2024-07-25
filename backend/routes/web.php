@@ -17,4 +17,10 @@ Route::get("/", function () {
     return ["Laravel" => app()->version()];
 });
 
+Route::any("/tus/{any?}", function () {
+    return app("tus-server")->serve();
+})
+    ->where("any", ".*")
+    ->middleware("auth:sanctum");
+
 require __DIR__ . "/auth.php";

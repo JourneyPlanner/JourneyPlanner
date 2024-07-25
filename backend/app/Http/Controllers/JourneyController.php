@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\JourneyRequest;
 use App\Models\Journey;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -278,6 +277,22 @@ class JourneyController extends Controller
     public function destroy(Request $request, Journey $journey)
     {
         Gate::authorize("journeyGuide", $journey);
+        $this::deleteJourney($journey);
+    }
+
+    public static function deleteJourney(Journey $journey)
+    {
+        // Delete journey uploads in folder
+        $journeyFolder = storage_path("app/journey_media/" . $journey->id);
+        if (file_exists($journeyFolder)) {
+            $files = scandir($journeyFolder);
+            foreach ($files as $file) {
+                if ($file !== "." && $file !== "..") {
+                    unlink($journeyFolder . "/" . $file);
+                }
+            }
+            rmdir($journeyFolder);
+        }
 
         $journey->delete();
     }

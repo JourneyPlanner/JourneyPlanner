@@ -218,6 +218,23 @@ async function onSuccess(values: ActivityForm) {
                 const timeDate = new Date(values.time);
                 time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
             }
+            if (props.calendarClicked) {
+                date = format(values.date, "yyyy-MM-dd");
+                const timeDate = new Date(values.time);
+                time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+                start = `${date}T${time}`;
+                const timeZone = new Date().getTimezoneOffset() / -60;
+                end = add(new Date(start), {
+                    hours: parseInt(duration.split(":")[0]) + timeZone,
+                    minutes: parseInt(duration.split(":")[1]),
+                })
+                    .toISOString()
+                    .substring(0, 16);
+            } else {
+                date = format(values.date, "yyyy-MM-dd");
+                const timeDate = new Date(values.time);
+                time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
+            }
         }
     }
 
@@ -257,113 +274,118 @@ async function onSuccess(values: ActivityForm) {
     }
 
     if (updateRef.value) {
-        await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
-            method: "PATCH",
-            body: activity,
-            async onResponse({ response }) {
-                if (response.ok) {
-                    toast.add({
-                        severity: "success",
-                        summary: t.value(
-                            "form.input.activity.edit.toast.success.heading",
-                        ),
-                        detail: t.value(
-                            "form.input.activity.edit.toast.success.detail",
-                        ),
-                        life: 6000,
-                    });
-                    close();
-                    loadingSave.value = false;
-                    activityStore.updateActivity(
-                        response._data,
-                        props.activityId,
-                    );
-                    activityStore.setNewActivity(response._data);
-                    if (props.calendarActivity) {
-                        emit("editCalendarActivity", activity.name);
-                    }
-                }
-            },
-            async onRequestError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-                loadingSave.value = false;
-            },
-            async onResponseError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-                loadingSave.value = false;
-            },
-        });
-
-        if (props.calendarClicked && start && end) {
-            const calendarActivity = props.calendarActivity;
-            calendarActivity.start = start;
-            calendarActivity.end = end;
+        if (updateRef.value) {
             await client(
-                `/api/journey/${props.id}/activity/${props.activityId}/calendarActivity/${props.calendarActivity.id}`,
+                `/api/journey/${props.id}/activity/${props.activityId}`,
                 {
                     method: "PATCH",
-                    body: calendarActivity,
+                    body: activity,
                     async onResponse({ response }) {
                         if (response.ok) {
+                            toast.add({
+                                severity: "success",
+                                summary: t.value(
+                                    "form.input.activity.edit.toast.success.heading",
+                                ),
+                                detail: t.value(
+                                    "form.input.activity.edit.toast.success.detail",
+                                ),
+                                life: 6000,
+                            });
                             close();
                             loadingSave.value = false;
-                            emit("calendarMoved", start, end);
+                            activityStore.updateActivity(
+                                response._data,
+                                props.activityId,
+                            );
+                            activityStore.setNewActivity(response._data);
+                            if (props.calendarActivity) {
+                                emit("editCalendarActivity", activity.name);
+                            }
                         }
+                    },
+                    async onRequestError() {
+                        toast.add({
+                            severity: "error",
+                            summary: t.value("common.toast.error.heading"),
+                            detail: t.value("common.error.unknown"),
+                            life: 6000,
+                        });
+                        loadingSave.value = false;
+                    },
+                    async onResponseError() {
+                        toast.add({
+                            severity: "error",
+                            summary: t.value("common.toast.error.heading"),
+                            detail: t.value("common.error.unknown"),
+                            life: 6000,
+                        });
+                        loadingSave.value = false;
                     },
                 },
             );
-        }
-    } else {
-        await client(`/api/journey/${props.id}/activity`, {
-            method: "POST",
-            body: activity,
-            async onResponse({ response }) {
-                if (response.ok) {
+
+            if (props.calendarClicked && start && end) {
+                const calendarActivity = props.calendarActivity;
+                calendarActivity.start = start;
+                calendarActivity.end = end;
+                await client(
+                    `/api/journey/${props.id}/activity/${props.activityId}/calendarActivity/${props.calendarActivity.id}`,
+                    {
+                        method: "PATCH",
+                        body: calendarActivity,
+                        async onResponse({ response }) {
+                            if (response.ok) {
+                                close();
+                                loadingSave.value = false;
+                                emit("calendarMoved", start, end);
+                            }
+                        },
+                    },
+                );
+            }
+        } else {
+            await client(`/api/journey/${props.id}/activity`, {
+                method: "POST",
+                body: activity,
+                async onResponse({ response }) {
+                    if (response.ok) {
+                        toast.add({
+                            severity: "success",
+                            summary: t.value(
+                                "form.input.activity.toast.success.heading",
+                            ),
+                            detail: t.value(
+                                "form.input.activity.toast.success.detail",
+                            ),
+                            life: 6000,
+                        });
+                        close();
+                        loadingSave.value = false;
+                        activityStore.addActivity(response._data);
+                        activityStore.setNewActivity(response._data);
+                    }
+                },
+                async onRequestError() {
                     toast.add({
-                        severity: "success",
-                        summary: t.value(
-                            "form.input.activity.toast.success.heading",
-                        ),
-                        detail: t.value(
-                            "form.input.activity.toast.success.detail",
-                        ),
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("common.error.unknown"),
                         life: 6000,
                     });
-                    close();
                     loadingSave.value = false;
-                    activityStore.addActivity(response._data);
-                    activityStore.setNewActivity(response._data);
-                }
-            },
-            async onRequestError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-                loadingSave.value = false;
-            },
-            async onResponseError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-                loadingSave.value = false;
-            },
-        });
+                },
+                async onResponseError() {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("common.error.unknown"),
+                        life: 6000,
+                    });
+                    loadingSave.value = false;
+                },
+            });
+        }
     }
 }
 
@@ -475,7 +497,7 @@ function setSelectedDate(date: Date) {
                             id="name"
                             name="name"
                             :value="name"
-                            :disabled="onlyShowRef && !create"
+                            :disabled="onlyShowRef && !create && !updateRef"
                             translation-key="form.input.activity.name"
                             icon="pi-tag"
                             :icon-pos-is-left="true"
@@ -485,7 +507,7 @@ function setSelectedDate(date: Date) {
                             id="duration"
                             name="duration"
                             :value="estimatedDuration"
-                            :disabled="onlyShowRef && !create"
+                            :disabled="onlyShowRef && !create && !updateRef"
                             translation-key="form.input.activity.duration"
                             class="order-2 col-span-1 w-full sm:col-span-2 sm:w-5/6 sm:justify-self-end"
                             :default-time="new Array(0, 30)"
@@ -499,7 +521,7 @@ function setSelectedDate(date: Date) {
                             <FormAddressInput
                                 name="address"
                                 :value="address"
-                                :disabled="onlyShowRef && !create"
+                                :disabled="onlyShowRef && !create && !updateRef"
                             />
                         </div>
 
@@ -507,7 +529,7 @@ function setSelectedDate(date: Date) {
                             id="costs"
                             name="costs"
                             :value="cost"
-                            :disabled="onlyShowRef && !create"
+                            :disabled="onlyShowRef && !create && !updateRef"
                             translation-key="form.input.activity.costs"
                             icon="pi-money-bill"
                             class="order-3 col-span-1 w-full sm:order-4 sm:col-span-2 sm:w-5/6 sm:justify-self-end"
@@ -516,7 +538,7 @@ function setSelectedDate(date: Date) {
                             id="description"
                             name="description"
                             :value="description"
-                            :disabled="onlyShowRef && !create"
+                            :disabled="onlyShowRef && !create && !updateRef"
                             translation-key="form.input.activity.description"
                             class="order-5 col-span-full row-span-2"
                             custom-class="h-full"
@@ -545,7 +567,7 @@ function setSelectedDate(date: Date) {
                         <div>
                             <FormGroupInput
                                 id="link"
-                                :disabled="onlyShowRef && !create"
+                                :disabled="onlyShowRef && !create && !updateRef"
                                 :value="link"
                                 name="link"
                                 translation-key="form.input.activity.link"
@@ -559,7 +581,7 @@ function setSelectedDate(date: Date) {
                             </label>
                             <FormGroupInput
                                 id="email"
-                                :disabled="onlyShowRef && !create"
+                                :disabled="onlyShowRef && !create && !updateRef"
                                 :value="email"
                                 name="email"
                                 icon="pi-at"
@@ -567,7 +589,7 @@ function setSelectedDate(date: Date) {
                             />
                             <FormGroupInput
                                 id="phone"
-                                :disabled="onlyShowRef && !create"
+                                :disabled="onlyShowRef && !create && !updateRef"
                                 :value="phone"
                                 name="phone"
                                 icon="pi-phone"
@@ -577,7 +599,7 @@ function setSelectedDate(date: Date) {
                         <FormClassicInputIcon
                             id="opening-hours"
                             name="open"
-                            :disabled="onlyShowRef && !create"
+                            :disabled="onlyShowRef && !create && !updateRef"
                             :value="openingHours"
                             translation-key="form.input.activity.opening-hours"
                             input-type="textarea"

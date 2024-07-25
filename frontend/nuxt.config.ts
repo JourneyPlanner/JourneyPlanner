@@ -24,7 +24,6 @@ export default defineNuxtConfig({
         "nuxt-auth-sanctum",
         "@pinia/nuxt",
         "@nuxt/eslint",
-        "nuxt-mapbox",
     ],
     css: [
         "@/assets/css/fonts/fonts.css",
@@ -42,6 +41,7 @@ export default defineNuxtConfig({
             NUXT_TOLGEE_API_URL: process.env.NUXT_TOLGEE_API_URL,
             NUXT_BACKEND_URL: process.env.NUXT_BACKEND_URL,
             NUXT_MAPBOX_API_KEY: process.env.NUXT_MAPBOX_API_KEY,
+            NUXT_UPLOAD_URL: process.env.NUXT_UPLOAD_URL,
         },
     },
     primevue: {
@@ -100,9 +100,5 @@ export default defineNuxtConfig({
             onAuthOnly: "/login",
             onGuestOnly: "/dashboard",
         },
-    },
-    mapbox: {
-        accessToken: process.env.NUXT_MAPBOX_API_KEY,
-        persistent: false,
     },
 });

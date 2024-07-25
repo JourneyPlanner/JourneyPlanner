@@ -29,6 +29,8 @@ const toggle = (event: Event) => {
 };
 const editEnabled = ref(false);
 const isActivityDialogVisible = ref(false);
+const upload = ref();
+const calendar = ref();
 
 definePageMeta({
     middleware: ["sanctum:auth"],
@@ -55,9 +57,9 @@ const { data, error } = await useAsyncData("journey", () =>
 );
 
 if (error.value) {
-    throw showError({
+    throw createError({
         statusCode: 404,
-        statusMessage: "Page Not Found",
+        statusMessage: "Journey not found",
         fatal: true,
     });
 }
@@ -98,8 +100,8 @@ if (
     colorMode.preference === "dark" ||
     (darkThemeMq.matches && colorMode.preference === "system")
 ) {
-    darkColor = "#FFFFFF";
-    lightColor = fullConfig.theme.accentColor["dark"] as string;
+    darkColor = fullConfig.theme.accentColor["white"] as string;
+    lightColor = fullConfig.theme.accentColor["card-dark"] as string;
 }
 
 const opts = {
@@ -765,6 +767,7 @@ async function changeRole(userid: string, selectedRole: number) {
                             <button
                                 v-if="duringJourney"
                                 class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
+                                @click="scroll(calendar)"
                             >
                                 <T
                                     key-name="journey.button.countdown.calendar"
@@ -773,7 +776,10 @@ async function changeRole(userid: string, selectedRole: number) {
                             <button
                                 v-else-if="journeyEnded"
                                 class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
-                                @click="jsConfetti.addConfetti()"
+                                @click="
+                                    scroll(upload);
+                                    jsConfetti.addConfetti();
+                                "
                             >
                                 <T
                                     key-name="journey.button.countdown.celebrate"
@@ -782,10 +788,12 @@ async function changeRole(userid: string, selectedRole: number) {
                             <button
                                 v-else
                                 class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
+                                @click="
+                                    isActivityDialogVisible =
+                                        !isActivityDialogVisible
+                                "
                             >
-                                <T
-                                    key-name="journey.button.countdown.planning"
-                                />
+                                <T key-name="journey.button.create.activity" />
                             </button>
                         </div>
                     </div>
@@ -813,7 +821,7 @@ async function changeRole(userid: string, selectedRole: number) {
                     <T key-name="journey.activities" />
                 </div>
                 <button
-                    class="-mb-3 ml-auto flex rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-base font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 lg:mb-4"
+                    class="-mb-3 ml-auto flex items-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-sm font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:text-base lg:mb-4"
                     @click="isActivityDialogVisible = !isActivityDialogVisible"
                 >
                     <SvgAddLocation class="h-6 w-6" />
@@ -830,14 +838,16 @@ async function changeRole(userid: string, selectedRole: number) {
             @close="isActivityDialogVisible = false"
         />
         <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
-        <CalendarFull
-            :id="journeyId.toString()"
-            :current-user-role="currUser.role"
-            :journey-ended="journeyEnded"
-            :during-journey="duringJourney"
-            :journey-startdate="journeyData.from"
-            :journey-enddate="journeyData.to"
-        />
+        <div ref="calendar">
+            <CalendarFull
+                :id="journeyId.toString()"
+                :current-user-role="currUser.role"
+                :journey-ended="journeyEnded"
+                :during-journey="duringJourney"
+                :journey-startdate="journeyData.from"
+                :journey-enddate="journeyData.to"
+            />
+        </div>
         <ActivityMap v-if="activityDataLoaded" />
         <ConfirmDialog
             :draggable="false"
@@ -851,6 +861,31 @@ async function changeRole(userid: string, selectedRole: number) {
                 },
                 footer: {
                     class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+            }"
+        />
+        <div
+            ref="upload"
+            class="flex items-center justify-center md:justify-start"
+        >
+            <div
+                class="relative mt-4 flex w-[90%] items-center sm:mt-7 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            >
+                <FormUpload />
+            </div>
+        </div>
+        <ConfirmDialog
+            :draggable="false"
+            group="journey"
+            :pt="{
+                header: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                content: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                },
+                footer: {
+                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
                 },
             }"
         />

@@ -5,7 +5,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/vue3";
 import { useTolgee, useTranslate } from "@tolgee/vue";
-import { add, differenceInMinutes } from "date-fns";
+import { add, differenceInMinutes, startOfWeek } from "date-fns";
 import resolveConfig from "tailwindcss/resolveConfig";
 import { ref } from "vue";
 import tailwindConfig from "~/tailwind.config.js";
@@ -21,7 +21,7 @@ if (
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
 ) {
-    text = "#FCFCFC";
+    text = fullConfig.theme.accentColor["natural-50"] as string;
     bg = fullConfig.theme.accentColor["dark"] as string;
     border = "#50A1C0";
 } else {
@@ -230,11 +230,11 @@ async function removeFromCalendar() {
 
 let start = undefined;
 if (props.duringJourney) {
-    start = new Date();
+    start = startOfWeek(new Date(), { weekStartsOn: 1 });
 } else if (props.journeyEnded) {
-    start = new Date(props.journeyEnddate);
+    start = startOfWeek(new Date(props.journeyEnddate), { weekStartsOn: 1 });
 } else {
-    start = new Date(props.journeyStartdate);
+    start = startOfWeek(new Date(props.journeyStartdate), { weekStartsOn: 1 });
 }
 const calendarOptions = reactive({
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -298,6 +298,7 @@ const calendarOptions = reactive({
     timeZone: "local",
     droppable: true,
     initialDate: start,
+    firstDay: 1,
     editable: true,
     views: {
         fullweek: {
@@ -621,7 +622,7 @@ function moveActivity(start: Date, end: Date) {
         <div
             class="flex w-[90%] flex-col items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
-            <div class="mt-10 w-full justify-start">
+            <div class="mt-5 w-full justify-start sm:mt-10">
                 <div class="text-2xl font-semibold lg:mb-3">
                     <T key-name="journey.calendar" />
                 </div>
@@ -673,6 +674,7 @@ function moveActivity(start: Date, end: Date) {
         align-items: center;
         justify-content: center;
     }
+
     .fc .fc-toolbar.fc-header-toolbar {
         margin-bottom: 1rem;
     }
@@ -699,6 +701,7 @@ function moveActivity(start: Date, end: Date) {
         grid-template-columns: repeat(3, minmax(0, 1fr));
         width: 100%;
     }
+
     .fc .fc-toolbar-title {
         grid-column: span 3 / span 3;
         margin-left: 0px;
@@ -734,6 +737,7 @@ function moveActivity(start: Date, end: Date) {
 .fc-theme-standard th {
     border-color: #e0e0e0;
 }
+
 /* dark mode */
 
 .dark .fc-day-today {

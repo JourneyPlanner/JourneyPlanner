@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+    environment {
+        BACKEND_IMAGE = 'journeyplanner/backend:latest'
+    }
+    stages {
+        stage('Build Backend') {
+            steps {
+                dir('backend') {
+                    script {
+                        docker.build(env.BACKEND_IMAGE)
+                    }
+                }
+            }
+        }
+        stage('Check Backend Code') {
+            steps {
+                dir('backend') {
+                    script {
+                        sh 'npm install'
+                        sh 'npx prettier . --check'
+                    }
+                }
+            }
+        }
+    }
+}

@@ -19,6 +19,15 @@ export default {
             screens: {
                 xs: "350px",
             },
+            keyframes: {
+                wiggle: {
+                    "0%, 100%": { transform: "rotate(-3deg)" },
+                    "50%": { transform: "rotate(3deg)" },
+                },
+            },
+            animation: {
+                wiggle: "wiggle 0.5s ease-in-out 2",
+            },
         },
         colors: {
             background: "#fcfcfc",

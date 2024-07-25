@@ -1,3 +1,14 @@
+<script setup lang="ts">
+import { useTranslate } from "@tolgee/vue";
+
+const { t } = useTranslate();
+const title = t.value("common.privacypolicy");
+
+useHead({
+    title: `${title} | JourneyPlanner`,
+});
+</script>
+
 <template>
     <div>
         <div class="flex justify-end">
