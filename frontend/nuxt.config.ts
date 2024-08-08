@@ -24,6 +24,7 @@ export default defineNuxtConfig({
         "nuxt-auth-sanctum",
         "@pinia/nuxt",
         "@nuxt/eslint",
+        "@nuxt/image",
     ],
     css: [
         "@/assets/css/fonts/fonts.css",
@@ -42,6 +43,7 @@ export default defineNuxtConfig({
             NUXT_BACKEND_URL: process.env.NUXT_BACKEND_URL,
             NUXT_MAPBOX_API_KEY: process.env.NUXT_MAPBOX_API_KEY,
             NUXT_UPLOAD_URL: process.env.NUXT_UPLOAD_URL,
+            NUXT_LIGHTGALLERY_KEY: process.env.NUXT_LIGHTGALLERY_KEY,
         },
     },
     primevue: {
@@ -50,6 +52,7 @@ export default defineNuxtConfig({
             unstyled: false,
             zIndex: {
                 modal: 500,
+                tooltip: 2000,
             },
         },
         components: {
@@ -77,6 +80,9 @@ export default defineNuxtConfig({
                 "ProgressSpinner",
                 "DataTable",
                 "Column",
+                "Skeleton",
+                "DeferredContent",
+                "Badge",
             ],
         },
     },

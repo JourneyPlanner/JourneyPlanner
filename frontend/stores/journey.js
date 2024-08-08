@@ -3,6 +3,8 @@ import { ref } from "vue";
 
 export const useJourneyStore = defineStore("journey", () => {
     const journey = ref({});
+    const media = ref([]);
+    const docs = ref([]);
 
     function setJourney(journey) {
         this.journey = journey;
@@ -36,8 +38,26 @@ export const useJourneyStore = defineStore("journey", () => {
         return this.journey.latitude;
     }
 
+    function setMedia(media) {
+        this.media = media;
+    }
+
+    function getMedia() {
+        return this.media;
+    }
+
+    function setDocs(docs) {
+        this.docs = docs;
+    }
+
+    function getDocs() {
+        return this.docs;
+    }
+
     return {
         journey,
+        media,
+        docs,
         setJourney,
         resetJourney,
         getID,
@@ -46,5 +66,9 @@ export const useJourneyStore = defineStore("journey", () => {
         getToDate,
         getLong,
         getLat,
+        setMedia,
+        getMedia,
+        setDocs,
+        getDocs,
     };
 });

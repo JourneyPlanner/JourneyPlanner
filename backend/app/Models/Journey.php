@@ -85,4 +85,12 @@ class Journey extends Model
     {
         return $this->hasMany(Media::class);
     }
+
+    /**
+     * Get the media folder path.
+     */
+    public function getMediaFolder(): string
+    {
+        return Media::getJourneyFolder($this->id);
+    }
 }
