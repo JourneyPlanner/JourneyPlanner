@@ -201,7 +201,7 @@ const setImage = (media) => {
 
 <template>
     <div class="w-full flex-col">
-        <div class="mb-3 flex flex-row items-center justify-between">
+        <div class="mb-1.5 flex flex-row items-center justify-between">
             <div class="flex flex-row items-center gap-2">
                 <h1 class="text-2xl font-semibold">
                     <T key-name="journey.media.overview" />
@@ -237,13 +237,13 @@ const setImage = (media) => {
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="ml-auto flex items-center rounded-xl border-2 border-cta-border bg-natural-50 px-2 py-1 text-sm font-bold hover:bg-cta-bg dark:bg-background-dark dark:text-input dark:hover:bg-cta-bg-dark sm:text-base lg:mb-4"
+                    class="ml-auto flex items-center rounded-xl border-2 border-cta-border bg-natural-50 px-2 py-1 text-sm font-bold hover:bg-cta-bg dark:bg-background-dark dark:text-input dark:hover:bg-cta-bg-dark sm:text-base lg:mb-1"
                     @click="downloadMedia"
                 />
             </div>
         </div>
         <div
-            class="h-[9.7rem] w-full rounded-2xl border-[3px] border-calypso-400 p-1 sm:h-[12.7rem] md:h-[16.7rem] lg:rounded-3xl"
+            class="h-[9.7rem] w-full rounded-2xl border-[3px] border-calypso-400 dark:border-calypso-600 sm:h-[12.7rem] md:h-[16.7rem] lg:rounded-3xl lg:p-1"
         >
             <ScrollPanel
                 class="h-full w-full overflow-x-hidden"
