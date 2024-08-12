@@ -21,7 +21,7 @@
         "@mapbox/mapbox-gl-geocoder": "^5.0.2",
         "@mapbox/search-js-web": "^1.0.0-beta.21",
         "@nuxt/eslint": "^0.3.13",
-        "@pinia/nuxt": "^0.5.1",
+        "@pinia/nuxt": "^0.5.3",
         "@studiometa/vue-mapbox-gl": "^2.5.0",
         "@tolgee/vue": "^5.28.6",
         "@uppy/core": "^3.11.2",
