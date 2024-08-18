@@ -91,7 +91,13 @@ const changeColorMode = () => {
 <template>
     <div>
         <div class="relative -z-10">
-            <SvgAboutClouds class="absolute top-32" />
+            <SvgAboutCloudRight
+                class="absolute right-0 top-48 w-[60%] xs:top-40 sm:hidden"
+            />
+            <SvgAboutCloudLeft
+                class="absolute top-64 w-[95%] xs:top-56 sm:hidden"
+            />
+            <SvgAboutClouds class="absolute top-28 hidden sm:block" />
         </div>
         <div class="mx-2 text-text dark:text-natural-50 md:mx-5">
             <header
@@ -167,7 +173,7 @@ const changeColorMode = () => {
                         <li>
                             <NuxtLink
                                 to="/register"
-                                class="rounded-lg border-2 border-dandelion-300 px-2 py-1 text-sm hover:bg-dandelion-200 dark:hover:bg-pesto-600 sm:py-0.5 md:text-base"
+                                class="rounded-lg border-2 border-dandelion-300 px-2 py-1 text-xs hover:bg-dandelion-200 dark:hover:bg-pesto-600 sm:py-0.5 sm:text-sm md:text-base"
                             >
                                 <T key-name="form.button.register" />
                             </NuxtLink>
@@ -180,42 +186,47 @@ const changeColorMode = () => {
                     class="flex flex-col items-center justify-center text-center"
                 >
                     <h1
-                        class="text-4xl font-extrabold text-calypso-400 dark:text-gothic-400 sm:text-4xl lg:text-6xl"
+                        class="text-3xl font-extrabold text-calypso-400 dark:text-gothic-400 xs:text-4xl lg:text-6xl"
                     >
                         JourneyPlanner
                     </h1>
                     <h2
-                        class="mt-1 text-lg font-bold xs:text-xl sm:text-2xl lg:text-3xl"
+                        class="mt-1 text-base font-bold xs:text-xl sm:text-2xl lg:text-3xl"
                     >
                         <T key-name="startpage.subheading" />
                     </h2>
                     <p
-                        class="mt-2 w-[90%] text-sm font-medium text-natural-600 xs:w-[60%] xs:text-base sm:w-[40%] sm:text-base sm:text-text md:text-lg"
+                        class="mt-2 w-[90%] text-sm font-medium text-natural-600 xs:w-[90%] sm:w-[40%] sm:text-base sm:text-text md:text-lg"
                     >
                         <T key-name="startpage.text.1" />
                     </p>
                     <p
-                        class="w-[85%] text-sm font-medium text-natural-600 xs:w-[60%] xs:text-base sm:w-[40%] sm:text-base sm:text-text md:text-lg"
+                        class="w-[85%] text-sm font-medium text-natural-600 xs:w-[90%] sm:w-[40%] sm:text-base sm:text-text md:text-lg"
                     >
                         <T key-name="startpage.text.2" />
                     </p>
                     <NuxtLink
                         to="/journey/new"
-                        class="mt-10 rounded-lg border-2 border-dandelion-300 bg-natural-50 p-1 px-2 text-sm font-bold text-text hover:bg-dandelion-200 dark:text-natural-50 dark:hover:bg-pesto-600 md:text-base"
+                        class="mt-8 rounded-lg border-2 border-dandelion-300 bg-natural-50 px-3 py-2 text-sm font-bold text-text hover:bg-dandelion-200 dark:text-natural-50 dark:hover:bg-pesto-600 sm:mt-16 md:text-base"
                     >
                         <T key-name="startpage.button.create.journey" />
                     </NuxtLink>
                 </div>
-                <div ref="idea" class="ml-10 mt-16 space-y-3 pt-12">
+                <div
+                    ref="idea"
+                    class="mt-10 space-y-3 pt-12 text-center sm:ml-10 sm:text-left"
+                >
                     <h4 class="font-nunito text-xl font-bold">
                         <T key-name="about.projectidea.headline" />
                     </h4>
-                    <div class="relative grid grid-cols-2 grid-rows-1">
-                        <p class="w-[85%] text-base font-medium">
+                    <div
+                        class="relative flex justify-center text-justify sm:grid sm:grid-cols-2 sm:grid-rows-1"
+                    >
+                        <p class="w-[85%] text-sm font-medium sm:text-base">
                             <T key-name="about.projectidea.text" />
                         </p>
                         <div
-                            class="-mr-2 -mt-16 w-[85%] justify-self-end md:-mr-5"
+                            class="-mr-2 -mt-16 hidden w-[85%] justify-self-end sm:block md:-mr-5"
                         >
                             <SvgStartpagePeople
                                 class="scale-x-[-1] transform"
@@ -223,9 +234,9 @@ const changeColorMode = () => {
                         </div>
                     </div>
                 </div>
-                <div class="mb-10 mt-20 flex flex-row justify-center">
+                <div class="mb-10 mt-10 flex flex-row justify-center sm:mt-20">
                     <div
-                        class="flex w-96 flex-col items-center justify-center rounded-lg bg-natural-100 py-2 text-center font-medium text-natural-700 shadow-md"
+                        class="flex w-72 flex-col items-center justify-center rounded-lg bg-natural-100 py-2 text-center text-sm font-medium text-natural-700 shadow-md sm:w-96 sm:text-base"
                     >
                         <h4 class="font-semibold">
                             <T key-name="about.sponsor" />
@@ -240,9 +251,9 @@ const changeColorMode = () => {
                 </div>
                 <div
                     ref="facts"
-                    class="flex select-none flex-row justify-center pt-20"
+                    class="-mx-2 flex select-none flex-row justify-center pt-6 sm:pt-20"
                 >
-                    <div class="grid grid-cols-3 grid-rows-1 gap-32">
+                    <div class="grid grid-cols-3 grid-rows-1 gap-2 sm:gap-32">
                         <div class="flex flex-col items-center">
                             <SvgAboutTime class="mb-2 w-20" />
                             <h4 class="flex flex-row text-xl font-bold">
@@ -256,7 +267,9 @@ const changeColorMode = () => {
                                 <span v-else>0</span>
                                 <span class="ml-1">h</span>
                             </h4>
-                            <h5 class="font-medium text-natural-600">
+                            <h5
+                                class="text-sm font-medium text-natural-600 sm:text-base"
+                            >
                                 <T key-name="about.facts.time" />
                             </h5>
                         </div>
@@ -282,7 +295,9 @@ const changeColorMode = () => {
                                     >US</span
                                 >
                             </h4>
-                            <h5 class="font-medium text-natural-600">
+                            <h5
+                                class="text-sm font-medium text-natural-600 sm:text-base"
+                            >
                                 <T key-name="about.facts.userstories" />
                             </h5>
                         </div>
@@ -299,7 +314,9 @@ const changeColorMode = () => {
                                 <span v-else>0</span>
                                 <span class="ml-1">Sprints</span>
                             </h4>
-                            <h5 class="font-medium text-natural-600">
+                            <h5
+                                class="text-sm font-medium text-natural-600 sm:text-base"
+                            >
                                 <T key-name="about.facts.sprints" />
                             </h5>
                         </div>
@@ -313,7 +330,7 @@ const changeColorMode = () => {
                             showDelay: 1000,
                             hideDelay: 300,
                         }"
-                        class="cursor-help text-center text-2xl font-bold"
+                        class="-ml-10 cursor-help text-center text-2xl font-bold"
                     >
                         <span
                             class="pi pi-circle-fill w-10 animate-blink text-error-dark"
@@ -321,13 +338,15 @@ const changeColorMode = () => {
                         <span class="underline">Deadline</span>
                     </h3>
                     <div class="flex flex-row justify-center">
-                        <div class="mt-8 grid grid-cols-4 grid-rows-1 gap-14">
+                        <div
+                            class="mt-8 grid grid-cols-4 grid-rows-1 gap-2 sm:gap-14"
+                        >
                             <div class="flex flex-col items-center">
-                                <h4 class="text-5xl font-medium">
+                                <h4 class="text-4xl font-medium sm:text-5xl">
                                     {{ deadline.days }}
                                 </h4>
                                 <h5
-                                    class="mt-3 text-xl font-medium text-natural-600"
+                                    class="mt-3 text-base font-medium text-natural-600 sm:text-xl"
                                 >
                                     <T
                                         v-if="deadline.days === 1"
@@ -337,11 +356,11 @@ const changeColorMode = () => {
                                 </h5>
                             </div>
                             <div class="flex flex-col items-center">
-                                <h4 class="text-5xl font-medium">
+                                <h4 class="text-4xl font-medium sm:text-5xl">
                                     {{ deadline.hours }}
                                 </h4>
                                 <h5
-                                    class="mt-3 text-xl font-medium text-natural-600"
+                                    class="mt-3 text-base font-medium text-natural-600 sm:text-xl"
                                 >
                                     <T
                                         v-if="deadline.hours === 1"
@@ -351,11 +370,11 @@ const changeColorMode = () => {
                                 </h5>
                             </div>
                             <div class="flex flex-col items-center">
-                                <h4 class="text-5xl font-medium">
+                                <h4 class="text-4xl font-medium sm:text-5xl">
                                     {{ deadline.minutes }}
                                 </h4>
                                 <h5
-                                    class="mt-3 text-xl font-medium text-natural-600"
+                                    class="mt-3 text-base font-medium text-natural-600 sm:text-xl"
                                 >
                                     <T
                                         v-if="deadline.minutes === 1"
@@ -368,11 +387,11 @@ const changeColorMode = () => {
                                 </h5>
                             </div>
                             <div class="flex flex-col items-center">
-                                <h4 class="text-5xl font-medium">
+                                <h4 class="text-4xl font-medium sm:text-5xl">
                                     {{ deadline.seconds }}
                                 </h4>
                                 <h5
-                                    class="mt-3 text-xl font-medium text-natural-600"
+                                    class="mt-3 text-base font-medium text-natural-600 sm:text-xl"
                                 >
                                     <T
                                         v-if="deadline.seconds === 1"
@@ -387,8 +406,10 @@ const changeColorMode = () => {
                         </div>
                     </div>
                 </div>
-                <div id="team" ref="team" class="mt-32">
-                    <h3 class="mb-5 ml-10 mt-10 text-center text-2xl font-bold">
+                <div id="team" ref="team" class="sm:mt-32">
+                    <h3
+                        class="mb-5 mt-10 text-center text-lg font-bold xs:text-xl sm:ml-10 sm:text-2xl"
+                    >
                         <T key-name="about.team.headline" />
                     </h3>
                     <ScrollPanel
@@ -424,13 +445,13 @@ const changeColorMode = () => {
                                         <NuxtLink
                                             to="https://www.linkedin.com/in/severin-rosner/"
                                             target="_blank"
-                                            class="pi pi-linkedin text-2xl"
+                                            class="pi pi-linkedin text-lg sm:text-2xl"
                                         />
                                         <NuxtLink
                                             href="mailto:severin.rosner@journeyplanner.io"
                                             class=""
                                         >
-                                            <SvgAboutMail class="w-7" />
+                                            <SvgAboutMail class="w-5 sm:w-7" />
                                         </NuxtLink>
                                     </div>
                                 </div>
@@ -456,13 +477,13 @@ const changeColorMode = () => {
                                         <NuxtLink
                                             to="https://www.linkedin.com/in/raven-burkard/"
                                             target="_blank"
-                                            class="pi pi-linkedin text-2xl"
+                                            class="pi pi-linkedin text-lg sm:text-2xl"
                                         />
                                         <NuxtLink
                                             to="mailto:raven.burkard@journeyplanner.io"
                                             class=""
                                         >
-                                            <SvgAboutMail class="w-7" />
+                                            <SvgAboutMail class="w-5 sm:w-7" />
                                         </NuxtLink>
                                     </div>
                                 </div>
@@ -486,18 +507,18 @@ const changeColorMode = () => {
                                         <NuxtLink
                                             to="https://www.linkedin.com/in/roman-krebs/"
                                             target="_blank"
-                                            class="pi pi-linkedin text-2xl"
+                                            class="pi pi-linkedin text-lg sm:text-2xl"
                                         />
                                         <NuxtLink
                                             to="mailto:roman.krebs@journeyplanner.io"
                                             class=""
                                         >
-                                            <SvgAboutMail class="w-7" />
+                                            <SvgAboutMail class="w-5 sm:w-7" />
                                         </NuxtLink>
                                     </div>
                                 </div>
                                 <div
-                                    class="flex w-72 flex-col items-center justify-center lg:w-full"
+                                    class="flex w-72 flex-col items-center justify-center pr-10 sm:pr-0 lg:w-full"
                                 >
                                     <SvgStartpageStefi
                                         class="w-40 xs:w-56 lg:w-72"
@@ -516,13 +537,13 @@ const changeColorMode = () => {
                                         <NuxtLink
                                             to="https://www.linkedin.com/in/stefania-manastirska/"
                                             target="_blank"
-                                            class="pi pi-linkedin text-2xl"
+                                            class="pi pi-linkedin text-lg sm:text-2xl"
                                         />
                                         <NuxtLink
                                             to="mailto:stefania.manastirska@journeyplanner.io"
                                             class=""
                                         >
-                                            <SvgAboutMail class="w-7" />
+                                            <SvgAboutMail class="w-5 sm:w-7" />
                                         </NuxtLink>
                                     </div>
                                 </div>
