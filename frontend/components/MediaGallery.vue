@@ -45,8 +45,6 @@ watch(
 );
 
 onMounted(() => {
-    multimedia.value = journey.getMedia();
-    docs.value = journey.getDocs();
     fetchMedia();
 });
 
@@ -104,19 +102,23 @@ const downloadMedia = async () => {
     });
 
     const zip = new JSZip();
-    const fetchImage = async (url, name) => {
+    const fetchFile = async (url, name) => {
+        console.log(url);
         const response = await client(url, { method: "GET" });
+        console.log(response);
 
         if (response) {
             zip.file(name, response);
         }
     };
 
-    const promises = multimedia.value.map((media) =>
-        fetchImage(media.link, media.name),
+    const multimediaPromises = multimedia.value.map((media) =>
+        fetchFile(media.link, media.name),
     );
 
-    await Promise.all(promises);
+    const docsPromises = docs.value.map((doc) => fetchFile(doc.link, doc.name));
+
+    await Promise.all([...multimediaPromises, ...docsPromises]);
 
     zip.generateAsync({ type: "blob" }).then((content) => {
         saveAs(content, `JourneyPlanner_${journey.getName()}.zip`);
@@ -274,7 +276,6 @@ const setImage = (media) => {
                         :data-download="media.name"
                     >
                         <NuxtImg
-                            placeholder="./placeholder.png"
                             loading="lazy"
                             class="img-responsive h-16 w-32 rounded-lg object-cover hover:cursor-zoom-in sm:h-24 sm:w-52 lg:h-32 lg:w-64"
                             :src="setImage(media)"
