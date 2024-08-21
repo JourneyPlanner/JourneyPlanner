@@ -428,7 +428,9 @@ const changeColorMode = () => {
                             target="_blank"
                             class="cursor-alias hover:text-calypso-500 dark:hover:text-calypso-500"
                             ><span class="underline">HTL Rennweg</span>
-                            <span class="pi pi-external-link text-base" />
+                            <span
+                                class="pi pi-external-link ml-0.5 text-xs xs:text-sm"
+                            />
                         </NuxtLink>
                     </h3>
                     <ScrollPanel
@@ -442,130 +444,52 @@ const changeColorMode = () => {
                             <div
                                 class="align-center flex w-full items-center gap-4 lg:grid lg:grid-cols-4 lg:gap-4"
                             >
-                                <div
-                                    class="flex w-72 flex-col items-center justify-center lg:w-full"
+                                <AboutProjectMemberCard
+                                    name="Severin Rosner"
+                                    role-key="startpage.people.scrummaster"
+                                    linkedin-link="https://www.linkedin.com/in/severin-rosner/"
+                                    mail="severin.rosner@journeyplanner.io"
                                 >
-                                    <SvgStartpageSeverin
-                                        class="w-40 hover-scale xs:w-56 lg:w-72"
-                                    />
-                                    <p class="mt-5 text-base md:text-xl">
-                                        Severin Rosner
-                                    </p>
-                                    <div
-                                        class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
-                                    >
-                                        <T
-                                            key-name="startpage.people.scrummaster"
+                                    <template #picture>
+                                        <SvgStartpageSeverin
+                                            class="w-40 hover-scale xs:w-52 lg:w-72"
                                         />
-                                    </div>
-                                    <div
-                                        class="mt-3 flex flex-row items-center gap-1"
-                                    >
-                                        <NuxtLink
-                                            to="https://www.linkedin.com/in/severin-rosner/"
-                                            target="_blank"
-                                            class="pi pi-linkedin text-lg hover-scale sm:text-2xl"
-                                        />
-                                        <NuxtLink
-                                            href="mailto:severin.rosner@journeyplanner.io"
-                                            class="hover-scale"
-                                        >
-                                            <SvgAboutMail class="w-5 sm:w-7" />
-                                        </NuxtLink>
-                                    </div>
-                                </div>
-                                <div
-                                    class="flex w-72 flex-col items-center justify-center lg:w-full"
+                                    </template>
+                                </AboutProjectMemberCard>
+                                <AboutProjectMemberCard
+                                    name="Raven Burkard"
+                                    role-key="startpage.people.productowner"
+                                    linkedin-link="https://www.linkedin.com/in/raven-burkard/"
+                                    mail="raven.burkard@journeyplanner.io"
                                 >
-                                    <SvgStartpageRaven
-                                        class="w-40 hover-scale xs:w-56 lg:w-72"
-                                    />
-                                    <p class="mt-5 text-base md:text-xl">
-                                        Raven Burkard
-                                    </p>
-                                    <div
-                                        class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
-                                    >
-                                        <T
-                                            key-name="startpage.people.productowner"
+                                    <template #picture>
+                                        <SvgStartpageRaven
+                                            class="w-40 hover-scale xs:w-52 lg:w-72"
                                         />
-                                    </div>
-                                    <div
-                                        class="mt-3 flex flex-row items-center gap-1"
-                                    >
-                                        <NuxtLink
-                                            to="https://www.linkedin.com/in/raven-burkard/"
-                                            target="_blank"
-                                            class="pi pi-linkedin text-lg hover-scale sm:text-2xl"
-                                        />
-                                        <NuxtLink
-                                            to="mailto:raven.burkard@journeyplanner.io"
-                                            class="hover-scale"
-                                        >
-                                            <SvgAboutMail class="w-5 sm:w-7" />
-                                        </NuxtLink>
-                                    </div>
-                                </div>
-                                <div
-                                    class="flex w-72 flex-col items-center justify-center lg:w-full"
+                                    </template>
+                                </AboutProjectMemberCard>
+                                <AboutProjectMemberCard
+                                    name="Roman Krebs"
+                                    linkedin-link="https://www.linkedin.com/in/roman-krebs/"
+                                    mail="roman.krebs@journeyplanner.io"
                                 >
-                                    <SvgStartpageRoman
-                                        class="w-40 hover-scale xs:w-56 lg:w-72"
-                                    />
-                                    <p class="textbase mt-5 md:text-xl">
-                                        Roman Krebs
-                                    </p>
-                                    <div
-                                        class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
-                                    >
-                                        <T key-name="startpage.people.member" />
-                                    </div>
-                                    <div
-                                        class="mt-3 flex flex-row items-center gap-1"
-                                    >
-                                        <NuxtLink
-                                            to="https://www.linkedin.com/in/roman-krebs/"
-                                            target="_blank"
-                                            class="pi pi-linkedin text-lg hover-scale sm:text-2xl"
+                                    <template #picture>
+                                        <SvgStartpageRoman
+                                            class="w-40 hover-scale xs:w-52 lg:w-72"
                                         />
-                                        <NuxtLink
-                                            to="mailto:roman.krebs@journeyplanner.io"
-                                            class="hover-scale"
-                                        >
-                                            <SvgAboutMail class="w-5 sm:w-7" />
-                                        </NuxtLink>
-                                    </div>
-                                </div>
-                                <div
-                                    class="flex w-72 flex-col items-center justify-center pr-10 sm:pr-0 lg:w-full"
+                                    </template>
+                                </AboutProjectMemberCard>
+                                <AboutProjectMemberCard
+                                    name="Stefania Manastirska"
+                                    linkedin-link="https://www.linkedin.com/in/stefania-manastirska/"
+                                    mail="stefania.manastirska@journeyplanner.io"
                                 >
-                                    <SvgStartpageStefi
-                                        class="w-40 hover-scale xs:w-56 lg:w-72"
-                                    />
-                                    <p class="mt-5 text-base md:text-xl">
-                                        Stefania Manastirska
-                                    </p>
-                                    <div
-                                        class="text-sm font-bold text-calypso-500 dark:text-gothic-400 md:text-xl"
-                                    >
-                                        <T key-name="startpage.people.member" />
-                                    </div>
-                                    <div
-                                        class="mt-3 flex flex-row items-center gap-1"
-                                    >
-                                        <NuxtLink
-                                            to="https://www.linkedin.com/in/stefania-manastirska/"
-                                            target="_blank"
-                                            class="pi pi-linkedin text-lg hover-scale sm:text-2xl"
+                                    <template #picture>
+                                        <SvgStartpageStefi
+                                            class="w-40 hover-scale xs:w-52 lg:w-72"
                                         />
-                                        <NuxtLink
-                                            to="mailto:stefania.manastirska@journeyplanner.io"
-                                            class="hover-scale"
-                                        >
-                                            <SvgAboutMail class="w-5 sm:w-7" />
-                                        </NuxtLink>
-                                    </div>
-                                </div>
+                                    </template>
+                                </AboutProjectMemberCard>
                             </div>
                         </div>
                     </ScrollPanel>
