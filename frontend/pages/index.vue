@@ -56,28 +56,32 @@ const changeColorMode = () => {
                 </NuxtLink>
                 <nav class="flex flex-row gap-4">
                     <ul
-                        class="hidden flex-row items-center gap-4 text-natural-500 dark:text-natural-600 md:flex"
+                        class="hidden flex-row items-center gap-2 text-natural-500 dark:text-natural-600 md:flex"
                     >
                         <li>
                             <button
-                                class="text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-lg"
+                                class="group flex items-center text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-lg"
                                 @click="scroll(features)"
                             >
                                 <T key-name="startpage.features" />
+                                <span
+                                    class="pi pi-arrow-down invisible ml-1 mt-0.5 text-sm group-hover:visible"
+                                />
                             </button>
                         </li>
                         <li>
                             <NuxtLink
                                 to="/about"
-                                class="text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-lg"
+                                class="group text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-lg"
                             >
                                 <T key-name="startpage.about" />
+                                <span
+                                    class="pi pi-external-link invisible ml-1.5 mt-0.5 text-sm group-hover:visible"
+                                />
                             </NuxtLink>
                         </li>
                     </ul>
-                    <ul
-                        class="flex flex-row items-center gap-2 md:gap-4 md:pl-5"
-                    >
+                    <ul class="flex flex-row items-center gap-2 md:gap-4">
                         <li class="flex">
                             <button
                                 class="group hidden md:flex"

@@ -82,7 +82,6 @@ const changeColorMode = () => {
     }
 };
 
-//TODO change lorem ipsum project idea
 //TODO redesign startpage
 //TODO darkmode
 //TODO responsive
@@ -110,49 +109,48 @@ const changeColorMode = () => {
                         JourneyPlanner
                     </h3>
                 </NuxtLink>
-                <nav class="flex flex-row gap-4">
+                <nav class="flex flex-row items-center gap-4">
                     <ul
-                        class="hidden flex-row items-center gap-4 text-natural-500 dark:text-natural-600 md:flex"
+                        class="hidden flex-row items-center gap-2 text-natural-500 dark:text-natural-600 md:flex"
                     >
                         <li>
-                            <NuxtLink
-                                to="/"
-                                class="text-sm hover:text-calypso-500 hover:underline dark:hover:text-calypso-500 md:text-base"
-                            >
-                                <T key-name="about.start" />
-                            </NuxtLink>
-                        </li>
-                        <li>
                             <button
-                                class="text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-base"
+                                class="group flex items-center text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-base"
                                 @click="scroll(idea)"
                             >
                                 <T key-name="about.idea" />
+                                <span
+                                    class="pi pi-arrow-down invisible ml-1 mt-0.5 text-sm group-hover:visible group-hover:animate-bounce"
+                                />
                             </button>
                         </li>
                         <li>
                             <button
-                                class="text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-base"
+                                class="group flex items-center text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-base"
                                 @click="scroll(facts)"
                             >
                                 <T key-name="about.facts" />
+                                <span
+                                    class="pi pi-arrow-down invisible ml-1 mt-0.5 text-sm group-hover:visible group-hover:animate-bounce"
+                                />
                             </button>
                         </li>
                         <li>
                             <button
-                                class="text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-base"
+                                class="group flex items-center text-sm hover:text-calypso-500 dark:hover:text-calypso-500 md:text-base"
                                 @click="scroll(team)"
                             >
                                 <T key-name="about.team" />
+                                <span
+                                    class="pi pi-arrow-down invisible ml-1 mt-0.5 text-sm group-hover:visible group-hover:animate-bounce"
+                                />
                             </button>
                         </li>
                     </ul>
-                    <ul
-                        class="flex flex-row items-center gap-2 md:gap-4 md:pl-5"
-                    >
+                    <ul class="flex flex-row items-center gap-2 md:gap-4">
                         <li class="flex">
                             <button
-                                class="group hidden sm:block"
+                                class="group hidden hover:animate-wiggle sm:block"
                                 @click="changeColorMode()"
                             >
                                 <SvgMoon
@@ -186,7 +184,7 @@ const changeColorMode = () => {
                     class="flex flex-col items-center justify-center text-center"
                 >
                     <h1
-                        class="text-3xl font-extrabold text-calypso-400 dark:text-gothic-400 xs:text-4xl lg:text-6xl"
+                        class="text-3xl font-extrabold text-calypso-400 hover-scale hover:cursor-default dark:text-gothic-400 xs:text-4xl lg:text-6xl"
                     >
                         JourneyPlanner
                     </h1>
@@ -255,8 +253,10 @@ const changeColorMode = () => {
                 >
                     <div class="grid grid-cols-3 grid-rows-1 gap-2 sm:gap-32">
                         <div class="flex flex-col items-center">
-                            <SvgAboutTime class="mb-2 w-20" />
-                            <h4 class="flex flex-row text-xl font-bold">
+                            <SvgAboutTime class="mb-2 w-20 hover-scale" />
+                            <h4
+                                class="flex flex-row text-xl font-bold hover-scale"
+                            >
                                 <ClientOnly v-if="time !== 0">
                                     <AnimatedCounter
                                         :value="time"
@@ -274,8 +274,10 @@ const changeColorMode = () => {
                             </h5>
                         </div>
                         <div class="flex flex-col items-center">
-                            <SvgAboutCheckMark class="mb-2 w-20" />
-                            <h4 class="flex flex-row text-xl font-bold">
+                            <SvgAboutCheckMark class="mb-2 w-20 hover-scale" />
+                            <h4
+                                class="flex flex-row text-xl font-bold hover-scale"
+                            >
                                 <ClientOnly v-if="userstories !== 0">
                                     <AnimatedCounter
                                         :value="userstories"
@@ -302,8 +304,10 @@ const changeColorMode = () => {
                             </h5>
                         </div>
                         <div class="flex flex-col items-center">
-                            <SvgAboutCalendar class="mb-2 w-20" />
-                            <h4 class="flex flex-row text-xl font-bold">
+                            <SvgAboutCalendar class="mb-2 w-20 hover-scale" />
+                            <h4
+                                class="flex flex-row text-xl font-bold hover-scale"
+                            >
                                 <ClientOnly v-if="sprints !== 0">
                                     <AnimatedCounter
                                         :value="sprints"
@@ -342,7 +346,9 @@ const changeColorMode = () => {
                             class="mt-8 grid grid-cols-4 grid-rows-1 gap-2 sm:gap-14"
                         >
                             <div class="flex flex-col items-center">
-                                <h4 class="text-4xl font-medium sm:text-5xl">
+                                <h4
+                                    class="text-4xl font-medium hover-scale sm:text-5xl"
+                                >
                                     {{ deadline.days }}
                                 </h4>
                                 <h5
@@ -356,7 +362,9 @@ const changeColorMode = () => {
                                 </h5>
                             </div>
                             <div class="flex flex-col items-center">
-                                <h4 class="text-4xl font-medium sm:text-5xl">
+                                <h4
+                                    class="text-4xl font-medium hover-scale sm:text-5xl"
+                                >
                                     {{ deadline.hours }}
                                 </h4>
                                 <h5
@@ -370,7 +378,9 @@ const changeColorMode = () => {
                                 </h5>
                             </div>
                             <div class="flex flex-col items-center">
-                                <h4 class="text-4xl font-medium sm:text-5xl">
+                                <h4
+                                    class="text-4xl font-medium hover-scale sm:text-5xl"
+                                >
                                     {{ deadline.minutes }}
                                 </h4>
                                 <h5
@@ -387,7 +397,9 @@ const changeColorMode = () => {
                                 </h5>
                             </div>
                             <div class="flex flex-col items-center">
-                                <h4 class="text-4xl font-medium sm:text-5xl">
+                                <h4
+                                    class="text-4xl font-medium hover-scale sm:text-5xl"
+                                >
                                     {{ deadline.seconds }}
                                 </h4>
                                 <h5
@@ -408,9 +420,16 @@ const changeColorMode = () => {
                 </div>
                 <div id="team" ref="team" class="sm:mt-32">
                     <h3
-                        class="mb-5 mt-10 text-center text-lg font-bold xs:text-xl sm:ml-10 sm:text-2xl"
+                        class="mt-10 cursor-default text-center text-lg font-bold xs:text-xl sm:ml-10 sm:text-2xl"
                     >
                         <T key-name="about.team.headline" />
+                        <NuxtLink
+                            to="https://www.htlrennweg.at/"
+                            target="_blank"
+                            class="cursor-alias hover:text-calypso-500 dark:hover:text-calypso-500"
+                            ><span class="underline">HTL Rennweg</span>
+                            <span class="pi pi-external-link text-base" />
+                        </NuxtLink>
                     </h3>
                     <ScrollPanel
                         :pt="{
@@ -418,7 +437,7 @@ const changeColorMode = () => {
                         }"
                     >
                         <div
-                            class="mx-5 flex items-center justify-center font-nunito"
+                            class="mx-5 mt-5 flex cursor-default items-center justify-center font-nunito"
                         >
                             <div
                                 class="align-center flex w-full items-center gap-4 lg:grid lg:grid-cols-4 lg:gap-4"
@@ -427,7 +446,7 @@ const changeColorMode = () => {
                                     class="flex w-72 flex-col items-center justify-center lg:w-full"
                                 >
                                     <SvgStartpageSeverin
-                                        class="w-40 xs:w-56 lg:w-72"
+                                        class="w-40 hover-scale xs:w-56 lg:w-72"
                                     />
                                     <p class="mt-5 text-base md:text-xl">
                                         Severin Rosner
@@ -445,11 +464,11 @@ const changeColorMode = () => {
                                         <NuxtLink
                                             to="https://www.linkedin.com/in/severin-rosner/"
                                             target="_blank"
-                                            class="pi pi-linkedin text-lg sm:text-2xl"
+                                            class="pi pi-linkedin text-lg hover-scale sm:text-2xl"
                                         />
                                         <NuxtLink
                                             href="mailto:severin.rosner@journeyplanner.io"
-                                            class=""
+                                            class="hover-scale"
                                         >
                                             <SvgAboutMail class="w-5 sm:w-7" />
                                         </NuxtLink>
@@ -459,7 +478,7 @@ const changeColorMode = () => {
                                     class="flex w-72 flex-col items-center justify-center lg:w-full"
                                 >
                                     <SvgStartpageRaven
-                                        class="w-40 xs:w-56 lg:w-72"
+                                        class="w-40 hover-scale xs:w-56 lg:w-72"
                                     />
                                     <p class="mt-5 text-base md:text-xl">
                                         Raven Burkard
@@ -477,11 +496,11 @@ const changeColorMode = () => {
                                         <NuxtLink
                                             to="https://www.linkedin.com/in/raven-burkard/"
                                             target="_blank"
-                                            class="pi pi-linkedin text-lg sm:text-2xl"
+                                            class="pi pi-linkedin text-lg hover-scale sm:text-2xl"
                                         />
                                         <NuxtLink
                                             to="mailto:raven.burkard@journeyplanner.io"
-                                            class=""
+                                            class="hover-scale"
                                         >
                                             <SvgAboutMail class="w-5 sm:w-7" />
                                         </NuxtLink>
@@ -491,7 +510,7 @@ const changeColorMode = () => {
                                     class="flex w-72 flex-col items-center justify-center lg:w-full"
                                 >
                                     <SvgStartpageRoman
-                                        class="w-40 xs:w-56 lg:w-72"
+                                        class="w-40 hover-scale xs:w-56 lg:w-72"
                                     />
                                     <p class="textbase mt-5 md:text-xl">
                                         Roman Krebs
@@ -507,11 +526,11 @@ const changeColorMode = () => {
                                         <NuxtLink
                                             to="https://www.linkedin.com/in/roman-krebs/"
                                             target="_blank"
-                                            class="pi pi-linkedin text-lg sm:text-2xl"
+                                            class="pi pi-linkedin text-lg hover-scale sm:text-2xl"
                                         />
                                         <NuxtLink
                                             to="mailto:roman.krebs@journeyplanner.io"
-                                            class=""
+                                            class="hover-scale"
                                         >
                                             <SvgAboutMail class="w-5 sm:w-7" />
                                         </NuxtLink>
@@ -521,7 +540,7 @@ const changeColorMode = () => {
                                     class="flex w-72 flex-col items-center justify-center pr-10 sm:pr-0 lg:w-full"
                                 >
                                     <SvgStartpageStefi
-                                        class="w-40 xs:w-56 lg:w-72"
+                                        class="w-40 hover-scale xs:w-56 lg:w-72"
                                     />
                                     <p class="mt-5 text-base md:text-xl">
                                         Stefania Manastirska
@@ -537,11 +556,11 @@ const changeColorMode = () => {
                                         <NuxtLink
                                             to="https://www.linkedin.com/in/stefania-manastirska/"
                                             target="_blank"
-                                            class="pi pi-linkedin text-lg sm:text-2xl"
+                                            class="pi pi-linkedin text-lg hover-scale sm:text-2xl"
                                         />
                                         <NuxtLink
                                             to="mailto:stefania.manastirska@journeyplanner.io"
-                                            class=""
+                                            class="hover-scale"
                                         >
                                             <SvgAboutMail class="w-5 sm:w-7" />
                                         </NuxtLink>

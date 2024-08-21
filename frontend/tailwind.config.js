@@ -30,7 +30,7 @@ export default {
                 },
             },
             animation: {
-                wiggle: "wiggle 0.5s ease-in-out 2",
+                wiggle: "wiggle 0.45s ease-in-out 5",
                 blink: "blink 2.75s infinite",
             },
         },
@@ -180,5 +180,17 @@ export default {
             "marker-not-added": "#8CA5B0",
         },
     },
-    plugins: [],
+    plugins: [
+        function ({ addUtilities }) {
+            addUtilities({
+                ".hover-scale": {
+                    cursor: "pointer",
+                    transition: "all 0.5s",
+                    "&:hover": {
+                        transform: "scale(1.125)",
+                    },
+                },
+            });
+        },
+    ],
 };
