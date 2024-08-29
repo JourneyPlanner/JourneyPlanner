@@ -87,10 +87,19 @@ const changeColorMode = () => {
     <div>
         <div class="relative -z-10">
             <SvgAboutCloudRight
-                class="absolute right-0 top-48 w-[60%] xs:top-40 sm:hidden"
+                class="absolute right-0 top-20 w-[60%] xs:top-24 sm:hidden"
             />
             <SvgAboutCloudLeft
-                class="absolute top-64 w-[95%] xs:top-56 sm:hidden"
+                class="absolute top-72 w-[95%] xs:top-80 sm:hidden"
+            />
+            <SvgAboutCloudRight
+                class="absolute right-0 w-[60%] xs:top-[33rem] sm:hidden"
+            />
+            <SvgAboutCloudLeft
+                class="absolute w-[95%] xs:top-[66rem] sm:hidden"
+            />
+            <SvgAboutCloudLeft
+                class="absolute hidden w-[55%] xs:top-[70rem] md:block"
             />
             <SvgAboutClouds class="absolute top-48 hidden sm:block lg:top-28" />
         </div>
@@ -181,7 +190,7 @@ const changeColorMode = () => {
                     class="flex flex-col items-center justify-center text-center"
                 >
                     <h1
-                        class="text-3xl font-extrabold text-calypso-400 hover-scale hover:cursor-default dark:text-gothic-400 xs:text-4xl lg:text-6xl"
+                        class="mt-16 text-4xl font-extrabold text-calypso-400 hover-scale hover:cursor-default dark:text-gothic-400 xs:mt-24 xs:text-5xl lg:mt-2 lg:text-7xl"
                     >
                         JourneyPlanner
                     </h1>
@@ -190,23 +199,23 @@ const changeColorMode = () => {
                     >
                         <T key-name="startpage.subheading" />
                     </h2>
-                    <p
-                        class="mt-2 w-[90%] text-sm font-medium text-natural-600 dark:text-natural-50 xs:w-[90%] sm:w-[40%] sm:text-base sm:text-text md:text-lg"
+                    <div
+                        class="mt-4 w-[90%] text-sm font-medium text-natural-600 dark:text-natural-50 xs:w-[90%] xs:text-base sm:w-[40%] sm:text-base sm:text-text md:text-lg lg:mt-6"
                     >
-                        <T key-name="startpage.text.1" />
-                    </p>
-                    <p
-                        class="w-[85%] text-sm font-medium text-natural-600 dark:text-natural-50 xs:w-[90%] sm:w-[40%] sm:text-base sm:text-text md:text-lg"
-                    >
-                        <T key-name="startpage.text.2" />
-                    </p>
+                        <p>
+                            <T key-name="startpage.text.1" />
+                        </p>
+                        <p>
+                            <T key-name="startpage.text.2" />
+                        </p>
+                    </div>
                     <NuxtLink
                         to="/journey/new"
-                        class="mt-8 rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-3 py-2 text-sm font-bold text-text hover-scale dark:bg-pesto-600 dark:text-natural-50 sm:mt-16 md:text-base"
+                        class="mt-20 rounded-lg border-2 border-dandelion-300 bg-dandelion-100 px-3 py-2 text-sm font-bold text-text hover-scale hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50 xs:mt-20 sm:mt-16 md:text-base lg:mt-20 lg:text-lg"
                     >
                         <T key-name="startpage.button.create.journey" />
                     </NuxtLink>
-                    <div class="hidden lg:block">
+                    <div class="hidden lg:mt-2 lg:block">
                         <span
                             class="pi pi-arrow-down mt-[14vh] animate-bounce text-2xl text-calypso-400 hover:cursor-pointer dark:text-gothic-400"
                             @click="scroll(idea)"
@@ -216,16 +225,18 @@ const changeColorMode = () => {
                 <div
                     id="idea"
                     ref="idea"
-                    class="space-y-3 pt-24 text-center md:ml-10 md:text-left lg:mt-44 xl:mt-32"
+                    class="mt-16 space-y-3 pt-10 text-center xs:mt-20 sm:pt-20 md:ml-10 md:text-left lg:mt-7 lg:pt-14"
                 >
-                    <h4 class="font-nunito text-xl font-bold lg:text-2xl">
+                    <h4
+                        class="font-nunito text-xl font-bold text-text underline dark:text-natural-50 xs:text-2xl lg:text-3xl"
+                    >
                         <T key-name="about.projectidea.headline" />
                     </h4>
                     <div
-                        class="relative flex justify-center text-justify md:grid md:grid-cols-2 md:grid-rows-1"
+                        class="relative flex justify-center md:grid md:grid-cols-2 md:grid-rows-1"
                     >
                         <p
-                            class="w-[85%] text-sm font-medium sm:text-base lg:text-lg"
+                            class="w-[85%] text-sm font-medium text-natural-800 dark:text-natural-200 xs:text-lg sm:text-base lg:text-xl"
                         >
                             <T key-name="about.projectidea.text" />
                         </p>
@@ -241,7 +252,7 @@ const changeColorMode = () => {
                 <div
                     id="facts"
                     ref="facts"
-                    class="flex select-none flex-col justify-center pt-16 sm:pt-20 xl:mt-20"
+                    class="flex select-none flex-col justify-center pt-16 xs:mt-4 sm:pt-20 lg:pt-16 xl:mt-10"
                 >
                     <h3
                         v-tooltip="{
@@ -250,16 +261,18 @@ const changeColorMode = () => {
                             showDelay: 1000,
                             hideDelay: 300,
                         }"
-                        class="-ml-10 cursor-help text-center text-xl font-bold lg:text-2xl"
+                        class="-ml-10 cursor-help text-center text-xl font-bold xs:-ml-5 xs:text-2xl lg:text-3xl"
                     >
                         <span
                             class="pi pi-circle-fill mr-2.5 w-2.5 animate-blink text-error-dark lg:mr-4"
                         />
-                        <span class="underline">Deadline</span>
+                        <span class="text-text underline dark:text-natural-50"
+                            >Deadline</span
+                        >
                     </h3>
                     <div class="flex flex-row justify-center">
                         <div
-                            class="mt-8 grid grid-cols-4 grid-rows-1 gap-0 sm:gap-8 md:gap-14"
+                            class="mt-8 grid grid-cols-4 grid-rows-1 gap-0 sm:gap-8 md:gap-14 lg:mt-7"
                         >
                             <AboutCountdownItem
                                 :value="deadline.days"
@@ -285,17 +298,15 @@ const changeColorMode = () => {
                     </div>
                 </div>
                 <div
-                    class="-mx-2 mt-10 flex select-none flex-row justify-center sm:mt-16"
+                    class="-mx-2 mt-10 flex select-none flex-row justify-center xs:mt-10 sm:mt-16"
                 >
                     <div
-                        class="grid grid-cols-3 grid-rows-1 gap-2 sm:gap-14 md:gap-24"
+                        class="grid grid-cols-3 grid-rows-1 gap-2 xs:gap-5 sm:gap-14 md:gap-24 lg:gap-32"
                     >
                         <div class="flex flex-col items-center">
-                            <SvgAboutTime
-                                class="mb-2 w-20 hover-scale sm:w-24 lg:w-28"
-                            />
+                            <SvgAboutTime class="mb-2 w-20 sm:w-24 lg:w-28" />
                             <h4
-                                class="flex flex-row text-xl font-bold hover-scale sm:text-2xl lg:text-3xl"
+                                class="flex flex-row text-xl font-bold text-text hover-scale dark:text-natural-50 sm:text-2xl lg:text-3xl"
                             >
                                 <ClientOnly v-if="time !== 0">
                                     <AnimatedCounter
@@ -315,10 +326,10 @@ const changeColorMode = () => {
                         </div>
                         <div class="flex flex-col items-center">
                             <SvgAboutCheckMark
-                                class="mb-2 w-20 hover-scale sm:w-24 lg:w-28"
+                                class="mb-2 w-20 sm:w-24 lg:w-28"
                             />
                             <h4
-                                class="flex flex-row text-xl font-bold hover-scale sm:text-2xl lg:text-3xl"
+                                class="flex flex-row text-xl font-bold text-text hover-scale dark:text-natural-50 sm:text-2xl lg:text-3xl"
                             >
                                 <ClientOnly v-if="userstories !== 0">
                                     <AnimatedCounter
@@ -347,10 +358,10 @@ const changeColorMode = () => {
                         </div>
                         <div class="flex flex-col items-center">
                             <SvgAboutCalendar
-                                class="mb-2 w-20 hover-scale sm:w-24 lg:w-28"
+                                class="mb-2 w-20 sm:w-24 lg:w-28"
                             />
                             <h4
-                                class="flex flex-row flex-wrap justify-center text-xl font-bold hover-scale sm:text-2xl lg:text-3xl"
+                                class="flex flex-row flex-wrap justify-center text-xl font-bold text-text hover-scale dark:text-natural-50 sm:text-2xl lg:text-3xl"
                             >
                                 <ClientOnly v-if="sprints !== 0">
                                     <AnimatedCounter
@@ -370,9 +381,9 @@ const changeColorMode = () => {
                         </div>
                     </div>
                 </div>
-                <div id="team" ref="team" class="sm:mt-16 md:mt-32">
+                <div id="team" ref="team" class="sm:mt-16 md:mt-32 lg:mt-28">
                     <h3
-                        class="mt-10 cursor-default text-center text-lg font-bold xs:text-xl md:ml-10 md:text-2xl"
+                        class="mt-10 cursor-default text-center text-lg font-bold text-text dark:text-natural-50 xs:mt-20 xs:text-xl md:text-2xl lg:mt-4"
                     >
                         <T key-name="about.team.headline" />
                         <NuxtLink
@@ -406,7 +417,7 @@ const changeColorMode = () => {
                                     mail="severin.rosner@journeyplanner.io"
                                 >
                                     <template #picture>
-                                        <SvgStartpageSeverin
+                                        <SvgAboutSeverin
                                             class="w-40 hover-scale xs:w-52 lg:w-[75%]"
                                         />
                                     </template>
@@ -419,7 +430,7 @@ const changeColorMode = () => {
                                     mail="raven.burkard@journeyplanner.io"
                                 >
                                     <template #picture>
-                                        <SvgStartpageRaven
+                                        <SvgAboutRaven
                                             class="w-40 hover-scale xs:w-52 lg:w-[75%]"
                                         />
                                     </template>
@@ -430,7 +441,7 @@ const changeColorMode = () => {
                                     mail="roman.krebs@journeyplanner.io"
                                 >
                                     <template #picture>
-                                        <SvgStartpageRoman
+                                        <SvgAboutRoman
                                             class="w-40 hover-scale xs:w-52 lg:w-[75%]"
                                         />
                                     </template>
@@ -442,7 +453,7 @@ const changeColorMode = () => {
                                     mail="stefania.manastirska@journeyplanner.io"
                                 >
                                     <template #picture>
-                                        <SvgStartpageStefi
+                                        <SvgAboutStefi
                                             class="w-40 hover-scale xs:w-52 lg:w-[75%]"
                                         />
                                     </template>
@@ -456,7 +467,7 @@ const changeColorMode = () => {
                     class="mb-10 mt-10 flex flex-col items-center justify-center sm:mt-20"
                 >
                     <h3
-                        class="mb-5 cursor-default text-center text-lg font-bold xs:text-xl md:text-2xl"
+                        class="mb-5 cursor-default text-center text-lg font-bold text-text dark:text-natural-50 xs:text-xl md:text-2xl"
                     >
                         <T key-name="about.sponsors.headline" />
                     </h3>
@@ -464,7 +475,7 @@ const changeColorMode = () => {
                         class="flex flex-col items-center md:flex-row lg:gap-16"
                     >
                         <div
-                            class="flex h-24 w-72 flex-col items-center justify-center rounded-lg bg-natural-100 py-2 text-center text-sm font-medium text-natural-700 shadow-md dark:bg-natural-300 sm:w-96 sm:text-base"
+                            class="flex h-24 w-72 flex-col items-center justify-center rounded-lg bg-natural-100 py-2 text-center text-sm font-medium text-natural-700 shadow-md dark:text-natural-300 dark:text-natural-800 sm:w-96 sm:text-base"
                         >
                             <h4 class="font-semibold">
                                 <T key-name="about.sponsor" />

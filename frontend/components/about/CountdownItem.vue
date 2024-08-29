@@ -9,7 +9,7 @@ defineProps({
 <template>
     <div class="flex flex-col items-center">
         <h4
-            class="text-3xl font-medium hover-scale sm:text-4xl md:text-5xl lg:text-6xl"
+            class="text-3xl font-medium text-text dark:text-natural-50 sm:text-4xl md:text-5xl lg:text-5xl"
         >
             {{ value }}
         </h4>
