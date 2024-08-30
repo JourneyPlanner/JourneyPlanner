@@ -17,6 +17,7 @@ const props = defineProps({
     id: { type: String, required: true },
     translationKey: { type: String, required: true },
     prefill: { type: Array, default: undefined as unknown as Date[] },
+    cy: { type: String, default: "" },
 });
 
 const { value, errorMessage } = useField<Date[]>(() => props.name);
@@ -38,6 +39,7 @@ defineEmits(["input"]);
             :manual-input="true"
             :show-button-bar="true"
             :number-of-months="1"
+            :cy="cy"
             date-format="dd/mm/yy"
             panel-class="bg-input dark:bg-background-dark dark:text-white"
             input-class="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-white font-bold bg-input dark:bg-input-dark border-2 border-border focus:outline-none focus:ring-1"
@@ -60,6 +62,11 @@ defineEmits(["input"]);
         <br />
         <div class="h-3">
             <span
+                :data-cy="'error-' + cy"
+                :class="{
+                    invisible: !errorMessage,
+                    visible: errorMessage,
+                }"
                 class="ml-2.5 text-xs text-error dark:font-bold dark:text-error-dark"
                 >{{ errorMessage }}</span
             >

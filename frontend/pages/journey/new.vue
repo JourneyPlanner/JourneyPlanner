@@ -141,10 +141,12 @@ function copyToClipboard() {
                             id="journey-name"
                             name="journeyName"
                             translation-key="form.input.journey.name"
+                            cy="journey-name"
                         />
                         <FormAddressInput
                             id="journey-destination"
                             name="journeyDestination"
+                            cy="journey-destination"
                             :placeholder="t('form.input.journey.destination')"
                             class="relative mb-5"
                             :translation-key="
@@ -158,6 +160,7 @@ function copyToClipboard() {
                             id="journey-range-calendar"
                             name="journeyRange"
                             translation-key="form.input.journey.dates"
+                            cy="journey-range-calendar"
                         />
                         <Divider
                             type="solid"
@@ -203,6 +206,7 @@ function copyToClipboard() {
 
                             <button
                                 type="submit"
+                                data-cy="journey-create"
                                 class="rounded-xl border-2 border-cta-border bg-input px-7 py-1 font-bold text-text hover:bg-cta-bg dark:bg-input-dark dark:text-white dark:hover:bg-cta-bg-dark"
                             >
                                 <T key-name="common.button.create" />

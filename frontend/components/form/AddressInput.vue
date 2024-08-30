@@ -6,6 +6,7 @@ import tailwindConfig from "~/tailwind.config.js";
 const props = defineProps({
     name: { type: String, required: true },
     placeholder: { type: String, default: " " },
+    cy: { type: String, default: "" },
     value: { type: String, default: "" },
     disabled: { type: Boolean, default: false },
     customClass: { type: String, default: "" },
@@ -114,6 +115,7 @@ function handleInput() {
         <ClientOnly v-if="isLoaded" class="relative">
             <mapbox-search-box
                 class="font-nunito"
+                :data-cy="cy"
                 :name="name"
                 :access-token="config.public.NUXT_MAPBOX_API_KEY"
                 :placeholder="placeholder"
@@ -131,6 +133,7 @@ function handleInput() {
             />
             <div v-if="errorMessage" class="h-1.5 w-full text-left">
                 <span
+                    :data-cy="'error-' + cy"
                     class="ml-3 text-xs text-error dark:font-bold dark:text-error-dark"
                     :class="{
                         invisible: !errorMessage,

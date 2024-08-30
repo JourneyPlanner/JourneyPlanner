@@ -126,6 +126,7 @@ async function loginUser(userData: User) {
                             id="email"
                             name="email"
                             translation-key="form.input.email"
+                            cy="email"
                         />
 
                         <FormPassword
@@ -133,6 +134,7 @@ async function loginUser(userData: User) {
                             name="password"
                             :feedback-style="true"
                             translation-key="form.input.password"
+                            cy="password"
                         />
 
                         <button

@@ -284,7 +284,7 @@ const onSave = handleSubmit(async (values) => {
 </script>
 
 <template>
-    <div>
+    <div id="journey-dashboard-item">
         <div
             id="journey-desktop"
             class="relative hidden hover:cursor-pointer lg:block"

@@ -10,7 +10,8 @@
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
         "prepare": "cd .. && husky frontend/.husky",
-        "start": "concurrently \"infisical run --env=dev -- nuxt dev -o\" \"cd ../backend && infisical run --env=dev -- php artisan serve\""
+        "start": "concurrently \"infisical run --env=dev -- nuxt dev -o\" \"cd ../backend && infisical run --env=dev -- php artisan serve\"",
+        "cytest": "concurrently \"infisical run --env=dev -- nuxt dev --host -o\" \"cd ../backend && infisical run --env=dev -- php artisan serve\" \"npx cypress open\""
     },
     "dependencies": {
         "@fullcalendar/core": "^6.1.11",
@@ -55,6 +56,7 @@
         "@types/mapbox-gl": "^3.1.0",
         "@types/qrcode": "^1.5.5",
         "@types/uuid": "^10.0.0",
+        "cypress": "^13.14.1",
         "husky": "^9.0.11",
         "lint-staged": "^15.2.7",
         "mapbox-gl": "^3.4.0",

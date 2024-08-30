@@ -26,6 +26,7 @@ const props = defineProps({
     feedback: Boolean,
     feedbackStyle: Boolean,
     translationKey: { type: String, required: true },
+    cy: { type: String, default: "" },
 });
 
 const { value, errorMessage } = useField<string>(() => props.name);
@@ -49,6 +50,7 @@ const { value, errorMessage } = useField<string>(() => props.name);
             :pt="{
                 input: { class: 'font-medium' },
             }"
+            data-cy="password"
             @focus="handleFocus"
             @focusout="handleBlur"
             @input="handleFocus"
