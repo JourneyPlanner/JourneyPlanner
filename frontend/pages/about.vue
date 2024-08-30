@@ -87,21 +87,29 @@ const changeColorMode = () => {
     <div>
         <div class="relative -z-10">
             <SvgAboutCloudRight
+                id="cloud-right-1"
                 class="absolute right-0 top-20 w-[60%] xs:top-24 sm:hidden"
             />
             <SvgAboutCloudLeft
+                id="cloud-left-1"
                 class="absolute top-72 w-[95%] xs:top-80 sm:hidden"
             />
             <SvgAboutCloudRight
-                class="absolute right-0 w-[60%] xs:top-[33rem] sm:hidden"
+                id="cloud-right-2"
+                class="absolute right-0 top-[25rem] w-[60%] xs:top-[33rem] sm:hidden"
             />
             <SvgAboutCloudLeft
-                class="absolute w-[95%] xs:top-[66rem] sm:hidden"
+                id="cloud-left-2"
+                class="absolute top-[55rem] w-[95%] xs:top-[66rem] sm:hidden"
             />
             <SvgAboutCloudLeft
+                id="cloud-left-3"
                 class="absolute hidden w-[55%] xs:top-[70rem] md:block"
             />
-            <SvgAboutClouds class="absolute top-48 hidden sm:block lg:top-28" />
+            <SvgAboutClouds
+                id="clouds"
+                class="absolute top-48 hidden sm:block lg:top-28"
+            />
         </div>
         <div class="mx-2 text-text dark:text-natural-50 md:mx-5">
             <header
@@ -152,10 +160,10 @@ const changeColorMode = () => {
                             </button>
                         </li>
                     </ul>
-                    <ul class="flex flex-row items-center gap-2 md:gap-4">
+                    <ul class="flex flex-row items-center gap-2 xs:gap-4">
                         <li class="flex">
                             <button
-                                class="group hidden hover:animate-wiggle xs:block"
+                                class="group hover:animate-wiggle"
                                 @click="changeColorMode()"
                             >
                                 <SvgMoon
@@ -168,15 +176,20 @@ const changeColorMode = () => {
                         <li class="border-l-2 border-natural-300 pl-2">
                             <NuxtLink
                                 to="/login"
-                                class="hidden text-sm text-text hover:underline dark:text-natural-50 xs:block md:text-base"
+                                class="text-sm text-text dark:text-natural-50 md:text-lg"
                             >
-                                <T key-name="form.button.login" />
+                                <span class="flex w-5 sm:hidden">
+                                    <i class="pi pi-sign-in text-lg" />
+                                </span>
+                                <span class="hidden hover:underline sm:block">
+                                    <T key-name="form.button.login" />
+                                </span>
                             </NuxtLink>
                         </li>
                         <li>
                             <NuxtLink
                                 to="/register"
-                                class="rounded-lg border-2 border-dandelion-300 px-2 py-1 text-xs text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:py-0.5 sm:text-sm md:text-base"
+                                class="rounded-lg border-2 border-dandelion-300 px-2 py-1 text-sm text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:py-0.5 sm:text-sm md:text-base"
                             >
                                 <T key-name="form.button.register" />
                             </NuxtLink>
@@ -184,13 +197,13 @@ const changeColorMode = () => {
                     </ul>
                 </nav>
             </header>
-            <main class="mt-10 flex flex-col font-nunito sm:mt-28">
+            <main class="mt-10 flex flex-col font-nunito lg:mt-28">
                 <div
                     id="hero"
                     class="flex flex-col items-center justify-center text-center"
                 >
                     <h1
-                        class="mt-16 text-4xl font-extrabold text-calypso-400 hover-scale hover:cursor-default dark:text-gothic-400 xs:mt-24 xs:text-5xl lg:mt-2 lg:text-7xl"
+                        class="mt-16 text-4xl font-extrabold text-calypso-400 hover:cursor-default dark:text-gothic-400 xs:mt-24 xs:text-5xl sm:hover-scale lg:mt-2 lg:text-7xl"
                     >
                         JourneyPlanner
                     </h1>
@@ -228,7 +241,7 @@ const changeColorMode = () => {
                     class="mt-16 space-y-3 pt-10 text-center xs:mt-20 sm:pt-20 md:ml-10 md:text-left lg:mt-7 lg:pt-14"
                 >
                     <h4
-                        class="font-nunito text-xl font-bold text-text underline dark:text-natural-50 xs:text-2xl lg:text-3xl"
+                        class="font-nunito text-xl font-bold text-text dark:text-natural-50 xs:text-2xl lg:text-3xl"
                     >
                         <T key-name="about.projectidea.headline" />
                     </h4>
@@ -236,7 +249,7 @@ const changeColorMode = () => {
                         class="relative flex justify-center md:grid md:grid-cols-2 md:grid-rows-1"
                     >
                         <p
-                            class="w-[85%] text-sm font-medium text-natural-800 dark:text-natural-200 xs:text-lg sm:text-base lg:text-xl"
+                            class="w-[85%] text-left text-sm font-medium text-natural-800 dark:text-natural-200 xs:text-lg sm:text-base lg:text-xl"
                         >
                             <T key-name="about.projectidea.text" />
                         </p>
@@ -266,13 +279,13 @@ const changeColorMode = () => {
                         <span
                             class="pi pi-circle-fill mr-2.5 w-2.5 animate-blink text-error-dark lg:mr-4"
                         />
-                        <span class="text-text underline dark:text-natural-50"
+                        <span class="text-text dark:text-natural-50"
                             >Deadline</span
                         >
                     </h3>
                     <div class="flex flex-row justify-center">
                         <div
-                            class="mt-8 grid grid-cols-4 grid-rows-1 gap-0 sm:gap-8 md:gap-14 lg:mt-7"
+                            class="mt-5 grid grid-cols-4 grid-rows-1 gap-0 sm:gap-8 md:gap-14 lg:mt-7"
                         >
                             <AboutCountdownItem
                                 :value="deadline.days"
@@ -447,6 +460,7 @@ const changeColorMode = () => {
                                     </template>
                                 </AboutProjectMemberCard>
                                 <AboutProjectMemberCard
+                                    class="pr-10 lg:pr-0"
                                     name="Stefania Manastirska"
                                     role-key="startpage.people.design"
                                     linkedin-link="https://www.linkedin.com/in/stefania-manastirska/"

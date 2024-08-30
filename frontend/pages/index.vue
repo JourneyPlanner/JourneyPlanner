@@ -81,10 +81,10 @@ const changeColorMode = () => {
                             </NuxtLink>
                         </li>
                     </ul>
-                    <ul class="flex flex-row items-center gap-2 md:gap-4">
+                    <ul class="flex flex-row items-center gap-2 xs:gap-4">
                         <li class="flex">
                             <button
-                                class="group hidden md:flex"
+                                class="group hover:animate-wiggle"
                                 @click="changeColorMode()"
                             >
                                 <SvgMoon
@@ -97,15 +97,20 @@ const changeColorMode = () => {
                         <li class="border-l-2 border-natural-300 pl-2">
                             <NuxtLink
                                 to="/login"
-                                class="text-sm text-text hover:underline dark:text-natural-50 md:text-lg"
+                                class="text-sm text-text dark:text-natural-50 md:text-lg"
                             >
-                                <T key-name="form.button.login" />
+                                <span class="flex w-5 sm:hidden">
+                                    <i class="pi pi-sign-in" />
+                                </span>
+                                <span class="hidden hover:underline sm:block">
+                                    <T key-name="form.button.login" />
+                                </span>
                             </NuxtLink>
                         </li>
                         <li>
                             <NuxtLink
                                 to="/register"
-                                class="rounded-lg border-2 border-dandelion-300 p-1 px-2 text-sm text-text hover:bg-dandelion-200 dark:text-natural-50 dark:hover:bg-pesto-600 md:text-lg"
+                                class="rounded-lg border-2 border-dandelion-300 p-1 px-2 text-sm text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 md:text-lg"
                             >
                                 <T key-name="form.button.register" />
                             </NuxtLink>
@@ -152,13 +157,19 @@ const changeColorMode = () => {
                     class="flex flex-col max-lg:w-full sm:flex-row sm:justify-center sm:gap-6 lg:ml-20 lg:w-auto lg:flex-col"
                 >
                     <div
-                        class="mb-16 mt-14 flex justify-center xs:mt-5 sm:hidden"
+                        class="mb-16 mt-14 flex justify-center gap-5 xs:mt-5 sm:hidden"
                     >
                         <NuxtLink
                             to="/journey/new"
                             class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400"
                         >
                             <T key-name="startpage.button.create.journey" />
+                        </NuxtLink>
+                        <NuxtLink
+                            to="/about"
+                            class="rounded-lg border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                        >
+                            <T key-name="startpage.about" />
                         </NuxtLink>
                     </div>
                     <div
