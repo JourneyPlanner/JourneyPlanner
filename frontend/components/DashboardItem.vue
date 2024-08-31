@@ -435,6 +435,7 @@ const onSave = handleSubmit(async (values) => {
 
         <Dialog
             v-model:visible="isEditMenuVisible"
+            close-on-escape
             modal
             :header="t('dashboard.edit.header')"
             :style="{ width: '30rem' }"
@@ -482,7 +483,8 @@ const onSave = handleSubmit(async (values) => {
                             translation-key="form.input.journey.destination"
                             class="my-0 mb-1 w-2/3"
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 1rem; line-height: 1.5rem;}"
-                            :placeholder="props.destination"
+                            :value="props.destination"
+                            only
                         />
                     </div>
                     <div class="flex flex-row items-center justify-between">
