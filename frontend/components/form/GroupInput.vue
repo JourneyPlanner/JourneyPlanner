@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ErrorMessage, Field } from "vee-validate";
 
-defineProps({
+const props = defineProps({
     id: { type: String, required: true },
     name: { type: String, required: true },
     translationKey: { type: String, default: "" },
@@ -11,6 +11,17 @@ defineProps({
     placeholder: { type: String, default: "" },
     disabled: { type: Boolean, default: false },
     value: { type: String, default: "" },
+});
+
+console.log(props);
+
+const isValidUrl = computed(() => {
+    try {
+        new URL(props.value);
+        return true;
+    } catch (_) {
+        return false;
+    }
 });
 </script>
 
@@ -25,7 +36,20 @@ defineProps({
             >
                 <i class="pi text-border" :class="icon" />
             </InputGroupAddon>
+
+            <NuxtLink
+                v-if="name === 'link' && isValidUrl && disabled"
+                :to="value"
+                target="_blank"
+                class="w-full rounded-r-md border-b-2 border-r-2 border-t-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text hover:underline focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
+                :class="{
+                    'bg-input-disabled dark:bg-input-disabled-dark': disabled,
+                }"
+                >{{ value }}</NuxtLink
+            >
+
             <Field
+                v-else
                 :id="id"
                 type="text"
                 :as="inputType"
