@@ -274,7 +274,7 @@ const changeColorMode = () => {
                             showDelay: 1000,
                             hideDelay: 300,
                         }"
-                        class="-ml-10 cursor-help text-center text-xl font-bold xs:-ml-5 xs:text-2xl lg:text-3xl"
+                        class="-ml-10 flex cursor-help items-center justify-center text-center text-xl font-bold xs:-ml-5 xs:text-2xl lg:text-3xl"
                     >
                         <span
                             class="pi pi-circle-fill mr-2.5 w-2.5 animate-blink text-error-dark lg:mr-4"
