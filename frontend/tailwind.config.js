@@ -184,7 +184,7 @@ export default {
         function ({ addUtilities }) {
             addUtilities({
                 ".hover-scale": {
-                    cursor: "pointer",
+                    cursor: "default",
                     transition: "all 0.5s",
                     "&:hover": {
                         transform: "scale(1.125)",
