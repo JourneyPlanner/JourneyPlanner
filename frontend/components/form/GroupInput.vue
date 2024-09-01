@@ -13,8 +13,6 @@ const props = defineProps({
     value: { type: String, default: "" },
 });
 
-console.log(props);
-
 const isValidUrl = computed(() => {
     try {
         new URL(props.value);
