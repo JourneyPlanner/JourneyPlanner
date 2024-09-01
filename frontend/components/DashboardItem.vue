@@ -207,11 +207,15 @@ const { handleSubmit } = useForm({
     validationSchema: yup.object({
         name: yup
             .string()
+            .min(1, t.value("form.error.journey.name"))
             .required(t.value("form.error.journey.name"))
+            .matches(/^(?!\s+$).*/, t.value("form.error.journey.name"))
             .label(t.value("form.input.journey.name")),
         destination: yup
             .string()
+            .min(1, t.value("form.error.journey.destination"))
             .required(t.value("form.error.journey.destination"))
+            .matches(/^(?!\s+$).*/, t.value("form.error.journey.destination"))
             .label(t.value("form.input.journey.destination")),
         range: yup
             .array()
@@ -268,6 +272,7 @@ const onSave = handleSubmit(async (values) => {
                 emit("journeyEdited", journey, props.id);
                 isEditMenuVisible.value = false;
             }
+            loadingEdit.value = false;
         },
         async onResponseError() {
             toast.add({
@@ -276,10 +281,9 @@ const onSave = handleSubmit(async (values) => {
                 detail: t.value("common.error.unknown"),
                 life: 6000,
             });
+            loadingEdit.value = false;
         },
     });
-
-    loadingEdit.value = false;
 });
 </script>
 
@@ -481,7 +485,7 @@ const onSave = handleSubmit(async (values) => {
                             id="journey-destination"
                             name="destination"
                             translation-key="form.input.journey.destination"
-                            class="my-0 mb-1 w-2/3"
+                            class="my-0 mb-1 mt-5 w-2/3"
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 1rem; line-height: 1.5rem;}"
                             :value="props.destination"
                             only
