@@ -29,6 +29,7 @@ const toggle = (event: Event) => {
 };
 const editEnabled = ref(false);
 const isActivityDialogVisible = ref(false);
+const uploadResult = ref();
 const upload = ref();
 const calendar = ref();
 
@@ -250,6 +251,10 @@ async function changeRole(userid: string, selectedRole: number) {
         },
     });
 }
+
+const handleUpload = (result: string) => {
+    uploadResult.value = result;
+};
 </script>
 
 <template>
@@ -257,6 +262,7 @@ async function changeRole(userid: string, selectedRole: number) {
         <Sidebar
             v-model:visible="visibleSidebar"
             position="right"
+            :block-scroll="true"
             :pt="{
                 closeButton: { class: 'w-9 h-9 dark:fill-white' },
                 closeIcon: {
@@ -850,7 +856,14 @@ async function changeRole(userid: string, selectedRole: number) {
             <div
                 class="relative mt-4 flex w-[90%] items-center sm:mt-7 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
             >
-                <FormUpload />
+                <FormUpload @uploaded="handleUpload" />
+            </div>
+        </div>
+        <div class="flex items-center justify-center md:justify-start">
+            <div
+                class="relative mt-4 flex w-[90%] items-center sm:mt-7 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            >
+                <MediaGallery :upload-data="uploadResult" />
             </div>
         </div>
         <ConfirmDialog
