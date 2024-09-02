@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
+import { useRouter } from "vue-router";
 
 const { t } = useTranslate();
 const title = t.value("common.imprint");
+const router = useRouter();
 
 useHead({
     title: `${title} | JourneyPlanner`,
@@ -14,7 +16,7 @@ useHead({
         <div class="flex justify-end">
             <button
                 class="mr-2 mt-5 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-base font-semibold hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-cta-bg-dark md:mr-10 md:px-6"
-                @click="$router.back()"
+                @click="router.back()"
             >
                 <T key-name="common.back" />
             </button>
@@ -79,7 +81,9 @@ useHead({
                     <T key-name="imprint.disclaimer.value" />
                 </p>
                 <p class="mt-1">
-                    <b> <T key-name="imprint.purpose.title" /> </b>:
+                    <b>
+                        <T key-name="imprint.purpose.title" /> </b
+                    >:
                     <T key-name="imprint.purpose.value" />
                 </p>
                 <p class="mt-3">
