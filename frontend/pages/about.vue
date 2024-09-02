@@ -225,7 +225,7 @@ const changeColorMode = () => {
                         </p>
                     </div>
                     <NuxtLink
-                        to="/journey/new"
+                        to="/register"
                         class="mt-20 rounded-lg border-2 border-dandelion-300 bg-dandelion-100 px-3 py-2 text-sm font-bold text-text hover-scale hover:cursor-pointer hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50 xs:mt-20 sm:mt-16 md:text-base lg:mt-20 lg:text-lg"
                     >
                         <T key-name="startpage.button.create.journey" />

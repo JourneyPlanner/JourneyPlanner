@@ -99,17 +99,18 @@ const changeColorMode = () => {
                         <li class="border-l-2 border-natural-300 pl-2">
                             <NuxtLink
                                 to="/login"
-                                class="text-sm text-text dark:text-natural-50 md:text-lg"
+                                class="rounded-lg border-2 border-dandelion-300 p-1 px-2 text-sm text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:hidden"
                             >
-                                <span class="flex w-5 sm:hidden">
-                                    <i class="pi pi-sign-in" />
-                                </span>
-                                <span class="hidden hover:underline sm:block">
-                                    <T key-name="form.button.login" />
-                                </span>
+                                <T key-name="form.button.login" />
+                            </NuxtLink>
+                            <NuxtLink
+                                to="/login"
+                                class="hidden text-sm text-text hover:underline dark:text-natural-50 sm:flex md:text-lg"
+                            >
+                                <T key-name="form.button.login" />
                             </NuxtLink>
                         </li>
-                        <li>
+                        <li class="hidden sm:flex">
                             <NuxtLink
                                 to="/register"
                                 class="rounded-lg border-2 border-dandelion-300 p-1 px-2 text-sm text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 md:text-lg"
@@ -138,7 +139,7 @@ const changeColorMode = () => {
                 </p>
                 <div class="mt-2 hidden md:mt-5 lg:flex">
                     <NuxtLink
-                        to="/journey/new"
+                        to="/register"
                         class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-64 lg:text-base lg:font-semibold"
                     >
                         <T key-name="startpage.button.create.journey" />
@@ -162,7 +163,7 @@ const changeColorMode = () => {
                         class="mb-16 mt-14 flex justify-center gap-5 xs:mt-5 sm:hidden"
                     >
                         <NuxtLink
-                            to="/journey/new"
+                            to="/register"
                             class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400"
                         >
                             <T key-name="startpage.button.create.journey" />
@@ -223,7 +224,7 @@ const changeColorMode = () => {
                     </div>
                     <div class="mt-5 justify-center max-lg:hidden lg:flex">
                         <NuxtLink
-                            to="/journey/new"
+                            to="/register"
                             class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:text-base lg:font-semibold"
                         >
                             <T key-name="startpage.button.create.journey" />
@@ -233,7 +234,7 @@ const changeColorMode = () => {
             </div>
             <div class="mt-10 justify-center max-sm:hidden sm:flex lg:hidden">
                 <NuxtLink
-                    to="/journey/new"
+                    to="/register"
                     class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-[20vw] lg:text-base lg:font-semibold"
                 >
                     <T key-name="startpage.button.create.journey" />
