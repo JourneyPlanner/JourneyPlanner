@@ -81,9 +81,7 @@ useHead({
                     <T key-name="imprint.disclaimer.value" />
                 </p>
                 <p class="mt-1">
-                    <b>
-                        <T key-name="imprint.purpose.title" /> </b
-                    >:
+                    <b> <T key-name="imprint.purpose.title" /> </b>:
                     <T key-name="imprint.purpose.value" />
                 </p>
                 <p class="mt-3">
