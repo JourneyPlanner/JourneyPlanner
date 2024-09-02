@@ -119,19 +119,15 @@ QRCode.toDataURL(journeyData.value.invite, opts, function (error, url) {
 const fromDate = new Date(journeyData.value.from.split("T")[0]);
 const toDate = new Date(journeyData.value.to.split("T")[0]);
 const currentDate = new Date();
-const days = ref(Math.ceil(differenceInDays(fromDate, currentDate) / 24));
+const days = ref(Math.ceil(differenceInHours(fromDate, currentDate) / 24));
 const daystoEnd = ref(Math.ceil(differenceInHours(toDate, currentDate) / 24));
+console.log(daystoEnd.value);
+console.log(days.value);
 
 if (days.value > 0) {
-    if (Math.floor(days.value % 10) == 9) {
-        day.value = Math.floor(days.value % 10);
-        days.value = days.value / 10;
-        tensDays.value = Math.floor(days.value % 10) + 1;
-    } else {
-        day.value = Math.floor(days.value % 10) + 1;
-        days.value = days.value / 10;
-        tensDays.value = Math.floor(days.value % 10);
-    }
+    day.value = Math.floor(days.value % 10);
+    days.value = days.value / 10;
+    tensDays.value = Math.floor(days.value % 10);
     days.value = days.value / 10;
     hundredsDays.value = Math.floor(days.value % 10);
 } else if (days.value <= 0 && daystoEnd.value > 0) {
