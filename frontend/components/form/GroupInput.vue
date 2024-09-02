@@ -39,7 +39,7 @@ const isValidUrl = computed(() => {
                 v-if="name === 'link' && isValidUrl && disabled"
                 :to="value"
                 target="_blank"
-                class="w-full rounded-r-md border-b-2 border-r-2 border-t-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text hover:underline focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
+                class="w-full overflow-hidden overflow-ellipsis whitespace-nowrap rounded-r-md border-b-2 border-r-2 border-t-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text hover:underline focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
                 :class="{
                     'bg-input-disabled dark:bg-input-disabled-dark': disabled,
                 }"
