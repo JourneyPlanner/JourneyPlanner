@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\JourneyUserController;
 use App\Http\Controllers\CalendarActivityController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
@@ -67,5 +68,9 @@ Route::post("invite/{id}", [JourneyUserController::class, "store"])->middleware(
 Route::post("upload", [UploadController::class, "upload"])->middleware([
     "auth:sanctum",
 ]);
+
+Route::apiResource("journey/{journey}/media", MediaController::class)
+    ->middleware("auth:sanctum")
+    ->only("index", "show");
 
 Route::get("project", [ProjectController::class, "getProjectData"]);
