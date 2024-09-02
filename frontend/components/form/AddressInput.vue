@@ -44,7 +44,23 @@ onMounted(async () => {
         search.value.input.disabled = true;
         search.value.input.style.cursor = "not-allowed";
         search.value.input.style.backgroundColor = disabledBg;
+    } else {
+        search.value.input.disabled = false;
+        search.value.input.style.cursor = "text";
+        search.value.input.style.backgroundColor = input;
     }
+
+    watch(props, () => {
+        if (props.disabled) {
+            search.value.input.disabled = true;
+            search.value.input.style.cursor = "not-allowed";
+            search.value.input.style.backgroundColor = disabledBg;
+        } else {
+            search.value.input.disabled = false;
+            search.value.input.style.cursor = "text";
+            search.value.input.style.backgroundColor = input;
+        }
+    });
 });
 
 onUnmounted(() => {
