@@ -129,20 +129,20 @@ const style = computed(() =>
                 :header="t('journey.map.notfound.title')"
                 :draggable="false"
                 :style="{ width: '35rem' }"
-                class="bg-input dark:bg-input-dark"
+                class="bg-natural-50 dark:bg-natural-900"
                 :pt="{
                     root: {
-                        class: 'font-nunito text-text bg-input dark:bg-input-dark',
+                        class: 'font-nunito text-text bg-natural-50 dark:bg-natural-900',
                     },
                     header: {
-                        class: 'pb-2 h-15 bg-input dark:bg-input-dark text-text dark:text-input',
+                        class: 'pb-2 h-15 bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
                     },
                     title: { class: 'text-xl mt-0.5' },
                     content: {
-                        class: 'bg-input dark:bg-input-dark text-text dark:text-input',
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
                     },
                     closeButtonIcon: {
-                        class: 'text-natural-600 hover:text-text dark:text-natural-600 dark:hover:text-input h-5 w-5',
+                        class: 'text-natural-600 hover:text-text dark:text-natural-600 dark:hover:text-natural-50 h-5 w-5',
                     },
                 }"
             >
@@ -155,8 +155,8 @@ const style = computed(() =>
                 <ScrollPanel
                     class="relative h-[15rem]"
                     :pt="{
-                        barY: 'w-1.5 bg-natural-300 hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
-                        barX: 'h-1.5 bg-natural-300 hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
+                        barY: 'w-1.5 bg-natural-300 hover:bg-calypso-300 dark:bg-[#888] dark:hover:bg-[#555]',
+                        barX: 'h-1.5 bg-natural-300 hover:bg-calypso-300 dark:bg-[#888] dark:hover:bg-[#555]',
                     }"
                 >
                     <div

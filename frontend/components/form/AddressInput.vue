@@ -54,7 +54,6 @@ const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
 let input = "";
 let text = "";
 let placeholderColor = "";
-const bg = "";
 let hoverCancel = "";
 const border = "#88C4D8";
 
@@ -65,7 +64,7 @@ if (
     input = "#464646";
     text = "#FCFCFC";
     placeholderColor = "#989898";
-    hoverCancel = fullConfig.theme.accentColor["cancel-bg-dark"] as string;
+    hoverCancel = fullConfig.theme.accentColor["mahagony-400"] as string;
 } else {
     input = "#FCFCFC";
     text = fullConfig.theme.accentColor["text"] as string;
@@ -73,7 +72,7 @@ if (
     hoverCancel = "#E58484";
 }
 
-const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Input::placeholder {font-family: Nunito; font-size: 0.75rem; line-height: 1rem; color: ${placeholderColor}} .Results {background-color: ${input}; color: ${text};} .SearchBox {background-color: ${bg}; border-radius: 0.5rem;} .Suggestion:hover {background-color: ${bg}; border-radius: 0.5rem;}  .ClearBtn:hover {color: ${hoverCancel}}`;
+const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Input::placeholder {font-family: Nunito; font-size: 0.75rem; line-height: 1rem; color: ${placeholderColor}} .Results {background-color: ${input}; color: ${text};}  border-radius: 0.5rem;} .ClearBtn:hover {color: ${hoverCancel}}`;
 
 function changeInput(event: InputEvent) {
     inputValue.value = (event.target as HTMLInputElement).value;

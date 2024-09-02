@@ -100,8 +100,8 @@ if (
     colorMode.preference === "dark" ||
     (darkThemeMq.matches && colorMode.preference === "system")
 ) {
-    darkColor = fullConfig.theme.accentColor["white"] as string;
-    lightColor = fullConfig.theme.accentColor["card-dark"] as string;
+    darkColor = fullConfig.theme.accentColor["background"] as string;
+    lightColor = fullConfig.theme.accentColor["text"] as string;
 }
 
 const opts = {
@@ -368,7 +368,7 @@ async function changeRole(userid: string, selectedRole: number) {
                             </div>
                             <div class="flex h-5/6">
                                 <div
-                                    class="dark:bg-calypso-300-dark -mr-1 h-fit w-full rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
+                                    class="-mr-1 h-fit w-full rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
                                 >
                                     <div
                                         class="mb-2 mt-1 grid w-full grid-cols-4"
@@ -447,7 +447,7 @@ async function changeRole(userid: string, selectedRole: number) {
                             </div>
                             <div class="flex h-5/6">
                                 <div
-                                    class="dark:bg-calypso-300-dark flex h-full w-full justify-center rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
+                                    class="dark flex h-full w-full justify-center rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
                                 >
                                     <div
                                         class="relative flex h-full w-full flex-col items-end"

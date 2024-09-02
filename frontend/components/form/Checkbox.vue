@@ -50,7 +50,7 @@ const { value, errorMessage } = useField(() => props.name);
 
         <label
             :for="id"
-            class="text-gray-900 dark:text-gray-300 ms-2 select-none font-nunito text-sm font-light dark:text-natural-50"
+            class="ms-2 select-none font-nunito text-sm font-light text-gothic-950 dark:text-natural-300"
         >
             <T key-name="form.input.text.privacypolicy" />
             <NuxtLink
@@ -64,7 +64,7 @@ const { value, errorMessage } = useField(() => props.name);
     </div>
     <div class="mb-2 h-3 text-left">
         <p
-            class="dark:text-mahaogony-300 ml-9 text-left text-xs text-mahagony-600 dark:font-bold"
+            class="ml-9 text-left text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
         >
             {{ errorMessage }}
         </p>
