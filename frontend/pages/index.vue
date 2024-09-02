@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
 
+import scroll from "../utils/scroll";
+
 const { t } = useTranslate();
 
 const title = t.value("startpage.subheading");
