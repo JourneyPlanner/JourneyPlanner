@@ -218,23 +218,6 @@ async function onSuccess(values: ActivityForm) {
                 const timeDate = new Date(values.time);
                 time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
             }
-            if (props.calendarClicked) {
-                date = format(values.date, "yyyy-MM-dd");
-                const timeDate = new Date(values.time);
-                time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
-                start = `${date}T${time}`;
-                const timeZone = new Date().getTimezoneOffset() / -60;
-                end = add(new Date(start), {
-                    hours: parseInt(duration.split(":")[0]) + timeZone,
-                    minutes: parseInt(duration.split(":")[1]),
-                })
-                    .toISOString()
-                    .substring(0, 16);
-            } else {
-                date = format(values.date, "yyyy-MM-dd");
-                const timeDate = new Date(values.time);
-                time = `${String(timeDate.getHours()).padStart(2, "0")}:${String(timeDate.getMinutes()).padStart(2, "0")}`;
-            }
         }
     }
 

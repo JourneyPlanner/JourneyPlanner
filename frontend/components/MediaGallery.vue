@@ -239,7 +239,7 @@ const setImage = (media) => {
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="ml-auto flex items-center rounded-xl border-2 border-cta-border bg-natural-50 px-2 py-1 text-sm font-bold hover:bg-cta-bg dark:bg-background-dark dark:text-input dark:hover:bg-cta-bg-dark sm:text-base lg:mb-1"
+                    class="border-cta-border hover:bg-cta-bg dark:text-input dark:hover:bg-cta-bg-dark ml-auto flex items-center rounded-xl border-2 bg-natural-50 px-2 py-1 text-sm font-bold dark:bg-background-dark sm:text-base lg:mb-1"
                     @click="downloadMedia"
                 />
             </div>
@@ -317,7 +317,7 @@ const setImage = (media) => {
             }"
         >
             <p
-                class="mb-2 border-b-2 border-natural-300 pb-0.5 dark:border-input-placeholder"
+                class="dark:border-input-placeholder mb-2 border-b-2 border-natural-300 pb-0.5"
             >
                 <T key-name="journey.media.docs.info" />
             </p>
@@ -334,7 +334,7 @@ const setImage = (media) => {
                         class="w-full table-fixed text-left text-sm md:text-base"
                     >
                         <thead
-                            class="border-b border-text text-xs uppercase dark:border-input"
+                            class="dark:border-input border-b border-text text-xs uppercase"
                         >
                             <tr>
                                 <th scope="col" class="w-2/3">

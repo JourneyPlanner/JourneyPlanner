@@ -4,10 +4,6 @@
             color="repeating-linear-gradient(to right,#B9DCE8 0%,#2B5973 100%)"
             :height="3"
         />
-        <NuxtLoadingIndicator
-            color="repeating-linear-gradient(to right,#B9DCE8 0%,#2B5973 100%)"
-            :height="3"
-        />
         <NuxtLayout>
             <div>
                 <Toast class="w-3/4 sm:w-auto" />
@@ -30,7 +26,6 @@
 <style>
 /* default background in light and dark: mode  */
 body {
-    @apply min-h-screen bg-background font-nunito dark:bg-background-dark;
     @apply min-h-screen bg-background font-nunito dark:bg-background-dark;
 }
 
