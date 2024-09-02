@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Journey;
 use App\Models\Media;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class UploadController extends Controller
 {
@@ -125,9 +126,8 @@ class UploadController extends Controller
         $filename = $request->all()["Event"]["Upload"]["MetaData"]["filename"];
         $journeyId = $request->all()["Event"]["Upload"]["MetaData"]["journey"];
 
-        $subfolder = "app/journey_media/" . $journeyId;
         // Create journey folder if it doesn't exist.
-        $journeyFolder = storage_path($subfolder);
+        $journeyFolder = Media::getJourneyFolder($journeyId);
         if (!file_exists($journeyFolder)) {
             mkdir($journeyFolder, 0750, true);
         }
@@ -136,6 +136,25 @@ class UploadController extends Controller
         $filename = hrtime(true) . "_" . $filename;
         try {
             rename($path, $journeyFolder . "/" . $filename);
+
+            // Create media record in database.
+            $media = new Media();
+            $media->name = $filename;
+            $media->journey_id = $journeyId;
+            $media->user_id = $request->user()->id;
+            $media->save();
+
+            // Add thumbnail if it's a video.
+            $filetype = mime_content_type($media->getMediaPath());
+            if (strpos($filetype, "video") !== false) {
+                $ffmpeg = FFMpeg::fromDisk("")->open($media->getMediaSubpath());
+                $duration = $ffmpeg->getDurationInMiliseconds();
+                $ffmpeg
+                    ->getFrameFromSeconds($duration / 2000)
+                    ->export()
+                    ->toDisk("")
+                    ->save($media->getThumbnailSubpath());
+            }
         } catch (\Exception $ignored) {
         }
 
@@ -144,13 +163,6 @@ class UploadController extends Controller
             unlink($path . ".info");
         } catch (\Exception $ignored) {
         }
-
-        // Create media record in database.
-        $media = new Media();
-        $media->path = $subfolder . "/" . $filename;
-        $media->journey_id = $journeyId;
-        $media->user_id = $request->user()->id;
-        $media->save();
 
         // Allow the upload (doesn't actually do anything, just for good measure)
         return response()->json([

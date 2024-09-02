@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTolgee } from "@tolgee/vue";
 import Uppy from "@uppy/core";
-import type { Locale } from "@uppy/core";
+import type { Locale, UploadResult } from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
 import German from "@uppy/locales/lib/de_DE";
@@ -12,8 +12,12 @@ import { Dashboard } from "@uppy/vue";
 const tolgee = useTolgee(["language"]);
 const journey = useJourneyStore();
 const config = useRuntimeConfig();
-
+const emit = defineEmits(["uploaded"]);
 const client = useSanctumClient();
+
+interface ExtendedUploadResult extends UploadResult {
+    uploadID: string;
+}
 
 let upload_token = localStorage.getItem("upload_token");
 
@@ -36,13 +40,17 @@ const uppy = new Uppy({
         maxFileSize: 1024 * 1024 * 1024,
         allowedFileTypes: ["image/*", "video/*", ".pdf", ".txt"],
     },
-}).use(Tus, {
-    endpoint: config.public.NUXT_UPLOAD_URL as string,
-    headers: {
-        Authorization: "Bearer " + upload_token,
-    },
-    removeFingerprintOnSuccess: true,
-});
+})
+    .use(Tus, {
+        endpoint: config.public.NUXT_UPLOAD_URL as string,
+        headers: {
+            Authorization: "Bearer " + upload_token,
+        },
+        removeFingerprintOnSuccess: true,
+    })
+    .on("complete", (response) => {
+        emit("uploaded", (response as ExtendedUploadResult).uploadID);
+    });
 </script>
 
 <template>
@@ -160,5 +168,10 @@ const uppy = new Uppy({
 
 .uppy-DashboardContent-back {
     @apply text-text hover:text-mahagony-600 hover:underline dark:text-natural-50 dark:hover:text-mahagony-300 !important;
+}
+
+.uppy-StatusBar-actions,
+.uppy-StatusBar {
+    @apply z-50 !important;
 }
 </style>

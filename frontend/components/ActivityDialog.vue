@@ -26,7 +26,7 @@ const props = defineProps({
     name: { type: String, default: "" },
     openingHours: { type: String, default: "" },
     phone: { type: String, default: "" },
-    updated_at: { type: String, default: "" },
+    updatedAt: { type: String, default: "" },
     update: { type: Boolean, default: false },
     calendarActivity: { type: Object, default: null },
     calendarClicked: { type: Boolean, default: false },
