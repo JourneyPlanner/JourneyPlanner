@@ -178,20 +178,21 @@ const changeColorMode = () => {
                         <li class="border-l-2 border-natural-300 pl-2">
                             <NuxtLink
                                 to="/login"
-                                class="text-sm text-text dark:text-natural-50 md:text-lg"
+                                class="rounded-lg border-2 border-dandelion-300 p-1 px-2 text-sm text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:hidden"
                             >
-                                <span class="flex w-5 sm:hidden">
-                                    <i class="pi pi-sign-in text-lg" />
-                                </span>
-                                <span class="hidden hover:underline sm:block">
-                                    <T key-name="form.button.login" />
-                                </span>
+                                <T key-name="form.button.login" />
+                            </NuxtLink>
+                            <NuxtLink
+                                to="/login"
+                                class="hidden text-sm text-text hover:underline dark:text-natural-50 sm:flex md:text-lg"
+                            >
+                                <T key-name="form.button.login" />
                             </NuxtLink>
                         </li>
-                        <li>
+                        <li class="hidden sm:flex">
                             <NuxtLink
                                 to="/register"
-                                class="rounded-lg border-2 border-dandelion-300 px-2 py-1 text-sm text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:py-0.5 sm:text-sm md:text-base"
+                                class="rounded-lg border-2 border-dandelion-300 p-1 px-2 text-sm text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 md:text-lg"
                             >
                                 <T key-name="form.button.register" />
                             </NuxtLink>
