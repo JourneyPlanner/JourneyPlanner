@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
-import { differenceInDays, format } from "date-fns";
+import { differenceInDays, differenceInHours, format } from "date-fns";
 import JSConfetti from "js-confetti";
 import QRCode from "qrcode";
 import resolveConfig from "tailwindcss/resolveConfig";
@@ -116,24 +116,37 @@ QRCode.toDataURL(journeyData.value.invite, opts, function (error, url) {
     qrcode.value = url;
 });
 
-const fromDate = new Date(journeyData.value.from);
-const toDate = new Date(journeyData.value.to);
+const fromDate = new Date(journeyData.value.from.split("T")[0]);
+const toDate = new Date(journeyData.value.to.split("T")[0]);
 const currentDate = new Date();
-const days = ref(differenceInDays(fromDate, currentDate));
-const daystoEnd = ref(differenceInDays(toDate, currentDate));
+const days = ref(Math.ceil(differenceInDays(fromDate, currentDate) / 24));
+const daystoEnd = ref(Math.ceil(differenceInHours(toDate, currentDate) / 24));
 
 if (days.value > 0) {
-    day.value = Math.floor(days.value % 10);
-    days.value = days.value / 10;
-    tensDays.value = Math.floor(days.value % 10);
+    if (Math.floor(days.value % 10) == 9) {
+        day.value = Math.floor(days.value % 10);
+        days.value = days.value / 10;
+        tensDays.value = Math.floor(days.value % 10) + 1;
+    } else {
+        day.value = Math.floor(days.value % 10) + 1;
+        days.value = days.value / 10;
+        tensDays.value = Math.floor(days.value % 10);
+    }
     days.value = days.value / 10;
     hundredsDays.value = Math.floor(days.value % 10);
 } else if (days.value <= 0 && daystoEnd.value > 0) {
     duringJourney.value = true;
     const journeyEnds = ref(differenceInDays(toDate, currentDate));
-    day.value = Math.floor(journeyEnds.value % 10);
-    journeyEnds.value = journeyEnds.value / 10;
-    tensDays.value = Math.floor(journeyEnds.value % 10);
+    if (Math.floor(journeyEnds.value % 10) == 9) {
+        day.value = Math.floor(journeyEnds.value % 10);
+        journeyEnds.value = journeyEnds.value / 10;
+        tensDays.value = Math.floor(journeyEnds.value % 10) + 1;
+    } else {
+        day.value = Math.floor(journeyEnds.value % 10) + 1;
+        journeyEnds.value = journeyEnds.value / 10;
+        tensDays.value = Math.floor(journeyEnds.value % 10);
+    }
+
     journeyEnds.value = journeyEnds.value / 10;
     hundredsDays.value = Math.floor(journeyEnds.value % 10);
 } else {
