@@ -119,7 +119,7 @@ const changeColorMode = () => {
             >
                 <NuxtLink to="/">
                     <h3
-                        class="text-sm font-bold text-calypso-400 dark:text-gothic-400 sm:text-base md:text-lg"
+                        class="text-lg font-bold text-calypso-400 dark:text-gothic-400 sm:text-base md:text-lg"
                     >
                         JourneyPlanner
                     </h3>
@@ -178,7 +178,7 @@ const changeColorMode = () => {
                         <li class="border-l-2 border-natural-300 pl-2">
                             <NuxtLink
                                 to="/login"
-                                class="rounded-lg border-2 border-dandelion-300 p-1 px-2 text-sm text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:hidden"
+                                class="rounded-lg border-2 border-dandelion-300 p-1 px-2 text-base text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:hidden"
                             >
                                 <T key-name="form.button.login" />
                             </NuxtLink>
@@ -206,7 +206,7 @@ const changeColorMode = () => {
                     class="flex flex-col items-center justify-center text-center"
                 >
                     <h1
-                        class="mt-16 text-4xl font-extrabold text-calypso-400 hover:cursor-default dark:text-gothic-400 xs:mt-24 xs:text-5xl sm:hover-scale lg:mt-2 lg:text-7xl"
+                        class="mt-16 text-4xl font-extrabold text-calypso-400 hover:cursor-default dark:text-gothic-400 xs:mt-20 xs:text-5xl sm:hover-scale lg:-mt-2 lg:text-7xl"
                     >
                         JourneyPlanner
                     </h1>
@@ -227,7 +227,7 @@ const changeColorMode = () => {
                     </div>
                     <NuxtLink
                         to="/register"
-                        class="mt-20 rounded-lg border-2 border-dandelion-300 bg-dandelion-100 px-3 py-2 text-sm font-bold text-text hover-scale hover:cursor-pointer hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50 xs:mt-20 sm:mt-16 md:text-base lg:mt-20 lg:text-lg"
+                        class="mt-20 rounded-lg border-2 border-dandelion-300 bg-dandelion-100 px-3 py-2 text-lg font-bold text-text hover-scale hover:cursor-pointer hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50 xs:mt-20 sm:mt-16 md:text-base lg:mt-20 lg:text-lg"
                     >
                         <T key-name="startpage.button.create.journey" />
                     </NuxtLink>
@@ -241,7 +241,7 @@ const changeColorMode = () => {
                 <div
                     id="idea"
                     ref="idea"
-                    class="mt-16 space-y-3 pt-10 text-center xs:mt-20 sm:pt-20 md:ml-10 md:text-left lg:mt-7 lg:pt-14"
+                    class="mt-16 space-y-3 pt-10 text-center xs:mt-[5.5rem] sm:pt-20 md:ml-10 md:text-left lg:mt-7 lg:pt-14"
                 >
                     <h4
                         class="font-nunito text-xl font-bold text-text dark:text-natural-50 xs:text-2xl lg:text-3xl"
