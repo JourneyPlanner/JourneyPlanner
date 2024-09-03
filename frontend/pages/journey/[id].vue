@@ -453,7 +453,7 @@ const handleUpload = (result: string) => {
                             </div>
                             <div class="flex h-5/6">
                                 <div
-                                    class="dark flex h-full w-full justify-center rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
+                                    class="flex h-full w-full justify-center rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
                                 >
                                     <div
                                         class="relative flex h-full w-full flex-col items-end"
@@ -771,7 +771,7 @@ const handleUpload = (result: string) => {
                                 <T key-name="journey.countdown.until" />
                             </p>
                             <button
-                                v-if="duringJourney"
+                                v-if="duringJourney || currUser.role !== 1"
                                 class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
                                 @click="scroll(calendar)"
                             >
@@ -836,6 +836,7 @@ const handleUpload = (result: string) => {
             </div>
         </div>
         <ActivityDialog
+            v-if="currUser.role === 1"
             :id="journeyId.toString()"
             :visible="isActivityDialogVisible"
             :only-show="false"

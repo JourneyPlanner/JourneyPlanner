@@ -592,7 +592,7 @@ function setSelectedDate(date: Date) {
                     </div>
                 </TabPanel>
                 <TabPanel
-                    v-if="!onlyShowRef || create"
+                    v-if="!onlyShowRef || create || updateRef"
                     :header="t('activity.manual.header')"
                     :pt="{
                         headerAction: () => ({

@@ -239,7 +239,7 @@ const setImage = (media) => {
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="border-cta-border hover:bg-cta-bg dark:text-input dark:hover:bg-cta-bg-dark ml-auto flex items-center rounded-xl border-2 bg-natural-50 px-2 py-1 text-sm font-bold dark:bg-background-dark sm:text-base lg:mb-1"
+                    class="ml-auto flex items-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-sm font-bold hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600 sm:text-base lg:mb-1"
                     @click="downloadMedia"
                 />
             </div>

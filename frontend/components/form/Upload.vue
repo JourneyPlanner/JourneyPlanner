@@ -88,7 +88,7 @@ const uppy = new Uppy({
 
 <style>
 .uppy-Root {
-    @apply font-nunito !important;
+    @apply z-10 font-nunito !important;
 }
 
 .uppy-Dashboard .uppy-Dashboard-inner {
