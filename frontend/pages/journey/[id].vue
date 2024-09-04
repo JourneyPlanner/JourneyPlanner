@@ -121,8 +121,6 @@ const toDate = new Date(journeyData.value.to.split("T")[0]);
 const currentDate = new Date();
 const days = ref(Math.ceil(differenceInHours(fromDate, currentDate) / 24));
 const daystoEnd = ref(Math.ceil(differenceInHours(toDate, currentDate) / 24));
-console.log(daystoEnd.value);
-console.log(days.value);
 
 if (days.value > 0) {
     day.value = Math.floor(days.value % 10);
