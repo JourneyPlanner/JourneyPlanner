@@ -27,14 +27,14 @@ const { value, errorMessage } = useField(() => props.name);
                     v-model="value"
                     type="checkbox"
                     :name="name"
-                    class="peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-border bg-input transition-all checked:border-border checked:bg-border dark:bg-input-dark checked:dark:bg-border"
+                    class="peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-calypso-400 bg-natural-50 transition-all checked:border-calypso-400 checked:bg-calypso-400 dark:bg-natural-800 checked:dark:bg-calypso-500"
                 />
                 <div
-                    class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                    class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-natural-50 opacity-0 transition-opacity peer-checked:opacity-100"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="h-3.5 w-3.5 fill-background"
+                        class="h-3.5 w-3.5 fill-natural-50"
                         viewBox="0 0 20 20"
                         stroke-width="1"
                     >
@@ -50,12 +50,12 @@ const { value, errorMessage } = useField(() => props.name);
 
         <label
             :for="id"
-            class="text-gray-900 dark:text-gray-300 ms-2 select-none font-nunito text-sm font-light dark:text-white"
+            class="ms-2 select-none font-nunito text-sm font-light text-gothic-950 dark:text-natural-300"
         >
             <T key-name="form.input.text.privacypolicy" />
             <NuxtLink
                 to="/privacy"
-                class="text-input-label underline dark:text-border"
+                class="text-text underline hover:text-calypso-500 dark:text-natural-50 dark:hover:text-calypso-300"
             >
                 <T key-name="common.privacypolicy" />
             </NuxtLink>
@@ -64,7 +64,7 @@ const { value, errorMessage } = useField(() => props.name);
     </div>
     <div class="mb-2 h-3 text-left">
         <p
-            class="ml-9 text-left text-xs text-error dark:font-bold dark:text-error-dark"
+            class="ml-9 text-left text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
         >
             {{ errorMessage }}
         </p>

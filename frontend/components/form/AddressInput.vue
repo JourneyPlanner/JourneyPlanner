@@ -12,8 +12,6 @@ const props = defineProps({
     withLabel: { type: Boolean, default: false },
     id: { type: String, default: "" },
     translationKey: { type: String, default: "" },
-    bgLightKey: { type: String, default: "background" },
-    bgDarkKey: { type: String, default: "background-dark" },
 });
 
 const { value: mapbox } = useField<Feature>(() => "mapbox");
@@ -78,35 +76,28 @@ const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
 let input = "";
 let text = "";
 let placeholderColor = "";
-let bg = "";
 let hoverCancel = "";
 let disabledBg = "";
-const border = fullConfig.theme.accentColor["border"] as string;
+const border = "#88C4D8";
 
 if (
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
 ) {
-    input = fullConfig.theme.accentColor["input-dark"] as string;
-    text = fullConfig.theme.accentColor["input"] as string;
-    placeholderColor = fullConfig.theme.accentColor[
-        "input-placeholder"
-    ] as string;
-    bg = fullConfig.theme.accentColor[props.bgDarkKey] as string;
-    hoverCancel = fullConfig.theme.accentColor["cancel-bg-dark"] as string;
+    input = "#464646";
+    text = "#FCFCFC";
+    placeholderColor = "#989898";
+    hoverCancel = fullConfig.theme.accentColor["mahagony-400"] as string;
     disabledBg = fullConfig.theme.accentColor["natural-800"] as string;
 } else {
-    input = fullConfig.theme.accentColor["input"] as string;
+    input = "#FCFCFC";
     text = fullConfig.theme.accentColor["text"] as string;
-    placeholderColor = fullConfig.theme.accentColor[
-        "input-placeholder"
-    ] as string;
-    bg = fullConfig.theme.accentColor[props.bgLightKey] as string;
-    hoverCancel = fullConfig.theme.accentColor["cancel-bg"] as string;
+    placeholderColor = "#989898";
+    hoverCancel = "#E58484";
     disabledBg = fullConfig.theme.accentColor["natural-100"] as string;
 }
 
-const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Input::placeholder {font-family: Nunito; font-size: 0.75rem; line-height: 1rem; color: ${placeholderColor}} .Results {background-color: ${input}; color: ${text};} .SearchBox {background-color: ${bg};} .Suggestion:hover {background-color: ${bg};}  .ClearBtn:hover {color: ${hoverCancel}}`;
+const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Input::placeholder {font-family: Nunito; font-size: 0.75rem; line-height: 1rem; color: ${placeholderColor}} .Results {background-color: ${input}; color: ${text};}  border-radius: 0.5rem;} .ClearBtn:hover {color: ${hoverCancel}}`;
 
 function changeInput(event: InputEvent) {
     inputValue.value = (event.target as HTMLInputElement).value;
@@ -143,7 +134,7 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
             />
             <div v-if="errorMessage" class="h-1.5 w-full text-left">
                 <span
-                    class="ml-3 text-xs text-error dark:font-bold dark:text-error-dark"
+                    class="ml-3 text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
                     :class="{
                         invisible: !errorMessage,
                         visible: errorMessage,

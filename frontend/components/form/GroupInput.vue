@@ -30,16 +30,17 @@ const isValidUrl = computed(() => {
         </label>
         <InputGroup>
             <InputGroupAddon
-                class="border-2 border-border bg-input dark:bg-input-dark"
+                :disabled="disabled"
+                class="border-2 border-calypso-300 bg-natural-50 disabled:bg-natural-100 dark:bg-natural-900"
             >
-                <i class="pi text-border" :class="icon" />
+                <i class="pi text-calypso-300" :class="icon" />
             </InputGroupAddon>
 
             <NuxtLink
                 v-if="name === 'link' && isValidUrl && disabled"
                 :to="value"
                 target="_blank"
-                class="w-full overflow-hidden overflow-ellipsis whitespace-nowrap rounded-r-md border-b-2 border-r-2 border-t-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text hover:underline focus:outline-none focus:ring-1 dark:bg-input-dark dark:text-input"
+                class="border-border bg-input dark:bg-input-dark dark:text-input w-full overflow-hidden overflow-ellipsis whitespace-nowrap rounded-r-md border-b-2 border-r-2 border-t-2 px-2.5 pb-1 pt-1 font-nunito font-normal text-text hover:underline focus:outline-none focus:ring-1"
                 :class="{
                     'bg-input-disabled dark:bg-input-disabled-dark': disabled,
                 }"
@@ -55,13 +56,13 @@ const isValidUrl = computed(() => {
                 :disabled="disabled"
                 :value="value"
                 :placeholder="placeholder"
-                class="block w-full border-b-2 border-r-2 border-t-2 border-border bg-input px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:bg-input-disabled dark:bg-input-dark dark:text-input disabled:dark:bg-input-disabled-dark"
+                class="block w-full border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:bg-natural-100 dark:bg-natural-900 dark:text-natural-50 disabled:dark:bg-natural-800"
                 :class="customClass"
             />
         </InputGroup>
         <ErrorMessage
             :name="name"
-            class="text-xs text-error dark:font-bold dark:text-error-dark sm:text-sm"
+            class="text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300 sm:text-sm"
         />
     </div>
 </template>

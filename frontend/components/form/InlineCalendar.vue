@@ -62,16 +62,16 @@ function checkJourneyRange(slotProp: SlotProps) {
         inline
         show-week
         name="date"
-        class="rounded-lg border border-border-grey"
+        class="rounded-lg border border-natural-200"
         date-format="dd/mm/yy"
         :pt="{
-            root: { class: 'font-nunito text-text bg-input border-0' },
-            title: { class: 'flex gap-1 text-text dark:text-input' },
+            root: { class: 'font-nunito text-text bg-natural-50 border-0' },
+            title: { class: 'flex gap-1 text-text dark:text-natural-50' },
             header: {
-                class: 'bg-input dark:bg-input-dark text-text dark:text-input',
+                class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50',
             },
             panel: {
-                class: 'font-nunito text-text bg-input dark:bg-input-dark text-border dark:text-border',
+                class: 'font-nunito text-text bg-natural-50 dark:bg-natural-800 dark:text-natural-50',
             },
         }"
         @date-select="dateSelected"

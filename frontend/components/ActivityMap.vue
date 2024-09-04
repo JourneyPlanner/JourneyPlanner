@@ -83,7 +83,7 @@ const style = computed(() =>
                     value: t('journey.map.notfound.tooltip'),
                     pt: { root: 'font-nunito' },
                 }"
-                class="pi pi-exclamation-circle -mb-2.5 ml-auto text-xl text-cancel-border hover:cursor-pointer"
+                class="pi pi-exclamation-circle -mb-2.5 ml-auto text-xl text-mahagony-400 hover:cursor-pointer"
                 @click="isNotFoundActivitiesDialogVisible = true"
             />
         </div>
@@ -129,25 +129,25 @@ const style = computed(() =>
                 :header="t('journey.map.notfound.title')"
                 :draggable="false"
                 :style="{ width: '35rem' }"
-                class="bg-input dark:bg-input-dark"
+                class="bg-natural-50 dark:bg-natural-900"
                 :pt="{
                     root: {
-                        class: 'font-nunito text-text bg-input dark:bg-input-dark',
+                        class: 'font-nunito text-text bg-natural-50 dark:bg-natural-900',
                     },
                     header: {
-                        class: 'pb-2 h-15 bg-input dark:bg-input-dark text-text dark:text-input',
+                        class: 'pb-2 h-15 bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
                     },
                     title: { class: 'text-xl mt-0.5' },
                     content: {
-                        class: 'bg-input dark:bg-input-dark text-text dark:text-input',
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
                     },
                     closeButtonIcon: {
-                        class: 'text-input-placeholder hover:text-text dark:text-input-placeholder dark:hover:text-input h-5 w-5',
+                        class: 'text-natural-600 hover:text-text dark:text-natural-600 dark:hover:text-natural-50 h-5 w-5',
                     },
                 }"
             >
                 <p
-                    class="border-b-2 border-border-gray pb-3 dark:border-input-placeholder"
+                    class="border-b-2 border-natural-300 pb-3 dark:border-natural-600"
                 >
                     <T key-name="journey.map.notfound.description" />
                 </p>
@@ -155,18 +155,18 @@ const style = computed(() =>
                 <ScrollPanel
                     class="relative h-[15rem]"
                     :pt="{
-                        barY: 'w-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
-                        barX: 'h-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
+                        barY: 'w-1.5 bg-natural-300 hover:bg-calypso-300 dark:bg-[#888] dark:hover:bg-[#555]',
+                        barX: 'h-1.5 bg-natural-300 hover:bg-calypso-300 dark:bg-[#888] dark:hover:bg-[#555]',
                     }"
                 >
                     <div
-                        class="mx-4 font-nunito text-text dark:text-input lg:mx-8"
+                        class="mx-4 font-nunito text-text dark:text-natural-50 lg:mx-8"
                     >
                         <table
                             class="w-full table-fixed text-left text-sm md:text-base"
                         >
                             <thead
-                                class="border-b border-text text-xs uppercase dark:border-input"
+                                class="border-b border-text text-xs uppercase dark:border-natural-50"
                             >
                                 <tr>
                                     <th scope="col" class="w-10 py-3 pr-5">

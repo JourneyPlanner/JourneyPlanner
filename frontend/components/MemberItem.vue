@@ -36,7 +36,7 @@ const name = computed(() => {
     <div class="flex flex-row items-center justify-between">
         <h2
             v-tooltip.left="{ value: name, pt: { root: 'font-nunito' } }"
-            class="w-2/3 cursor-default overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-input"
+            class="w-2/3 cursor-default overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50"
         >
             {{ name }}
         </h2>
@@ -44,11 +44,11 @@ const name = computed(() => {
             class="w-1/4 rounded-md p-0.5 px-1 text-center"
             :class="
                 currentRole === 1
-                    ? 'bg-chip-blue dark:bg-chip-blue-dark'
-                    : 'bg-chip-grey dark:bg-chip-grey-dark'
+                    ? 'bg-calypso-200 dark:bg-gothic-600'
+                    : 'bg-natural-100 dark:bg-natural-600'
             "
         >
-            <h3 class="text-base text-text dark:text-input">
+            <h3 class="text-base text-text dark:text-natural-50">
                 <T :key-name="roleType" />
             </h3>
         </div>
@@ -60,8 +60,8 @@ const name = computed(() => {
         <h4
             :class="
                 currentRole === 1
-                    ? 'font-semibold text-blue-text dark:text-blue-text-dark'
-                    : 'text-text hover:font-semibold hover:text-blue-text dark:text-input dark:hover:text-blue-text-dark'
+                    ? 'font-semibold text-calypso-600 dark:text-calypso-400'
+                    : 'text-text hover:font-semibold hover:text-calypso-600 dark:text-natural-50 dark:hover:text-calypso-400'
             "
             class="hover:cursor-pointer"
             @click="changeRole(1)"
@@ -72,8 +72,8 @@ const name = computed(() => {
         <h4
             :class="
                 currentRole === 0
-                    ? 'font-semibold text-grey-text dark:text-grey-text-dark'
-                    : 'text-text hover:font-semibold hover:text-grey-text dark:text-input dark:hover:text-grey-text-dark'
+                    ? 'font-semibold text-natural-600 dark:text-natural-400'
+                    : 'text-text hover:font-semibold hover:text-natural-600 dark:text-natural-50 dark:hover:text-natural-400'
             "
             class="hover:cursor-pointer"
             @click="changeRole(0)"
