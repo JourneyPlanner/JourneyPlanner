@@ -120,7 +120,7 @@ const confirmJourneyNameAsTemplateName = (event: Event) => {
             :draggable="false"
             close-on-escape
             dismissable-mask
-            class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-5/12 md:rounded-xl"
+            class="z-50 flex flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-5/12 md:rounded-xl"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -133,7 +133,7 @@ const confirmJourneyNameAsTemplateName = (event: Event) => {
                 },
                 footer: { class: 'h-0' },
                 closeButtonIcon: {
-                    class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-text h-10 w-10',
+                    class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10',
                 },
             }"
             @hide="close"
@@ -198,7 +198,7 @@ const confirmJourneyNameAsTemplateName = (event: Event) => {
                         type="button"
                         :label="t('common.button.cancel')"
                         icon="pi pi-times"
-                        class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
+                        class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-mahagony-500030"
                         :pt="{
                             root: { class: 'flex items-center justify-center' },
                             label: {
