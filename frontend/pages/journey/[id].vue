@@ -4,6 +4,7 @@ import { differenceInDays, format } from "date-fns";
 import JSConfetti from "js-confetti";
 import QRCode from "qrcode";
 import resolveConfig from "tailwindcss/resolveConfig";
+import TemplateDialog from "~/components/TemplateDialog.vue";
 import tailwindConfig from "~/tailwind.config.js";
 
 const fullConfig = resolveConfig(tailwindConfig);
@@ -32,6 +33,8 @@ const isActivityDialogVisible = ref(false);
 const uploadResult = ref();
 const upload = ref();
 const calendar = ref();
+
+const isCreateTemplateVisible = ref(false);
 
 definePageMeta({
     middleware: ["sanctum:auth"],
@@ -275,6 +278,10 @@ const handleUpload = (result: string) => {
         >
             <template #header>
                 <span
+                    v-tooltip.left="{
+                        value: t('dashboard.options.leave'),
+                        pt: { root: 'font-nunito' },
+                    }"
                     class="pi pi-sign-out order-1 pr-2 text-xl text-text hover:cursor-pointer hover:text-mahagony-600 dark:text-natural-50 dark:hover:text-mahagony-300"
                     @click="confirmLeave($event)"
                 />
@@ -298,6 +305,24 @@ const handleUpload = (result: string) => {
                         <SvgCopy class="w-4" />
                     </button>
                 </div>
+            </div>
+            <div
+                v-if="currUser.role === 1"
+                class="border-b-2 border-natural-200 pb-4 dark:border-natural-900"
+            >
+                <button
+                    v-tooltip.left="{
+                        value: t('journey.template.create.detail'),
+                        pt: { root: 'font-nunito' },
+                    }"
+                    class="dark:hover:bg-pesto-700 mt-4 h-10 w-full rounded-md bg-dandelion-300 text-natural-50 hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50"
+                    @click="
+                        isCreateTemplateVisible = !isCreateTemplateVisible;
+                        console.log(isCreateTemplateVisible);
+                    "
+                >
+                    <T key-name="journey.template.create" />
+                </button>
             </div>
             <div
                 class="flex flex-row items-center justify-center border-b-2 border-natural-200 pb-1 pt-1 dark:border-natural-900"
@@ -856,21 +881,6 @@ const handleUpload = (result: string) => {
             />
         </div>
         <ActivityMap v-if="activityDataLoaded" />
-        <ConfirmDialog
-            :draggable="false"
-            group="journey"
-            :pt="{
-                header: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                content: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                footer: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-            }"
-        />
         <div
             ref="upload"
             class="flex items-center justify-center md:justify-start"
@@ -902,6 +912,11 @@ const handleUpload = (result: string) => {
                     class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
                 },
             }"
+        />
+        <TemplateDialog
+            v-if="currUser.role === 1"
+            :is-create-template-visible="isCreateTemplateVisible"
+            @close-template-dialog="isCreateTemplateVisible = false"
         />
     </div>
 </template>

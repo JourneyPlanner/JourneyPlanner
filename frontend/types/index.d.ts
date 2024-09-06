@@ -104,4 +104,9 @@ declare global {
         allDay: boolean;
         activity_id: string;
     }
+
+    interface Template {
+        name: string;
+        description: string;
+    }
 }
