@@ -67,6 +67,7 @@ export default defineNuxtConfig({
                 "Menu",
                 "Dialog",
                 "ConfirmDialog",
+                "ConfirmPopup",
                 "Toast",
                 "Sidebar",
                 "ScrollPanel",
