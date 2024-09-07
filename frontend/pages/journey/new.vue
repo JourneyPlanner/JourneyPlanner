@@ -147,9 +147,6 @@ function copyToClipboard() {
                             name="journeyDestination"
                             :placeholder="t('form.input.journey.destination')"
                             class="relative mb-5"
-                            :translation-key="
-                                t('form.input.journey.destination')
-                            "
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
                         />
                         <FormCalendar

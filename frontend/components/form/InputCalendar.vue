@@ -44,7 +44,7 @@ watch(
             :name="name"
             date-format="dd/mm/yy"
             placeholder="dd/mm/yyyy"
-            input-class="block rounded-lg px-2.5 pb-1 pt-1 text-md text-text dark:text-natural-50 font-normal bg-natural-50 dark:bg-natural-800 border-2 border-calypso-300 focus:outline-none focus:ring-1"
+            input-class="block rounded-lg px-2.5 pb-1 pt-1 text-md text-text dark:text-natural-50 font-normal bg-natural-50 dark:bg-natural-800 border-2 border-calypso-300 dark:border-calypso-400 focus:outline-none focus:ring-1"
             @date-select="dateSelected"
             @blur="dateSelected"
         >

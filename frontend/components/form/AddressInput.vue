@@ -11,7 +11,6 @@ const props = defineProps({
     customClass: { type: String, default: "" },
     withLabel: { type: Boolean, default: false },
     id: { type: String, default: "" },
-    translationKey: { type: String, default: "" },
 });
 
 const { value: mapbox } = useField<Feature>(() => "mapbox");
@@ -78,26 +77,29 @@ let text = "";
 let placeholderColor = "";
 let hoverCancel = "";
 let disabledBg = "";
-const border = "#88C4D8";
+const bg = "";
+let border = "";
 
 if (
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
 ) {
-    input = "#464646";
+    input = "#3D3D3D";
     text = "#FCFCFC";
     placeholderColor = "#989898";
-    hoverCancel = fullConfig.theme.accentColor["mahagony-400"] as string;
-    disabledBg = fullConfig.theme.accentColor["natural-800"] as string;
+    hoverCancel = "#E58484";
+    disabledBg = "#464646";
+    border = "#50A1C0";
 } else {
     input = "#FCFCFC";
     text = fullConfig.theme.accentColor["text"] as string;
     placeholderColor = "#989898";
     hoverCancel = "#E58484";
-    disabledBg = fullConfig.theme.accentColor["natural-100"] as string;
+    disabledBg = "#EFEFEF";
+    border = "#88C4D8";
 }
 
-const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Input::placeholder {font-family: Nunito; font-size: 0.75rem; line-height: 1rem; color: ${placeholderColor}} .Results {background-color: ${input}; color: ${text};}  border-radius: 0.5rem;} .ClearBtn:hover {color: ${hoverCancel}}`;
+const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Input::placeholder {font-family: Nunito; font-size: 0.75rem; line-height: 1rem; color: ${placeholderColor}} .Results {background-color: ${input}; color: ${text};} .SearchBox {background-color: ${bg}; border-radius: 0.5rem;} .ClearBtn:hover {color: ${hoverCancel}}`;
 
 function changeInput(event: InputEvent) {
     inputValue.value = (event.target as HTMLInputElement).value;
@@ -125,7 +127,7 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                     proximity: longlat,
                 }"
                 :theme="{
-                    cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px ${border};} .Input:focus {border-radius: 0.5rem; border: solid 2px ${border};} .SearchBox {box-shadow: none;} .Results {font-family: Nunito;} .ResultsAttribution {color: ${placeholderColor}} .SearchIcon {fill: ${border};} .ActionIcon {color: ${placeholderColor}}  ${css} ${customClass}`,
+                    cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border-style: solid;  border-width:2px; border-color: ${border};} .Input:focus {border-radius: 0.5rem; border: solid 2px ${border};} .SearchBox {box-shadow: none;} .Results {font-family: Nunito;} .ResultsAttribution {color: ${placeholderColor}} .SearchIcon {fill: ${border};} .ActionIcon {color: ${placeholderColor}}  ${css} ${customClass}`,
                 }"
                 @input="changeInput"
                 @retrieve="

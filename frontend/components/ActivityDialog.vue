@@ -112,7 +112,7 @@ const confirmDelete = () => {
         icon: "pi pi-exclamation-triangle",
         rejectClass: "hover:underline",
         acceptClass:
-            "text-error dark:text-error-dark hover:underline font-bold",
+            "text-mahagony-500 dark:text-mahagony-400 hover:underline font-bold",
         rejectLabel: t.value("common.button.cancel"),
         acceptLabel: t.value("journey.delete"),
 
@@ -137,7 +137,7 @@ const confirmRemoveFromCalendar = () => {
         icon: "pi pi-exclamation-triangle",
         rejectClass: "hover:underline",
         acceptClass:
-            "text-error dark:text-error-dark hover:underline font-bold",
+            "text-mahagony-500 dark:text-mahagony-400 hover:underline font-bold",
         rejectLabel: t.value("common.button.cancel"),
         acceptLabel: t.value("activity.remove"),
 
@@ -431,7 +431,7 @@ function setSelectedDate(date: Date) {
             },
             footer: { class: 'h-0' },
             closeButtonIcon: {
-                class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-text h-10 w-10',
+                class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10',
             },
         }"
         @hide="close"
