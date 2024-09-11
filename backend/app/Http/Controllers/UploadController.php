@@ -132,6 +132,8 @@ class UploadController extends Controller
             mkdir($journeyFolder, 0750, true);
         }
 
+        $filename = hrtime(true) . "_" . $filename;
+
         // Create media record in database.
         $media = new Media();
         $media->name = $filename;
@@ -140,7 +142,6 @@ class UploadController extends Controller
         $media->save();
 
         // Move file to journey folder.
-        $filename = hrtime(true) . "_" . $filename;
         try {
             rename($path, $journeyFolder . "/" . $filename);
         } catch (\Exception $ignored) {
