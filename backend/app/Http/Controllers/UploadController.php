@@ -132,18 +132,22 @@ class UploadController extends Controller
             mkdir($journeyFolder, 0750, true);
         }
 
+        // Create media record in database.
+        $media = new Media();
+        $media->name = $filename;
+        $media->journey_id = $journeyId;
+        $media->user_id = $request->user()->id;
+        $media->save();
+
         // Move file to journey folder.
         $filename = hrtime(true) . "_" . $filename;
         try {
             rename($path, $journeyFolder . "/" . $filename);
+        } catch (\Exception $ignored) {
+        }
 
-            // Create media record in database.
-            $media = new Media();
-            $media->name = $filename;
-            $media->journey_id = $journeyId;
-            $media->user_id = $request->user()->id;
-            $media->save();
-
+        // Create thumbnail for video files.
+        try {
             // Add thumbnail if it's a video.
             $filetype = mime_content_type($media->getMediaPath());
             if (strpos($filetype, "video") !== false) {
