@@ -22,7 +22,7 @@
         "@mapbox/search-js-web": "^1.0.0-beta.22",
         "@nuxt/eslint": "^0.3.13",
         "@nuxt/image": "^1.8.0",
-        "@pinia/nuxt": "^0.5.1",
+        "@pinia/nuxt": "^0.5.4",
         "@studiometa/vue-mapbox-gl": "^2.5.0",
         "@tolgee/vue": "^5.28.6",
         "@uppy/core": "^3.11.2",
