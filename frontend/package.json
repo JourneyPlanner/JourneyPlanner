@@ -41,7 +41,7 @@
         "js-confetti": "^0.12.0",
         "jszip": "^3.10.1",
         "lightgallery": "^2.7.2",
-        "nuxt": "^3.12.3",
+        "nuxt": "^3.13.1",
         "pinia": "^2.2.2",
         "primeicons": "^7.0.0",
         "primevue": "^3.52.0",
