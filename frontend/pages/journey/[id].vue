@@ -316,7 +316,7 @@ const handleUpload = (result: string) => {
                         pt: { root: 'font-nunito' },
                     }"
                     class="dark:hover:bg-pesto-700 mt-4 h-10 w-full rounded-md bg-dandelion-300 text-natural-50 hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50"
-                    @click="isCreateTemplateVisible = true"
+                    @click="isCreateTemplateVisible = !isCreateTemplateVisible"
                 >
                     <T key-name="journey.template.create" />
                 </button>
