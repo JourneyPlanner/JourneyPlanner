@@ -11,7 +11,9 @@ defineProps({
 <template>
     <div class="flex w-72 flex-col items-center justify-center lg:w-full">
         <slot name="picture" />
-        <p class="mt-5 text-base xs:text-lg md:text-xl">
+        <p
+            class="mt-5 text-base font-bold xs:text-lg sm:font-normal md:text-xl"
+        >
             {{ name }}
         </p>
         <div
@@ -22,14 +24,14 @@ defineProps({
         <div class="text-sm xs:text-base md:text-lg">
             <T :key-name="roleKey" />
         </div>
-        <div class="mt-3 flex flex-row items-center gap-1">
+        <div class="mt-3 flex flex-row items-center gap-4 sm:gap-1">
             <NuxtLink
                 :to="linkedinLink"
                 target="_blank"
-                class="pi pi-linkedin text-lg text-text hover-scale dark:text-natural-200 sm:text-2xl"
+                class="pi pi-linkedin text-3xl text-text hover-scale dark:text-natural-200 sm:text-2xl"
             />
             <NuxtLink :to="'mailto:' + mail" class="hover-scale">
-                <SvgAboutMail class="w-5 sm:w-7" />
+                <SvgAboutMail class="w-9 sm:w-7" />
             </NuxtLink>
         </div>
     </div>

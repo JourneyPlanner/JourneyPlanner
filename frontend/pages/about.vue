@@ -200,7 +200,7 @@ const changeColorMode = () => {
                     </ul>
                 </nav>
             </header>
-            <main class="mt-10 flex flex-col font-nunito lg:mt-28">
+            <main class="mt-4 flex flex-col font-nunito lg:mt-28">
                 <div
                     id="hero"
                     class="flex flex-col items-center justify-center text-center"
@@ -227,7 +227,7 @@ const changeColorMode = () => {
                     </div>
                     <NuxtLink
                         to="/register"
-                        class="mt-20 rounded-lg border-2 border-dandelion-300 bg-dandelion-100 px-3 py-2 text-lg font-bold text-text hover-scale hover:cursor-pointer hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50 xs:mt-20 sm:mt-16 md:text-base lg:mt-20 lg:text-lg"
+                        class="mt-20 text-nowrap rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-3 py-2 text-lg font-bold text-text hover-scale hover:cursor-pointer hover:bg-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 xs:mt-20 sm:mt-16 md:text-base lg:mt-20 lg:text-lg"
                     >
                         <T key-name="startpage.button.create.journey" />
                     </NuxtLink>
@@ -424,7 +424,7 @@ const changeColorMode = () => {
                             class="mx-5 mt-5 flex cursor-default items-center justify-center font-nunito lg:mt-10"
                         >
                             <div
-                                class="align-center flex w-full items-center gap-4"
+                                class="align-center flex w-full items-center gap-8 sm:gap-4"
                             >
                                 <AboutProjectMemberCard
                                     name="Severin Rosner"

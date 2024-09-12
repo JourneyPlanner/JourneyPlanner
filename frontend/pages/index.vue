@@ -36,34 +36,11 @@ const changeColorMode = () => {
         class="relative cursor-default overflow-hidden font-nunito text-text dark:text-natural-50"
     >
         <div
-            class="mb-10 min-h-72 xs:mb-[30vw] sm:mb-60 md:mb-64 lg:mb-52 xl:mb-[10vw] xl:pb-20"
+            class="mb-10 min-h-72 xs:mb-[30vw] sm:mb-60 md:mb-44 lg:mb-36 xl:mb-[8vw] xl:pb-60"
         >
             <div>
-                <!--<SvgStartpagePlaneSmall
-                    class="absolute top-36 -z-10 hidden sm:block"
-                />-->
-                <SvgAboutCloudLeft
-                    id="cloud-left-3"
-                    class="absolute right-0 -z-20 scale-x-[-1] xs:top-72 xs:w-[80%] lg:top-44 lg:w-[40%]"
-                />
                 <SvgStartpagePlane
-                    class="absolute -right-28 top-48 -z-10 xs:-right-24 xs:top-[18.5rem] xs:w-[110%] sm:-right-48 sm:top-20 sm:block sm:w-[130%] md:top-16 md:w-[110%] lg:-right-24 lg:top-40 lg:w-[60%]"
-                />
-                <SvgAboutCloudLeft
-                    id="cloud-right-3"
-                    class="absolute -z-20 hidden w-[55%] xs:top-16 md:block lg:top-80"
-                />
-                <SvgAboutCloudLeft
-                    id="cloud-left-3"
-                    class="absolute -z-10 xs:top-[32rem] xs:w-[74%] md:block lg:right-0 lg:top-[37rem] lg:w-[30%] lg:scale-x-[-1]"
-                />
-                <SvgAboutCloudLeft
-                    id="cloud-right-3"
-                    class="absolute -left-20 top-[87rem] -z-20 w-[70%] sm:hidden"
-                />
-                <SvgAboutCloudLeft
-                    id="cloud-right-3"
-                    class="absolute right-0 top-[92rem] -z-20 w-[70%] scale-x-[-1] sm:hidden"
+                    class="absolute -right-14 top-64 -z-10 w-[115%] sm:-right-48 sm:top-20 sm:w-[130%] md:top-20 md:w-[110%] lg:-right-20 lg:top-28 lg:w-[90%] xl:top-16"
                 />
             </div>
             <header
@@ -71,7 +48,7 @@ const changeColorMode = () => {
             >
                 <NuxtLink to="/">
                     <h3
-                        class="text-lg font-bold text-calypso-400 dark:text-gothic-400 sm:text-base md:text-lg"
+                        class="text-lg font-bold text-calypso-400 dark:text-gothic-400"
                     >
                         JourneyPlanner
                     </h3>
@@ -111,15 +88,15 @@ const changeColorMode = () => {
                             >
                                 <SvgMoon
                                     v-if="icon === 'moon'"
-                                    class="group w-4"
+                                    class="group w-5 md:w-4"
                                 />
-                                <SvgSun v-else class="group w-4" />
+                                <SvgSun v-else class="group w-5 md:w-4" />
                             </button>
                         </li>
                         <li class="border-l-2 border-natural-300 pl-2">
                             <NuxtLink
                                 to="/login"
-                                class="rounded-lg border-2 border-dandelion-300 p-1 px-2 text-base text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:hidden"
+                                class="text-md rounded-lg border-2 border-dandelion-300 p-1 px-2 text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:hidden"
                             >
                                 <T key-name="form.button.login" />
                             </NuxtLink>
@@ -141,33 +118,26 @@ const changeColorMode = () => {
                     </ul>
                 </nav>
             </header>
-            <div
-                class="mt-10 flex flex-col items-center justify-center text-center font-nunito xs:mt-4 lg:mt-24"
-            >
+            <div class="mt-10 sm:ml-5 md:mt-14 lg:ml-16 lg:mt-24 xl:ml-24">
                 <h1
-                    class="mt-16 text-4xl font-extrabold text-calypso-400 hover:cursor-default dark:text-gothic-400 xs:mt-20 xs:text-5xl sm:hover-scale lg:mt-2 lg:text-7xl"
+                    class="text-4xl font-extrabold text-calypso-400 hover:cursor-default dark:text-gothic-400 max-sm:text-center xs:text-5xl sm:text-6xl lg:text-7xl"
                 >
                     JourneyPlanner
                 </h1>
                 <h2
-                    class="mt-1 text-base font-bold text-text dark:text-natural-200 xs:text-xl sm:text-2xl lg:text-3xl"
+                    class="mt-2 text-lg font-bold max-sm:text-center xs:text-xl sm:text-2xl lg:text-3xl"
                 >
                     <T key-name="startpage.subheading" />
                 </h2>
-                <div
-                    class="mt-4 w-[90%] text-sm font-medium text-natural-600 dark:text-natural-50 xs:w-[90%] xs:text-base sm:w-[40%] sm:text-base sm:text-text md:text-lg lg:mt-6"
+                <p
+                    class="mx-2 mt-3 text-sm max-sm:text-center xs:text-base sm:w-96 sm:text-base md:text-lg"
                 >
-                    <p>
-                        <T key-name="startpage.text.1" />
-                    </p>
-                    <p>
-                        <T key-name="startpage.text.2" />
-                    </p>
-                </div>
-                <div class="mt-2 hidden md:mt-5 lg:flex">
+                    <T key-name="startpage.text" />
+                </p>
+                <div class="mt-2 hidden md:mt-10 lg:flex">
                     <NuxtLink
                         to="/register"
-                        class="mt-24 rounded-lg border-2 border-dandelion-300 bg-dandelion-100 px-3 py-2 text-sm font-bold text-text hover-scale hover:cursor-pointer hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50 xs:mt-28 sm:mt-28 md:text-base lg:mt-16 lg:text-lg"
+                        class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover-scale hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-64 lg:text-base lg:font-semibold"
                     >
                         <T key-name="startpage.button.create.journey" />
                     </NuxtLink>
@@ -177,97 +147,85 @@ const changeColorMode = () => {
         <div
             id="features"
             ref="features"
-            class="mb-16 pt-[10vw] lg:mb-32 lg:pt-0"
+            class="mb-14 pt-[10vw] lg:mb-14 lg:pt-10"
         >
             <div class="relative flex flex-row">
                 <div class="w-[40rem] max-lg:hidden">
-                    <SvgStartpagePeople class="absolute -z-10 mt-12 w-[40%]" />
+                    <SvgStartpagePeople class="mt-20" />
                 </div>
                 <div
                     class="flex flex-col max-lg:w-full sm:flex-row sm:justify-center sm:gap-6 lg:ml-20 lg:w-auto lg:flex-col"
                 >
                     <div
-                        class="mb-16 mt-14 flex justify-center gap-5 xs:mb-20 xs:mt-4 sm:hidden"
+                        class="mb-16 mt-14 flex justify-center gap-5 xs:mt-8 sm:hidden"
                     >
                         <NuxtLink
                             to="/register"
-                            class="rounded-lg border-2 border-dandelion-300 bg-dandelion-100 px-3 py-2 text-lg font-bold text-text hover:bg-dandelion-200 dark:bg-ronchi-300 dark:hover:bg-ronchi-400"
+                            class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-4 py-2 text-base font-bold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400"
                         >
                             <T key-name="startpage.button.create.journey" />
                         </NuxtLink>
                     </div>
                     <div
-                        class="-mt-3 flex flex-col max-lg:items-center xs:-mt-0 xs:mb-4 lg:flex-row"
+                        class="-mt-3 flex flex-col max-lg:items-center xs:-mt-0 lg:flex-row"
                     >
                         <SvgStartpageCalendar
-                            class="hover:animate-wiggle xs:w-24 md:w-24"
+                            class="w-28 hover:animate-wiggle sm:w-24"
                         />
                         <div class="flex flex-col max-lg:text-center lg:ml-4">
-                            <h4
-                                class="text-2xl font-semibold md:text-2xl md:font-bold"
-                            >
+                            <h4 class="text-2xl font-semibold md:text-2xl">
                                 <T key-name="startpage.calendar.header" />
                             </h4>
                             <p
-                                class="mt-0.5 w-[15rem] text-lg sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
+                                class="mt-0.5 w-[15rem] text-base sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
                             >
                                 <T key-name="startpage.calendar.text" />
                             </p>
                         </div>
                     </div>
                     <div
-                        class="mt-8 flex flex-col max-lg:items-center xs:mb-4 md:mt-6 lg:ml-16 lg:flex-row"
+                        class="mt-10 flex flex-col max-lg:items-center md:mt-6 lg:ml-16 lg:flex-row"
                     >
-                        <SvgStartpageShare class="w-24 hover:animate-wiggle" />
+                        <SvgStartpageShare
+                            class="w-28 hover:animate-wiggle sm:w-24"
+                        />
                         <div class="flex flex-col max-lg:text-center lg:ml-4">
-                            <h4
-                                class="text-2xl font-semibold md:text-2xl md:font-bold"
-                            >
+                            <h4 class="text-2xl font-semibold">
                                 <T key-name="startpage.share.header" />
                             </h4>
                             <p
-                                class="mt-0.5 w-[15rem] text-lg sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
+                                class="mt-0.5 w-[15rem] text-base sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
                             >
                                 <T key-name="startpage.share.text" />
                             </p>
                         </div>
                     </div>
                     <div
-                        class="mt-8 flex flex-col max-lg:items-center xs:mb-4 sm:-mt-0 md:mt-0 lg:ml-32 lg:mt-6 lg:flex-row"
+                        class="mt-10 flex flex-col max-lg:items-center sm:-mt-0 md:mt-0 lg:ml-32 lg:mt-6 lg:flex-row"
                     >
-                        <SvgStartpageGlobe class="w-24 hover:animate-wiggle" />
+                        <SvgStartpageGlobe
+                            class="w-28 hover:animate-wiggle sm:w-24"
+                        />
                         <div class="flex flex-col max-lg:text-center lg:ml-4">
-                            <h4
-                                class="text-2xl font-semibold md:text-2xl md:font-bold"
-                            >
+                            <h4 class="text-2xl font-semibold">
                                 <T key-name="startpage.experience.header" />
                             </h4>
                             <p
-                                class="mt-0.5 w-[15rem] text-lg sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
+                                class="mt-0.5 w-[15rem] text-base sm:w-[12.5rem] md:text-lg lg:w-[30rem]"
                             >
                                 <T key-name="startpage.experience.text" />
                             </p>
                         </div>
                     </div>
-                    <div class="mt-1 justify-center max-lg:hidden lg:flex">
+                    <div class="mt-5 justify-center max-lg:hidden lg:flex">
                         <NuxtLink
                             to="/register"
-                            class="mt-20 rounded-lg border-2 border-dandelion-300 bg-dandelion-100 px-3 py-2 text-sm font-bold text-text hover-scale hover:cursor-pointer hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50 xs:mt-20 sm:mt-16 md:text-base lg:mt-5 lg:text-lg"
+                            class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:text-base lg:font-semibold"
                         >
                             <T key-name="startpage.button.create.journey" />
                         </NuxtLink>
                     </div>
                 </div>
-            </div>
-            <div
-                class="mb-20 mt-14 flex justify-center gap-5 xs:mt-16 sm:hidden"
-            >
-                <NuxtLink
-                    to="/about"
-                    class="rounded-lg border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-lg font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
-                >
-                    <T key-name="startpage.about" />
-                </NuxtLink>
             </div>
             <div class="mt-10 justify-center max-sm:hidden sm:flex lg:hidden">
                 <NuxtLink
@@ -275,6 +233,14 @@ const changeColorMode = () => {
                     class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-[20vw] lg:text-base lg:font-semibold"
                 >
                     <T key-name="startpage.button.create.journey" />
+                </NuxtLink>
+            </div>
+            <div class="mt-14 flex justify-center sm:hidden">
+                <NuxtLink
+                    to="/about"
+                    class="rounded-lg border-2 border-dandelion-300 bg-natural-50 px-4 py-2 text-lg font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                >
+                    <T key-name="startpage.about" />
                 </NuxtLink>
             </div>
         </div>
