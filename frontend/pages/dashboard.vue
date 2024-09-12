@@ -30,6 +30,7 @@ const searchInput = ref();
 const searchInputMobile = ref();
 const searchValue = ref<string>("");
 const currentJourneys = ref<Journey[]>([]);
+const isUserSettingsVisible = ref(false);
 
 currentJourneys.value = store.journeys;
 
@@ -234,9 +235,13 @@ function editJourney(journey: Journey, id: string) {
                         <T key-name="dashboard.new" />
                     </button>
                 </NuxtLink>
-                <NuxtLink to="/settings">
+                <button @click="isUserSettingsVisible = !isUserSettingsVisible">
                     <SvgSettingsIcon class="-mt-1 h-9 w-9" />
-                </NuxtLink>
+                </button>
+                <UserSettings
+                    :visible="isUserSettingsVisible"
+                    @close="isUserSettingsVisible = false"
+                />
             </div>
         </div>
         <div
