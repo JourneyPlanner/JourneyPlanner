@@ -70,140 +70,142 @@ const style = computed(() =>
 </script>
 
 <template>
-    <div class="flex items-center justify-center md:justify-start">
-        <div
-            class="relative -mb-1 mt-5 flex w-[90%] items-center sm:-mb-0 sm:mt-10 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
-        >
-            <div class="-mb-2.5 text-2xl font-semibold">
-                <T key-name="journey.map" />
-            </div>
-            <span
-                v-if="activitiesWithoutLocation.length > 0"
-                v-tooltip.top="{
-                    value: t('journey.map.notfound.tooltip'),
-                    pt: { root: 'font-nunito' },
-                }"
-                class="pi pi-exclamation-circle -mb-2.5 ml-auto text-xl text-cancel-border hover:cursor-pointer"
-                @click="isNotFoundActivitiesDialogVisible = true"
-            />
-        </div>
-    </div>
-    <div class="flex justify-center md:justify-start">
-        <div
-            class="relative mt-5 flex h-44 w-[90%] items-end sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:h-96 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
-        >
-            <div>
-                <MapboxMap
-                    style="position: absolute; top: 0; bottom: 0"
-                    class="h-full w-full rounded-xl"
-                    :access-token="config.public.NUXT_MAPBOX_API_KEY"
-                    :zoom="zoom"
-                    :map-style="style"
-                    :center="[long, lat]"
-                >
-                    <MapboxMarker
-                        v-for="activity in activitiesWithLocation"
-                        :key="activity.id"
-                        :lng-lat="[activity.longitude, activity.latitude]"
-                        :color="markerColor(activity)"
-                        popup
-                    >
-                        <template #popup>
-                            <div
-                                class="flex flex-col font-nunito text-text dark:text-natural-50"
-                            >
-                                <h1 class="font-bold">
-                                    {{ activity.name }}
-                                </h1>
-                                <p>{{ activity.mapbox_full_address }}</p>
-                            </div>
-                        </template>
-                    </MapboxMarker>
-                    <MapboxGeolocateControl />
-                    <MapboxNavigationControl position="top-left" />
-                </MapboxMap>
-            </div>
-            <Dialog
-                v-model:visible="isNotFoundActivitiesDialogVisible"
-                modal
-                :header="t('journey.map.notfound.title')"
-                :draggable="false"
-                :style="{ width: '35rem' }"
-                class="bg-input dark:bg-input-dark"
-                :pt="{
-                    root: {
-                        class: 'font-nunito text-text bg-input dark:bg-input-dark',
-                    },
-                    header: {
-                        class: 'pb-2 h-15 bg-input dark:bg-input-dark text-text dark:text-input',
-                    },
-                    title: { class: 'text-xl mt-0.5' },
-                    content: {
-                        class: 'bg-input dark:bg-input-dark text-text dark:text-input',
-                    },
-                    closeButtonIcon: {
-                        class: 'text-input-placeholder hover:text-text dark:text-input-placeholder dark:hover:text-input h-5 w-5',
-                    },
-                }"
+    <div>
+        <div class="flex items-center justify-center md:justify-start">
+            <div
+                class="relative -mb-1 mt-5 flex w-[90%] items-center sm:-mb-0 sm:mt-10 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
             >
-                <p
-                    class="border-b-2 border-border-gray pb-3 dark:border-input-placeholder"
-                >
-                    <T key-name="journey.map.notfound.description" />
-                </p>
-
-                <ScrollPanel
-                    class="relative h-[15rem]"
+                <div class="-mb-2.5 text-2xl font-semibold">
+                    <T key-name="journey.map" />
+                </div>
+                <span
+                    v-if="activitiesWithoutLocation.length > 0"
+                    v-tooltip.top="{
+                        value: t('journey.map.notfound.tooltip'),
+                        pt: { root: 'font-nunito' },
+                    }"
+                    class="pi pi-exclamation-circle -mb-2.5 ml-auto text-xl text-cancel-border hover:cursor-pointer"
+                    @click="isNotFoundActivitiesDialogVisible = true"
+                />
+            </div>
+        </div>
+        <div class="flex justify-center md:justify-start">
+            <div
+                class="relative mt-5 flex h-44 w-[90%] items-end sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:h-96 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            >
+                <div>
+                    <MapboxMap
+                        style="position: absolute; top: 0; bottom: 0"
+                        class="h-full w-full rounded-xl"
+                        :access-token="config.public.NUXT_MAPBOX_API_KEY"
+                        :zoom="zoom"
+                        :map-style="style"
+                        :center="[long, lat]"
+                    >
+                        <MapboxMarker
+                            v-for="activity in activitiesWithLocation"
+                            :key="activity.id"
+                            :lng-lat="[activity.longitude, activity.latitude]"
+                            :color="markerColor(activity)"
+                            popup
+                        >
+                            <template #popup>
+                                <div
+                                    class="flex flex-col font-nunito text-text dark:text-natural-50"
+                                >
+                                    <h1 class="font-bold">
+                                        {{ activity.name }}
+                                    </h1>
+                                    <p>{{ activity.mapbox_full_address }}</p>
+                                </div>
+                            </template>
+                        </MapboxMarker>
+                        <MapboxGeolocateControl />
+                        <MapboxNavigationControl position="top-left" />
+                    </MapboxMap>
+                </div>
+                <Dialog
+                    v-model:visible="isNotFoundActivitiesDialogVisible"
+                    modal
+                    :header="t('journey.map.notfound.title')"
+                    :draggable="false"
+                    :style="{ width: '35rem' }"
+                    class="bg-input dark:bg-input-dark"
                     :pt="{
-                        barY: 'w-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
-                        barX: 'h-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
+                        root: {
+                            class: 'font-nunito text-text bg-input dark:bg-input-dark',
+                        },
+                        header: {
+                            class: 'pb-2 h-15 bg-input dark:bg-input-dark text-text dark:text-input',
+                        },
+                        title: { class: 'text-xl mt-0.5' },
+                        content: {
+                            class: 'bg-input dark:bg-input-dark text-text dark:text-input',
+                        },
+                        closeButtonIcon: {
+                            class: 'text-input-placeholder hover:text-text dark:text-input-placeholder dark:hover:text-input h-5 w-5',
+                        },
                     }"
                 >
-                    <div
-                        class="mx-4 font-nunito text-text dark:text-input lg:mx-8"
+                    <p
+                        class="border-b-2 border-border-gray pb-3 dark:border-input-placeholder"
                     >
-                        <table
-                            class="w-full table-fixed text-left text-sm md:text-base"
+                        <T key-name="journey.map.notfound.description" />
+                    </p>
+
+                    <ScrollPanel
+                        class="relative h-[15rem]"
+                        :pt="{
+                            barY: 'w-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
+                            barX: 'h-1.5 bg-border-gray hover:bg-border-light dark:bg-[#888] dark:hover:bg-[#555]',
+                        }"
+                    >
+                        <div
+                            class="mx-4 font-nunito text-text dark:text-input lg:mx-8"
                         >
-                            <thead
-                                class="border-b border-text text-xs uppercase dark:border-input"
+                            <table
+                                class="w-full table-fixed text-left text-sm md:text-base"
                             >
-                                <tr>
-                                    <th scope="col" class="w-10 py-3 pr-5">
-                                        <T
-                                            key-name="journey.map.notfound.name"
-                                        />
-                                    </th>
-                                    <th scope="col" class="w-20 py-3">
-                                        <T
-                                            key-name="journey.map.notfound.address"
-                                        />
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    v-for="activity in activitiesWithoutLocation"
-                                    :key="activity.id"
+                                <thead
+                                    class="border-b border-text text-xs uppercase dark:border-input"
                                 >
-                                    <th
-                                        scope="row"
-                                        class="w-10 truncate py-2 pr-5"
+                                    <tr>
+                                        <th scope="col" class="w-10 py-3 pr-5">
+                                            <T
+                                                key-name="journey.map.notfound.name"
+                                            />
+                                        </th>
+                                        <th scope="col" class="w-20 py-3">
+                                            <T
+                                                key-name="journey.map.notfound.address"
+                                            />
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="activity in activitiesWithoutLocation"
+                                        :key="activity.id"
                                     >
-                                        {{ activity.name }}
-                                    </th>
-                                    <td class="w-20 truncate py-2">
-                                        {{
-                                            activity.address ||
-                                            "-----------------"
-                                        }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </ScrollPanel>
-            </Dialog>
+                                        <th
+                                            scope="row"
+                                            class="w-10 truncate py-2 pr-5"
+                                        >
+                                            {{ activity.name }}
+                                        </th>
+                                        <td class="w-20 truncate py-2">
+                                            {{
+                                                activity.address ||
+                                                "-----------------"
+                                            }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </ScrollPanel>
+                </Dialog>
+            </div>
         </div>
     </div>
 </template>
