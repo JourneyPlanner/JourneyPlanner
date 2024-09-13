@@ -13,7 +13,6 @@ const journey = useJourneyStore();
 const { t } = useTranslate();
 const toast = useToast();
 const client = useSanctumClient();
-const confirm = useConfirm();
 
 const savingTemplate = ref(false);
 const templateName = ref("");
@@ -40,8 +39,8 @@ const close = () => {
 const validationSchema = yup.object({
     templateName: yup
         .string()
-        .required(t.value("form.input.required"))
-        .matches(/^(?!\s+$).*/, t.value("form.input.required")),
+        .required(t.value("form.template.name.required"))
+        .matches(/^(?!\s+$).*/, t.value("form.template.name.required")),
     templateDescription: yup.string().nullable(),
 });
 
@@ -60,12 +59,12 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
     savingTemplate.value = true;
 
     const template = {
+        journey_id: journey.getID(),
         name: values.name,
         description: values.description,
     };
 
-    //TODO api call to create template
-    await client(`/api/journey/${journey.getID()}/`, {
+    await client(`/api/template/`, {
         method: "POST",
         body: template,
         async onResponse({ response }) {
@@ -104,28 +103,6 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
         },
     });
 });
-
-const checkTemplateName = (target: Event) => {
-    if (templateName.value === "") {
-        confirmJourneyNameAsTemplateName(target);
-    }
-};
-
-const confirmJourneyNameAsTemplateName = (event: Event) => {
-    confirm.require({
-        target: event.currentTarget as HTMLElement,
-        group: "template",
-        message: t.value("form.template.create.confirm.journeyname.message"),
-        rejectLabel: t.value("common.button.cancel"),
-        acceptLabel: t.value("form.template.create.confirm.journeyname.accept"),
-        acceptClass:
-            "px-2 py-1 text-nowrap rounded-xl border-2 border-dandelion-300 bg-natural-50 text-sm text-center text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600",
-        rejectClass: "hover:underline",
-        accept: () => {
-            templateName.value = journey.getName();
-        },
-    });
-};
 </script>
 
 <template>
@@ -138,7 +115,7 @@ const confirmJourneyNameAsTemplateName = (event: Event) => {
             :draggable="false"
             close-on-escape
             dismissable-mask
-            class="z-50 mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-9/12 md:w-5/12 md:rounded-xl"
+            class="z-50 mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-6/12 xl:w-5/12"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -167,7 +144,7 @@ const confirmJourneyNameAsTemplateName = (event: Event) => {
                 </h1>
                 <div class="mb-5 mt-5 flex flex-col">
                     <div
-                        class="mb-1 grid grid-cols-2 grid-rows-2 items-center sm:grid-cols-4 sm:gap-x-20"
+                        class="mb-1 grid grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20"
                     >
                         <label
                             for="template-name"
@@ -180,10 +157,11 @@ const confirmJourneyNameAsTemplateName = (event: Event) => {
                             v-model="templateName"
                             name="templateName"
                             :validate-on-blur="false"
-                            class="col-span-full col-start-2 block w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50"
-                            @click="checkTemplateName($event.target)"
+                            class="col-span-full col-start-3 block w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2"
                         />
-                        <div class="col-span-3 -mt-3 flex justify-end">
+                        <div
+                            class="col-start-5 -mt-3 flex justify-end xs:col-start-8 sm:col-start-4"
+                        >
                             <ErrorMessage
                                 name="templateName"
                                 class="text-nowrap text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300 sm:text-sm"
@@ -243,16 +221,5 @@ const confirmJourneyNameAsTemplateName = (event: Event) => {
                 </div>
             </form>
         </Dialog>
-
-        <ConfirmPopup
-            group="template"
-            :pt="{
-                root: {
-                    class: 'font-nunito text-text dark:text-natural-50 bg-natural-50 dark:bg-background-dark ml-0',
-                },
-                message: { class: 'ml-0' },
-                footer: { class: 'flex justify-between' },
-            }"
-        />
     </div>
 </template>

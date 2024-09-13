@@ -895,6 +895,14 @@ const handleUpload = (result: string) => {
                 <MediaGallery :upload-data="uploadResult" />
             </div>
         </div>
+        <TemplateDialog
+            v-if="currUser.role === 1"
+            :is-create-template-visible="isCreateTemplateVisible"
+            @close-template-dialog="
+                isCreateTemplateVisible = false;
+                visibleSidebar = false;
+            "
+        />
         <ConfirmDialog
             :draggable="false"
             group="journey"
@@ -909,11 +917,6 @@ const handleUpload = (result: string) => {
                     class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
                 },
             }"
-        />
-        <TemplateDialog
-            v-if="currUser.role === 1"
-            :is-create-template-visible="isCreateTemplateVisible"
-            @close-template-dialog="isCreateTemplateVisible = false"
         />
     </div>
 </template>
