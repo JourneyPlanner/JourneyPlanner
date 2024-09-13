@@ -134,10 +134,10 @@ const changeColorMode = () => {
                 >
                     <T key-name="startpage.text" />
                 </p>
-                <div class="mt-2 hidden md:mt-10 lg:flex">
+                <div class="mt-2 hidden md:mt-10 lg:ml-2 lg:flex">
                     <NuxtLink
                         to="/register"
-                        class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover-scale hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-64 lg:text-base lg:font-semibold"
+                        class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-64 lg:text-base lg:font-semibold"
                     >
                         <T key-name="startpage.button.create.journey" />
                     </NuxtLink>
