@@ -481,18 +481,27 @@ const changeColorMode = () => {
                 </div>
                 <div
                     id="sponsors"
-                    class="mb-10 mt-10 flex flex-col items-center justify-center sm:mt-20"
+                    class="mb-10 mt-5 flex flex-col items-center justify-center sm:mt-20"
                 >
                     <h3
-                        class="mb-5 cursor-default text-center text-lg font-bold text-text dark:text-natural-50 xs:text-xl md:text-2xl"
+                        class="mb-10 cursor-default text-center text-lg font-bold text-text dark:text-natural-50 xs:text-xl md:text-2xl"
                     >
                         <T key-name="about.sponsors.headline" />
                     </h3>
                     <div
-                        class="flex flex-col items-center md:flex-row lg:gap-16"
+                        class="flex flex-col items-center justify-center gap-10 md:flex-row lg:gap-16"
                     >
+                        <NuxtLink to="https://www.mapbox.com/" target="_blank">
+                            <SvgAboutMapbox class="h-12" />
+                        </NuxtLink>
+                        <NuxtLink
+                            to="https://www.lightgalleryjs.com/"
+                            target="_blank"
+                        >
+                            <SvgAboutLightgallery class="h-10" />
+                        </NuxtLink>
                         <div
-                            class="flex h-24 w-72 flex-col items-center justify-center rounded-lg bg-natural-100 py-2 text-center text-sm font-medium text-natural-700 shadow-md dark:text-natural-300 dark:text-natural-800 sm:w-96 sm:text-base"
+                            class="flex h-16 w-72 flex-col items-center justify-center rounded-lg bg-natural-100 py-2 text-center text-sm font-medium text-natural-700 shadow-md dark:text-natural-800 sm:w-96 sm:text-base"
                         >
                             <h4 class="font-semibold">
                                 <T key-name="about.sponsor" />
