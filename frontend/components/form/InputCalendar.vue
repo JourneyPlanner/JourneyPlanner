@@ -44,16 +44,16 @@ watch(
             :name="name"
             date-format="dd/mm/yy"
             placeholder="dd/mm/yyyy"
-            input-class="block rounded-lg px-2.5 pb-1 pt-1 text-md text-text dark:text-input font-normal bg-input dark:bg-input-dark border-2 border-border focus:outline-none focus:ring-1"
+            input-class="block rounded-lg px-2.5 pb-1 pt-1 text-md text-text dark:text-natural-50 font-normal bg-natural-50 dark:bg-natural-800 border-2 border-calypso-300 focus:outline-none focus:ring-1"
             @date-select="dateSelected"
             @blur="dateSelected"
         >
             <template #inputicon>
-                <InputIcon class="pi pi-calendar text-border" />
+                <InputIcon class="pi pi-calendar text-calypso-400" />
             </template>
         </Calendar>
         <span
-            class="text-xs text-error dark:font-bold dark:text-error-dark sm:text-sm"
+            class="text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300 sm:text-sm"
             >{{ errorMessage }}</span
         >
     </div>

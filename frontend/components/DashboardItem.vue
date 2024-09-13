@@ -46,9 +46,9 @@ const confirmDelete = (event: Event) => {
         header: t.value("dashboard.delete.header"),
         message: t.value("dashboard.delete.confirm"),
         icon: "pi pi-exclamation-triangle",
-        rejectClass: "hover:underline",
+        rejectClass: "hover:underline dark:text-natural-200",
         acceptClass:
-            "text-error dark:text-error-dark hover:underline font-bold",
+            "text-mahagony-500 dark:text-mahagony-400 hover:underline font-bold",
         rejectLabel: t.value("common.button.cancel"),
         acceptLabel: t.value("common.delete"),
         accept: () => {
@@ -73,7 +73,7 @@ const confirmLeave = (event: Event) => {
         icon: "pi pi-exclamation-triangle",
         rejectClass: "hover:underline",
         acceptClass:
-            "text-error dark:text-error-dark hover:underline font-bold",
+            "text-mahagony-500 dark:text-mahagony-400 hover:underline font-bold",
         rejectLabel: t.value("common.button.cancel"),
         acceptLabel: t.value("journey.leave"),
         accept: () => {
@@ -160,7 +160,7 @@ const itemsJourneyGuide = ref([
             {
                 label: t.value("dashboard.options.edit"),
                 icon: "pi pi-pencil",
-                className: "text-cta-border",
+                className: "text-natural-50",
                 command: () => {
                     isEditMenuVisible.value = true;
                 },
@@ -207,11 +207,15 @@ const { handleSubmit } = useForm({
     validationSchema: yup.object({
         name: yup
             .string()
+            .min(1, t.value("form.error.journey.name"))
             .required(t.value("form.error.journey.name"))
+            .matches(/^(?!\s+$).*/, t.value("form.error.journey.name"))
             .label(t.value("form.input.journey.name")),
         destination: yup
             .string()
+            .min(1, t.value("form.error.journey.destination"))
             .required(t.value("form.error.journey.destination"))
+            .matches(/^(?!\s+$).*/, t.value("form.error.journey.destination"))
             .label(t.value("form.input.journey.destination")),
         range: yup
             .array()
@@ -268,6 +272,7 @@ const onSave = handleSubmit(async (values) => {
                 emit("journeyEdited", journey, props.id);
                 isEditMenuVisible.value = false;
             }
+            loadingEdit.value = false;
         },
         async onResponseError() {
             toast.add({
@@ -276,10 +281,9 @@ const onSave = handleSubmit(async (values) => {
                 detail: t.value("common.error.unknown"),
                 life: 6000,
             });
+            loadingEdit.value = false;
         },
     });
-
-    loadingEdit.value = false;
 });
 </script>
 
@@ -325,24 +329,24 @@ const onSave = handleSubmit(async (values) => {
                         {{ destination }}
                     </h2>
                     <div
-                        class="mt-1.5 w-56 border-b-2 border-dashed border-border-grey text-sm dark:border-input-placeholder"
+                        class="mt-1.5 w-56 border-b-2 border-dashed border-natural-200 text-sm dark:border-natural-400"
                     >
-                        <span class="mr-1 text-border">
+                        <span class="mr-1 text-calypso-400">
                             <T key-name="dashboard.date" />
                         </span>
-                        <span class="-mb-1 text-text dark:text-white"
+                        <span class="-mb-1 text-text dark:text-natural-50"
                             >{{ format(from, "dd/MM/yyyy") }}-{{
                                 format(to, "dd/MM/yyyy")
                             }}</span
                         >
                     </div>
                     <h3
-                        class="mt-1 w-56 border-b-2 border-dashed border-border-grey text-sm dark:border-input-placeholder"
+                        class="mt-1 w-56 border-b-2 border-dashed border-natural-200 text-sm dark:border-natural-400"
                     >
-                        <span class="mr-1 text-border">
+                        <span class="mr-1 text-calypso-400">
                             <T key-name="dashboard.role" />
                         </span>
-                        <span class="text-text dark:text-white">
+                        <span class="text-text dark:text-natural-50">
                             <T :key-name="roleType" />
                         </span>
                     </h3>
@@ -351,7 +355,7 @@ const onSave = handleSubmit(async (values) => {
         </div>
         <div
             id="journey-mobile"
-            class="h-32 min-w-36 rounded-md border border-border bg-card p-1 dark:bg-card-dark md:p-2 lg:hidden"
+            class="h-32 min-w-36 rounded-md border border-calypso-300 bg-calypso-50 bg-opacity-20 p-1 dark:bg-gothic-800 md:p-2 lg:hidden"
         >
             <div class="flex justify-between">
                 <NuxtLink
@@ -388,24 +392,25 @@ const onSave = handleSubmit(async (values) => {
                     {{ destination }}
                 </h2>
                 <h3
-                    class="mt-1.5 border-b-2 border-dashed border-border-grey text-xs dark:border-input-placeholder md:text-sm"
+                    class="mt-1.5 border-b-2 border-dashed border-natural-200 text-xs dark:border-natural-400 md:text-sm"
                 >
-                    <span class="mr-0.5 text-border">
+                    <span class="mr-0.5 text-calypso-400">
                         <T key-name="dashboard.date" />
                     </span>
                     <br class="sm:hidden" />
-                    <span class="whitespace-nowrap text-text dark:text-white"
+                    <span
+                        class="whitespace-nowrap text-text dark:text-natural-50"
                         >{{ format(from, "dd/MM/yyyy") }} -
                         {{ format(to, "dd/MM/yyyy") }}</span
                     >
                 </h3>
                 <h3
-                    class="mt-1 border-b-2 border-dashed border-border-grey text-xs dark:border-input-placeholder md:text-sm"
+                    class="mt-1 border-b-2 border-dashed border-natural-200 text-xs dark:border-natural-400 md:text-sm"
                 >
-                    <span class="mr-0.5 text-border">
+                    <span class="mr-0.5 text-calypso-400">
                         <T key-name="dashboard.role" />
                     </span>
-                    <span class="text-text dark:text-white">
+                    <span class="text-text dark:text-natural-50">
                         <T :key-name="roleType" />
                     </span>
                 </h3>
@@ -415,40 +420,43 @@ const onSave = handleSubmit(async (values) => {
             id="overlay_menu"
             ref="menu"
             :model="props.role === 1 ? itemsJourneyGuide : itemsJourneyMember"
-            class="bg-input dark:bg-input-dark"
+            class="bg-natural-50 dark:bg-natural-800"
             :popup="true"
             :pt="{
-                root: { class: 'font-nunito bg-input dark:bg-input-dark' },
+                root: {
+                    class: 'font-nunito bg-natural-50 dark:bg-natural-800',
+                },
                 menuitem: {
-                    class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                    class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
                 },
                 content: {
-                    class: 'bg-input dark:bg-input-dark hover:bg-cta-bg-light dark:hover:bg-cta-bg-dark rounded-md text-text dark:text-white',
+                    class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
                 },
                 submenuHeader: {
-                    class: 'text-input-placeholder dark:text-text-light-dark bg-input dark:bg-input-dark',
+                    class: 'text-natural-500 dark:text-natural-100 bg-natural-50 dark:bg-natural-800',
                 },
-                label: { class: 'text-text dark:text-white' },
-                icon: { class: 'text-text dark:text-white' },
+                label: { class: 'text-text dark:text-natural-50' },
+                icon: { class: 'text-text dark:text-natural-50' },
             }"
         />
 
         <Dialog
             v-model:visible="isEditMenuVisible"
+            close-on-escape
             modal
             :header="t('dashboard.edit.header')"
             :style="{ width: '30rem' }"
-            class="bg-input dark:bg-input-dark"
+            class="bg-natural-50 dark:bg-natural-800"
             :pt="{
                 root: {
-                    class: 'font-nunito text-text bg-input dark:bg-input-dark',
+                    class: 'font-nunito text-text bg-natural-50 dark:bg-natural-800',
                 },
                 header: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-input',
+                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50',
                 },
                 title: { class: 'text-2xl' },
                 content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-input',
+                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50',
                 },
             }"
         >
@@ -480,9 +488,10 @@ const onSave = handleSubmit(async (values) => {
                             id="journey-destination"
                             name="destination"
                             translation-key="form.input.journey.destination"
-                            class="my-0 mb-1 w-2/3"
+                            class="my-0 mb-1 mt-5 w-2/3"
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 1rem; line-height: 1.5rem;}"
-                            :placeholder="props.destination"
+                            :value="props.destination"
+                            only
                         />
                     </div>
                     <div class="flex flex-row items-center justify-between">
@@ -509,7 +518,7 @@ const onSave = handleSubmit(async (values) => {
                         type="button"
                         :label="t('common.delete')"
                         icon="pi pi-trash"
-                        class="h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-white dark:hover:bg-cancel-bg-dark"
+                        class="h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                         :pt="{
                             root: { class: 'flex items-center justify-center' },
                             label: { class: 'display-block flex-none' },
@@ -525,7 +534,7 @@ const onSave = handleSubmit(async (values) => {
                             root: { class: 'flex items-center justify-center' },
                             label: { class: 'display-block flex-none' },
                         }"
-                        class="flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-border-green-save bg-input text-center font-bold text-text hover:bg-fill-green-save dark:border-border-green-save-dark dark:bg-input-dark dark:text-white dark:hover:bg-fill-green-save-dark"
+                        class="flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-atlantis-400 bg-natural-50 text-center font-bold text-text hover:bg-atlantis-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-atlantis-30040"
                     />
                 </div>
             </form>

@@ -21,12 +21,11 @@ if (props.value !== null && props.value !== "") {
 }
 
 const defaultClass =
-    "font-nunito block rounded-lg px-2.5 pb-1 pt-1 text-text dark:text-input font-normal border-2 border-border focus:outline-none focus:ring-1 ";
+    "font-nunito block rounded-lg px-2.5 pb-1 pt-1 text-text dark:text-natural-50 font-normal border-2 border-calypso-300 focus:outline-none focus:ring-1 ";
 const computedClass = computed(() => {
     return props.disabled === true
-        ? defaultClass +
-              "bg-input-disabled dark:bg-input-disabled-dark cursor-not-allowed"
-        : defaultClass + "bg-input dark:bg-input-dark";
+        ? defaultClass + "bg-natural-100 dark:bg-natural-800 cursor-not-allowed"
+        : defaultClass + "bg-natural-50 dark:bg-natural-900";
 });
 </script>
 
@@ -47,17 +46,18 @@ const computedClass = computed(() => {
             :disabled="disabled"
             :pt="{ timePicker: { class: 'font-nunito' } }"
             :input-class="computedClass"
-            panel-class="bg-input dark:bg-input-dark text-text dark:text-input disabled:bg-input"
+            panel-class="bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 disabled:bg-natural-100 disabled:dark:bg-natural-800"
         >
             <template #inputicon="{ clickCallback }">
                 <InputIcon
-                    class="pi pi-clock cursor-pointer text-border"
+                    class="pi pi-clock cursor-pointer text-calypso-400"
                     @click="clickCallback"
                 />
             </template>
         </Calendar>
-        <span class="text-sm text-error dark:font-bold dark:text-error-dark">{{
-            errorMessage
-        }}</span>
+        <span
+            class="text-sm text-mahagony-600 dark:font-bold dark:text-mahagony-300"
+            >{{ errorMessage }}</span
+        >
     </div>
 </template>

@@ -23,7 +23,7 @@ async function logoutUser() {
         class="flex flex-col items-center justify-center text-center font-nunito"
     >
         <div class="mt-10 text-center">
-            <h1 class="text-4xl font-bold text-text dark:text-white">
+            <h1 class="dark:text-white text-4xl font-bold text-text">
                 JourneyPlanner
             </h1>
         </div>
@@ -52,13 +52,13 @@ async function logoutUser() {
         <div class="mt-5 flex gap-5">
             <NuxtLink to="/register" class="">
                 <button
-                    class="min-w-28 rounded-lg border-2 border-cta-border py-2 font-bold text-text hover:bg-cta-bg dark:hover:bg-cta-bg-dark"
+                    class="border-cta-border hover:bg-cta-bg dark:hover:bg-cta-bg-dark min-w-28 rounded-lg border-2 py-2 font-bold text-text"
                 >
                     <T key-name="form.button.register" />
                 </button>
             </NuxtLink>
             <button
-                class="min-w-28 rounded-lg border-2 border-cta-border py-2 font-bold text-text hover:bg-cta-bg dark:hover:bg-cta-bg-dark"
+                class="border-cta-border hover:bg-cta-bg dark:hover:bg-cta-bg-dark min-w-28 rounded-lg border-2 py-2 font-bold text-text"
                 @click="logoutUser"
             >
                 <T key-name="form.button.logout" />

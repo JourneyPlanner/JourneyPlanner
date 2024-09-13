@@ -257,113 +257,118 @@ async function onSuccess(values: ActivityForm) {
     }
 
     if (updateRef.value) {
-        await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
-            method: "PATCH",
-            body: activity,
-            async onResponse({ response }) {
-                if (response.ok) {
-                    toast.add({
-                        severity: "success",
-                        summary: t.value(
-                            "form.input.activity.edit.toast.success.heading",
-                        ),
-                        detail: t.value(
-                            "form.input.activity.edit.toast.success.detail",
-                        ),
-                        life: 6000,
-                    });
-                    close();
-                    loadingSave.value = false;
-                    activityStore.updateActivity(
-                        response._data,
-                        props.activityId,
-                    );
-                    activityStore.setNewActivity(response._data);
-                    if (props.calendarActivity) {
-                        emit("editCalendarActivity", activity.name);
-                    }
-                }
-            },
-            async onRequestError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-                loadingSave.value = false;
-            },
-            async onResponseError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-                loadingSave.value = false;
-            },
-        });
-
-        if (props.calendarClicked && start && end) {
-            const calendarActivity = props.calendarActivity;
-            calendarActivity.start = start;
-            calendarActivity.end = end;
+        if (updateRef.value) {
             await client(
-                `/api/journey/${props.id}/activity/${props.activityId}/calendarActivity/${props.calendarActivity.id}`,
+                `/api/journey/${props.id}/activity/${props.activityId}`,
                 {
                     method: "PATCH",
-                    body: calendarActivity,
+                    body: activity,
                     async onResponse({ response }) {
                         if (response.ok) {
+                            toast.add({
+                                severity: "success",
+                                summary: t.value(
+                                    "form.input.activity.edit.toast.success.heading",
+                                ),
+                                detail: t.value(
+                                    "form.input.activity.edit.toast.success.detail",
+                                ),
+                                life: 6000,
+                            });
                             close();
                             loadingSave.value = false;
-                            emit("calendarMoved", start, end);
+                            activityStore.updateActivity(
+                                response._data,
+                                props.activityId,
+                            );
+                            activityStore.setNewActivity(response._data);
+                            if (props.calendarActivity) {
+                                emit("editCalendarActivity", activity.name);
+                            }
                         }
+                    },
+                    async onRequestError() {
+                        toast.add({
+                            severity: "error",
+                            summary: t.value("common.toast.error.heading"),
+                            detail: t.value("common.error.unknown"),
+                            life: 6000,
+                        });
+                        loadingSave.value = false;
+                    },
+                    async onResponseError() {
+                        toast.add({
+                            severity: "error",
+                            summary: t.value("common.toast.error.heading"),
+                            detail: t.value("common.error.unknown"),
+                            life: 6000,
+                        });
+                        loadingSave.value = false;
                     },
                 },
             );
-        }
-    } else {
-        await client(`/api/journey/${props.id}/activity`, {
-            method: "POST",
-            body: activity,
-            async onResponse({ response }) {
-                if (response.ok) {
+
+            if (props.calendarClicked && start && end) {
+                const calendarActivity = props.calendarActivity;
+                calendarActivity.start = start;
+                calendarActivity.end = end;
+                await client(
+                    `/api/journey/${props.id}/activity/${props.activityId}/calendarActivity/${props.calendarActivity.id}`,
+                    {
+                        method: "PATCH",
+                        body: calendarActivity,
+                        async onResponse({ response }) {
+                            if (response.ok) {
+                                close();
+                                loadingSave.value = false;
+                                emit("calendarMoved", start, end);
+                            }
+                        },
+                    },
+                );
+            }
+        } else {
+            await client(`/api/journey/${props.id}/activity`, {
+                method: "POST",
+                body: activity,
+                async onResponse({ response }) {
+                    if (response.ok) {
+                        toast.add({
+                            severity: "success",
+                            summary: t.value(
+                                "form.input.activity.toast.success.heading",
+                            ),
+                            detail: t.value(
+                                "form.input.activity.toast.success.detail",
+                            ),
+                            life: 6000,
+                        });
+                        close();
+                        loadingSave.value = false;
+                        activityStore.addActivity(response._data);
+                        activityStore.setNewActivity(response._data);
+                    }
+                },
+                async onRequestError() {
                     toast.add({
-                        severity: "success",
-                        summary: t.value(
-                            "form.input.activity.toast.success.heading",
-                        ),
-                        detail: t.value(
-                            "form.input.activity.toast.success.detail",
-                        ),
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("common.error.unknown"),
                         life: 6000,
                     });
-                    close();
                     loadingSave.value = false;
-                    activityStore.addActivity(response._data);
-                    activityStore.setNewActivity(response._data);
-                }
-            },
-            async onRequestError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-                loadingSave.value = false;
-            },
-            async onResponseError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-                loadingSave.value = false;
-            },
-        });
+                },
+                async onResponseError() {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("common.error.unknown"),
+                        life: 6000,
+                    });
+                    loadingSave.value = false;
+                },
+            });
+        }
     }
 }
 
@@ -426,31 +431,31 @@ function setSelectedDate(date: Date) {
             },
             footer: { class: 'h-0' },
             closeButtonIcon: {
-                class: 'z-20 text-input-placeholder hover:text-text dark:text-input-placeholder dark:hover:text-input h-10 w-10',
+                class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-text h-10 w-10',
             },
         }"
         @hide="close"
     >
         <form
-            class="flex h-full flex-col justify-between bg-background font-nunito text-text dark:bg-background-dark dark:text-input"
+            class="flex h-full flex-col justify-between bg-background font-nunito text-text dark:bg-background-dark dark:text-natural-50"
             @submit="onSubmit"
         >
             <TabView
                 v-model:active-index="activeIndex"
                 :pt="{
                     root: {
-                        class: 'font-nunito bg-background dark:bg-background-dark text-text dark:text-input',
+                        class: 'font-nunito bg-background dark:bg-background-dark text-text dark:text-natural-50',
                     },
                     panelContainer: {
-                        class: 'text-text dark:text-input font-nunito bg-background dark:bg-background-dark',
+                        class: 'text-text dark:text-natural-50 font-nunito bg-background dark:bg-background-dark',
                     },
                     nav: {
                         class: 'font-nunito bg-background dark:bg-background-dark text-lg',
                     },
                     navContainer: {
-                        class: 'border-b-2 border-border-gray dark:border-input-placeholder',
+                        class: 'border-b-2 border-natural-200 dark:border-natural-500',
                     },
-                    inkbar: { class: 'pt-0.5 bg-border' },
+                    inkbar: { class: 'pt-0.5 bg-calypso-300' },
                 }"
             >
                 <TabPanel
@@ -460,9 +465,9 @@ function setSelectedDate(date: Date) {
                             class: [
                                 'font-nunito bg-background dark:bg-background-dark',
                                 {
-                                    'text-border border-b-2 border-border':
+                                    'text-calypso-300 border-b-2 border-calypso-300':
                                         activeIndex === 0,
-                                    'text-input-placeholder': activeIndex !== 0,
+                                    'text-natural-500': activeIndex !== 0,
                                 },
                             ],
                         }),
@@ -531,9 +536,9 @@ function setSelectedDate(date: Date) {
                             class: [
                                 'font-nunito bg-background dark:bg-background-dark',
                                 {
-                                    'text-border border-b-2 border-border':
+                                    'text-calypso-300 border-b-2 border-calypso-300':
                                         activeIndex === 1,
-                                    'text-input-placeholder': activeIndex !== 1,
+                                    'text-natural-500': activeIndex !== 1,
                                 },
                             ],
                         }),
@@ -587,16 +592,16 @@ function setSelectedDate(date: Date) {
                     </div>
                 </TabPanel>
                 <TabPanel
-                    v-if="!onlyShowRef || create"
+                    v-if="!onlyShowRef || create || updateRef"
                     :header="t('activity.manual.header')"
                     :pt="{
                         headerAction: () => ({
                             class: [
                                 'font-nunito bg-background dark:bg-background-dark',
                                 {
-                                    'text-border border-b-2 border-border':
+                                    'text-calypso-300 border-b-2 border-calypso-300':
                                         activeIndex === 2,
-                                    'text-input-placeholder': activeIndex !== 2,
+                                    'text-natural-500': activeIndex !== 2,
                                 },
                             ],
                         }),
@@ -647,7 +652,7 @@ function setSelectedDate(date: Date) {
                     type="button"
                     :label="t('common.button.cancel')"
                     icon="pi pi-times"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
                         label: {
@@ -667,7 +672,7 @@ function setSelectedDate(date: Date) {
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-cta-border bg-input text-center text-text hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
+                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
                 />
             </div>
             <div
@@ -678,7 +683,7 @@ function setSelectedDate(date: Date) {
                     v-if="calendarActivity"
                     type="button"
                     :label="t('calendar.options.remove')"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-mahagony-500030"
                     icon="pi pi-calendar-times"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
@@ -691,7 +696,7 @@ function setSelectedDate(date: Date) {
                 <Button
                     type="button"
                     :label="t('dashboard.options.edit')"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cta-border bg-input px-2 font-bold text-text hover:bg-cta-bg dark:bg-input-dark dark:text-input dark:hover:bg-cta-bg-dark"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 font-bold text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
                     icon="pi pi-pencil"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
@@ -713,7 +718,7 @@ function setSelectedDate(date: Date) {
                 <Button
                     type="button"
                     :label="t('dashboard.options.delete')"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-cancel-border bg-input px-2 font-bold text-text hover:bg-cancel-bg dark:bg-input-dark dark:text-input dark:hover:bg-cancel-bg-dark"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-mahagony-500030"
                     icon="pi pi-trash"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
@@ -734,7 +739,7 @@ function setSelectedDate(date: Date) {
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-border-green-save bg-input text-center text-text hover:bg-fill-green-save dark:bg-input-dark dark:text-input dark:hover:bg-fill-green-save-dark"
+                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-atlantis-400 bg-natural-50 text-center text-text hover:bg-atlantis-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-atlantis-30040"
                 />
             </div>
         </form>

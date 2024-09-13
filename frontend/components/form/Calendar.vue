@@ -39,18 +39,18 @@ defineEmits(["input"]);
             :show-button-bar="true"
             :number-of-months="1"
             date-format="dd/mm/yy"
-            panel-class="bg-input dark:bg-background-dark dark:text-white"
-            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-white font-bold bg-input dark:bg-input-dark border-2 border-border focus:outline-none focus:ring-1"
+            panel-class="bg-natural-50 dark:bg-natural-800 dark:text-natural-50"
+            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 dark:bg-natural-800 border-2 border-calypso-300 dark:border-calypso-400 focus:outline-none focus:ring-1"
             :pt="{
                 panel: { class: 'text-text font-nunito z-50' },
                 header: {
-                    class: 'flex justify-between border-b bg-input dark:bg-background-dark dark:text-white',
+                    class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-800 dark:text-natural-50',
                 },
                 title: {
-                    class: 'text-text dark:text-input flex gap-1 font-nunito',
+                    class: 'text-text dark:text-natural-50 flex gap-1 font-nunito',
                 },
-                dayLabel: { class: 'text-border' },
-                datepickerMask: { class: 'text-text bg-background-dark' },
+                dayLabel: { class: 'text-calypso-400' },
+                datepickerMask: { class: 'text-text bg-natural-800' },
             }"
             @focus="handleFocus"
             @hide="handleBlur"
@@ -60,7 +60,7 @@ defineEmits(["input"]);
         <br />
         <div class="h-3">
             <span
-                class="ml-2.5 text-xs text-error dark:font-bold dark:text-error-dark"
+                class="ml-2.5 text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
                 >{{ errorMessage }}</span
             >
         </div>
@@ -68,8 +68,8 @@ defineEmits(["input"]);
             for="journey-range-calendar"
             class="pointer-events-none absolute left-0 top-0 overflow-hidden whitespace-nowrap py-4 pl-2.5 text-sm transition-all duration-300"
             :class="{
-                'text-input-placeholder': !isFocused,
-                'text-input-label': isFocused,
+                'text-natural-400': !isFocused,
+                'text-calypso-600': isFocused,
                 '-translate-x-6 -translate-y-4 scale-75': isFocused || value,
                 'translate-y-0 scale-100': !isFocused && !value,
             }"
