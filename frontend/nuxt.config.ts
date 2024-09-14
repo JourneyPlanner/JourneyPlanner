@@ -52,7 +52,6 @@ export default defineNuxtConfig({
             unstyled: false,
             zIndex: {
                 modal: 500,
-                tooltip: 2000,
             },
         },
         components: {
