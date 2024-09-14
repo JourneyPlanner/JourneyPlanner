@@ -31,16 +31,19 @@ const isValidUrl = computed(() => {
         <InputGroup>
             <InputGroupAddon
                 :disabled="disabled"
-                class="border-2 border-calypso-300 bg-natural-50 disabled:bg-natural-100 dark:bg-natural-900"
+                class="border-2 border-calypso-300 bg-natural-50 disabled:bg-natural-100 dark:border-calypso-400 dark:bg-natural-900"
             >
-                <i class="pi text-calypso-300" :class="icon" />
+                <i
+                    class="pi text-calypso-300 dark:border-calypso-400"
+                    :class="icon"
+                />
             </InputGroupAddon>
 
             <NuxtLink
                 v-if="name === 'link' && isValidUrl && disabled"
                 :to="value"
                 target="_blank"
-                class="w-full overflow-hidden overflow-ellipsis whitespace-nowrap rounded-r-md border-2 border-b-2 border-r-2 border-t-2 border-calypso-300 px-2.5 pb-1 pt-1 font-nunito font-normal text-text hover:underline focus:outline-none focus:ring-1 dark:border-calypso-400 dark:text-natural-50"
+                class="w-full overflow-hidden overflow-ellipsis whitespace-nowrap rounded-r-md border-2 border-b-2 border-l-0 border-r-2 border-t-2 border-calypso-300 px-2.5 pb-1 pt-1 font-nunito font-normal text-text hover:underline focus:outline-none focus:ring-1 dark:border-calypso-400 dark:text-natural-50"
                 :class="{
                     'bg-natural-100 text-ronchi-500 dark:bg-natural-800':
                         disabled,

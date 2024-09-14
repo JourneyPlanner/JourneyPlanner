@@ -416,6 +416,7 @@ function setSelectedDate(date: Date) {
         v-model:visible="isVisible"
         modal
         block-scroll
+        dismissable-mask
         :auto-z-index="true"
         :draggable="false"
         class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-6/12 md:rounded-xl"
