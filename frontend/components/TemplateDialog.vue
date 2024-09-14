@@ -115,34 +115,38 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
             :draggable="false"
             close-on-escape
             dismissable-mask
+            :header="t('journey.template.create')"
             class="z-50 mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-6/12 xl:w-5/12"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',
                 },
                 header: {
-                    class: 'flex justify-end h-1 pb-2 font-nunito bg-background dark:bg-background-dark',
+                    class: 'flex pb-2 font-nunito bg-background dark:bg-background-dark px-4 sm:px-7',
+                },
+                title: {
+                    class: 'font-nunito text-2xl font-semibold text-text dark:text-natural-50',
                 },
                 content: {
-                    class: 'font-nunito bg-background dark:bg-background-dark px-0 sm:px-7 h-full',
+                    class: 'font-nunito bg-background dark:bg-background-dark px-4 sm:px-7 h-full',
                 },
                 footer: { class: 'h-0' },
                 closeButtonIcon: {
-                    class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10',
+                    class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10 ',
                 },
             }"
             @hide="close"
         >
             <form
-                class="flex h-full flex-col justify-between bg-background px-4 font-nunito text-text dark:bg-background-dark dark:text-natural-50 sm:px-0"
+                class="flex h-full flex-col justify-between bg-background font-nunito text-text dark:bg-background-dark dark:text-natural-50"
                 @submit="onSubmitCreateTemplate"
             >
-                <h1
-                    class="text-2xl font-semibold text-text dark:text-natural-50"
-                >
-                    <T key-name="journey.template.create" />
-                </h1>
-                <div class="mb-5 mt-5 flex flex-col">
+                <div class="mb-5 flex flex-col">
+                    <p
+                        class="col-span-full col-start-1 row-span-1 mb-4 text-sm md:text-base"
+                    >
+                        <T key-name="journey.template.create.description" />
+                    </p>
                     <div
                         class="mb-1 grid grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20"
                     >
@@ -157,7 +161,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                             v-model="templateName"
                             name="templateName"
                             :validate-on-blur="false"
-                            class="col-span-full col-start-3 block w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2"
+                            class="col-span-full col-start-3 row-start-1 block w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2"
                         />
                         <div
                             class="col-start-5 -mt-3 flex justify-end xs:col-start-8 sm:col-start-4"
@@ -169,7 +173,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                         </div>
                     </div>
                     <div
-                        class="-mt-4 grid grid-cols-2 grid-rows-6 sm:grid-rows-5"
+                        class="-mt-4 grid grid-cols-2 grid-rows-6 sm:grid-rows-5 md:-mt-5"
                     >
                         <label
                             for="template-description"
@@ -185,7 +189,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                             :placeholder="
                                 t('form.input.template.description.placeholder')
                             "
-                            class="md:placeholder:text-md col-span-full row-span-5 block h-full w-full resize-none rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-sm placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 sm:row-span-4"
+                            class="md:placeholder:text-md col-span-full row-span-5 block h-full w-full resize-none rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-sm placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 sm:row-span-4 md:placeholder:text-base"
                         />
                     </div>
                 </div>
@@ -196,7 +200,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                         type="button"
                         :label="t('common.button.cancel')"
                         icon="pi pi-times"
-                        class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                        class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                         :pt="{
                             root: { class: 'flex items-center justify-center' },
                             label: {
