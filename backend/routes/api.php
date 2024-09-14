@@ -6,6 +6,7 @@ use App\Http\Controllers\JourneyUserController;
 use App\Http\Controllers\CalendarActivityController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -71,3 +72,18 @@ Route::post("upload", [UploadController::class, "upload"])->middleware([
 Route::apiResource("journey/{journey}/media", MediaController::class)
     ->middleware("auth:sanctum")
     ->only("index", "show");
+
+Route::post("user/change-password", [
+    UserController::class,
+    "changePassword",
+])->middleware("auth:sanctum");
+
+Route::post("user/change-email", [
+    UserController::class,
+    "changeEmail",
+])->middleware("auth:sanctum");
+
+Route::post("user/delete-account", [
+    UserController::class,
+    "deleteAccount",
+])->middleware("auth:sanctum");
