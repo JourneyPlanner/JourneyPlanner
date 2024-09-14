@@ -26,6 +26,9 @@ class Journey extends Model
         "invite",
         "mapbox_id",
         "mapbox_full_address",
+        "description",
+        "is_template",
+        "created_from",
     ];
 
     /**
