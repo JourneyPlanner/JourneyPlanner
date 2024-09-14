@@ -37,11 +37,11 @@ const close = () => {
  * optional fields: templateDescription
  */
 const validationSchema = yup.object({
-    templateName: yup
+    name: yup
         .string()
         .required(t.value("form.template.name.required"))
         .matches(/^(?!\s+$).*/, t.value("form.template.name.required")),
-    templateDescription: yup.string().nullable(),
+    description: yup.string().nullable(),
 });
 
 /**
@@ -159,7 +159,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                         <Field
                             id="template-name"
                             v-model="templateName"
-                            name="templateName"
+                            name="name"
                             :validate-on-blur="false"
                             class="col-span-full col-start-3 row-start-1 block w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2"
                         />
@@ -167,7 +167,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                             class="col-start-5 -mt-3 flex justify-end xs:col-start-8 sm:col-start-4"
                         >
                             <ErrorMessage
-                                name="templateName"
+                                name="name"
                                 class="text-nowrap text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300 sm:text-sm"
                             />
                         </div>
@@ -185,7 +185,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                             id="template-description"
                             type="text"
                             as="textarea"
-                            name="templateDescription"
+                            name="description"
                             :placeholder="
                                 t('form.input.template.description.placeholder')
                             "
