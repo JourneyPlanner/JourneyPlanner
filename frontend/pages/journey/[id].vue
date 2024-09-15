@@ -21,7 +21,8 @@ const day = ref(0);
 const tensDays = ref(0);
 const hundredsDays = ref(0);
 const jsConfetti = new JSConfetti();
-const visibleSidebar = ref(false);
+const isMemberSidebarVisible = ref(false);
+const isMenuSidebarVisible = ref(false);
 const toast = useToast();
 const { t } = useTranslate();
 const op = ref();
@@ -35,6 +36,8 @@ const upload = ref();
 const calendar = ref();
 
 const isCreateTemplateVisible = ref(false);
+const isJourneyEditMenuVisible = ref(false);
+const activeMenuAccordionIndex = ref(0);
 
 definePageMeta({
     middleware: ["sanctum:auth"],
@@ -119,29 +122,15 @@ QRCode.toDataURL(journeyData.value.invite, opts, function (error, url) {
     qrcode.value = url;
 });
 
-const fromDate = new Date(journeyData.value.from);
-const toDate = new Date(journeyData.value.to);
+const fromDate = ref(new Date(journeyData.value.from));
+const toDate = ref(new Date(journeyData.value.to));
 const currentDate = new Date();
-const days = ref(differenceInDays(fromDate, currentDate));
-const daystoEnd = ref(differenceInDays(toDate, currentDate));
+const days = ref(-1);
+const daystoEnd = ref(-1);
 
-if (days.value > 0) {
-    day.value = Math.floor(days.value % 10);
-    days.value = days.value / 10;
-    tensDays.value = Math.floor(days.value % 10);
-    days.value = days.value / 10;
-    hundredsDays.value = Math.floor(days.value % 10);
-} else if (days.value <= 0 && daystoEnd.value > 0) {
-    duringJourney.value = true;
-    const journeyEnds = ref(differenceInDays(toDate, currentDate));
-    day.value = Math.floor(journeyEnds.value % 10);
-    journeyEnds.value = journeyEnds.value / 10;
-    tensDays.value = Math.floor(journeyEnds.value % 10);
-    journeyEnds.value = journeyEnds.value / 10;
-    hundredsDays.value = Math.floor(journeyEnds.value % 10);
-} else {
-    journeyEnded.value = true;
-}
+onMounted(() => {
+    calculateDays(journeyData.value.from, journeyData.value.to);
+});
 
 const isFlipped = ref(false);
 const flip = () => {
@@ -149,7 +138,7 @@ const flip = () => {
 };
 
 const confirmLeave = (event: Event) => {
-    visibleSidebar.value = false;
+    isMemberSidebarVisible.value = false;
     confirm.require({
         target: event.currentTarget as HTMLElement,
         group: "journey",
@@ -172,6 +161,41 @@ const confirmLeave = (event: Event) => {
         },
     });
 };
+
+function calculateDays(from: string, to: string) {
+    fromDate.value = new Date(from);
+    toDate.value = new Date(to);
+    days.value = differenceInDays(fromDate.value, currentDate);
+    daystoEnd.value = differenceInDays(toDate.value, currentDate);
+
+    if (days.value > 0) {
+        day.value = Math.floor(days.value % 10);
+        days.value = days.value / 10;
+        tensDays.value = Math.floor(days.value % 10);
+        days.value = days.value / 10;
+        hundredsDays.value = Math.floor(days.value % 10);
+    } else if (days.value <= 0 && daystoEnd.value > 0) {
+        duringJourney.value = true;
+        journeyEnded.value = false;
+        const journeyEnds = ref(differenceInDays(toDate.value, currentDate));
+        day.value = Math.floor(journeyEnds.value % 10);
+        journeyEnds.value = journeyEnds.value / 10;
+        tensDays.value = Math.floor(journeyEnds.value % 10);
+        journeyEnds.value = journeyEnds.value / 10;
+        hundredsDays.value = Math.floor(journeyEnds.value % 10);
+    } else {
+        journeyEnded.value = true;
+        duringJourney.value = false;
+    }
+}
+
+function journeyEdited(journey: Journey) {
+    store.setJourney(journey);
+    useHead({
+        title: `${journey.name} | JourneyPlanner`,
+    });
+    calculateDays(journey.from, journey.to);
+}
 
 /**
  * API call to leave the journey
@@ -263,27 +287,35 @@ const handleUpload = (result: string) => {
 <template>
     <div class="flex flex-col font-nunito text-text dark:text-natural-50">
         <Sidebar
-            v-model:visible="visibleSidebar"
+            id="member-sidebar"
+            v-model:visible="isMemberSidebarVisible"
             position="right"
             :block-scroll="true"
             :pt="{
-                closeButton: { class: 'w-9 h-9 dark:fill-white' },
-                closeIcon: {
-                    class: 'w-7 h-7 text-natural-400 hover:text-text dark:text-natural-300 dark:hover:text-natural-50',
+                closeButton: {
+                    class: 'w-9 h-9 col-span-2 flex w-full justify-end pr-1',
                 },
-                header: { class: 'p-2 flex items-center' },
-                content: { class: 'pl-3 pr-2 py-2' },
-                root: { class: ' dark:bg-background-dark font-nunito' },
+                closeIcon: {
+                    class: 'w-7 h-7 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50',
+                },
+                header: { class: 'p-2 pl-3 grid grid-rows-1 grid-cols-12' },
+                content: { class: 'pl-3 pr-2 py-2 flex flex-col h-full' },
+                root: {
+                    class: 'dark:bg-background-dark font-nunito relative',
+                },
             }"
         >
             <template #header>
+                <span class="h-0.5 w-full bg-calypso-400" />
+                <div
+                    class="col-span-5 flex w-full flex-row justify-center text-2xl font-medium text-text dark:text-natural-50"
+                >
+                    <h3>
+                        <T key-name="journey.sidebar.members" />
+                    </h3>
+                </div>
                 <span
-                    v-tooltip.left="{
-                        value: t('dashboard.options.leave'),
-                        pt: { root: 'font-nunito' },
-                    }"
-                    class="pi pi-sign-out order-1 pr-2 text-xl text-text hover:cursor-pointer hover:text-mahagony-600 dark:text-natural-50 dark:hover:text-mahagony-300"
-                    @click="confirmLeave($event)"
+                    class="col-span-4 col-start-7 h-0.5 w-full bg-calypso-400"
                 />
             </template>
             <div class="text-xl font-medium text-text dark:text-natural-50">
@@ -307,21 +339,6 @@ const handleUpload = (result: string) => {
                 </div>
             </div>
             <div
-                v-if="currUser.role === 1"
-                class="border-b-2 border-natural-200 pb-4 dark:border-natural-900"
-            >
-                <button
-                    v-tooltip.left="{
-                        value: t('journey.template.create.detail'),
-                        pt: { root: 'font-nunito' },
-                    }"
-                    class="dark:hover:bg-pesto-700 mt-4 h-10 w-full rounded-md bg-dandelion-300 text-natural-50 hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50"
-                    @click="isCreateTemplateVisible = !isCreateTemplateVisible"
-                >
-                    <T key-name="journey.template.create" />
-                </button>
-            </div>
-            <div
                 class="flex flex-row items-center justify-center border-b-2 border-natural-200 pb-1 pt-1 dark:border-natural-900"
             >
                 <h1
@@ -340,7 +357,7 @@ const handleUpload = (result: string) => {
                     </button>
                 </div>
             </div>
-            <div id="list" class="mt-3 flex flex-col gap-3">
+            <div id="list" class="mt-3 flex flex-grow flex-col gap-3">
                 <MemberItem
                     v-for="user in users"
                     :id="user.id"
@@ -353,6 +370,133 @@ const handleUpload = (result: string) => {
                     @change-role="changeRole"
                 />
             </div>
+            <div class="border-t-2 border-natural-200 dark:border-natural-900">
+                <button
+                    class="my-3 w-full rounded-md border-2 border-mahagony-500 bg-natural-50 py-1 text-base text-text hover:bg-mahagony-300 dark:bg-pesto-600 dark:text-natural-50"
+                    @click="confirmLeave($event)"
+                >
+                    <T key-name="journey.leave.short" />
+                </button>
+            </div>
+        </Sidebar>
+        <Sidebar
+            id="menu-sidebar"
+            v-model:visible="isMenuSidebarVisible"
+            position="right"
+            :block-scroll="true"
+            :pt="{
+                closeButton: {
+                    class: 'w-9 h-9 col-span-2 flex w-full justify-end pr-1',
+                },
+                closeIcon: {
+                    class: 'w-7 h-7 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50',
+                },
+                header: { class: 'p-2 pl-3 grid grid-cols-12' },
+                content: {
+                    class: 'pl-3 pr-2 text-text dark:text-natural-50',
+                },
+                root: { class: 'bg-natural-50 font-nunito' },
+            }"
+        >
+            <template #header>
+                <span class="h-0.5 w-full bg-calypso-400" />
+                <div
+                    class="col-span-3 flex w-full flex-row justify-center text-2xl font-medium text-text dark:text-natural-50"
+                >
+                    <h3>
+                        <T key-name="journey.sidebar.menu" />
+                    </h3>
+                </div>
+                <span
+                    class="col-span-6 col-start-5 h-0.5 w-full bg-calypso-400"
+                />
+            </template>
+            <div>
+                <Accordion
+                    v-model:active-index="activeMenuAccordionIndex"
+                    class="font-nunito text-xl text-text"
+                >
+                    <AccordionTab
+                        v-if="currUser.role === 1"
+                        :header="t('dashboard.edit.header')"
+                        :pt="{
+                            root: {
+                                class: 'border-b-2 border-natural-200 dark:border-natural-900',
+                            },
+                            headerAction: { class: 'pl-0 pr-0 bg-natural-50' },
+                            content: { class: 'pl-0 bg-natural-50' },
+                        }"
+                    >
+                        <div>
+                            <p class="text-base font-medium text-natural-600">
+                                <T key-name="dashboard.edit.detail" />
+                            </p>
+                            <button
+                                class="mt-4 w-full rounded-md border-2 border-dandelion-300 bg-natural-50 py-1 text-base text-text hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50"
+                                @click="
+                                    isJourneyEditMenuVisible =
+                                        !isJourneyEditMenuVisible
+                                "
+                            >
+                                <T key-name="dashboard.edit.short" />
+                            </button>
+                        </div>
+                    </AccordionTab>
+                    <AccordionTab
+                        v-if="currUser.role === 1"
+                        :header="t('journey.template.create')"
+                        :pt="{
+                            root: {
+                                class: 'border-b-2 border-natural-200 dark:border-natural-900',
+                            },
+                            headerAction: { class: 'pl-0 pr-0 bg-natural-50' },
+                            content: { class: 'pl-0 bg-natural-50' },
+                        }"
+                    >
+                        <div>
+                            <p class="text-base font-medium text-natural-600">
+                                <T key-name="journey.template.create.detail" />
+                            </p>
+                            <button
+                                class="mt-4 w-full rounded-md border-2 border-dandelion-300 bg-natural-50 py-1 text-base text-text hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50"
+                                @click="
+                                    isCreateTemplateVisible =
+                                        !isCreateTemplateVisible
+                                "
+                            >
+                                <T key-name="journey.template.create" />
+                            </button>
+                        </div>
+                    </AccordionTab>
+                    <AccordionTab
+                        v-if="currUser.role === 1"
+                        :header="t('dashboard.options.leave')"
+                        :pt="{
+                            root: {
+                                class: 'border-b-2 border-natural-200 dark:border-natural-900',
+                            },
+                            headerAction: { class: 'pl-0 pr-0 bg-natural-50' },
+                            content: { class: 'pl-0 bg-natural-50' },
+                        }"
+                    >
+                        <div>
+                            <p class="text-base font-medium text-natural-600">
+                                <T key-name="journey.leave.detail" />
+                                <T
+                                    v-if="currUser.role === 1"
+                                    key-name="journey.leave.detail.journeyguide"
+                                />
+                            </p>
+                            <button
+                                class="mt-4 w-full rounded-md border-2 border-mahagony-500 bg-natural-50 py-1 text-base text-text hover:bg-mahagony-300 dark:bg-pesto-600 dark:text-natural-50"
+                                @click="confirmLeave($event)"
+                            >
+                                <T key-name="journey.leave.short" />
+                            </button>
+                        </div>
+                    </AccordionTab>
+                </Accordion>
+            </div>
         </Sidebar>
         <div
             class="absolute right-0 mt-5 flex h-10 w-full items-center justify-end font-semibold lg:w-1/3"
@@ -361,9 +505,13 @@ const handleUpload = (result: string) => {
                 <SvgDashboardIcon class="h-6 w-6" />
                 <p class="text-2xl hover:underline">Dashboard</p>
             </NuxtLink>
-            <SvgMenu
-                class="mx-5 h-8 w-8 hover:cursor-pointer md:mx-10 md:h-10 md:w-10"
-                @click="visibleSidebar = true"
+            <span
+                class="pi pi-users ml-10 mr-5 text-3xl hover:cursor-pointer"
+                @click="isMemberSidebarVisible = true"
+            />
+            <span
+                class="pi pi-bars mr-10 text-3xl hover:cursor-pointer"
+                @click="isMenuSidebarVisible = true"
             />
         </div>
         <div class="mt-[12vh] flex h-fit flex-wrap">
@@ -895,12 +1043,22 @@ const handleUpload = (result: string) => {
                 <MediaGallery :upload-data="uploadResult" />
             </div>
         </div>
+        <EditJourneyDialog
+            :id="store.getID()"
+            :is-journey-dialog-visible="isJourneyEditMenuVisible"
+            :name="store.getName()"
+            :destination="store.getDestination()"
+            :from="new Date(store.getFromDate())"
+            :to="new Date(store.getToDate())"
+            @close-edit-journey-dialog="isJourneyEditMenuVisible = false"
+            @journey-edited="journeyEdited"
+        />
         <TemplateDialog
             v-if="currUser.role === 1"
             :is-create-template-visible="isCreateTemplateVisible"
             @close-template-dialog="
                 isCreateTemplateVisible = false;
-                visibleSidebar = false;
+                isMemberSidebarVisible = false;
             "
         />
         <ConfirmDialog

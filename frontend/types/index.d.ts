@@ -1,6 +1,16 @@
 export {};
 
 declare global {
+    interface Journey {
+        id: string;
+        name: string;
+        destination: string;
+        mapbox_full_address: string;
+        from: Date;
+        to: Date;
+        role: number;
+    }
+
     interface Feature {
         type: string;
         geometry: {

@@ -30,6 +30,7 @@ if (journey.getLat() && journey.getLong()) {
 }
 
 onMounted(async () => {
+    inputValue.value = props.value;
     Mapbox = await import("@mapbox/search-js-web");
     search.value = new Mapbox.MapboxSearchBox();
     isLoaded.value = true;
