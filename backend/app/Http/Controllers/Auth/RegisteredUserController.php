@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
         $username = Str::lower(
             preg_replace("/[ ]/", "_", $request->display_name)
         );
-        $username = preg_replace("/[^a-z0-9_]/", "", $username);
+        $username = preg_replace("/[^a-z0-9_-]/", "", $username);
         while (User::where("username", $username)->exists()) {
             $username .= Str::lower(Str::random(4));
         }

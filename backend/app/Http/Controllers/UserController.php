@@ -51,6 +51,39 @@ class UserController extends Controller
         return response()->json(["message" => "Email changed"]);
     }
 
+    public function changeDisplayName(Request $request): JsonResponse
+    {
+        $request->validate([
+            "display_name" => "required|string|max:255",
+        ]);
+
+        $user = $request->user();
+        $user->display_name = $request->display_name;
+        $user->save();
+
+        return response()->json([
+            "message" => "Display name changed",
+            "display_name" => $user->display_name,
+        ]);
+    }
+
+    public function changeUsername(Request $request): JsonResponse
+    {
+        $request->validate([
+            "username" =>
+                "required|string|alpha_dash|lowercase|max:255|unique:users",
+        ]);
+
+        $user = $request->user();
+        $user->username = $request->username;
+        $user->save();
+
+        return response()->json([
+            "message" => "Username changed",
+            "username" => $user->username,
+        ]);
+    }
+
     public function deleteAccount(Request $request): JsonResponse
     {
         $request->validate([

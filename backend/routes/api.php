@@ -73,17 +73,27 @@ Route::apiResource("journey/{journey}/media", MediaController::class)
     ->middleware("auth:sanctum")
     ->only("index", "show");
 
-Route::post("user/change-password", [
+Route::put("user/change-password", [
     UserController::class,
     "changePassword",
 ])->middleware("auth:sanctum");
 
-Route::post("user/change-email", [
+Route::put("user/change-email", [
     UserController::class,
     "changeEmail",
 ])->middleware("auth:sanctum");
 
-Route::post("user/delete-account", [
+Route::put("user/change-display-name", [
+    UserController::class,
+    "changeDisplayName",
+])->middleware("auth:sanctum");
+
+Route::put("user/change-username", [
+    UserController::class,
+    "changeUsername",
+])->middleware("auth:sanctum");
+
+Route::delete("user/delete-account", [
     UserController::class,
     "deleteAccount",
 ])->middleware("auth:sanctum");

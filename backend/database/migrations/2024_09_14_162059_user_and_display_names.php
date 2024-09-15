@@ -26,7 +26,7 @@ return new class extends Migration {
                 $user->firstName .
                     ($user->lastName ? "_" . $user->lastName : "")
             );
-            $username = preg_replace("/[^a-z0-9_]/", "", $username);
+            $username = preg_replace("/[^a-z0-9_-]/", "", $username);
             while (User::where("username", $username)->exists()) {
                 $username .= Str::lower(Str::random(4));
             }
