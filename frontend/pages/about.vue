@@ -172,7 +172,7 @@ const changeColorMode = () => {
                                     v-if="icon === 'moon'"
                                     class="group w-4"
                                 />
-                                <SvgSun v-else class="group w-4" />
+                                <SvgSun v-else class="w- group" />
                             </button>
                         </li>
                         <li class="border-l-2 border-natural-300 pl-2">
@@ -397,7 +397,7 @@ const changeColorMode = () => {
                         </div>
                     </div>
                 </div>
-                <div id="team" ref="team" class="sm:mt-16 md:mt-32 lg:mt-28">
+                <div id="team" ref="team" class="sm:mt-16 md:mt-10 lg:mt-28">
                     <h3
                         class="mt-10 cursor-default text-center text-lg font-bold text-text dark:text-natural-50 xs:mt-20 xs:text-xl md:text-2xl lg:mt-4"
                     >
@@ -421,7 +421,7 @@ const changeColorMode = () => {
                         }"
                     >
                         <div
-                            class="mx-5 mt-5 flex cursor-default items-center justify-center font-nunito lg:mt-10"
+                            class="mx-5 mb-2 mt-8 flex cursor-default items-center justify-center font-nunito md:mt-10 lg:mt-10"
                         >
                             <div
                                 class="align-center flex w-full items-center gap-8 sm:gap-4"
@@ -481,15 +481,15 @@ const changeColorMode = () => {
                 </div>
                 <div
                     id="sponsors"
-                    class="mb-10 mt-5 flex flex-col items-center justify-center sm:mt-20"
+                    class="mb-10 mt-5 flex flex-col items-center justify-center sm:mt-20 md:mt-10"
                 >
                     <h3
-                        class="mb-10 cursor-default text-center text-lg font-bold text-text dark:text-natural-50 xs:text-xl md:text-2xl"
+                        class="mb-8 cursor-default text-center text-lg font-bold text-text dark:text-natural-50 xs:text-xl md:text-2xl"
                     >
                         <T key-name="about.sponsors.headline" />
                     </h3>
                     <div
-                        class="flex flex-col items-center justify-center gap-10 md:flex-row lg:gap-16"
+                        class="flex flex-col items-center justify-center gap-9 md:flex-row lg:gap-16"
                     >
                         <NuxtLink to="https://www.mapbox.com/" target="_blank">
                             <SvgAboutMapbox class="h-12" />
@@ -500,19 +500,19 @@ const changeColorMode = () => {
                         >
                             <SvgAboutLightgallery class="h-10" />
                         </NuxtLink>
-                        <div
-                            class="flex h-16 w-72 flex-col items-center justify-center rounded-lg bg-natural-100 py-2 text-center text-sm font-medium text-natural-700 shadow-md dark:text-natural-800 sm:w-96 sm:text-base"
+                    </div>
+                    <div
+                        class="mt-10 flex h-16 w-72 flex-col items-center justify-center rounded-lg bg-natural-100 py-2 text-center text-sm font-medium text-natural-700 shadow-md dark:text-natural-800 sm:w-96 sm:text-base"
+                    >
+                        <h4 class="font-semibold">
+                            <T key-name="about.sponsor" />
+                        </h4>
+                        <a
+                            href="mailto:raven.burkard@journeyplanner.io?cc=contact@journeyplanner.io&subject=Sponsorship"
+                            class="text-calypso-400 hover:font-bold dark:text-calypso-600"
                         >
-                            <h4 class="font-semibold">
-                                <T key-name="about.sponsor" />
-                            </h4>
-                            <a
-                                href="mailto:raven.burkard@journeyplanner.io?cc=contact@journeyplanner.io&subject=Sponsorship"
-                                class="text-calypso-400 hover:font-bold dark:text-calypso-600"
-                            >
-                                <T key-name="about.sponsor.contact" />
-                            </a>
-                        </div>
+                            <T key-name="about.sponsor.contact" />
+                        </a>
                     </div>
                 </div>
             </main>
