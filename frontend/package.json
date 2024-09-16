@@ -35,7 +35,7 @@
         "@uppy/vue": "^1.1.2",
         "@vee-validate/nuxt": "^4.13.2",
         "@vee-validate/yup": "^4.13.2",
-        "concurrently": "^9.0.0",
+        "concurrently": "^9.0.1",
         "date-fns": "^3.6.0",
         "file-saver": "^2.0.5",
         "js-confetti": "^0.12.0",
