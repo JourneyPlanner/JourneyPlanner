@@ -172,7 +172,7 @@ const changeColorMode = () => {
                                     v-if="icon === 'moon'"
                                     class="group w-4"
                                 />
-                                <SvgSun v-else class="w- group" />
+                                <SvgSun v-else class="group w-5" />
                             </button>
                         </li>
                         <li class="border-l-2 border-natural-300 pl-2">
