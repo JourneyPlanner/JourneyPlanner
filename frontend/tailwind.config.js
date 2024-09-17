@@ -24,9 +24,14 @@ export default {
                     "0%, 100%": { transform: "rotate(-3deg)" },
                     "50%": { transform: "rotate(3deg)" },
                 },
+                blink: {
+                    "0%, 50%, 100%": { opacity: 1 },
+                    "25%, 75%": { opacity: 0 },
+                },
             },
             animation: {
-                wiggle: "wiggle 0.5s ease-in-out 2",
+                wiggle: "wiggle 0.45s ease-in-out 5",
+                blink: "blink 2.75s infinite",
             },
         },
         colors: {
@@ -118,5 +123,17 @@ export default {
             light: "#F6FAFB",
         },
     },
-    plugins: [],
+    plugins: [
+        function ({ addUtilities }) {
+            addUtilities({
+                ".hover-scale": {
+                    cursor: "default",
+                    transition: "all 0.5s",
+                    "&:hover": {
+                        transform: "scale(1.125)",
+                    },
+                },
+            });
+        },
+    ],
 };

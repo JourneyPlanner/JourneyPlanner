@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
-import { differenceInDays, format } from "date-fns";
+import { differenceInDays, differenceInHours, format } from "date-fns";
 import JSConfetti from "js-confetti";
 import QRCode from "qrcode";
 import resolveConfig from "tailwindcss/resolveConfig";
 import TemplateDialog from "~/components/TemplateDialog.vue";
 import tailwindConfig from "~/tailwind.config.js";
+
+import scroll from "../../utils/scroll";
 
 const fullConfig = resolveConfig(tailwindConfig);
 const confirm = useConfirm();
@@ -121,11 +123,16 @@ QRCode.toDataURL(journeyData.value.invite, opts, function (error, url) {
     qrcode.value = url;
 });
 
-const fromDate = ref(new Date(journeyData.value.from));
-const toDate = ref(new Date(journeyData.value.to));
+const fromDate = ref(new Date(journeyData.value.from.split("T")[0]));
+const toDate = ref(new Date(journeyData.value.to.split("T")[0]));
 const currentDate = new Date();
-const days = ref(-1);
-const daystoEnd = ref(-1);
+
+const days = ref(
+    Math.ceil(differenceInHours(fromDate.value, currentDate) / 24),
+);
+const daystoEnd = ref(
+    Math.ceil(differenceInHours(toDate.value, currentDate) / 24),
+);
 
 onMounted(() => {
     calculateDays(journeyData.value.from, journeyData.value.to);
@@ -162,10 +169,12 @@ const confirmLeave = (event: Event) => {
 };
 
 function calculateDays(from: string, to: string) {
-    fromDate.value = new Date(from);
-    toDate.value = new Date(to);
-    days.value = differenceInDays(fromDate.value, currentDate);
-    daystoEnd.value = differenceInDays(toDate.value, currentDate);
+    fromDate.value = new Date(from.split("T")[0]);
+    toDate.value = new Date(to.split("T")[0]);
+    days.value = Math.ceil(differenceInHours(fromDate.value, currentDate) / 24);
+    daystoEnd.value = Math.ceil(
+        differenceInHours(toDate.value, currentDate) / 24,
+    );
 
     if (days.value > 0) {
         journeyEnded.value = false;
@@ -179,9 +188,17 @@ function calculateDays(from: string, to: string) {
         duringJourney.value = true;
         journeyEnded.value = false;
         const journeyEnds = ref(differenceInDays(toDate.value, currentDate));
-        day.value = Math.floor(journeyEnds.value % 10);
-        journeyEnds.value = journeyEnds.value / 10;
-        tensDays.value = Math.floor(journeyEnds.value % 10);
+
+        if (Math.floor(journeyEnds.value % 10) == 9) {
+            day.value = Math.floor(journeyEnds.value % 10);
+            journeyEnds.value = journeyEnds.value / 10;
+            tensDays.value = Math.floor(journeyEnds.value % 10) + 1;
+        } else {
+            day.value = Math.floor(journeyEnds.value % 10) + 1;
+            journeyEnds.value = journeyEnds.value / 10;
+            tensDays.value = Math.floor(journeyEnds.value % 10);
+        }
+
         journeyEnds.value = journeyEnds.value / 10;
         hundredsDays.value = Math.floor(journeyEnds.value % 10);
     } else {

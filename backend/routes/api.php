@@ -5,6 +5,7 @@ use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\JourneyUserController;
 use App\Http\Controllers\CalendarActivityController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\TemplateController;
 use Illuminate\Http\Request;
@@ -76,3 +77,5 @@ Route::apiResource("journey/{journey}/media", MediaController::class)
 Route::apiResource("template", TemplateController::class)
     ->middleware("auth:sanctum")
     ->only("store");
+
+Route::get("project", [ProjectController::class, "getProjectData"]);

@@ -1,6 +1,6 @@
 <script setup>
 import { T, useTranslate } from "@tolgee/vue";
-import { saveAs } from "file-saver";
+import pkg from "file-saver";
 import JSZip from "jszip";
 import "lightgallery/css/lg-autoplay.css";
 import "lightgallery/css/lg-fullscreen.css";
@@ -25,6 +25,7 @@ const docs = ref([]);
 const downloading = ref(false);
 const toast = useToast();
 const isDocDialogOpen = ref(false);
+const { saveAs } = pkg;
 
 let lightGallery = null;
 
