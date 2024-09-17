@@ -257,118 +257,113 @@ async function onSuccess(values: ActivityForm) {
     }
 
     if (updateRef.value) {
-        if (updateRef.value) {
+        await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
+            method: "PATCH",
+            body: activity,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value(
+                            "form.input.activity.edit.toast.success.heading",
+                        ),
+                        detail: t.value(
+                            "form.input.activity.edit.toast.success.detail",
+                        ),
+                        life: 6000,
+                    });
+                    close();
+                    loadingSave.value = false;
+                    activityStore.updateActivity(
+                        response._data,
+                        props.activityId,
+                    );
+                    activityStore.setNewActivity(response._data);
+                    if (props.calendarActivity) {
+                        emit("editCalendarActivity", activity.name);
+                    }
+                }
+            },
+            async onRequestError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                loadingSave.value = false;
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                loadingSave.value = false;
+            },
+        });
+
+        if (props.calendarClicked && start && end) {
+            const calendarActivity = props.calendarActivity;
+            calendarActivity.start = start;
+            calendarActivity.end = end;
             await client(
-                `/api/journey/${props.id}/activity/${props.activityId}`,
+                `/api/journey/${props.id}/activity/${props.activityId}/calendarActivity/${props.calendarActivity.id}`,
                 {
                     method: "PATCH",
-                    body: activity,
+                    body: calendarActivity,
                     async onResponse({ response }) {
                         if (response.ok) {
-                            toast.add({
-                                severity: "success",
-                                summary: t.value(
-                                    "form.input.activity.edit.toast.success.heading",
-                                ),
-                                detail: t.value(
-                                    "form.input.activity.edit.toast.success.detail",
-                                ),
-                                life: 6000,
-                            });
                             close();
                             loadingSave.value = false;
-                            activityStore.updateActivity(
-                                response._data,
-                                props.activityId,
-                            );
-                            activityStore.setNewActivity(response._data);
-                            if (props.calendarActivity) {
-                                emit("editCalendarActivity", activity.name);
-                            }
+                            emit("calendarMoved", start, end);
                         }
-                    },
-                    async onRequestError() {
-                        toast.add({
-                            severity: "error",
-                            summary: t.value("common.toast.error.heading"),
-                            detail: t.value("common.error.unknown"),
-                            life: 6000,
-                        });
-                        loadingSave.value = false;
-                    },
-                    async onResponseError() {
-                        toast.add({
-                            severity: "error",
-                            summary: t.value("common.toast.error.heading"),
-                            detail: t.value("common.error.unknown"),
-                            life: 6000,
-                        });
-                        loadingSave.value = false;
                     },
                 },
             );
-
-            if (props.calendarClicked && start && end) {
-                const calendarActivity = props.calendarActivity;
-                calendarActivity.start = start;
-                calendarActivity.end = end;
-                await client(
-                    `/api/journey/${props.id}/activity/${props.activityId}/calendarActivity/${props.calendarActivity.id}`,
-                    {
-                        method: "PATCH",
-                        body: calendarActivity,
-                        async onResponse({ response }) {
-                            if (response.ok) {
-                                close();
-                                loadingSave.value = false;
-                                emit("calendarMoved", start, end);
-                            }
-                        },
-                    },
-                );
-            }
-        } else {
-            await client(`/api/journey/${props.id}/activity`, {
-                method: "POST",
-                body: activity,
-                async onResponse({ response }) {
-                    if (response.ok) {
-                        toast.add({
-                            severity: "success",
-                            summary: t.value(
-                                "form.input.activity.toast.success.heading",
-                            ),
-                            detail: t.value(
-                                "form.input.activity.toast.success.detail",
-                            ),
-                            life: 6000,
-                        });
-                        close();
-                        loadingSave.value = false;
-                        activityStore.addActivity(response._data);
-                        activityStore.setNewActivity(response._data);
-                    }
-                },
-                async onRequestError() {
-                    toast.add({
-                        severity: "error",
-                        summary: t.value("common.toast.error.heading"),
-                        detail: t.value("common.error.unknown"),
-                        life: 6000,
-                    });
-                    loadingSave.value = false;
-                },
-                async onResponseError() {
-                    toast.add({
-                        severity: "error",
-                        summary: t.value("common.toast.error.heading"),
-                        detail: t.value("common.error.unknown"),
-                        life: 6000,
-                    });
-                    loadingSave.value = false;
-                },
-            });
         }
+    } else {
+        await client(`/api/journey/${props.id}/activity`, {
+            method: "POST",
+            body: activity,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value(
+                            "form.input.activity.toast.success.heading",
+                        ),
+                        detail: t.value(
+                            "form.input.activity.toast.success.detail",
+                        ),
+                        life: 6000,
+                    });
+                    close();
+                    loadingSave.value = false;
+                    activityStore.addActivity(response._data);
+                    activityStore.setNewActivity(response._data);
+                }
+            },
+            async onRequestError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                loadingSave.value = false;
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                loadingSave.value = false;
+            },
+        });
     }
 }
 

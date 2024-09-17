@@ -863,21 +863,6 @@ const handleUpload = (result: string) => {
             />
         </div>
         <ActivityMap v-if="activityDataLoaded" />
-        <ConfirmDialog
-            :draggable="false"
-            group="journey"
-            :pt="{
-                header: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                content: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                footer: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-            }"
-        />
         <div
             ref="upload"
             class="flex items-center justify-center md:justify-start"
