@@ -129,14 +129,13 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
             :draggable="false"
             close-on-escape
             dismissable-mask
-            :header="t('journey.template.create')"
             class="z-50 mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-6/12 xl:w-5/12"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',
                 },
                 header: {
-                    class: 'flex pb-2 font-nunito bg-background dark:bg-background-dark px-4 sm:px-7',
+                    class: 'flex gap-x-3 pb-2 font-nunito bg-background dark:bg-background-dark px-4 sm:px-7',
                 },
                 title: {
                     class: 'font-nunito text-2xl font-semibold text-text dark:text-natural-50',
@@ -151,6 +150,14 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
             }"
             @hide="close"
         >
+            <template #header>
+                <h3
+                    class="text-nowrap text-2xl font-medium text-text dark:text-natural-50"
+                >
+                    <T key-name="journey.template.create" />
+                </h3>
+                <span class="h-0.5 w-full bg-calypso-400 md:mr-2" />
+            </template>
             <form
                 class="flex h-full flex-col justify-between bg-background font-nunito text-text dark:bg-background-dark dark:text-natural-50"
                 @submit="onSubmitCreateTemplate"

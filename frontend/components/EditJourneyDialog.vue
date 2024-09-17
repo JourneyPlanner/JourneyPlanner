@@ -157,32 +157,47 @@ const onSave = handleSubmit(async (values) => {
 <template>
     <Dialog
         v-model:visible="isDialogVisible"
+        modal
+        :block-scroll="true"
+        :auto-z-index="true"
+        :draggable="false"
         close-on-escape
         dismissable-mask
-        modal
-        :header="t('dashboard.edit.header')"
-        :style="{ width: '30rem' }"
-        class="bg-natural-50 dark:bg-natural-800"
+        class="z-50 mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-8/12 md:w-6/12 md:rounded-xl lg:w-5/12 xl:w-4/12"
         :pt="{
             root: {
-                class: 'font-nunito text-text bg-natural-50 dark:bg-natural-800',
+                class: 'font-nunito bg-background dark:bg-background-dark z-10',
             },
             header: {
-                class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50',
+                class: 'flex gap-x-3 pb-2 font-nunito bg-background dark:bg-background-dark px-4 sm:px-7',
             },
-            title: { class: 'text-2xl' },
+            title: {
+                class: 'font-nunito text-2xl font-semibold text-text dark:text-natural-50',
+            },
             content: {
-                class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50',
+                class: 'font-nunito bg-background dark:bg-background-dark px-4 sm:px-7 h-full',
+            },
+            footer: { class: 'h-0' },
+            closeButtonIcon: {
+                class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10 ',
             },
         }"
         @hide="close"
     >
+        <template #header>
+            <h3
+                class="text-nowrap text-2xl font-medium text-text dark:text-natural-50"
+            >
+                <T key-name="dashboard.edit.header" />
+            </h3>
+            <span class="h-0.5 w-full bg-calypso-400 md:mr-2" />
+        </template>
         <form @submit.prevent="onSave()">
             <div class="flex flex-col">
                 <div class="flex flex-row items-center justify-between">
                     <label
                         for="journey-name"
-                        class="text-base font-bold sm:text-xl"
+                        class="text-base font-bold text-text dark:text-natural-50 sm:text-xl"
                     >
                         <T key-name="form.input.journey.name" />
                     </label>
@@ -197,7 +212,7 @@ const onSave = handleSubmit(async (values) => {
                 <div class="flex flex-row items-center justify-between">
                     <label
                         for="journey-destination"
-                        class="text-base font-bold sm:text-xl"
+                        class="text-base font-bold text-text dark:text-natural-50 sm:text-xl"
                     >
                         <T key-name="form.input.journey.destination" />
                     </label>
@@ -213,7 +228,7 @@ const onSave = handleSubmit(async (values) => {
                 <div class="flex flex-row items-center justify-between">
                     <label
                         for="journey-range-calendar"
-                        class="text-base font-bold sm:text-xl"
+                        class="text-base font-bold text-text dark:text-natural-50 sm:text-xl"
                     >
                         <T key-name="dashboard.edit.dates" />
                     </label>
@@ -241,7 +256,7 @@ const onSave = handleSubmit(async (values) => {
                 <Button
                     type="submit"
                     :label="t('common.save')"
-                    icon="pi pi-check"
+                    icon="pi pi-save"
                     :loading="loadingEdit"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
