@@ -1094,7 +1094,10 @@ const handleUpload = (result: string) => {
             :destination="store.getDestination()"
             :from="new Date(store.getFromDate())"
             :to="new Date(store.getToDate())"
-            @close-edit-journey-dialog="isJourneyEditMenuVisible = false"
+            @close-edit-journey-dialog="
+                isJourneyEditMenuVisible = false;
+                isMenuSidebarVisible = false;
+            "
             @journey-edited="journeyEdited"
         />
         <TemplateDialog
@@ -1102,7 +1105,7 @@ const handleUpload = (result: string) => {
             :is-create-template-visible="isCreateTemplateVisible"
             @close-template-dialog="
                 isCreateTemplateVisible = false;
-                isMemberSidebarVisible = false;
+                isMenuSidebarVisible = false;
             "
         />
         <ConfirmDialog
