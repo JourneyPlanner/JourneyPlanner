@@ -11,13 +11,13 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table("journeys", function (Blueprint $table) {
-            $table->string("description")->default(null);
+            $table->string("description")->nullable()->default(null);
             $table->boolean("is_template")->default(false);
             $table
                 ->foreignUuid("created_from")
+                ->nullable()
                 ->constrained("journeys")
-                ->default(null)
-                ->constrained();
+                ->default(null);
         });
     }
 
@@ -26,6 +26,9 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::table("journeys", function (Blueprint $table) {
+            $table->dropForeign(["created_from"]);
+        });
         Schema::dropColumns("journeys", [
             "description",
             "is_template",

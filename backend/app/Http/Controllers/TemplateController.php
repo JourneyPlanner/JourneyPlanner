@@ -28,6 +28,21 @@ class TemplateController extends Controller
         ]);
         $journey = Journey::findOrFail($validated["journey_id"]);
 
+        if (
+            Journey::where([
+                ["is_template", "=", "1"],
+                ["created_from", "=", $journey->id],
+            ])->exists()
+        ) {
+            return response()->json(
+                [
+                    "message" =>
+                        "A template has already been created from this journey.",
+                ],
+                400
+            );
+        }
+
         $journeyTemplate = $journey
             ->replicate([
                 "name",
