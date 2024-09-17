@@ -39,7 +39,7 @@ class TemplateController extends Controller
                     "message" =>
                         "A template has already been created from this journey.",
                 ],
-                400
+                409
             );
         }
 
