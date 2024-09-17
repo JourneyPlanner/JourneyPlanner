@@ -84,7 +84,7 @@ await client(`/api/journey/${journeyId}/activity`, {
     client(`/api/journey/${journeyId}/user`),
 );*/
 //TODO remove test data
-const users = [
+const users = ref([
     {
         id: "7A-6F-FF-06-C1-D8",
         firstName: "Cariotta",
@@ -685,7 +685,7 @@ const users = [
         lastName: "Gumb",
         role: 1,
     },
-];
+]);
 
 const { data: currUser } = await useAsyncData("userRole", () =>
     client(`/api/journey/${journeyId}/user/me`),
@@ -892,7 +892,7 @@ const handleUpload = (result: string) => {
     uploadResult.value = result;
 };
 
-//TODO dark mode, mobile, sticky leave button, remove test data
+//TODO dark mode, mobile, sticky leave button, remove test data, merge
 </script>
 
 <template>
@@ -1006,7 +1006,9 @@ const handleUpload = (result: string) => {
                 content: {
                     class: 'pl-3 pr-2 text-text dark:text-natural-50',
                 },
-                root: { class: 'bg-natural-50 font-nunito' },
+                root: {
+                    class: 'bg-background dark:bg-background-dark font-nunito',
+                },
             }"
         >
             <template #header>
@@ -1032,18 +1034,24 @@ const handleUpload = (result: string) => {
                         :header="t('dashboard.edit.header')"
                         :pt="{
                             root: {
-                                class: 'border-b-2 border-natural-200 dark:border-natural-900',
+                                class: 'border-b-2 border-natural-300 dark:border-natural-700',
                             },
-                            headerAction: { class: 'pl-0 pr-0 bg-natural-50' },
-                            content: { class: 'pl-0 bg-natural-50' },
+                            headerAction: {
+                                class: 'pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                            },
+                            content: {
+                                class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                            },
                         }"
                     >
                         <div>
-                            <p class="text-base font-medium text-natural-600">
+                            <p
+                                class="text-base font-medium text-natural-600 dark:text-natural-300"
+                            >
                                 <T key-name="dashboard.edit.detail" />
                             </p>
                             <button
-                                class="mt-4 w-full rounded-md border-2 border-dandelion-300 bg-natural-50 py-1 text-base text-text hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50"
+                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                                 @click="
                                     isJourneyEditMenuVisible =
                                         !isJourneyEditMenuVisible
@@ -1058,18 +1066,24 @@ const handleUpload = (result: string) => {
                         :header="t('journey.template.create')"
                         :pt="{
                             root: {
-                                class: 'border-b-2 border-natural-200 dark:border-natural-900',
+                                class: 'border-b-2 border-natural-300 dark:border-natural-700',
                             },
-                            headerAction: { class: 'pl-0 pr-0 bg-natural-50' },
-                            content: { class: 'pl-0 bg-natural-50' },
+                            headerAction: {
+                                class: 'pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                            },
+                            content: {
+                                class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                            },
                         }"
                     >
                         <div>
-                            <p class="text-base font-medium text-natural-600">
+                            <p
+                                class="text-base font-medium text-natural-600 dark:text-natural-300"
+                            >
                                 <T key-name="journey.template.create.detail" />
                             </p>
                             <button
-                                class="mt-4 w-full rounded-md border-2 border-dandelion-300 bg-natural-50 py-1 text-base text-text hover:bg-dandelion-200 dark:bg-pesto-600 dark:text-natural-50"
+                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                                 @click="
                                     isCreateTemplateVisible =
                                         !isCreateTemplateVisible
@@ -1084,14 +1098,20 @@ const handleUpload = (result: string) => {
                         :header="t('dashboard.options.leave')"
                         :pt="{
                             root: {
-                                class: 'border-b-2 border-natural-200 dark:border-natural-900',
+                                class: 'border-b-2 border-natural-300 dark:border-natural-700',
                             },
-                            headerAction: { class: 'pl-0 pr-0 bg-natural-50' },
-                            content: { class: 'pl-0 bg-natural-50' },
+                            headerAction: {
+                                class: 'pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                            },
+                            content: {
+                                class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                            },
                         }"
                     >
                         <div>
-                            <p class="text-base font-medium text-natural-600">
+                            <p
+                                class="text-base font-medium text-natural-600 dark:text-natural-300"
+                            >
                                 <T key-name="journey.leave.detail" />
                                 <T
                                     v-if="currUser.role === 1"
@@ -1099,7 +1119,7 @@ const handleUpload = (result: string) => {
                                 />
                             </p>
                             <button
-                                class="mt-4 w-full rounded-md border-2 border-mahagony-500 bg-natural-50 py-1 text-base text-text hover:bg-mahagony-300 dark:bg-pesto-600 dark:text-natural-50"
+                                class="mt-4 w-full rounded-lg border-2 border-mahagony-500 bg-natural-50 py-1 text-base text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                                 @click="confirmLeave($event)"
                             >
                                 <T key-name="journey.leave.short" />
