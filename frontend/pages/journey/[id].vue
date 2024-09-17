@@ -6,6 +6,8 @@ import QRCode from "qrcode";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "~/tailwind.config.js";
 
+import scroll from "../../utils/scroll";
+
 const fullConfig = resolveConfig(tailwindConfig);
 const confirm = useConfirm();
 const route = useRoute();

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const { t } = useTranslate();
 const title = t.value("common.privacypolicy");
 
@@ -14,7 +16,7 @@ useHead({
         <div class="flex justify-end">
             <button
                 class="mr-2 mt-5 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-base font-semibold hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 md:mr-10 md:px-6"
-                @click="$router.back()"
+                @click="router.back()"
             >
                 <T key-name="common.back" />
             </button>
