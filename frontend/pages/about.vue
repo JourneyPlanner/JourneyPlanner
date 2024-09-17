@@ -40,7 +40,7 @@ const updateCountdown = () => {
 
 interface Facts {
     time: number;
-    userstories: number;
+    user_stories: number;
     sprints: number;
 }
 
@@ -49,7 +49,7 @@ const { data } = await useAsyncData<Facts>("facts", () =>
     client("/api/project"),
 );
 time.value = data?.value?.time || 0;
-userstories.value = data?.value?.userstories || 0;
+userstories.value = data?.value?.user_stories || 0;
 sprints.value = data?.value?.sprints || 0;
 
 onMounted(async () => {
