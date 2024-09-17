@@ -37,7 +37,6 @@ const calendar = ref();
 
 const isCreateTemplateVisible = ref(false);
 const isJourneyEditMenuVisible = ref(false);
-const activeMenuAccordionIndex = ref(0);
 
 definePageMeta({
     middleware: ["sanctum:auth"],
@@ -80,612 +79,9 @@ await client(`/api/journey/${journeyId}/activity`, {
     },
 });
 
-/*const { data: users } = await useAsyncData("users", () =>
+const { data: users } = await useAsyncData("users", () =>
     client(`/api/journey/${journeyId}/user`),
-);*/
-//TODO remove test data
-const users = ref([
-    {
-        id: "7A-6F-FF-06-C1-D8",
-        firstName: "Cariotta",
-        lastName: "Angrove",
-        role: 2,
-    },
-    {
-        id: "BD-F2-C4-18-03-DC",
-        firstName: "Timofei",
-        lastName: "Willerstone",
-        role: 1,
-    },
-    {
-        id: "AC-7E-F5-06-C2-D5",
-        firstName: "Erich",
-        lastName: "Gniewosz",
-        role: 1,
-    },
-    {
-        id: "1D-BC-51-D0-0A-E1",
-        firstName: "Natala",
-        lastName: "Smiley",
-        role: 2,
-    },
-    {
-        id: "4D-CC-64-F9-59-59",
-        firstName: "Kial",
-        lastName: "de Keep",
-        role: 2,
-    },
-    {
-        id: "A3-CB-34-B5-F2-B5",
-        firstName: "Cayla",
-        lastName: "Taye",
-        role: 2,
-    },
-    {
-        id: "E3-FF-FA-0B-20-4E",
-        firstName: "Jaime",
-        lastName: "Maestro",
-        role: 2,
-    },
-    {
-        id: "99-38-2C-CB-34-0E",
-        firstName: "Rowland",
-        lastName: "Collough",
-        role: 2,
-    },
-    {
-        id: "E1-8A-8C-72-DF-33",
-        firstName: "Jonie",
-        lastName: "Silbersak",
-        role: 2,
-    },
-    {
-        id: "8D-7B-74-45-78-DD",
-        firstName: "Jo-anne",
-        lastName: "Chinnock",
-        role: 2,
-    },
-    {
-        id: "C3-6F-6F-E1-8D-C5",
-        firstName: "Suki",
-        lastName: "McBrearty",
-        role: 2,
-    },
-    {
-        id: "11-4F-BD-6F-8C-EA",
-        firstName: "Willamina",
-        lastName: "Juleff",
-        role: 1,
-    },
-    {
-        id: "E5-5A-E7-C2-5F-B3",
-        firstName: "Randi",
-        lastName: "Leggott",
-        role: 1,
-    },
-    {
-        id: "64-A6-A8-81-6F-4C",
-        firstName: "Gilbert",
-        lastName: "McOnie",
-        role: 1,
-    },
-    {
-        id: "99-4A-0B-2F-2E-2B",
-        firstName: "Sashenka",
-        lastName: "Wagnerin",
-        role: 1,
-    },
-    {
-        id: "5D-0F-AA-3B-3F-8A",
-        firstName: "Cyrillus",
-        lastName: "Thatcher",
-        role: 2,
-    },
-    {
-        id: "6A-DA-7B-F2-5E-AD",
-        firstName: "Timmi",
-        lastName: "Stitson",
-        role: 1,
-    },
-    {
-        id: "86-71-00-39-23-33",
-        firstName: "Cornie",
-        lastName: "Vida",
-        role: 1,
-    },
-    {
-        id: "2D-F0-00-B2-8A-0F",
-        firstName: "Janaya",
-        lastName: "Sharphouse",
-        role: 2,
-    },
-    {
-        id: "11-AC-C6-18-94-86",
-        firstName: "Keene",
-        lastName: "Albasiny",
-        role: 2,
-    },
-    {
-        id: "AF-94-72-59-7E-66",
-        firstName: "Osborne",
-        lastName: "Van der Beek",
-        role: 2,
-    },
-    {
-        id: "2D-67-D9-4D-94-3C",
-        firstName: "Marsiella",
-        lastName: "Logg",
-        role: 1,
-    },
-    {
-        id: "DE-45-C3-D9-AB-92",
-        firstName: "Gris",
-        lastName: "Hawkshaw",
-        role: 2,
-    },
-    {
-        id: "4A-10-37-99-61-A8",
-        firstName: "Sharity",
-        lastName: "Hawson",
-        role: 1,
-    },
-    {
-        id: "43-C7-8E-61-BE-71",
-        firstName: "Galvan",
-        lastName: "Hainsworth",
-        role: 1,
-    },
-    {
-        id: "16-6D-81-8B-5B-D9",
-        firstName: "Jilli",
-        lastName: "Ciciotti",
-        role: 2,
-    },
-    {
-        id: "03-00-C0-83-1B-02",
-        firstName: "Cosmo",
-        lastName: "Dight",
-        role: 1,
-    },
-    {
-        id: "F9-E3-38-61-B9-A4",
-        firstName: "Maryanne",
-        lastName: "Nicholl",
-        role: 2,
-    },
-    {
-        id: "7D-52-3A-13-5B-9A",
-        firstName: "Devin",
-        lastName: "Mollitt",
-        role: 2,
-    },
-    {
-        id: "02-C4-7B-EC-FE-2D",
-        firstName: "Tera",
-        lastName: "Androli",
-        role: 1,
-    },
-    {
-        id: "CF-DD-53-09-D2-9E",
-        firstName: "Evaleen",
-        lastName: "Letts",
-        role: 2,
-    },
-    {
-        id: "D4-6A-F5-D0-6F-5B",
-        firstName: "Quint",
-        lastName: "Hynam",
-        role: 2,
-    },
-    {
-        id: "F8-7F-08-59-BD-08",
-        firstName: "Emelia",
-        lastName: "Guiett",
-        role: 2,
-    },
-    {
-        id: "9A-84-BC-8C-6C-42",
-        firstName: "Leoline",
-        lastName: "Densie",
-        role: 1,
-    },
-    {
-        id: "EA-94-C0-33-09-22",
-        firstName: "Georgetta",
-        lastName: "Pochon",
-        role: 1,
-    },
-    {
-        id: "B0-7A-F9-36-2A-EE",
-        firstName: "Eugene",
-        lastName: "Bolderstone",
-        role: 1,
-    },
-    {
-        id: "F2-27-5F-36-C2-27",
-        firstName: "Fee",
-        lastName: "Helm",
-        role: 1,
-    },
-    {
-        id: "D2-BB-57-B9-72-CF",
-        firstName: "Doyle",
-        lastName: "Faithfull",
-        role: 2,
-    },
-    {
-        id: "A9-30-87-31-FD-DE",
-        firstName: "Bron",
-        lastName: "Spellman",
-        role: 1,
-    },
-    {
-        id: "80-BB-5B-CD-D8-92",
-        firstName: "Jerry",
-        lastName: "Trussman",
-        role: 1,
-    },
-    {
-        id: "0A-EA-84-55-42-F7",
-        firstName: "Syman",
-        lastName: "Wythill",
-        role: 2,
-    },
-    {
-        id: "8F-FA-01-5C-71-5A",
-        firstName: "Nels",
-        lastName: "Nisot",
-        role: 1,
-    },
-    {
-        id: "FF-F1-87-18-EB-12",
-        firstName: "Tedie",
-        lastName: "Wiersma",
-        role: 2,
-    },
-    {
-        id: "DC-6A-04-31-EC-47",
-        firstName: "Garwin",
-        lastName: "Sayre",
-        role: 2,
-    },
-    {
-        id: "BE-F5-64-E6-27-B3",
-        firstName: "Koralle",
-        lastName: "Harley",
-        role: 2,
-    },
-    {
-        id: "53-24-15-1D-14-0A",
-        firstName: "Harriet",
-        lastName: "Goodrick",
-        role: 2,
-    },
-    {
-        id: "58-BB-55-69-E1-4B",
-        firstName: "Ellyn",
-        lastName: "Churly",
-        role: 2,
-    },
-    {
-        id: "FB-26-42-1D-C7-A8",
-        firstName: "Jessie",
-        lastName: "Furbank",
-        role: 1,
-    },
-    {
-        id: "4F-43-75-F6-11-EC",
-        firstName: "Sarine",
-        lastName: "Paffett",
-        role: 2,
-    },
-    {
-        id: "AD-1C-17-C8-D4-5E",
-        firstName: "Dyanne",
-        lastName: "Tilby",
-        role: 1,
-    },
-    {
-        id: "0B-61-65-8B-F0-06",
-        firstName: "Justina",
-        lastName: "Lehr",
-        role: 1,
-    },
-    {
-        id: "BE-F9-E3-65-F7-82",
-        firstName: "Flossy",
-        lastName: "Wittering",
-        role: 1,
-    },
-    {
-        id: "1E-D9-4A-47-82-F5",
-        firstName: "Antoni",
-        lastName: "Daugherty",
-        role: 2,
-    },
-    {
-        id: "C7-B6-41-9C-26-16",
-        firstName: "Brendan",
-        lastName: "Pittel",
-        role: 1,
-    },
-    {
-        id: "C2-BC-81-98-BF-7E",
-        firstName: "Llewellyn",
-        lastName: "McCowen",
-        role: 2,
-    },
-    {
-        id: "F1-8F-8D-2A-D8-EF",
-        firstName: "Bogart",
-        lastName: "Eakin",
-        role: 1,
-    },
-    {
-        id: "B2-5F-11-CD-71-92",
-        firstName: "Tiffie",
-        lastName: "Waszczykowski",
-        role: 2,
-    },
-    {
-        id: "56-31-C2-FE-68-4D",
-        firstName: "Odille",
-        lastName: "Burdell",
-        role: 2,
-    },
-    {
-        id: "D9-16-E3-C5-DC-08",
-        firstName: "Egon",
-        lastName: "Andres",
-        role: 2,
-    },
-    {
-        id: "5A-6A-6C-3E-C8-FA",
-        firstName: "Geri",
-        lastName: "Paggitt",
-        role: 2,
-    },
-    {
-        id: "C8-EB-2C-29-10-6B",
-        firstName: "Milicent",
-        lastName: "Barnett",
-        role: 1,
-    },
-    {
-        id: "65-33-98-04-6A-4B",
-        firstName: "Genia",
-        lastName: "Bachura",
-        role: 2,
-    },
-    {
-        id: "A6-8B-6B-56-88-E3",
-        firstName: "Rinaldo",
-        lastName: "Grutchfield",
-        role: 2,
-    },
-    {
-        id: "DD-98-CA-DA-19-87",
-        firstName: "Karlie",
-        lastName: "Frazier",
-        role: 2,
-    },
-    {
-        id: "E6-A3-16-9E-AE-D8",
-        firstName: "Susannah",
-        lastName: "Test",
-        role: 2,
-    },
-    {
-        id: "12-86-41-23-99-06",
-        firstName: "Charlie",
-        lastName: "Aggiss",
-        role: 2,
-    },
-    {
-        id: "07-5B-2F-0C-F4-FE",
-        firstName: "Georgia",
-        lastName: "Girault",
-        role: 1,
-    },
-    {
-        id: "FE-44-36-06-46-8E",
-        firstName: "Inge",
-        lastName: "O'Codihie",
-        role: 2,
-    },
-    {
-        id: "67-EC-CE-6D-32-BE",
-        firstName: "Cody",
-        lastName: "Sabin",
-        role: 1,
-    },
-    {
-        id: "C7-FD-83-AF-FC-03",
-        firstName: "Frannie",
-        lastName: "Oldroyde",
-        role: 1,
-    },
-    {
-        id: "99-2E-4C-9F-EC-CA",
-        firstName: "Margalit",
-        lastName: "Jakubovitch",
-        role: 2,
-    },
-    {
-        id: "63-EA-86-B6-53-07",
-        firstName: "Lexy",
-        lastName: "McCandless",
-        role: 2,
-    },
-    {
-        id: "FE-5B-ED-F6-5D-9B",
-        firstName: "Leopold",
-        lastName: "Sabbatier",
-        role: 2,
-    },
-    {
-        id: "DF-B5-CE-3A-5E-B1",
-        firstName: "Nadya",
-        lastName: "Spacey",
-        role: 2,
-    },
-    {
-        id: "30-B1-76-D3-01-5F",
-        firstName: "Joe",
-        lastName: "McKenna",
-        role: 1,
-    },
-    {
-        id: "EA-18-7A-E7-3E-32",
-        firstName: "Kermy",
-        lastName: "Pirdue",
-        role: 1,
-    },
-    {
-        id: "F2-02-EF-AE-E1-B2",
-        firstName: "Dari",
-        lastName: "Billinge",
-        role: 1,
-    },
-    {
-        id: "9C-37-B5-FB-1A-4A",
-        firstName: "Hartwell",
-        lastName: "Sheavills",
-        role: 2,
-    },
-    {
-        id: "16-11-33-45-1C-4B",
-        firstName: "Jazmin",
-        lastName: "Espinoza",
-        role: 1,
-    },
-    {
-        id: "3F-92-2A-14-64-52",
-        firstName: "Casey",
-        lastName: "Swiers",
-        role: 1,
-    },
-    {
-        id: "83-84-0A-23-FE-EF",
-        firstName: "Brose",
-        lastName: "Waleran",
-        role: 2,
-    },
-    {
-        id: "BD-7F-28-02-A5-9A",
-        firstName: "Valerye",
-        lastName: "Priter",
-        role: 1,
-    },
-    {
-        id: "F7-9B-55-24-5D-87",
-        firstName: "Harriette",
-        lastName: "Oluwatoyin",
-        role: 1,
-    },
-    {
-        id: "AF-C2-72-16-E8-40",
-        firstName: "Warren",
-        lastName: "Fonteyne",
-        role: 1,
-    },
-    {
-        id: "8C-E1-D7-69-4A-DD",
-        firstName: "Alfreda",
-        lastName: "Davidsohn",
-        role: 2,
-    },
-    {
-        id: "F2-9E-1B-AF-16-D8",
-        firstName: "Roman",
-        lastName: "Paffley",
-        role: 1,
-    },
-    {
-        id: "10-A1-CE-AA-F3-49",
-        firstName: "Fidole",
-        lastName: "Huntley",
-        role: 1,
-    },
-    {
-        id: "1D-7C-AF-E8-12-0B",
-        firstName: "Ross",
-        lastName: "Wignall",
-        role: 2,
-    },
-    {
-        id: "FC-D3-81-F8-A0-D1",
-        firstName: "Riki",
-        lastName: "Jonsson",
-        role: 2,
-    },
-    {
-        id: "87-BA-B6-5E-4B-6B",
-        firstName: "Dev",
-        lastName: "Mellmer",
-        role: 2,
-    },
-    {
-        id: "57-43-85-FE-8C-EF",
-        firstName: "Ker",
-        lastName: "Kellett",
-        role: 2,
-    },
-    {
-        id: "95-A0-F1-3E-CF-66",
-        firstName: "Paten",
-        lastName: "Shillan",
-        role: 2,
-    },
-    {
-        id: "FF-E9-C8-1A-40-87",
-        firstName: "Toni",
-        lastName: "Boken",
-        role: 2,
-    },
-    {
-        id: "EC-CD-52-1B-65-96",
-        firstName: "Winston",
-        lastName: "Seddon",
-        role: 2,
-    },
-    {
-        id: "1B-D8-10-39-A8-99",
-        firstName: "Livvy",
-        lastName: "Ubach",
-        role: 2,
-    },
-    {
-        id: "2C-68-86-08-6C-60",
-        firstName: "Gay",
-        lastName: "Jopson",
-        role: 2,
-    },
-    {
-        id: "50-52-02-BF-2E-0C",
-        firstName: "Upton",
-        lastName: "Reddoch",
-        role: 2,
-    },
-    {
-        id: "93-5D-C4-85-E9-F1",
-        firstName: "Corette",
-        lastName: "Newsome",
-        role: 1,
-    },
-    {
-        id: "CE-EC-1C-81-52-89",
-        firstName: "Conchita",
-        lastName: "Wegman",
-        role: 2,
-    },
-    {
-        id: "2A-E2-7E-57-C3-73",
-        firstName: "Nora",
-        lastName: "Gumb",
-        role: 1,
-    },
-]);
+);
 
 const { data: currUser } = await useAsyncData("userRole", () =>
     client(`/api/journey/${journeyId}/user/me`),
@@ -891,8 +287,6 @@ async function changeRole(userid: string, selectedRole: number) {
 const handleUpload = (result: string) => {
     uploadResult.value = result;
 };
-
-//TODO dark mode, mobile, sticky leave button, remove test data, merge
 </script>
 
 <template>
@@ -968,7 +362,10 @@ const handleUpload = (result: string) => {
                     </button>
                 </div>
             </div>
-            <div id="list" class="mt-3 flex flex-grow flex-col gap-3">
+            <div
+                id="list"
+                class="mt-3 flex flex-grow flex-col gap-3 overflow-y-auto pr-0.5"
+            >
                 <MemberItem
                     v-for="user in users"
                     :id="user.id"
@@ -981,9 +378,11 @@ const handleUpload = (result: string) => {
                     @change-role="changeRole"
                 />
             </div>
-            <div class="border-t-2 border-natural-200 dark:border-natural-900">
+            <div
+                class="sticky bottom-0 border-t-2 border-natural-200 dark:border-natural-900"
+            >
                 <button
-                    class="my-3 w-full rounded-md border-2 border-mahagony-500 bg-natural-50 py-1 text-base text-text hover:bg-mahagony-300 dark:bg-pesto-600 dark:text-natural-50"
+                    class="my-4 w-full rounded-lg border-2 border-mahagony-500 bg-natural-50 py-1 text-base text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                     @click="confirmLeave($event)"
                 >
                     <T key-name="journey.leave.short" />
@@ -1025,10 +424,7 @@ const handleUpload = (result: string) => {
                 />
             </template>
             <div>
-                <Accordion
-                    v-model:active-index="activeMenuAccordionIndex"
-                    class="font-nunito text-xl text-text"
-                >
+                <Accordion class="font-nunito text-xl text-text">
                     <AccordionTab
                         v-if="currUser.role === 1"
                         :header="t('dashboard.edit.header')"
@@ -1697,13 +1093,13 @@ const handleUpload = (result: string) => {
             group="journey"
             :pt="{
                 header: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
                 content: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
                 footer: {
-                    class: 'bg-input dark:bg-input-dark text-text dark:text-white font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
             }"
         />

@@ -77,7 +77,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                     detail: t.value(
                         "form.template.create.toast.success.detail",
                     ),
-                    life: 6000,
+                    life: 3000,
                 });
                 close();
                 savingTemplate.value = false;
@@ -92,13 +92,27 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
             });
             savingTemplate.value = false;
         },
-        async onResponseError() {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value("common.error.unknown"),
-                life: 6000,
-            });
+        async onResponseError({ response }) {
+            if (response.status === 409) {
+                toast.add({
+                    severity: "error",
+                    summary: t.value(
+                        "form.template.create.toast.error.duplicate.heading",
+                    ),
+                    detail: t.value(
+                        "form.template.create.toast.error.duplicate.detail",
+                    ),
+                    life: 6000,
+                });
+                close();
+            } else {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+            }
             savingTemplate.value = false;
         },
     });
