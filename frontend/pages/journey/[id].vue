@@ -464,7 +464,7 @@ const handleUpload = (result: string) => {
                                 <T key-name="dashboard.edit.detail" />
                             </p>
                             <button
-                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base text-text dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                                 @click="
                                     isJourneyEditMenuVisible =
                                         !isJourneyEditMenuVisible
@@ -1094,19 +1094,13 @@ const handleUpload = (result: string) => {
             :destination="store.getDestination()"
             :from="new Date(store.getFromDate())"
             :to="new Date(store.getToDate())"
-            @close-edit-journey-dialog="
-                isJourneyEditMenuVisible = false;
-                isMenuSidebarVisible = false;
-            "
+            @close-edit-journey-dialog="isJourneyEditMenuVisible = false"
             @journey-edited="journeyEdited"
         />
         <TemplateDialog
             v-if="currUser.role === 1"
             :is-create-template-visible="isCreateTemplateVisible"
-            @close-template-dialog="
-                isCreateTemplateVisible = false;
-                isMenuSidebarVisible = false;
-            "
+            @close-template-dialog="isCreateTemplateVisible = false"
         />
         <ConfirmDialog
             :draggable="false"

@@ -169,7 +169,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                         <T key-name="journey.template.create.description" />
                     </p>
                     <div
-                        class="mb-1 grid grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20"
+                        class="mb-1 grid grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20 xl:gap-x-0"
                     >
                         <label
                             for="template-name"
@@ -185,7 +185,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                             class="col-span-full col-start-3 row-start-1 block w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2"
                         />
                         <div
-                            class="col-start-5 -mt-3 flex justify-end xs:col-start-8 sm:col-start-4"
+                            class="col-start-3 row-start-2 -mt-3 xs:col-start-4 sm:col-start-2"
                         >
                             <ErrorMessage
                                 name="name"
