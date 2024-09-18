@@ -83,6 +83,7 @@ export default defineNuxtConfig({
                 "Skeleton",
                 "DeferredContent",
                 "Badge",
+                "Dropdown",
             ],
         },
     },

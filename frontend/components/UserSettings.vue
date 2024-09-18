@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { T, useTranslate } from "@tolgee/vue";
+import { T, useTolgee, useTranslate } from "@tolgee/vue";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
@@ -9,6 +9,35 @@ const isVisible = ref(props.visible);
 const { t } = useTranslate();
 const displayname = ref("");
 const username = ref("");
+const colorScheme = ref("test");
+const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+const tolgee = useTolgee(["language"]);
+const { logout } = useSanctumAuth();
+const isEmailChangeVisible = ref(false);
+const isPasswordChangeVisible = ref(false);
+const isDeleteAccountVisible = ref(false);
+const selectedColorMode = ref();
+const selectedLanguage = ref();
+const language = ref();
+const client = useSanctumClient();
+const toast = useToast();
+
+onMounted(() => {
+    if (
+        colorMode.preference === "dark" ||
+        (darkThemeMq.matches && colorMode.preference === "system")
+    ) {
+        colorScheme.value = "darkmode";
+    } else {
+        colorScheme.value = "lightmode";
+    }
+
+    if (tolgee.value.getLanguage() == "en") {
+        language.value = "English";
+    } else if (tolgee.value.getLanguage() == "de") {
+        language.value = "Deutsch";
+    }
+});
 
 const close = () => {
     emit("close");
@@ -22,6 +51,82 @@ watch(
 );
 
 const emit = defineEmits(["close"]);
+const colorMode = useColorMode();
+
+const changeLanguage = () => {
+    tolgee.value.changeLanguage(selectedLanguage.value.value);
+};
+
+function handelChange() {
+    console.log(selectedColorMode.value.name);
+    if (selectedColorMode.value.name == "darkmode") {
+        colorMode.preference = "dark";
+    } else if (selectedColorMode.value.name == "lightmode") {
+        colorMode.preference = "light";
+    } else {
+        colorMode.preference = "system";
+    }
+}
+
+async function changeUsername() {
+    console.log(username.value.length);
+    if (
+        currUser.value.username != username.value &&
+        username.value.length > 3
+    ) {
+        await client(`/api/user`, {
+            method: "PATCH",
+            body: {
+                username: username.value,
+            },
+            async onResponse() {
+                console.log(currUser);
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+            },
+        });
+    }
+}
+
+async function logoutUser() {
+    await logout();
+}
+
+const colorModes = ref([
+    { name: "lightmode", code: "pi pi-sun" },
+    { name: "darkmode", code: "pi pi-moon" },
+    { name: "system", code: "pi pi-desktop" },
+]);
+
+const languages = ref([
+    { name: "common.english", value: "en" },
+    { name: "common.deutsch", value: "de" },
+]);
+
+const { data: currUser } = await useAsyncData("userRole", () =>
+    client(`/api/user`),
+);
+
+if (currUser.value) {
+    console.log(currUser.value);
+}
+
+async function changeEmail(newEmail: Ref) {
+    currUser.value.email = newEmail.value;
+    isEmailChangeVisible.value = false;
+    toast.add({
+        severity: "success",
+        summary: t.value("change.email.toast.success.heading"),
+        detail: t.value("change.email.toast.success.detail"),
+        life: 3000,
+    });
+}
 </script>
 <template>
     <Dialog
@@ -31,13 +136,13 @@ const emit = defineEmits(["close"]);
         :auto-z-index="true"
         :draggable="false"
         :header="t('dashboard.user.settings')"
-        class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-4/5 md:rounded-xl"
+        class="-z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-lg:collapse sm:w-4/5 md:rounded-xl"
         :pt="{
             root: {
                 class: 'font-nunito bg-background dark:bg-background-dark z-10',
             },
             header: {
-                class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark',
+                class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50',
             },
             title: {
                 class: 'font-nunito text-4xl font-semibold',
@@ -55,11 +160,11 @@ const emit = defineEmits(["close"]);
         }"
         @hide="close"
     >
-        <div class="pl-4 pt-4">
+        <div class="pl-4 pt-4 dark:text-natural-50">
             <div class="flex items-center pb-5">
                 <div class="bg h-0.5 w-10 bg-calypso-400" />
                 <div
-                    class="flex-grow-5 dark:text-white mx-5 text-3xl font-semibold text-text"
+                    class="flex-grow-5 dark:text-white mx-5 text-3xl font-semibold text-text dark:text-natural-50"
                 >
                     <T key-name="dashboard.user.settings.profile" />
                 </div>
@@ -70,17 +175,19 @@ const emit = defineEmits(["close"]);
                     <div class="text-2xl">
                         <T key-name="dashboard.user.settings.display.name" />
                     </div>
-                    <T
-                        key-name="dashboard.user.settings.display.name.description"
-                    />
+                    <div class="dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.display.name.description"
+                        />
+                    </div>
                 </div>
                 <div class="flex w-full items-center justify-end">
                     <input
                         id="displayname"
-                        :value="displayname"
+                        v-model="displayname"
                         name="displayname"
-                        placeholder="irgendwas"
-                        class="rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50"
+                        :placeholder="currUser.display_name"
+                        class="rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400"
                     />
                 </div>
             </div>
@@ -89,24 +196,28 @@ const emit = defineEmits(["close"]);
                     <div class="text-2xl">
                         <T key-name="dashboard.user.settings.user.name" />
                     </div>
-                    <T
-                        key-name="dashboard.user.settings.user.name.description"
-                    />
+                    <div class="dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.user.name.description"
+                        />
+                    </div>
                 </div>
                 <div class="flex w-full items-center justify-end">
                     <input
                         id="username"
-                        :value="username"
+                        v-model="username"
                         name="username"
-                        placeholder="irgendwas"
-                        class="rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50"
+                        :placeholder="currUser.username"
+                        class="rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400"
+                        @blur="changeUsername"
+                        @keyup.enter="changeUsername"
                     />
                 </div>
             </div>
             <div class="flex items-center pb-5">
                 <div class="bg h-0.5 w-10 bg-calypso-400" />
                 <div
-                    class="flex-grow-5 dark:text-white mx-5 text-3xl font-semibold text-text"
+                    class="flex-grow-5 dark:text-white mx-5 text-3xl font-semibold text-text dark:text-natural-50"
                 >
                     <T key-name="dashboard.user.settings.account.security" />
                 </div>
@@ -117,16 +228,26 @@ const emit = defineEmits(["close"]);
                     <div class="text-2xl">
                         <T key-name="dashboard.user.settings.user.email" />
                     </div>
-                    <T
-                        key-name="dashboard.user.settings.user.email.description"
-                    />
+                    <div class="dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.user.email.description"
+                        />
+                        {{ currUser.email }}
+                    </div>
                 </div>
                 <div class="flex w-full items-center justify-end">
                     <button
-                        class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200"
+                        class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="isEmailChangeVisible = !isEmailChangeVisible"
                     >
                         <T key-name="dashboard.user.settings.email.change" />
                     </button>
+                    <FormEmailChange
+                        :visible="isEmailChangeVisible"
+                        :curr-email="currUser.email"
+                        @close="isEmailChangeVisible = false"
+                        @change-email="changeEmail"
+                    />
                 </div>
             </div>
             <div class="flex pb-14 pl-10">
@@ -134,22 +255,31 @@ const emit = defineEmits(["close"]);
                     <div class="text-2xl">
                         <T key-name="dashboard.user.settings.password" />
                     </div>
-                    <T
-                        key-name="dashboard.user.settings.password.description"
-                    />
+                    <div class="dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.password.description"
+                        />
+                    </div>
                 </div>
                 <div class="flex w-full items-center justify-end">
                     <button
-                        class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200"
+                        class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="
+                            isPasswordChangeVisible = !isPasswordChangeVisible
+                        "
                     >
                         <T key-name="dashboard.user.settings.password.change" />
                     </button>
+                    <FormPasswordChange
+                        :visible="isPasswordChangeVisible"
+                        @close="isPasswordChangeVisible = false"
+                    />
                 </div>
             </div>
             <div class="flex items-center pb-5">
                 <div class="bg h-0.5 w-10 bg-calypso-400" />
                 <div
-                    class="flex-grow-5 dark:text-white mx-5 text-3xl font-semibold text-text"
+                    class="flex-grow-5 dark:text-white mx-5 text-3xl font-semibold text-text dark:text-natural-50"
                 >
                     <T key-name="dashboard.user.settings.appearance" />
                 </div>
@@ -160,25 +290,515 @@ const emit = defineEmits(["close"]);
                     <div class="text-2xl">
                         <T key-name="dashboard.user.settings.appearance" />
                     </div>
-                    <T
-                        key-name="dashboard.user.settings.appearance.description"
-                    />
+                    <div class="dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.appearance.description"
+                        />
+                    </div>
                 </div>
                 <div class="flex w-full items-center justify-end">
-                    <select class="bg-natural-50 px-2">
-                        <option>
-                            <T
-                                key-name="dashboard.user.settings.email.change"
-                            />
-                        </option>
-                        <option>
-                            <T
-                                key-name="dashboard.user.settings.email.change"
-                            />
-                        </option>
-                    </select>
+                    <Dropdown
+                        v-model="selectedColorMode"
+                        :options="colorModes"
+                        option-label="name"
+                        :placeholder="colorScheme"
+                        :highlight-on-select="false"
+                        :focus-on-hover="false"
+                        :pt="{
+                            root: {
+                                class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
+                            },
+                            input: {
+                                class: 'text-text dark:text-natural-50',
+                            },
+                            item: {
+                                class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900',
+                            },
+                            wrapper: {
+                                class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                            },
+                        }"
+                        @change="handelChange()"
+                    >
+                        <template #value="slotProps">
+                            <div
+                                v-if="slotProps.value"
+                                class="align-items-center flex"
+                            >
+                                <div>{{ slotProps.value.name }}</div>
+                            </div>
+                            <span v-else>
+                                {{ slotProps.placeholder }}
+                            </span>
+                        </template>
+                        <template #option="slotProps">
+                            <div class="align-items-center flex items-center">
+                                <span
+                                    :class="slotProps.option.code"
+                                    class="pr-2"
+                                />
+                                <div>{{ slotProps.option.name }}</div>
+                            </div>
+                        </template>
+                    </Dropdown>
+                </div>
+            </div>
+            <div class="flex pb-5 pl-10">
+                <div class="flex w-full flex-col">
+                    <div class="text-2xl">
+                        <T key-name="dashboard.user.settings.language" />
+                    </div>
+                    <div class="dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.language.description"
+                        />
+                    </div>
+                </div>
+                <div class="flex w-full items-center justify-end">
+                    <Dropdown
+                        v-model="selectedLanguage"
+                        :options="languages"
+                        option-label="name"
+                        :placeholder="language"
+                        :highlight-on-select="false"
+                        :focus-on-hover="false"
+                        :pt="{
+                            root: {
+                                class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
+                            },
+                            input: {
+                                class: 'text-text dark:text-natural-50',
+                            },
+                            item: {
+                                class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900',
+                            },
+                            wrapper: {
+                                class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                            },
+                        }"
+                        @change="changeLanguage"
+                        ><template #value="slotProps">
+                            <div
+                                v-if="slotProps.value"
+                                class="align-items-center flex"
+                            >
+                                <T :key-name="slotProps.value.name" />
+                            </div>
+                            <span v-else>
+                                {{ slotProps.placeholder }}
+                            </span>
+                        </template>
+                        <template #option="slotProps">
+                            <div class="align-items-center flex items-center">
+                                <T :key-name="slotProps.option.name" />
+                            </div>
+                        </template>
+                    </Dropdown>
+                </div>
+            </div>
+            <div class="flex items-center pb-5">
+                <div class="bg h-0.5 w-10 bg-calypso-400" />
+                <div
+                    class="flex-grow-5 dark:text-white mx-5 text-3xl font-semibold text-text dark:text-natural-50"
+                >
+                    <T key-name="dashboard.user.settings.delete.log.out" />
+                </div>
+                <div class="bg h-0.5 flex-grow bg-calypso-400" />
+            </div>
+            <div class="flex pb-5 pl-10">
+                <div class="flex w-full flex-col">
+                    <div class="text-2xl">
+                        <T key-name="dashboard.user.settings.log.out" />
+                    </div>
+                    <div class="dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.log.out.description"
+                        />
+                    </div>
+                </div>
+                <div class="flex w-full items-center justify-end">
+                    <button
+                        class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="logoutUser"
+                    >
+                        <T key-name="dashboard.user.settings.log.out" />
+                    </button>
+                </div>
+            </div>
+            <div
+                class="flex pb-5 pl-10 text-mahagony-600 dark:text-mahagony-300"
+            >
+                <div class="flex w-full flex-col">
+                    <div class="text-2xl">
+                        <T key-name="dashboard.user.settings.delete" />
+                    </div>
+                    <T key-name="dashboard.user.settings.delete.description" />
+                </div>
+                <div class="flex w-full items-center justify-end">
+                    <button
+                        class="w-40 rounded-md border-2 border-mahagony-500 bg-natural-50 px-2 text-text hover:border-mahagony-600 hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                        @click="
+                            isDeleteAccountVisible = !isDeleteAccountVisible
+                        "
+                    >
+                        <T key-name="dashboard.user.settings.delete" />
+                    </button>
+                    <FormDeleteAccount
+                        :visible="isDeleteAccountVisible"
+                        @close="isDeleteAccountVisible = false"
+                    />
                 </div>
             </div>
         </div>
     </Dialog>
+    <Sidebar
+        v-model:visible="isVisible"
+        modal
+        position="right"
+        block-scroll
+        :auto-z-index="true"
+        :draggable="false"
+        :header="t('dashboard.user.settings')"
+        class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-4/5 md:hidden md:rounded-xl lg:-z-10"
+        :pt="{
+            root: {
+                class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden',
+            },
+            header: {
+                class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50',
+            },
+            title: {
+                class: 'font-nunito text-4xl font-semibold',
+            },
+            content: {
+                class: 'font-nunito bg-background dark:bg-background-dark px-0 -ml-2 sm:pr-12 h-full',
+            },
+            footer: { class: 'h-0' },
+            closeButton: {
+                class: 'justify-start w-full h-full items-center collapse',
+            },
+            mask: {
+                class: 'md:collapse',
+            },
+        }"
+        @hide="close"
+    >
+        <template #header>
+            <button
+                class="-ml-6 flex justify-center pr-4"
+                @click="$emit('close')"
+            >
+                <span class="pi pi-angle-left text-3xl" />
+            </button>
+            <div class="font-nunito text-4xl font-semibold">
+                <T key-name="dashboard.user.settings" />
+            </div>
+        </template>
+        <div class="pl-4 dark:text-natural-50">
+            <div class="flex items-center pb-2">
+                <div class="bg h-0.5 w-6 bg-calypso-400" />
+                <div
+                    class="flex-grow-5 dark:text-white mx-2 text-2xl font-semibold text-text dark:text-natural-50"
+                >
+                    <T key-name="dashboard.user.settings.profile" />
+                </div>
+                <div class="bg h-0.5 flex-grow bg-calypso-400" />
+            </div>
+            <div class="flex pb-5 pl-4">
+                <div class="flex w-full flex-col">
+                    <div class="text-xl">
+                        <T key-name="dashboard.user.settings.display.name" />
+                    </div>
+                    <div class="text-sm dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.display.name.description"
+                        />
+                    </div>
+                </div>
+                <div class="flex w-full items-center justify-end">
+                    <button
+                        class="flex w-40 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 text-xl hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="
+                            isPasswordChangeVisible = !isPasswordChangeVisible
+                        "
+                    >
+                        <T key-name="common.change" />
+                        <div class="flex items-center">
+                            <span class="pi pi-angle-right" />
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="flex pb-5 pl-4">
+                <div class="flex w-full flex-col">
+                    <div class="text-xl">
+                        <T key-name="dashboard.user.settings.user.name" />
+                    </div>
+                    <div class="text-sm dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.user.name.description"
+                        />
+                    </div>
+                </div>
+                <div class="flex w-full items-center justify-end">
+                    <button
+                        class="flex w-40 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 text-xl hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="
+                            isPasswordChangeVisible = !isPasswordChangeVisible
+                        "
+                    >
+                        <T key-name="common.change" />
+                        <div class="flex items-center">
+                            <span class="pi pi-angle-right" />
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center pb-2">
+                <div class="bg h-0.5 w-6 bg-calypso-400" />
+                <div
+                    class="flex-grow-5 dark:text-white mx-2 text-2xl font-semibold text-text dark:text-natural-50"
+                >
+                    <T key-name="dashboard.user.settings.account.security" />
+                </div>
+                <div class="bg h-0.5 flex-grow bg-calypso-400" />
+            </div>
+            <div class="flex pb-5 pl-4">
+                <div class="flex w-full flex-col">
+                    <div class="text-xl">
+                        <T key-name="dashboard.user.settings.user.email" />
+                    </div>
+                    <div class="text-sm dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.user.email.description"
+                        />
+                        {{ currUser.email }}
+                    </div>
+                </div>
+                <div class="flex w-full items-center justify-end">
+                    <button
+                        class="flex w-40 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 text-xl hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="isEmailChangeVisible = !isEmailChangeVisible"
+                    >
+                        <T key-name="common.change" />
+                        <div class="flex items-center">
+                            <span class="pi pi-angle-right" />
+                        </div>
+                    </button>
+                    <FormEmailChange
+                        :visible="isEmailChangeVisible"
+                        :curr-email="currUser.email"
+                        @close="isEmailChangeVisible = false"
+                        @change-email="changeEmail"
+                    />
+                </div>
+            </div>
+            <div class="flex pb-5 pl-4">
+                <div class="flex w-full flex-col">
+                    <div class="text-xl">
+                        <T key-name="dashboard.user.settings.password" />
+                    </div>
+                    <div class="text-sm dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.password.description"
+                        />
+                    </div>
+                </div>
+                <div class="flex w-full items-center justify-end">
+                    <button
+                        class="flex w-40 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 text-xl hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="
+                            isPasswordChangeVisible = !isPasswordChangeVisible
+                        "
+                    >
+                        <T key-name="common.change" />
+                        <div class="flex items-center">
+                            <span class="pi pi-angle-right" />
+                        </div>
+                    </button>
+                    <FormPasswordChange
+                        :visible="isPasswordChangeVisible"
+                        @close="isPasswordChangeVisible = false"
+                    />
+                </div>
+            </div>
+            <div class="flex items-center pb-2">
+                <div class="bg h-0.5 w-6 bg-calypso-400" />
+                <div
+                    class="flex-grow-5 dark:text-white mx-2 text-2xl font-semibold text-text dark:text-natural-50"
+                >
+                    <T key-name="dashboard.user.settings.appearance" />
+                </div>
+                <div class="bg h-0.5 flex-grow bg-calypso-400" />
+            </div>
+            <div class="flex pb-5 pl-4">
+                <div class="flex w-full flex-col">
+                    <div class="text-xl">
+                        <T key-name="dashboard.user.settings.appearance" />
+                    </div>
+                    <div class="text-sm dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.appearance.description"
+                        />
+                    </div>
+                </div>
+                <div class="flex w-full items-center justify-end">
+                    <Dropdown
+                        v-model="selectedColorMode"
+                        :options="colorModes"
+                        option-label="name"
+                        :placeholder="colorScheme"
+                        :highlight-on-select="false"
+                        :focus-on-hover="false"
+                        :pt="{
+                            root: {
+                                class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
+                            },
+                            input: {
+                                class: 'text-text dark:text-natural-50',
+                            },
+                            item: {
+                                class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900',
+                            },
+                            wrapper: {
+                                class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                            },
+                        }"
+                        @change="handelChange()"
+                    >
+                        <template #value="slotProps">
+                            <div
+                                v-if="slotProps.value"
+                                class="align-items-center flex"
+                            >
+                                <div>{{ slotProps.value.name }}</div>
+                            </div>
+                            <span v-else>
+                                {{ slotProps.placeholder }}
+                            </span>
+                        </template>
+                        <template #option="slotProps">
+                            <div class="align-items-center flex items-center">
+                                <span
+                                    :class="slotProps.option.code"
+                                    class="pr-2"
+                                />
+                                <div>{{ slotProps.option.name }}</div>
+                            </div>
+                        </template>
+                    </Dropdown>
+                </div>
+            </div>
+            <div class="flex pb-5 pl-4">
+                <div class="flex w-full flex-col">
+                    <div class="text-xl">
+                        <T key-name="dashboard.user.settings.language" />
+                    </div>
+                    <div class="text-sm dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.language.description"
+                        />
+                    </div>
+                </div>
+                <div class="flex w-full items-center justify-end">
+                    <Dropdown
+                        v-model="selectedLanguage"
+                        :options="languages"
+                        option-label="name"
+                        :placeholder="language"
+                        :highlight-on-select="false"
+                        :focus-on-hover="false"
+                        :pt="{
+                            root: {
+                                class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
+                            },
+                            input: {
+                                class: 'text-text dark:text-natural-50',
+                            },
+                            item: {
+                                class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900',
+                            },
+                            wrapper: {
+                                class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                            },
+                        }"
+                        @change="changeLanguage"
+                        ><template #value="slotProps">
+                            <div
+                                v-if="slotProps.value"
+                                class="align-items-center flex"
+                            >
+                                <T :key-name="slotProps.value.name" />
+                            </div>
+                            <span v-else>
+                                {{ slotProps.placeholder }}
+                            </span>
+                        </template>
+                        <template #option="slotProps">
+                            <div class="align-items-center flex items-center">
+                                <T :key-name="slotProps.option.name" />
+                            </div>
+                        </template>
+                    </Dropdown>
+                </div>
+            </div>
+            <div class="flex items-center pb-2">
+                <div class="bg h-0.5 w-6 bg-calypso-400" />
+                <div
+                    class="flex-grow-5 dark:text-white mx-2 text-2xl font-semibold text-text dark:text-natural-50"
+                >
+                    <T key-name="dashboard.user.settings.delete.log.out" />
+                </div>
+                <div class="bg h-0.5 flex-grow bg-calypso-400" />
+            </div>
+            <div class="flex pb-5 pl-4">
+                <div class="flex w-full flex-col">
+                    <div class="text-xl">
+                        <T key-name="dashboard.user.settings.log.out" />
+                    </div>
+                    <div class="text-sm dark:text-natural-300">
+                        <T
+                            key-name="dashboard.user.settings.log.out.description"
+                        />
+                    </div>
+                </div>
+                <div class="flex w-full items-center justify-end">
+                    <button
+                        class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="logoutUser"
+                    >
+                        <T key-name="dashboard.user.settings.log.out" />
+                    </button>
+                </div>
+            </div>
+            <div
+                class="flex pb-5 pl-4 text-mahagony-600 dark:text-mahagony-300"
+            >
+                <div class="flex w-full flex-col">
+                    <div class="text-xl">
+                        <T key-name="dashboard.user.settings.delete" />
+                    </div>
+                    <div class="text-sm">
+                        <T
+                            key-name="dashboard.user.settings.delete.description"
+                        />
+                    </div>
+                </div>
+                <div class="flex w-full items-center justify-end">
+                    <button
+                        class="w-40 rounded-md border-2 border-mahagony-500 bg-natural-50 px-2 text-text hover:border-mahagony-600 hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                        @click="
+                            isDeleteAccountVisible = !isDeleteAccountVisible
+                        "
+                    >
+                        <T key-name="dashboard.user.settings.delete" />
+                    </button>
+                    <FormDeleteAccount
+                        :visible="isDeleteAccountVisible"
+                        @close="isDeleteAccountVisible = false"
+                    />
+                </div>
+            </div>
+        </div>
+    </Sidebar>
 </template>
