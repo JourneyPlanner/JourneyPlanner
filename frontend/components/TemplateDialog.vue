@@ -164,7 +164,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
             >
                 <div class="mb-5 flex flex-col">
                     <p
-                        class="col-span-full col-start-1 row-span-1 mb-4 text-sm md:text-base"
+                        class="col-span-full col-start-1 row-span-1 -mt-1 mb-5 text-sm text-natural-600 dark:text-natural-200 md:text-base"
                     >
                         <T key-name="journey.template.create.description" />
                     </p>
@@ -215,7 +215,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                     </div>
                 </div>
                 <div
-                    class="flex h-full flex-row justify-between gap-2 bg-background align-bottom font-nunito dark:bg-background-dark"
+                    class="flex h-full flex-row justify-between gap-2 bg-background align-bottom font-nunito dark:bg-background-dark md:mt-1"
                 >
                     <Button
                         type="button"
