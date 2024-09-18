@@ -399,7 +399,7 @@ const handleUpload = (result: string) => {
                 class="sticky bottom-0 border-t-2 border-natural-200 dark:border-natural-900"
             >
                 <button
-                    class="my-4 w-full rounded-lg border-2 border-mahagony-500 bg-natural-50 py-1 text-base text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                    class="my-4 w-full rounded-lg border-2 border-mahagony-500 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                     @click="confirmLeave($event)"
                 >
                     <T key-name="journey.leave.short" />
@@ -464,7 +464,7 @@ const handleUpload = (result: string) => {
                                 <T key-name="dashboard.edit.detail" />
                             </p>
                             <button
-                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                                 @click="
                                     isJourneyEditMenuVisible =
                                         !isJourneyEditMenuVisible
@@ -496,7 +496,7 @@ const handleUpload = (result: string) => {
                                 <T key-name="journey.template.create.detail" />
                             </p>
                             <button
-                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                                 @click="
                                     isCreateTemplateVisible =
                                         !isCreateTemplateVisible
@@ -532,7 +532,7 @@ const handleUpload = (result: string) => {
                                 />
                             </p>
                             <button
-                                class="mt-4 w-full rounded-lg border-2 border-mahagony-500 bg-natural-50 py-1 text-base text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                                class="mt-4 w-full rounded-lg border-2 border-mahagony-500 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                                 @click="confirmLeave($event)"
                             >
                                 <T key-name="journey.leave.short" />
