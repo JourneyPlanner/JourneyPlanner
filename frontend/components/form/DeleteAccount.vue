@@ -25,7 +25,7 @@ const close = () => {
 
 async function deleteAccount() {
     await client(`/api/user/delete-account`, {
-        method: "POST",
+        method: "DELETE",
         body: {
             password: password.value,
         },

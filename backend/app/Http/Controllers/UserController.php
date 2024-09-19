@@ -96,6 +96,15 @@ class UserController extends Controller
             return response()->json(["message" => "Invalid password"], 401);
         }
 
+        // Delete images
+        foreach ($user->media as $media) {
+            try {
+                unlink($media->getMediaPath());
+                $media->delete();
+            } catch (\Exception $ignored) {
+            }
+        }
+
         $user->delete();
 
         return response()->json(["message" => "Account deleted"]);
