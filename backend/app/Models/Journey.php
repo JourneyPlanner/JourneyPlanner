@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Journey extends Model
@@ -95,5 +96,24 @@ class Journey extends Model
     public function getMediaFolder(): string
     {
         return Media::getJourneyFolder($this->id);
+    }
+
+    /**
+     * The templates that are created from this journey.
+     */
+    public function templates(): HasMany
+    {
+        return $this->hasMany(Journey::class, "created_from")->where(
+            "is_template",
+            "1"
+        );
+    }
+
+    /**
+     * Get the journey that the template was created from.
+     */
+    public function createdFrom(): BelongsTo
+    {
+        return $this->belongsTo(Journey::class, "created_from");
     }
 }

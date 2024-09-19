@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Journey;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class TemplateController extends Controller
 {
@@ -28,16 +27,11 @@ class TemplateController extends Controller
         ]);
         $journey = Journey::findOrFail($validated["journey_id"]);
 
-        if (
-            Journey::where([
-                ["is_template", "=", "1"],
-                ["created_from", "=", $journey->id],
-            ])->exists()
-        ) {
+        if ($request->user()->can("journeyTemplateCreator", $journey)) {
             return response()->json(
                 [
                     "message" =>
-                        "A template has already been created from this journey.",
+                        "You have already created a template from this journey.",
                 ],
                 409
             );
