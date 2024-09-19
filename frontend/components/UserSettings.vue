@@ -16,11 +16,15 @@ const { logout } = useSanctumAuth();
 const isEmailChangeVisible = ref(false);
 const isPasswordChangeVisible = ref(false);
 const isDeleteAccountVisible = ref(false);
+const isUsernameChangeVisible = ref(false);
+const isDisplaynameChangeVisible = ref(false);
 const selectedColorMode = ref();
 const selectedLanguage = ref();
 const language = ref();
 const client = useSanctumClient();
 const toast = useToast();
+const usernameRegex = /^[a-z0-9_-]+$/;
+const usernameInvalid = ref(false);
 
 onMounted(() => {
     if (
@@ -57,8 +61,7 @@ const changeLanguage = () => {
     tolgee.value.changeLanguage(selectedLanguage.value.value);
 };
 
-function handelChange() {
-    console.log(selectedColorMode.value.name);
+function handleChange() {
     if (selectedColorMode.value.name == "darkmode") {
         colorMode.preference = "dark";
     } else if (selectedColorMode.value.name == "lightmode") {
@@ -68,19 +71,69 @@ function handelChange() {
     }
 }
 
-async function changeUsername() {
-    console.log(username.value.length);
+async function changeUsername(newUsername: string) {
+    if (newUsername != "") {
+        username.value = newUsername;
+        isUsernameChangeVisible.value = false;
+        usernameInvalid.value = false;
+    }
     if (
         currUser.value.username != username.value &&
-        username.value.length > 3
+        username.value.length > 0 &&
+        !usernameInvalid.value
     ) {
-        await client(`/api/user`, {
-            method: "PATCH",
+        await client(`/api/user/change-username`, {
+            method: "PUT",
             body: {
                 username: username.value,
             },
-            async onResponse() {
-                console.log(currUser);
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value("common.toast.success.heading"),
+                        detail: t.value("username.changed.toast.success"),
+                        life: 6000,
+                    });
+                    currUser.value.username = username.value;
+                }
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+            },
+        });
+    }
+}
+
+async function changeDisplayname(newDisplayname: string) {
+    if (newDisplayname != "") {
+        displayname.value = newDisplayname;
+        isDisplaynameChangeVisible.value = false;
+    }
+    if (
+        currUser.value.display_name != displayname.value &&
+        displayname.value.length > 0
+    ) {
+        await client(`/api/user/change-display-name`, {
+            method: "PUT",
+            body: {
+                display_name: displayname.value,
+            },
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value("common.toast.success.heading"),
+                        detail: t.value("username.changed.toast.success"),
+                        life: 6000,
+                    });
+                    currUser.value.display_name = displayname.value;
+                }
             },
             async onResponseError() {
                 toast.add({
@@ -113,10 +166,6 @@ const { data: currUser } = await useAsyncData("userRole", () =>
     client(`/api/user`),
 );
 
-if (currUser.value) {
-    console.log(currUser.value);
-}
-
 async function changeEmail(newEmail: Ref) {
     currUser.value.email = newEmail.value;
     isEmailChangeVisible.value = false;
@@ -127,6 +176,22 @@ async function changeEmail(newEmail: Ref) {
         life: 3000,
     });
 }
+
+function validateUsername() {
+    if (usernameRegex.test(username.value)) {
+        usernameInvalid.value = false;
+    } else {
+        usernameInvalid.value = true;
+    }
+}
+
+interface InputEvent extends Event {
+    target: HTMLInputElement;
+}
+
+function blur(e: InputEvent) {
+    e.target.blur();
+}
 </script>
 <template>
     <Dialog
@@ -136,7 +201,7 @@ async function changeEmail(newEmail: Ref) {
         :auto-z-index="true"
         :draggable="false"
         :header="t('dashboard.user.settings')"
-        class="-z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-lg:collapse sm:w-4/5 md:rounded-xl"
+        class="-z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-4/5 md:rounded-xl"
         :pt="{
             root: {
                 class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -188,6 +253,8 @@ async function changeEmail(newEmail: Ref) {
                         name="displayname"
                         :placeholder="currUser.display_name"
                         class="rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400"
+                        @blur="changeDisplayname('')"
+                        @keyup.enter="blur"
                     />
                 </div>
             </div>
@@ -202,16 +269,27 @@ async function changeEmail(newEmail: Ref) {
                         />
                     </div>
                 </div>
-                <div class="flex w-full items-center justify-end">
+                <div class="flex w-full flex-col items-center justify-end">
                     <input
                         id="username"
                         v-model="username"
                         name="username"
                         :placeholder="currUser.username"
-                        class="rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400"
-                        @blur="changeUsername"
-                        @keyup.enter="changeUsername"
+                        class="self-end rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400"
+                        @blur="changeUsername('')"
+                        @keyup.enter="blur"
+                        @keyup="validateUsername"
                     />
+                    <div class="w-44 self-end">
+                        <div
+                            v-if="usernameInvalid"
+                            class="-ml-10 text-sm text-mahagony-600"
+                        >
+                            <T
+                                key-name="dashboard.user.settings.username.invalid"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="flex items-center pb-5">
@@ -228,7 +306,9 @@ async function changeEmail(newEmail: Ref) {
                     <div class="text-2xl">
                         <T key-name="dashboard.user.settings.user.email" />
                     </div>
-                    <div class="dark:text-natural-300">
+                    <div
+                        class="overflow-hidden overflow-ellipsis dark:text-natural-300"
+                    >
                         <T
                             key-name="dashboard.user.settings.user.email.description"
                         />
@@ -318,7 +398,7 @@ async function changeEmail(newEmail: Ref) {
                                 class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
                             },
                         }"
-                        @change="handelChange()"
+                        @change="handleChange()"
                     >
                         <template #value="slotProps">
                             <div
@@ -459,7 +539,7 @@ async function changeEmail(newEmail: Ref) {
         :auto-z-index="true"
         :draggable="false"
         :header="t('dashboard.user.settings')"
-        class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-4/5 md:hidden md:rounded-xl lg:-z-10"
+        class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:hidden sm:w-4/5 sm:rounded-xl lg:-z-10"
         :pt="{
             root: {
                 class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden',
@@ -478,7 +558,7 @@ async function changeEmail(newEmail: Ref) {
                 class: 'justify-start w-full h-full items-center collapse',
             },
             mask: {
-                class: 'md:collapse',
+                class: 'sm:collapse',
             },
         }"
         @hide="close"
@@ -505,21 +585,30 @@ async function changeEmail(newEmail: Ref) {
                 <div class="bg h-0.5 flex-grow bg-calypso-400" />
             </div>
             <div class="flex pb-5 pl-4">
-                <div class="flex w-full flex-col">
+                <div class="flex w-[55%] flex-col">
                     <div class="text-xl">
                         <T key-name="dashboard.user.settings.display.name" />
                     </div>
-                    <div class="text-sm dark:text-natural-300">
+                    <div
+                        class="overflow-hidden overflow-ellipsis text-sm dark:text-natural-300"
+                    >
                         <T
                             key-name="dashboard.user.settings.display.name.description"
                         />
+                        <br />
+                        <T key-name="dashboard.user.display.name" />
+                        <b
+                            class="overflow-hidden overflow-ellipsis text-text dark:text-natural-50"
+                            >{{ currUser.display_name }}</b
+                        >
                     </div>
                 </div>
-                <div class="flex w-full items-center justify-end">
+                <div class="flex w-[45%] items-center justify-end">
                     <button
                         class="flex w-40 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 text-xl hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
                         @click="
-                            isPasswordChangeVisible = !isPasswordChangeVisible
+                            isDisplaynameChangeVisible =
+                                !isDisplaynameChangeVisible
                         "
                     >
                         <T key-name="common.change" />
@@ -527,24 +616,38 @@ async function changeEmail(newEmail: Ref) {
                             <span class="pi pi-angle-right" />
                         </div>
                     </button>
+                    <FormDisplaynameChange
+                        :visible="isDisplaynameChangeVisible"
+                        :displayname="currUser.display_name"
+                        @close="isDisplaynameChangeVisible = false"
+                        @change-displayname="changeDisplayname"
+                    />
                 </div>
             </div>
             <div class="flex pb-5 pl-4">
-                <div class="flex w-full flex-col">
+                <div class="flex w-[55%] flex-col">
                     <div class="text-xl">
                         <T key-name="dashboard.user.settings.user.name" />
                     </div>
-                    <div class="text-sm dark:text-natural-300">
+                    <div
+                        class="overflow-hidden overflow-ellipsis text-sm dark:text-natural-300"
+                    >
                         <T
                             key-name="dashboard.user.settings.user.name.description"
                         />
+                        <br />
+                        <T key-name="dashboard.user.username" />
+                        <b
+                            class="overflow-hidden overflow-ellipsis text-text dark:text-natural-50"
+                            >{{ currUser.username }}</b
+                        >
                     </div>
                 </div>
-                <div class="flex w-full items-center justify-end">
+                <div class="flex w-[45%] items-center justify-end">
                     <button
                         class="flex w-40 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 text-xl hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
                         @click="
-                            isPasswordChangeVisible = !isPasswordChangeVisible
+                            isUsernameChangeVisible = !isUsernameChangeVisible
                         "
                     >
                         <T key-name="common.change" />
@@ -552,6 +655,13 @@ async function changeEmail(newEmail: Ref) {
                             <span class="pi pi-angle-right" />
                         </div>
                     </button>
+                    <FormUsernameChange
+                        :visible="isUsernameChangeVisible"
+                        :username="currUser.username"
+                        :username-regex="usernameRegex"
+                        @close="isUsernameChangeVisible = false"
+                        @change-username="changeUsername"
+                    />
                 </div>
             </div>
             <div class="flex items-center pb-2">
@@ -564,18 +674,24 @@ async function changeEmail(newEmail: Ref) {
                 <div class="bg h-0.5 flex-grow bg-calypso-400" />
             </div>
             <div class="flex pb-5 pl-4">
-                <div class="flex w-full flex-col">
+                <div class="flex w-1/2 flex-col">
                     <div class="text-xl">
                         <T key-name="dashboard.user.settings.user.email" />
                     </div>
-                    <div class="text-sm dark:text-natural-300">
+                    <div
+                        class="w-full overflow-hidden overflow-ellipsis text-sm dark:text-natural-300"
+                    >
                         <T
                             key-name="dashboard.user.settings.user.email.description"
                         />
-                        {{ currUser.email }}
+                        <b
+                            class="overflow-hidden overflow-ellipsis text-text dark:text-natural-50"
+                        >
+                            {{ currUser.email }}
+                        </b>
                     </div>
                 </div>
-                <div class="flex w-full items-center justify-end">
+                <div class="flex w-1/2 items-center justify-end">
                     <button
                         class="flex w-40 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 text-xl hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
                         @click="isEmailChangeVisible = !isEmailChangeVisible"
@@ -664,7 +780,7 @@ async function changeEmail(newEmail: Ref) {
                                 class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
                             },
                         }"
-                        @change="handelChange()"
+                        @change="handleChange()"
                     >
                         <template #value="slotProps">
                             <div

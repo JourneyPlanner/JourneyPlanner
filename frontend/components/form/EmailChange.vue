@@ -45,19 +45,19 @@ async function changeEmail() {
             });
         } else {
             await client(`/api/user/change-email`, {
-                method: "POST",
+                method: "PUT",
                 body: {
                     email: newEmail.value,
                     password: password.value,
                 },
                 async onResponse({ response }) {
-                    console.log(response);
                     if (response.ok) {
                         emit("changeEmail", newEmail);
+                        password.value = "";
+                        newEmail.value = "";
                     }
                 },
                 async onResponseError({ response }) {
-                    console.log(response.status);
                     if (
                         response._data.message ==
                         "The email field must be a valid email address."
@@ -98,7 +98,7 @@ async function changeEmail() {
         :auto-z-index="true"
         :draggable="false"
         :header="t('dashboard.user.settings')"
-        class="z-50 flex w-2/3 flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-lg:collapse sm:w-1/4 md:rounded-xl"
+        class="z-50 flex w-2/3 flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-1/2 2xl:w-1/4"
         :pt="{
             root: {
                 class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -120,7 +120,7 @@ async function changeEmail() {
                 class: 'z-30 self-center text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-text h-10 w-10 ',
             },
             mask: {
-                class: 'max-md:collapse',
+                class: 'max-sm:collapse',
             },
         }"
         @hide="close"
@@ -137,7 +137,9 @@ async function changeEmail() {
             </div>
         </template>
         <div class="pl-4">
-            <div class="-pt-4 text-sm text-natural-700 dark:text-natural-300">
+            <div
+                class="-pt-4 overflow-hidden overflow-ellipsis text-sm text-natural-700 dark:text-natural-300"
+            >
                 <T
                     key-name="dashboard.user.settings.change.email.description"
                 />
@@ -186,7 +188,7 @@ async function changeEmail() {
         :auto-z-index="true"
         :draggable="false"
         :header="t('dashboard.user.settings')"
-        class="z-50 mt-auto flex h-[95%] w-full flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:w-4/5 md:hidden md:rounded-xl lg:-z-10"
+        class="z-50 mt-auto flex h-[95%] w-full flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden sm:w-4/5 md:rounded-xl lg:-z-10"
         :pt="{
             root: {
                 class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden ',
@@ -205,7 +207,7 @@ async function changeEmail() {
                 class: 'justify-start w-full h-full items-center collapse',
             },
             mask: {
-                class: 'md:collapse bg-natural-50',
+                class: 'sm:collapse bg-natural-50',
             },
         }"
         @hide="close"
@@ -221,8 +223,10 @@ async function changeEmail() {
                 <T key-name="dashboard.user.settings.email.change" />
             </div>
         </template>
-        <div class="h-full pl-8">
-            <div class="-pt-4 text-sm text-natural-700 dark:text-natural-300">
+        <div class="flex h-full flex-col pl-8">
+            <div
+                class="-pt-4 overflow-hidden overflow-ellipsis text-sm text-natural-700 dark:text-natural-300"
+            >
                 <T
                     key-name="dashboard.user.settings.change.email.description.part1"
                 />
@@ -262,12 +266,12 @@ async function changeEmail() {
                     />
                 </div>
             </div>
-            <div class="mt-auto flex w-full justify-center pb-6 pt-6">
+            <div class="mt-auto flex w-full justify-center">
                 <button
-                    class="mt-auto w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                    class="ml-1 mr-6 mt-auto w-full rounded-md border-[3px] border-dandelion-300 bg-natural-50 px-2 py-1 pl-2 text-2xl font-semibold hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                     @click="changeEmail"
                 >
-                    <T key-name="dashboard.user.settings.change.email" />
+                    <T key-name="common.save" />
                 </button>
             </div>
         </div>

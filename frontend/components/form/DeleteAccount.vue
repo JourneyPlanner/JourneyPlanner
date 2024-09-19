@@ -6,6 +6,7 @@ const props = defineProps({
 });
 
 const isVisible = ref(props.visible);
+const isConfirmVisible = ref(false);
 const emit = defineEmits(["close", "changeEmail"]);
 const { t } = useTranslate();
 const password = ref("");
@@ -52,7 +53,7 @@ async function deleteAccount() {
         :auto-z-index="true"
         :draggable="false"
         :header="t('dashboard.user.settings')"
-        class="z-50 flex w-2/3 flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-1/4 md:rounded-xl"
+        class="z-50 flex w-2/3 flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-1/2 2xl:w-1/4"
         :pt="{
             root: {
                 class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -72,6 +73,9 @@ async function deleteAccount() {
             },
             closeButtonIcon: {
                 class: 'z-30 self-center text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-text h-10 w-10 ',
+            },
+            mask: {
+                class: 'max-sm:collapse',
             },
         }"
         @hide="close"
@@ -137,4 +141,182 @@ async function deleteAccount() {
             </div>
         </div>
     </Dialog>
+    <Sidebar
+        v-model:visible="isVisible"
+        modal
+        position="right"
+        :auto-z-index="true"
+        :draggable="false"
+        :header="t('dashboard.user.settings')"
+        class="z-50 mt-auto flex h-[95%] w-full flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden sm:w-4/5 md:rounded-xl lg:-z-10"
+        :pt="{
+            root: {
+                class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden ',
+            },
+            header: {
+                class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50 rounded-3xl',
+            },
+            title: {
+                class: 'font-nunito text-4xl font-semibold',
+            },
+            content: {
+                class: 'font-nunito bg-background dark:bg-background-dark px-0 -ml-2 sm:pr-12 h-full',
+            },
+            footer: { class: 'h-0' },
+            closeButton: {
+                class: 'justify-start w-full h-full items-center collapse',
+            },
+            mask: {
+                class: 'sm:collapse bg-natural-50',
+            },
+        }"
+        @hide="close"
+    >
+        <template #header>
+            <button
+                class="-ml-6 flex justify-center pr-4"
+                @click="$emit('close')"
+            >
+                <span class="pi pi-angle-left text-3xl" />
+            </button>
+            <div class="font-nunito text-4xl font-semibold">
+                <T key-name="dashboard.user.settings.delete" />
+            </div>
+        </template>
+        <div class="flex h-full flex-col pl-8">
+            <div
+                class="-pt-4 w-11/12 overflow-hidden overflow-ellipsis text-sm text-natural-700 dark:text-natural-300"
+            >
+                <T
+                    key-name="dashboard.user.settings.delete.account.description.part1"
+                />
+                <b class="dark:text-natural-50">
+                    <T
+                        key-name="dashboard.user.settings.delete.account.description.part2"
+                /></b>
+                <T
+                    key-name="dashboard.user.settings.delete.account.description.part3"
+                />
+                <br />
+                <br />
+                <T
+                    key-name="dashboard.user.settings.delete.account.description.part4"
+                />
+            </div>
+            <div class="flex items-center pl-6 pt-4">
+                <div class="flex w-full flex-col items-center">
+                    <div
+                        class="mb-2 mr-10 flex w-full items-start text-sm dark:text-natural-50"
+                    >
+                        <T
+                            key-name="dashboard.user.settings.enter.current.password"
+                        />
+                    </div>
+                    <input
+                        id="password"
+                        v-model="password"
+                        name="password"
+                        type="password"
+                        class="mb-3 mr-10 w-full rounded-md border-2 border-natural-400 bg-natural-100 py-1 pl-3 text-text placeholder:text-text hover:border-calypso-400 dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50 dark:hover:border-calypso-400"
+                    />
+                </div>
+            </div>
+            <div class="mt-auto flex w-full flex-col justify-center">
+                <div class="-ml-2 mb-6 flex w-full justify-center">
+                    <button
+                        class="w-40 rounded-md bg-natural-50 px-2 text-2xl hover:underline dark:bg-background-dark dark:text-natural-50"
+                        @click="$emit('close')"
+                    >
+                        <T key-name="common.button.cancel" />
+                    </button>
+                </div>
+                <button
+                    class="ml-1 mr-6 mt-auto w-[93%] rounded-md border-[3px] border-mahagony-500 bg-natural-50 px-2 py-1 pl-2 text-2xl font-semibold hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                    @click="isConfirmVisible = true"
+                >
+                    <T key-name="dashboard.user.settings.delete" />
+                </button>
+            </div>
+        </div>
+    </Sidebar>
+    <Sidebar
+        v-model:visible="isConfirmVisible"
+        modal
+        position="bottom"
+        :auto-z-index="true"
+        :draggable="false"
+        :header="t('dashboard.user.settings')"
+        class="z-50 mt-auto flex h-[30%] w-full flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden sm:w-4/5 md:rounded-xl lg:-z-10"
+        :pt="{
+            root: {
+                class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden ',
+            },
+            header: {
+                class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50 rounded-3xl',
+            },
+            title: {
+                class: 'font-nunito text-4xl font-semibold',
+            },
+            content: {
+                class: 'font-nunito bg-background dark:bg-background-dark px-0 -ml-2 sm:pr-12 h-full',
+            },
+            footer: { class: 'h-0' },
+            closeButton: {
+                class: 'justify-start w-full h-full items-center collapse',
+            },
+            mask: {
+                class: 'sm:collapse bg-natural-50',
+            },
+        }"
+        @hide="close"
+    >
+        <template #header>
+            <button
+                class="-ml-6 flex justify-center pr-4"
+                @click="isConfirmVisible = false"
+            >
+                <span class="pi pi-angle-down text-3xl" />
+            </button>
+            <div class="font-nunito text-4xl font-semibold">
+                <T key-name="dashboard.user.settings.delete" />
+            </div>
+        </template>
+        <div class="flex h-full flex-col pl-8">
+            <div
+                class="-pt-4 w-11/12 overflow-hidden overflow-ellipsis text-xl text-natural-700 dark:text-natural-300"
+            >
+                <T
+                    key-name="dashboard.user.settings.delete.account.confirm.part1"
+                />
+                <b class="dark:text-natural-50">
+                    <T key-name="dashboard.user.settings.delete.little"
+                /></b>
+                <T
+                    key-name="dashboard.user.settings.delete.account.confirm.part2"
+                />
+                <b>
+                    <T
+                        key-name="dashboard.user.settings.delete.account.confirm.part3"
+                    />
+                </b>
+            </div>
+
+            <div class="mt-auto flex w-full flex-col justify-center">
+                <div class="-ml-2 mb-6 flex w-full justify-center">
+                    <button
+                        class="w-40 rounded-md bg-natural-50 px-2 text-2xl hover:underline dark:bg-background-dark dark:text-natural-50"
+                        @click="isConfirmVisible = false"
+                    >
+                        <T key-name="common.button.cancel" />
+                    </button>
+                </div>
+                <button
+                    class="ml-1 mr-6 mt-auto w-[93%] rounded-md border-[3px] border-mahagony-500 bg-natural-50 px-2 py-1 pl-2 text-2xl font-semibold hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                    @click="deleteAccount"
+                >
+                    <T key-name="dashboard.user.settings.delete" />
+                </button>
+            </div>
+        </div>
+    </Sidebar>
 </template>
