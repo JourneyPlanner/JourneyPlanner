@@ -6,6 +6,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use App\Models\Journey;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserController extends Controller
 {
@@ -106,6 +108,11 @@ class UserController extends Controller
         }
 
         $user->delete();
+
+        // Delete all journeys which don't have at least one journey guide
+        Journey::whereDoesntHave("users", function (Builder $query) {
+            $query->whereIn("role", [1, 2]);
+        })->delete();
 
         return response()->json(["message" => "Account deleted"]);
     }
