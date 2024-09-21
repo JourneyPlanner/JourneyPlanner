@@ -12,6 +12,7 @@ const emit = defineEmits(["close", "changeUsername"]);
 const { t } = useTranslate();
 const newUsername = ref(props.username);
 const usernameInvalid = ref(false);
+const toast = useToast();
 
 watch(
     () => props.visible,
@@ -26,7 +27,18 @@ const close = () => {
 
 function changeUsername() {
     if (!usernameInvalid.value) {
-        emit("changeUsername", newUsername.value);
+        if (newUsername.value == props.username) {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value(
+                    "dashboard.user.settings.toast.same.username.description",
+                ),
+                life: 6000,
+            });
+        } else {
+            emit("changeUsername", newUsername.value);
+        }
     }
 }
 

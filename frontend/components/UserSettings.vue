@@ -77,36 +77,44 @@ async function changeUsername(newUsername: string) {
         isUsernameChangeVisible.value = false;
         usernameInvalid.value = false;
     }
-    if (
-        currUser.value.username != username.value &&
-        username.value.length > 0 &&
-        !usernameInvalid.value
-    ) {
-        await client(`/api/user/change-username`, {
-            method: "PUT",
-            body: {
-                username: username.value,
-            },
-            async onResponse({ response }) {
-                if (response.ok) {
+
+    if (currUser.value.username == username.value) {
+        toast.add({
+            severity: "error",
+            summary: t.value("common.toast.error.heading"),
+            detail: t.value(
+                "dashboard.user.settings.toast.same.username.description",
+            ),
+            life: 6000,
+        });
+    } else {
+        if (username.value.length > 0 && !usernameInvalid.value) {
+            await client(`/api/user/change-username`, {
+                method: "PUT",
+                body: {
+                    username: username.value,
+                },
+                async onResponse({ response }) {
+                    if (response.ok) {
+                        toast.add({
+                            severity: "success",
+                            summary: t.value("common.toast.success.heading"),
+                            detail: t.value("username.changed.toast.success"),
+                            life: 6000,
+                        });
+                        currUser.value.username = username.value;
+                    }
+                },
+                async onResponseError() {
                     toast.add({
-                        severity: "success",
-                        summary: t.value("common.toast.success.heading"),
-                        detail: t.value("username.changed.toast.success"),
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("common.error.unknown"),
                         life: 6000,
                     });
-                    currUser.value.username = username.value;
-                }
-            },
-            async onResponseError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-            },
-        });
+                },
+            });
+        }
     }
 }
 
@@ -185,12 +193,9 @@ function validateUsername() {
     }
 }
 
-interface InputEvent extends Event {
-    target: HTMLInputElement;
-}
-
-function blur(e: InputEvent) {
-    e.target.blur();
+function blur(e: Event) {
+    const element = e.target as HTMLInputElement;
+    element.blur();
 }
 </script>
 <template>
