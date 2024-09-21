@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
-import { differenceInDays, differenceInHours, format } from "date-fns";
+import { differenceInDays, format } from "date-fns";
 import JSConfetti from "js-confetti";
 import QRCode from "qrcode";
 import resolveConfig from "tailwindcss/resolveConfig";
+import SmallWeather from "~/components/SmallWeather.vue";
 import tailwindConfig from "~/tailwind.config.js";
-
-import scroll from "../../utils/scroll";
 
 const fullConfig = resolveConfig(tailwindConfig);
 const confirm = useConfirm();
@@ -25,10 +24,13 @@ const jsConfetti = new JSConfetti();
 const visibleSidebar = ref(false);
 const toast = useToast();
 const { t } = useTranslate();
-const op = ref();
-const toggle = (event: Event) => {
-    op.value.toggle(event);
-};
+const celsius = ref(true);
+const fahrenheit = ref(false);
+const temperature = ref(22);
+const weatherType = ref("bewölkt");
+const highestTemp = ref(24);
+const lowestTemp = ref(9);
+const currentDate = new Date();
 const editEnabled = ref(false);
 const isActivityDialogVisible = ref(false);
 const uploadResult = ref();
@@ -118,11 +120,12 @@ QRCode.toDataURL(journeyData.value.invite, opts, function (error, url) {
     qrcode.value = url;
 });
 
-const fromDate = new Date(journeyData.value.from.split("T")[0]);
-const toDate = new Date(journeyData.value.to.split("T")[0]);
-const currentDate = new Date();
-const days = ref(Math.ceil(differenceInHours(fromDate, currentDate) / 24));
-const daystoEnd = ref(Math.ceil(differenceInHours(toDate, currentDate) / 24));
+console.log(currentDate.getDate());
+console.log(currentDate.getMonth());
+const fromDate = new Date(journeyData.value.from);
+const toDate = new Date(journeyData.value.to);
+const days = ref(differenceInDays(fromDate, currentDate));
+const daystoEnd = ref(differenceInDays(toDate, currentDate));
 
 if (days.value > 0) {
     day.value = Math.floor(days.value % 10);
@@ -133,16 +136,9 @@ if (days.value > 0) {
 } else if (days.value <= 0 && daystoEnd.value > 0) {
     duringJourney.value = true;
     const journeyEnds = ref(differenceInDays(toDate, currentDate));
-    if (Math.floor(journeyEnds.value % 10) == 9) {
-        day.value = Math.floor(journeyEnds.value % 10);
-        journeyEnds.value = journeyEnds.value / 10;
-        tensDays.value = Math.floor(journeyEnds.value % 10) + 1;
-    } else {
-        day.value = Math.floor(journeyEnds.value % 10) + 1;
-        journeyEnds.value = journeyEnds.value / 10;
-        tensDays.value = Math.floor(journeyEnds.value % 10);
-    }
-
+    day.value = Math.floor(journeyEnds.value % 10);
+    journeyEnds.value = journeyEnds.value / 10;
+    tensDays.value = Math.floor(journeyEnds.value % 10);
     journeyEnds.value = journeyEnds.value / 10;
     hundredsDays.value = Math.floor(journeyEnds.value % 10);
 } else {
@@ -264,6 +260,25 @@ async function changeRole(userid: string, selectedRole: number) {
 const handleUpload = (result: string) => {
     uploadResult.value = result;
 };
+
+function changeToCelsius() {
+    if (fahrenheit.value == true) {
+        temperature.value = Math.round(((temperature.value - 32) * 5) / 9);
+    }
+
+    celsius.value = true;
+    fahrenheit.value = false;
+    console.log(fahrenheit.value);
+}
+
+function changeToFahrenheit() {
+    if (celsius.value == true) {
+        temperature.value = Math.round((temperature.value * 9) / 5 + 32);
+    }
+    celsius.value = false;
+    fahrenheit.value = true;
+    console.log(fahrenheit.value);
+}
 </script>
 
 <template>
@@ -465,21 +480,107 @@ const handleUpload = (result: string) => {
                                     class="flex h-full w-full justify-center rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
                                 >
                                     <div
-                                        class="relative flex h-full w-full flex-col items-end"
+                                        class="relative flex h-full w-full flex-col overflow-hidden"
                                     >
-                                        <img
-                                            class="absolute right-[50%] top-[25%] z-20 w-40 -translate-y-[25%] translate-x-[50%] max-sm:mt-1"
-                                            :src="qrcode"
-                                            alt="QR Code"
-                                        />
                                         <div
                                             class="absolute bottom-4 right-2 z-40 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
                                         >
                                             <T key-name="journey.turn" />
                                         </div>
-                                        <SvgStripes
-                                            class="z-0 md:w-2/3 lg:w-1/2"
+                                        <SvgOtherStripes
+                                            class="absolute bottom-1 z-0 -ml-1 w-32 self-start pb-2 md:w-2/3 lg:w-1/2"
                                         />
+                                        <div class="flex h-full">
+                                            <div class="z-0 ml-6 h-full w-1/2">
+                                                <div
+                                                    class="-ml-14 mt-3 flex h-1/2 items-center justify-center"
+                                                >
+                                                    <img
+                                                        class="w-20"
+                                                        :src="qrcode"
+                                                        alt="QR Code"
+                                                    />
+                                                </div>
+                                                <div class="flex">
+                                                    <div>
+                                                        <div
+                                                            class="flex w-full justify-start text-5xl"
+                                                        >
+                                                            {{ temperature }}°
+                                                        </div>
+                                                        <div
+                                                            class="flex w-full justify-start text-base"
+                                                        >
+                                                            {{ weatherType }}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div
+                                                            class="ml-4 flex h-full flex-col items-start justify-center pt-1 text-sm"
+                                                        >
+                                                            <div>
+                                                                H:
+                                                                {{
+                                                                    highestTemp
+                                                                }}°
+                                                            </div>
+                                                            <div class="pt-2">
+                                                                T:
+                                                                {{
+                                                                    lowestTemp
+                                                                }}°
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="z-0 h-full w-1/3 pt-2">
+                                                <SmallWeather
+                                                    :qr-code="qrcode"
+                                                    :day="1"
+                                                />
+                                                <SmallWeather
+                                                    :qr-code="qrcode"
+                                                    :day="2"
+                                                    :right-line="false"
+                                                />
+                                            </div>
+                                            <div class="z-0 h-full w-1/5">
+                                                <div
+                                                    class="mr-2 mt-2 flex w-1/3"
+                                                >
+                                                    <button
+                                                        class="h-1/5 pr-2 text-xl"
+                                                        :class="
+                                                            celsius === true
+                                                                ? 'font-bold text-calypso-600 dark:bg-gothic-600'
+                                                                : 'font-normal text-text dark:bg-natural-600'
+                                                        "
+                                                        @click.stop="
+                                                            changeToCelsius
+                                                        "
+                                                    >
+                                                        °C
+                                                    </button>
+                                                    <div
+                                                        class="border-l border-natural-300"
+                                                    />
+                                                    <button
+                                                        class="font ml-1 h-1/5 text-xl"
+                                                        :class="
+                                                            fahrenheit === true
+                                                                ? 'font-bold text-calypso-600 dark:bg-gothic-600'
+                                                                : 'font-normal text-text dark:bg-natural-600'
+                                                        "
+                                                        @click.stop="
+                                                            changeToFahrenheit
+                                                        "
+                                                    >
+                                                        °F
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -568,48 +669,83 @@ const handleUpload = (result: string) => {
                         <div
                             class="relative flex h-full w-full flex-col items-end"
                         >
-                            <SvgStripes
-                                class="absolute right-0 md:w-[8.8rem] lg:w-[10.15rem]"
-                            />
-                            <img
-                                class="absolute right-[50%] top-[25%] -translate-y-[25%] translate-x-[50%] md:w-[8rem] lg:w-[10rem]"
-                                :src="qrcode"
-                                alt="QR Code"
-                            />
-                            <button
-                                class="absolute right-[50%] top-[80%] flex h-1/6 w-2/5 translate-x-[50%] items-center justify-center rounded-xl border-2 border-dandelion-300 bg-background font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:-translate-y-[30%] lg:-translate-y-[2%]"
-                                @click="toggle"
-                            >
-                                <T key-name="journey.button.invite" />
-                                <SvgShare class="ml-2 w-3" />
-                            </button>
-                            <OverlayPanel
-                                ref="op"
-                                class="rounded-lg bg-natural-50 font-nunito text-text dark:bg-natural-800 dark:text-natural-50"
-                            >
-                                <div class="flex-column w-25rem flex gap-3">
-                                    <div>
-                                        <span
-                                            class="mb-1 block text-lg font-medium"
+                            <div class="flex w-full pt-4 font-nunito">
+                                <div
+                                    class="flex w-1/2 items-center justify-center"
+                                >
+                                    <img
+                                        class="w-5/6"
+                                        :src="qrcode"
+                                        alt="QR Code"
+                                    />
+                                </div>
+                                <div class="w-1/2">
+                                    <div class="flex">
+                                        <div
+                                            class="flex w-2/3 flex-col justify-center"
                                         >
-                                            <T key-name="sidebar.invite.link" />
-                                        </span>
-                                        <div class="flex">
-                                            <input
-                                                class="w-full rounded-l-md border-2 border-natural-200 bg-natural-100 pb-1 pl-2.5 pt-1 text-base font-medium text-text shadow-sm focus:outline-none focus:ring-1 dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50"
-                                                disabled
-                                                :value="journeyData.invite"
+                                            <div
+                                                class="flex justify-center text-6xl"
+                                            >
+                                                {{ temperature }}
+                                            </div>
+                                            <div
+                                                class="flex justify-center text-xl"
+                                            >
+                                                {{ weatherType }}
+                                            </div>
+                                        </div>
+                                        <div class="mr-2 flex w-1/3">
+                                            <button
+                                                class="h-1/5 pr-2 text-xl"
+                                                :class="
+                                                    celsius === true
+                                                        ? 'font-bold text-calypso-600 dark:bg-gothic-600'
+                                                        : 'font-normal text-text dark:bg-natural-600'
+                                                "
+                                                @click="changeToCelsius"
+                                            >
+                                                °C
+                                            </button>
+                                            <div
+                                                class="h-1/4 border-l-2 border-natural-300"
                                             />
                                             <button
-                                                class="flex h-9 w-9 items-center justify-center rounded-r-md border-2 border-y-2 border-r-2 border-dandelion-300 bg-natural-100 shadow-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                                                @click="copyToClipboard"
+                                                class="font mr-2 h-1/5 text-xl"
+                                                :class="
+                                                    fahrenheit === true
+                                                        ? 'font-bold text-calypso-600 dark:bg-gothic-600'
+                                                        : 'font-normal text-text dark:bg-natural-600'
+                                                "
+                                                @click="changeToFahrenheit"
                                             >
-                                                <SvgCopy class="w-4" />
+                                                °F
                                             </button>
                                         </div>
                                     </div>
+                                    <div>
+                                        <div
+                                            class="flex items-end justify-start pt-1 text-xl"
+                                        >
+                                            <div>H: {{ highestTemp }}°</div>
+                                            <div class="pl-2">
+                                                T: {{ lowestTemp }}°
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </OverlayPanel>
+                            </div>
+                            <div
+                                class="grid h-1/2 w-full grid-cols-3 gap-2 pt-4"
+                            >
+                                <SmallWeather :qr-code="qrcode" :day="1" />
+                                <SmallWeather :qr-code="qrcode" :day="2" />
+                                <SmallWeather
+                                    :qr-code="qrcode"
+                                    :day="3"
+                                    :right-line="false"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -865,6 +1001,21 @@ const handleUpload = (result: string) => {
             />
         </div>
         <ActivityMap v-if="activityDataLoaded" />
+        <ConfirmDialog
+            :draggable="false"
+            group="journey"
+            :pt="{
+                header: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+                content: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+                footer: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+            }"
+        />
         <div
             ref="upload"
             class="flex items-center justify-center md:justify-start"
