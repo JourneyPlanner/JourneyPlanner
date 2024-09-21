@@ -24,7 +24,11 @@ class MediaController extends Controller
                 "user_display_name" => $media->user->display_name,
                 "user_username" => $media->user->username,
                 "name" => $media->name,
-                "link" => route("media.show", [$media->journey_id, $media->id]),
+                "link" => url(
+                    "/api/journey/{$media->journey_id}/media/{$media->id}",
+                    [],
+                    config("app.env") === "production"
+                ),
                 "type" => file_exists($media->getMediaPath())
                     ? mime_content_type($media->getMediaPath())
                     : "unknown",

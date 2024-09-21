@@ -13,7 +13,9 @@ const journeyStore = useJourneyStore();
 journeyStore.resetJourney();
 
 const journeyInvite = uuidv4();
-const journeyInviteLink = window.location.origin + "/invite/" + journeyInvite;
+const journeyInviteLink = ref(
+    window.location.origin + "/invite/" + journeyInvite,
+);
 
 const title = t.value("title.journey.create");
 useHead({
@@ -110,7 +112,7 @@ const onSubmit = handleSubmit(async (values) => {
 });
 
 function copyToClipboard() {
-    navigator.clipboard.writeText(journeyInviteLink);
+    navigator.clipboard.writeText(journeyInviteLink.value);
     toast.add({
         severity: "info",
         summary: t.value("common.toast.info.heading"),
