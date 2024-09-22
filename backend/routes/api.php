@@ -7,6 +7,7 @@ use App\Http\Controllers\CalendarActivityController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -74,3 +75,5 @@ Route::apiResource("journey/{journey}/media", MediaController::class)
     ->only("index", "show");
 
 Route::get("project", [ProjectController::class, "getProjectData"]);
+
+Route::get("user/{username}", [UserController::class, "show"]);
