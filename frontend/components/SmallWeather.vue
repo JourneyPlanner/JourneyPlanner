@@ -1,12 +1,28 @@
 <script setup lang="ts">
 const props = defineProps({
+    maxTemp: { type: Number, required: true },
+    minTemp: { type: Number, required: true },
     qrCode: { type: String, required: true },
     day: { type: Number, required: true },
     rightLine: { type: Boolean, default: true },
+    celsius: { type: Boolean, default: true },
 });
 
-const highestTemp = ref(24);
-const lowestTemp = ref(9);
+watch(
+    () => props.celsius,
+    (value) => {
+        if (value) {
+            highestTemp.value = Math.round(props.maxTemp);
+            lowestTemp.value = Math.round(props.minTemp);
+        } else {
+            highestTemp.value = Math.round((props.maxTemp * 9) / 5 + 32);
+            lowestTemp.value = Math.round((props.minTemp * 9) / 5 + 32);
+        }
+    },
+);
+
+const highestTemp = ref(Math.round(props.maxTemp));
+const lowestTemp = ref(Math.round(props.minTemp));
 function daysInTheFuture(days: number) {
     const today = new Date();
     const futureDay = new Date(today.setDate(today.getDate() + days));
@@ -24,7 +40,7 @@ function monthInDays(days: number) {
 }
 </script>
 <template>
-    <div class="flex max-lg:flex-col">
+    <div class="flex max-md:flex-col">
         <div class="w-[99%]">
             <div class="flex justify-center text-base underline">
                 {{ daysInTheFuture(props.day) }} /
@@ -44,7 +60,7 @@ function monthInDays(days: number) {
         </div>
         <div
             v-if="rightLine"
-            class="mb-3 w-full self-center border-b-2 border-calypso-300 pb-3 lg:mb-10 lg:h-20 lg:w-[1%] lg:border-r-2"
+            class="mb-3 w-full self-center border-b-2 border-calypso-300 pb-3 md:mb-10 md:h-20 md:w-[1%] md:border-r-2"
         />
     </div>
 </template>

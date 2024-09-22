@@ -7,6 +7,8 @@ import resolveConfig from "tailwindcss/resolveConfig";
 import SmallWeather from "~/components/SmallWeather.vue";
 import tailwindConfig from "~/tailwind.config.js";
 
+import scroll from "../../utils/scroll";
+
 const fullConfig = resolveConfig(tailwindConfig);
 const confirm = useConfirm();
 const route = useRoute();
@@ -26,8 +28,8 @@ const toast = useToast();
 const { t } = useTranslate();
 const celsius = ref(true);
 const fahrenheit = ref(false);
-const temperature = ref(22);
-const weatherType = ref("bewölkt");
+const currTemperature = ref();
+const weatherType = ref("");
 const highestTemp = ref(24);
 const lowestTemp = ref(9);
 const currentDate = new Date();
@@ -77,6 +79,21 @@ await client(`/api/journey/${journeyId}/activity`, {
         }
     },
 });
+
+const { data: weather } = await useAsyncData("weather", () =>
+    client(`/api/journey/${journeyId}/weather`),
+);
+
+console.log(weather.value.current.temperature);
+console.log(weather.value);
+console.log(weather.value.forecast[0].temperature_max);
+
+currTemperature.value = Math.round(weather.value.current.temperature);
+highestTemp.value = Math.round(weather.value.forecast[0].temperature_max);
+lowestTemp.value = Math.round(weather.value.forecast[0].temperature_min);
+weatherType.value = t.value(
+    `weather.code.${weather.value.current.weather_code}`,
+);
 
 const { data: users } = await useAsyncData("users", () =>
     client(`/api/journey/${journeyId}/user`),
@@ -263,7 +280,13 @@ const handleUpload = (result: string) => {
 
 function changeToCelsius() {
     if (fahrenheit.value == true) {
-        temperature.value = Math.round(((temperature.value - 32) * 5) / 9);
+        currTemperature.value = Math.round(weather.value.current.temperature);
+        highestTemp.value = Math.round(
+            weather.value.forecast[0].temperature_max,
+        );
+        lowestTemp.value = Math.round(
+            weather.value.forecast[0].temperature_min,
+        );
     }
 
     celsius.value = true;
@@ -273,7 +296,15 @@ function changeToCelsius() {
 
 function changeToFahrenheit() {
     if (celsius.value == true) {
-        temperature.value = Math.round((temperature.value * 9) / 5 + 32);
+        currTemperature.value = Math.round(
+            (weather.value.current.temperature * 9) / 5 + 32,
+        );
+        highestTemp.value = Math.round(
+            (weather.value.forecast[0].temperature_max * 9) / 5 + 32,
+        );
+        lowestTemp.value = Math.round(
+            (weather.value.forecast[0].temperature_min * 9) / 5 + 32,
+        );
     }
     celsius.value = false;
     fahrenheit.value = true;
@@ -443,7 +474,7 @@ function changeToFahrenheit() {
                                                 class="absolute right-0 z-0 w-[7.4rem]"
                                             />
                                             <div
-                                                class="absolute bottom-2 right-2 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-center text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
+                                                class="absolute bottom-2 right-2 ml-10 flex h-16 w-16 cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-center text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
                                             >
                                                 <T key-name="journey.turn" />
                                             </div>
@@ -451,7 +482,7 @@ function changeToFahrenheit() {
                                     </div>
                                 </div>
                                 <div
-                                    class="rounded-b-r-3xl h-[90%] w-0 border-r-2 border-dashed border-natural-200"
+                                    class="rounded-b-r-3xl h-[90%] w-0 cursor-pointer border-r-2 border-dashed border-natural-200"
                                 />
                             </div>
                         </div>
@@ -483,7 +514,7 @@ function changeToFahrenheit() {
                                         class="relative flex h-full w-full flex-col overflow-hidden"
                                     >
                                         <div
-                                            class="absolute bottom-4 right-2 z-40 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
+                                            class="absolute bottom-4 right-2 z-40 ml-10 flex h-16 w-16 cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
                                         >
                                             <T key-name="journey.turn" />
                                         </div>
@@ -504,14 +535,11 @@ function changeToFahrenheit() {
                                                 <div class="flex">
                                                     <div>
                                                         <div
-                                                            class="flex w-full justify-start text-5xl"
+                                                            class="mt-1 flex h-full w-full items-center justify-start text-5xl"
                                                         >
-                                                            {{ temperature }}°
-                                                        </div>
-                                                        <div
-                                                            class="flex w-full justify-start text-base"
-                                                        >
-                                                            {{ weatherType }}
+                                                            {{
+                                                                currTemperature
+                                                            }}°
                                                         </div>
                                                     </div>
                                                     <div>
@@ -536,10 +564,28 @@ function changeToFahrenheit() {
                                             </div>
                                             <div class="z-0 h-full w-1/3 pt-2">
                                                 <SmallWeather
+                                                    :celsius="celsius"
+                                                    :max-temp="
+                                                        weather.forecast[1]
+                                                            .temperature_max
+                                                    "
+                                                    :min-temp="
+                                                        weather.forecast[1]
+                                                            .temperature_min
+                                                    "
                                                     :qr-code="qrcode"
                                                     :day="1"
                                                 />
                                                 <SmallWeather
+                                                    :celsius="celsius"
+                                                    :max-temp="
+                                                        weather.forecast[2]
+                                                            .temperature_max
+                                                    "
+                                                    :min-temp="
+                                                        weather.forecast[2]
+                                                            .temperature_min
+                                                    "
                                                     :qr-code="qrcode"
                                                     :day="2"
                                                     :right-line="false"
@@ -664,12 +710,14 @@ function changeToFahrenheit() {
                         class="rounded-b-l-3xl h-[90%] w-0 border-l-2 border-dashed border-natural-200"
                     />
                     <div
-                        class="flex h-full w-full justify-center rounded-b-3xl border-b-2 border-r-2 border-natural-200 dark:border-gothic-600 dark:bg-dark"
+                        class="flex h-full w-full cursor-default justify-center rounded-b-3xl border-b-2 border-r-2 border-natural-200 dark:border-gothic-600 dark:bg-dark"
                     >
                         <div
                             class="relative flex h-full w-full flex-col items-end"
                         >
-                            <div class="flex w-full pt-4 font-nunito">
+                            <div
+                                class="flex w-full pt-4 font-nunito max-lg:h-1/2"
+                            >
                                 <div
                                     class="flex w-1/2 items-center justify-center"
                                 >
@@ -685,19 +733,14 @@ function changeToFahrenheit() {
                                             class="flex w-2/3 flex-col justify-center"
                                         >
                                             <div
-                                                class="flex justify-center text-6xl"
+                                                class="flex justify-center text-5xl lg:text-6xl"
                                             >
-                                                {{ temperature }}
-                                            </div>
-                                            <div
-                                                class="flex justify-center text-xl"
-                                            >
-                                                {{ weatherType }}
+                                                {{ currTemperature }}
                                             </div>
                                         </div>
                                         <div class="mr-2 flex w-1/3">
                                             <button
-                                                class="h-1/5 pr-2 text-xl"
+                                                class="-ml-2 h-1/5 pr-2 text-xl"
                                                 :class="
                                                     celsius === true
                                                         ? 'font-bold text-calypso-600 dark:bg-gothic-600'
@@ -708,10 +751,10 @@ function changeToFahrenheit() {
                                                 °C
                                             </button>
                                             <div
-                                                class="h-1/4 border-l-2 border-natural-300"
+                                                class="h-1/2 border-l-2 border-natural-300"
                                             />
                                             <button
-                                                class="font mr-2 h-1/5 text-xl"
+                                                class="font mr-2 h-1/5 pl-1 text-xl"
                                                 :class="
                                                     fahrenheit === true
                                                         ? 'font-bold text-calypso-600 dark:bg-gothic-600'
@@ -725,7 +768,19 @@ function changeToFahrenheit() {
                                     </div>
                                     <div>
                                         <div
-                                            class="flex items-end justify-start pt-1 text-xl"
+                                            class="flex h-6 w-32 justify-center overflow-hidden overflow-ellipsis"
+                                        >
+                                            <span
+                                                v-tooltip.right="{
+                                                    value: weatherType,
+                                                    pt: { root: 'font-nunito' },
+                                                }"
+                                                class="h-6 w-32 overflow-hidden overflow-ellipsis text-nowrap"
+                                                >{{ weatherType }}</span
+                                            >
+                                        </div>
+                                        <div
+                                            class="flex items-end justify-start pt-1 lg:text-xl"
                                         >
                                             <div>H: {{ highestTemp }}°</div>
                                             <div class="pl-2">
@@ -738,9 +793,36 @@ function changeToFahrenheit() {
                             <div
                                 class="grid h-1/2 w-full grid-cols-3 gap-2 pt-4"
                             >
-                                <SmallWeather :qr-code="qrcode" :day="1" />
-                                <SmallWeather :qr-code="qrcode" :day="2" />
                                 <SmallWeather
+                                    :celsius="celsius"
+                                    :max-temp="
+                                        weather.forecast[1].temperature_max
+                                    "
+                                    :min-temp="
+                                        weather.forecast[1].temperature_min
+                                    "
+                                    :qr-code="qrcode"
+                                    :day="1"
+                                />
+                                <SmallWeather
+                                    :celsius="celsius"
+                                    :max-temp="
+                                        weather.forecast[2].temperature_max
+                                    "
+                                    :min-temp="
+                                        weather.forecast[2].temperature_min
+                                    "
+                                    :qr-code="qrcode"
+                                    :day="2"
+                                />
+                                <SmallWeather
+                                    :celsius="celsius"
+                                    :max-temp="
+                                        weather.forecast[3].temperature_max
+                                    "
+                                    :min-temp="
+                                        weather.forecast[3].temperature_min
+                                    "
                                     :qr-code="qrcode"
                                     :day="3"
                                     :right-line="false"
