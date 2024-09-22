@@ -73,4 +73,9 @@ Route::apiResource("journey/{journey}/media", MediaController::class)
     ->middleware("auth:sanctum")
     ->only("index", "show");
 
+Route::get("journey/{journey}/weather", [
+    JourneyController::class,
+    "getWeather",
+])->middleware("auth:sanctum");
+
 Route::get("project", [ProjectController::class, "getProjectData"]);
