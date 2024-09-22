@@ -1,18 +1,32 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
     username: { type: String, required: true },
-    usernameRegex: { type: Object, required: true },
+    usernameRegex: { type: RegExp, required: true },
 });
 
 const isVisible = ref(props.visible);
 const emit = defineEmits(["close", "changeUsername"]);
 const { t } = useTranslate();
-const newUsername = ref(props.username);
-const usernameInvalid = ref(false);
-const toast = useToast();
+
+const { errors, handleSubmit, defineField, handleReset } = useForm({
+    validationSchema: yup.object({
+        newUsername: yup
+            .string()
+            .matches(
+                props.usernameRegex,
+                t.value("dashboard.user.settings.username.invalid"),
+            )
+            .required(t.value("form.input.required")),
+    }),
+});
+
+const [newUsername] = defineField("newUsername");
+newUsername.value = props.username;
 
 watch(
     () => props.visible,
@@ -21,7 +35,19 @@ watch(
     },
 );
 
+watch(
+    () => props.username,
+    (value) => {
+        newUsername.value = value;
+    },
+);
+
+const onSubmit = handleSubmit(() => {
+    changeUsername();
+});
+
 const close = () => {
+    handleReset();
     emit("close");
 };
 
@@ -29,28 +55,8 @@ const close = () => {
  * emits to userSettings so that the username can be changed there
  */
 function changeUsername() {
-    if (!usernameInvalid.value) {
-        if (newUsername.value == props.username) {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value(
-                    "dashboard.user.settings.toast.same.username.description",
-                ),
-                life: 6000,
-            });
-        } else {
-            emit("changeUsername", newUsername.value);
-        }
-    }
-}
-
-function validateUsername() {
-    if (props.usernameRegex.test(newUsername.value)) {
-        usernameInvalid.value = false;
-    } else {
-        usernameInvalid.value = true;
-    }
+    handleReset();
+    emit("changeUsername", newUsername.value);
 }
 </script>
 
@@ -111,24 +117,19 @@ function validateUsername() {
                         <input
                             id="username"
                             v-model="newUsername"
-                            class="focus-ring-1 mr-10 w-full rounded-md border-2 border-natural-400 bg-natural-100 py-1 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50 dark:hover:border-calypso-400"
-                            @keyup.enter="changeUsername"
-                            @keyup="validateUsername"
+                            class="focus-ring-1 mr-10 w-full rounded-md border-2 border-natural-400 bg-natural-100 py-1 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                            @keyup.enter="onSubmit"
                         />
-                        <div
-                            v-if="usernameInvalid"
-                            class="-ml-4 text-sm text-mahagony-600"
+                        <span
+                            class="-ml-4 flex justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
+                            >{{ errors.newUsername }}</span
                         >
-                            <T
-                                key-name="dashboard.user.settings.username.invalid"
-                            />
-                        </div>
                     </div>
                 </div>
                 <div class="mt-auto flex w-full justify-center">
                     <button
                         class="ml-1 mr-6 mt-auto w-full rounded-md border-[3px] border-dandelion-300 bg-natural-50 px-2 py-1 pl-2 text-2xl font-semibold hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
-                        @click="changeUsername"
+                        @click="onSubmit"
                     >
                         <T key-name="common.save" />
                     </button>
