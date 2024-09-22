@@ -181,7 +181,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                             id="template-name"
                             v-model="templateName"
                             name="name"
-                            :validate-on-blur="false"
+                            :validate-on-input="true"
                             class="col-span-full col-start-3 row-start-1 block w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2"
                         />
                         <div
