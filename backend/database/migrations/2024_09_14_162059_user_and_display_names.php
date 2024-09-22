@@ -31,7 +31,9 @@ return new class extends Migration {
                 $username .= Str::lower(Str::random(4));
             }
             $user->username = $username;
-            $user->display_name = trim($user->firstName . " " . $user->lastName);
+            $user->display_name = trim(
+                $user->firstName . " " . $user->lastName
+            );
             $user->save();
         }
 
