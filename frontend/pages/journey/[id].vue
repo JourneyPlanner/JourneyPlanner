@@ -543,22 +543,29 @@ const handleUpload = (result: string) => {
             </div>
         </Sidebar>
         <div
-            class="absolute right-0 mt-5 flex h-10 w-full items-center justify-end font-semibold lg:w-1/3"
+            class="mt-5 flex w-full items-center justify-between px-4 font-semibold"
         >
-            <NuxtLink to="/dashboard" class="flex items-center">
-                <SvgDashboardIcon class="h-6 w-6" />
-                <p class="text-2xl hover:underline">Dashboard</p>
+            <NuxtLink
+                to="/dashboard"
+                class="group flex items-center sm:ml-1 md:ml-2"
+            >
+                <SvgDashboardIcon class="h-7 w-7 md:h-6 md:w-6" />
+                <p class="hidden text-2xl group-hover:underline sm:block">
+                    Dashboard
+                </p>
             </NuxtLink>
-            <span
-                class="pi pi-users ml-10 mr-5 text-3xl hover:cursor-pointer"
-                @click="isMemberSidebarVisible = true"
-            />
-            <span
-                class="pi pi-bars mr-10 text-3xl hover:cursor-pointer"
-                @click="isMenuSidebarVisible = true"
-            />
+            <div class="flex flex-row items-center">
+                <span
+                    class="pi pi-users ml-10 mr-5 text-3xl hover:cursor-pointer"
+                    @click="isMemberSidebarVisible = true"
+                />
+                <span
+                    class="pi pi-bars mr-2 text-3xl hover:cursor-pointer sm:mr-5 md:mr-8"
+                    @click="isMenuSidebarVisible = true"
+                />
+            </div>
         </div>
-        <div class="mt-[12vh] flex h-fit flex-wrap">
+        <div class="mt-8 flex h-fit flex-wrap">
             <div class="flex w-full items-center justify-center md:hidden">
                 <div
                     class="group w-[90%] [perspective:1000px] sm:w-5/6"
