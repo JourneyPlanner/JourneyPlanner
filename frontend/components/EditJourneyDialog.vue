@@ -230,7 +230,7 @@ const onSave = handleSubmit(async (values) => {
                     />
                 </div>
                 <div
-                    class="mt-3.5 flex flex-row items-center justify-between lg:mt-3"
+                    class="mt-3.5 flex flex-row items-center justify-between lg:mt-5"
                 >
                     <label
                         for="journey-range-calendar"
