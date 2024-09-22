@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Journey;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Gate;
 
 class TemplateController extends Controller
 {
@@ -17,7 +17,7 @@ class TemplateController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a new template from the journey.
      */
     public function store(Request $request)
     {
@@ -27,17 +27,13 @@ class TemplateController extends Controller
             "description" => "string",
         ]);
         $journey = Journey::findOrFail($validated["journey_id"]);
+        Gate::authorize("journeyGuide", $journey);
 
-        if (
-            Journey::where([
-                ["is_template", "=", "1"],
-                ["created_from", "=", $journey->id],
-            ])->exists()
-        ) {
+        if ($request->user()->can("journeyTemplateCreator", $journey)) {
             return response()->json(
                 [
                     "message" =>
-                        "A template has already been created from this journey.",
+                        "You have already created a template from this journey.",
                 ],
                 409
             );

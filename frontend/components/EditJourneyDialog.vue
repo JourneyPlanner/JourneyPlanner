@@ -194,10 +194,12 @@ const onSave = handleSubmit(async (values) => {
         </template>
         <form @submit.prevent="onSave()">
             <div class="flex flex-col">
-                <div class="flex flex-row items-center justify-between">
+                <div
+                    class="flex flex-row items-center justify-between lg:-mt-1"
+                >
                     <label
                         for="journey-name"
-                        class="text-base font-bold text-text dark:text-natural-50 sm:text-xl"
+                        class="text-lg font-bold text-text dark:text-natural-50 sm:text-xl"
                     >
                         <T key-name="form.input.journey.name" />
                     </label>
@@ -209,10 +211,12 @@ const onSave = handleSubmit(async (values) => {
                         class="my-0 mb-1 w-2/3"
                     />
                 </div>
-                <div class="flex flex-row items-center justify-between">
+                <div
+                    class="mt-3.5 flex flex-row items-center justify-between lg:mt-3"
+                >
                     <label
                         for="journey-destination"
-                        class="text-base font-bold text-text dark:text-natural-50 sm:text-xl"
+                        class="text-lg font-bold text-text dark:text-natural-50 sm:text-xl"
                     >
                         <T key-name="form.input.journey.destination" />
                     </label>
@@ -220,28 +224,30 @@ const onSave = handleSubmit(async (values) => {
                         id="journey-destination"
                         name="destination"
                         translation-key="form.input.journey.destination"
-                        class="my-0 mb-1 mt-5 w-2/3"
+                        class="my-0 mb-1 mt-1 w-2/3"
                         custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 1rem; line-height: 1.5rem;}"
                         :value="props.destination"
                     />
                 </div>
-                <div class="flex flex-row items-center justify-between">
+                <div
+                    class="mt-3.5 flex flex-row items-center justify-between lg:mt-3"
+                >
                     <label
                         for="journey-range-calendar"
-                        class="text-base font-bold text-text dark:text-natural-50 sm:text-xl"
+                        class="text-lg font-bold text-text dark:text-natural-50 sm:text-xl"
                     >
                         <T key-name="dashboard.edit.dates" />
                     </label>
                     <FormCalendar
                         id="journey-range-calendar"
                         name="range"
-                        class="my-0 mr-0 mt-5 w-2/3"
+                        class="my-0 mr-0 mt-1 w-2/3"
                         translation-key="form.input.journey.dates"
                         :prefill="[new Date(props.from), new Date(props.to)]"
                     />
                 </div>
             </div>
-            <div class="mt-10 flex justify-between gap-2">
+            <div class="mt-10 flex justify-between gap-2 lg:mt-8">
                 <Button
                     type="button"
                     :label="t('common.delete')"
