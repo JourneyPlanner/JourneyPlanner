@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { T, useTranslate } from "@tolgee/vue";
+import { T } from "@tolgee/vue";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
@@ -8,7 +8,6 @@ const props = defineProps({
 
 const isVisible = ref(props.visible);
 const emit = defineEmits(["close", "changeDisplayname"]);
-const { t } = useTranslate();
 const newDisplayname = ref(props.displayname);
 
 watch(
@@ -22,7 +21,10 @@ const close = () => {
     emit("close");
 };
 
-function changeUsername() {
+/**
+ * emits the function so it can be handled in userSettings
+ */
+function changeDisplayname() {
     emit("changeDisplayname", newDisplayname.value);
 }
 </script>
@@ -34,7 +36,6 @@ function changeUsername() {
         position="right"
         :auto-z-index="true"
         :draggable="false"
-        :header="t('dashboard.user.settings')"
         class="z-50 mt-auto flex h-[95%] w-full flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden sm:w-4/5 md:rounded-xl lg:-z-10"
         :pt="{
             root: {
@@ -60,10 +61,7 @@ function changeUsername() {
         @hide="close"
     >
         <template #header>
-            <button
-                class="-ml-6 flex justify-center pr-4"
-                @click="$emit('close')"
-            >
+            <button class="-ml-6 flex justify-center pr-4" @click="close">
                 <span class="pi pi-angle-left text-3xl" />
             </button>
             <div class="font-nunito text-4xl font-semibold">
@@ -84,20 +82,20 @@ function changeUsername() {
             <div class="flex items-center pl-6 pt-4">
                 <div class="flex w-full flex-col items-center">
                     <div
-                        class="mb-2 mr-10 flex w-full items-start text-sm dark:text-natural-50"
+                        class="mb-2 mr-10 flex w-full items-start text-sm text-text dark:text-natural-50"
                     />
                     <input
-                        id="username"
+                        id="displayname"
                         v-model="newDisplayname"
-                        class="mr-10 w-full rounded-md border-2 border-natural-400 bg-natural-100 py-1 pl-3 text-text placeholder:text-text hover:border-calypso-400 dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50 dark:hover:border-calypso-400"
-                        @keyup.enter="changeUsername"
+                        class="focus-ring-1 mr-10 w-full rounded-md border-2 border-natural-400 bg-natural-100 py-1 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50 dark:hover:border-calypso-400"
+                        @keyup.enter="changeDisplayname"
                     />
                 </div>
             </div>
             <div class="mt-auto flex w-full justify-center">
                 <button
                     class="ml-1 mr-6 mt-auto w-full rounded-md border-[3px] border-dandelion-300 bg-natural-50 px-2 py-1 pl-2 text-2xl font-semibold hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
-                    @click="changeUsername"
+                    @click="changeDisplayname"
                 >
                     <T key-name="common.save" />
                 </button>
