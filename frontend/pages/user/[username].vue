@@ -2,36 +2,51 @@
 import { useTranslate } from "@tolgee/vue";
 
 const route = useRoute();
-const username = route.params.username;
+const { t } = useTranslate();
+const router = useRouter();
+const username = ref(route.params.username);
+const displayname = ref("");
+const created_at = ref("");
 
-//const client = useSanctumClient();
-//const { data } = await useAsyncData("user", () => client("/api/user"));
+const client = useSanctumClient();
 
-useHead({
-    title: `${username} | JourneyPlanner`,
-});
+const { data, error } = await useAsyncData("user", () =>
+    client(`/api/user/${username.value}`),
+);
 
-//abortNavigation();
+if (error.value) {
+    if (error.value.statusCode === 404) {
+        throw createError({
+            statusCode: 404,
+            message: "No user was found with that username",
+            fatal: true,
+        });
+    } else {
+        throw createError({
+            statusCode: 500,
+            message: "An error occurred while fetching user data",
+            fatal: true,
+        });
+    }
+} else {
+    displayname.value = data.value.display_name;
+    created_at.value = data.value.created_at;
+}
 
 definePageMeta({
     middleware: ["sanctum:auth"],
 });
 
-const { t } = useTranslate();
-const router = useRouter();
-console.log(router.options.history);
-console.log(route);
-
 const showMore = ref(false);
-const toggleText = ref(t.value("profile.showMore") + username);
+const toggleText = ref(t.value("profile.showMore") + username.value);
 const toggleTextShort = ref(t.value("profile.showMore.short"));
 const allowedRoutes = ["/journey"];
 
 const toggle = () => {
     showMore.value = !showMore.value;
     toggleText.value = showMore.value
-        ? t.value("profile.showLess") + username
-        : t.value("profile.showMore") + username;
+        ? t.value("profile.showLess") + username.value
+        : t.value("profile.showMore") + username.value;
     toggleTextShort.value = showMore.value
         ? t.value("profile.showLess.short")
         : t.value("profile.showMore.short");
@@ -39,7 +54,11 @@ const toggle = () => {
 
 const navigateBack = () => {
     const lastRoute = router.options.history.state.back as string;
-    if (allowedRoutes.includes(lastRoute)) {
+
+    if (
+        lastRoute &&
+        allowedRoutes.some((route) => lastRoute.startsWith(route))
+    ) {
         router.back();
     } else {
         router.push("/dashboard");
@@ -58,7 +77,7 @@ const navigateBack = () => {
                     <h1
                         class="max-w-48 truncate text-nowrap text-xl font-medium text-text dark:text-natural-50 xs:text-2xl sm:max-w-sm md:max-w-screen-md md:text-3xl"
                     >
-                        {{ "Anzeigenameeeeeeeeeeeeeeeeeeeeee" }}
+                        {{ displayname }}
                     </h1>
                 </div>
                 <span
@@ -124,11 +143,10 @@ const navigateBack = () => {
                 class="mt-2 grid grid-cols-2 grid-rows-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-6"
             >
                 <Skeleton
-                    v-for="index in 12"
+                    v-for="index in 8"
                     :key="index"
-                    width="14rem"
                     height="7rem"
-                    class="hidden dark:bg-text md:block"
+                    class="hidden w-full dark:bg-text md:block"
                 />
                 <Skeleton
                     v-for="index in 5"
