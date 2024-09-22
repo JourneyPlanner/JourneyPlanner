@@ -38,7 +38,9 @@ const { handleSubmit } = useForm({
             .label(t.value("form.input.journey.name")),
         journeyDestination: yup
             .string()
+            .min(1, t.value("form.error.journey.destination"))
             .required(t.value("form.error.journey.destination"))
+            .matches(/^(?!\s+$).*/, t.value("form.error.journey.destination"))
             .label(t.value("form.input.journey.destination")),
         journeyRange: yup
             .array()
