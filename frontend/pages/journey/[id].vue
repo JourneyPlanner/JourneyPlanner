@@ -126,6 +126,12 @@ if (
     lightColor = fullConfig.theme.accentColor["text"] as string;
 }
 
+const op = ref();
+
+const toggle = (event: Event) => {
+    op.value.toggle(event);
+};
+
 const opts = {
     margin: 0,
     color: {
@@ -353,6 +359,14 @@ function changeToFahrenheit() {
                         <SvgCopy class="w-4" />
                     </button>
                 </div>
+                <div class="flex w-1/5 justify-end">
+                    <button
+                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                        @click="toggle"
+                    >
+                        <span class="pi pi-qrcode" />
+                    </button>
+                </div>
             </div>
             <div
                 class="flex flex-row items-center justify-center border-b-2 border-natural-200 pb-1 pt-1 dark:border-natural-900"
@@ -386,6 +400,11 @@ function changeToFahrenheit() {
                     @change-role="changeRole"
                 />
             </div>
+            <OverlayPanel ref="op">
+                <div class="bg-background dark:bg-background-dark">
+                    <img class="w-full" :src="qrcode" alt="QR Code" />
+                </div>
+            </OverlayPanel>
         </Sidebar>
         <div
             class="absolute right-0 mt-5 flex h-10 w-full items-center justify-end font-semibold lg:w-1/3"
