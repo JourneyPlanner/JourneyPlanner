@@ -246,7 +246,7 @@ function blur(e: Event) {
                     class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50',
                 },
                 title: {
-                    class: 'font-nunito text-4xl font-semibold',
+                    class: 'font-nunito text-3xl font-semibold',
                 },
                 content: {
                     class: 'font-nunito bg-background dark:bg-background-dark px-0 sm:pl-5 sm:pr-12 h-full',
@@ -262,12 +262,12 @@ function blur(e: Event) {
             @hide="close"
         >
             <div class="pl-4 pt-4 text-text dark:text-natural-50">
-                <div class="flex items-center pb-5">
-                    <div class="h-0.5 w-10 bg-calypso-400" />
-                    <div class="flex-grow-5 mx-5 text-3xl font-semibold">
+                <div class="flex items-center pb-3">
+                    <div class="h-[1.6px] w-10 bg-calypso-400" />
+                    <div class="flex-grow-5 mx-4 text-[1.65rem] font-semibold">
                         <T key-name="dashboard.user.settings.profile" />
                     </div>
-                    <div class="h-0.5 flex-grow bg-calypso-400" />
+                    <div class="h-[1.6px] flex-grow bg-calypso-400" />
                 </div>
                 <div class="flex pb-5 pl-10">
                     <div class="flex w-full flex-col">
@@ -289,7 +289,8 @@ function blur(e: Event) {
                             id="displayname"
                             v-model="displayname"
                             name="displayname"
-                            class="focus-ring-1 self-end rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                            :placeholder="currUser.display_name"
+                            class="w-60 self-end rounded-md border-2 border-natural-300 bg-natural-100 py-0.5 pl-3 pr-1 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400"
                             @blur="changeDisplayname('')"
                             @keyup.enter="blur"
                         />
@@ -299,7 +300,7 @@ function blur(e: Event) {
                         >
                     </div>
                 </div>
-                <div class="flex pb-14 pl-10">
+                <div class="flex pb-8 pl-10">
                     <div class="flex w-full flex-col">
                         <div class="text-2xl">
                             <T key-name="dashboard.user.settings.user.name" />
@@ -317,7 +318,8 @@ function blur(e: Event) {
                             id="username"
                             v-model="username"
                             name="username"
-                            class="focus-ring-1 self-end rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                            :placeholder="currUser.username"
+                            class="w-60 self-end rounded-md border-2 border-natural-300 bg-natural-100 py-0.5 pl-3 pr-1 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400"
                             @blur="onSubmitUsername"
                             @keyup.enter="blur"
                         />
@@ -337,14 +339,14 @@ function blur(e: Event) {
                         </div>
                     </div>
                 </div>
-                <div class="flex items-center pb-5">
-                    <div class="h-0.5 w-10 bg-calypso-400" />
-                    <div class="flex-grow-5 mx-5 text-3xl font-semibold">
+                <div class="flex items-center pb-3">
+                    <div class="bg h-[1.6px] w-10 bg-calypso-400" />
+                    <div class="flex-grow-5 mx-4 text-[1.65rem] font-semibold">
                         <T
                             key-name="dashboard.user.settings.account.security"
                         />
                     </div>
-                    <div class="h-0.5 flex-grow bg-calypso-400" />
+                    <div class="h-[1.6px] flex-grow bg-calypso-400" />
                 </div>
                 <div class="flex pb-5 pl-10">
                     <div class="flex w-full flex-col">
@@ -364,7 +366,7 @@ function blur(e: Event) {
                     </div>
                     <div class="flex w-full items-center justify-end">
                         <button
-                            class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                            class="w-44 rounded-md border-2 border-dandelion-300 bg-natural-50 py-0.5 text-base font-medium hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
                             @click="
                                 isEmailChangeDialogVisible =
                                     !isEmailChangeDialogVisible
@@ -376,7 +378,7 @@ function blur(e: Event) {
                         </button>
                     </div>
                 </div>
-                <div class="flex pb-14 pl-10">
+                <div class="flex pb-8 pl-10">
                     <div class="flex w-full flex-col">
                         <div class="text-2xl">
                             <T key-name="dashboard.user.settings.password" />
@@ -389,7 +391,7 @@ function blur(e: Event) {
                     </div>
                     <div class="flex w-full items-center justify-end">
                         <button
-                            class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                            class="w-44 rounded-md border-2 border-dandelion-300 bg-natural-50 py-0.5 text-base font-medium hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
                             @click="
                                 isPasswordChangeDialogVisible =
                                     !isPasswordChangeDialogVisible
@@ -401,12 +403,12 @@ function blur(e: Event) {
                         </button>
                     </div>
                 </div>
-                <div class="flex items-center pb-5">
-                    <div class="h-0.5 w-10 bg-calypso-400" />
-                    <div class="flex-grow-5 mx-5 text-3xl font-semibold">
+                <div class="flex items-center pb-4">
+                    <div class="h-[1.6px] w-10 bg-calypso-400" />
+                    <div class="flex-grow-5 mx-4 text-[1.65rem] font-semibold">
                         <T key-name="dashboard.user.settings.appearance" />
                     </div>
-                    <div class="h-0.5 flex-grow bg-calypso-400" />
+                    <div class="h-[1.6px] flex-grow bg-calypso-400" />
                 </div>
                 <div class="flex pb-5 pl-10">
                     <div class="flex w-full flex-col">
@@ -429,16 +431,16 @@ function blur(e: Event) {
                             :focus-on-hover="false"
                             :pt="{
                                 root: {
-                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
+                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 ',
                                 },
                                 input: {
-                                    class: 'text-text dark:text-natural-50',
+                                    class: 'text-text dark:text-natural-50 ',
                                 },
                                 item: {
-                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 dark:hover:bg-pesto-600',
+                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600',
                                 },
                                 wrapper: {
-                                    class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
                                 },
                                 trigger: {
                                     class: 'text-text dark:text-natural-50',
@@ -471,7 +473,7 @@ function blur(e: Event) {
                         </Dropdown>
                     </div>
                 </div>
-                <div class="flex pb-5 pl-10">
+                <div class="flex pb-8 pl-10">
                     <div class="flex w-full flex-col">
                         <div class="text-2xl">
                             <T key-name="dashboard.user.settings.language" />
@@ -498,10 +500,10 @@ function blur(e: Event) {
                                     class: 'text-text dark:text-natural-50',
                                 },
                                 item: {
-                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 dark:hover:bg-pesto-600',
+                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600',
                                 },
                                 wrapper: {
-                                    class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
                                 },
                                 trigger: {
                                     class: 'text-text dark:text-natural-50',
@@ -529,12 +531,12 @@ function blur(e: Event) {
                         </Dropdown>
                     </div>
                 </div>
-                <div class="flex items-center pb-5">
-                    <div class="h-0.5 w-10 bg-calypso-400" />
-                    <div class="flex-grow-5 mx-5 text-3xl font-semibold">
+                <div class="flex items-center pb-4">
+                    <div class="h-[1.6px] w-10 bg-calypso-400" />
+                    <div class="flex-grow-5 mx-4 text-[1.65rem] font-semibold">
                         <T key-name="dashboard.user.settings.delete.log.out" />
                     </div>
-                    <div class="h-0.5 flex-grow bg-calypso-400" />
+                    <div class="h-[1.6px] flex-grow bg-calypso-400" />
                 </div>
                 <div class="flex pb-5 pl-10">
                     <div class="flex w-full flex-col">
@@ -549,7 +551,7 @@ function blur(e: Event) {
                     </div>
                     <div class="flex w-full items-center justify-end">
                         <button
-                            class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                            class="w-44 rounded-md border-2 border-dandelion-300 bg-natural-50 py-0.5 text-base font-medium hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
                             @click="logoutUser"
                         >
                             <T key-name="dashboard.user.settings.log.out" />
@@ -557,7 +559,7 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div
-                    class="flex pb-5 pl-10 text-mahagony-600 dark:text-mahagony-300"
+                    class="flex pb-8 pl-10 text-mahagony-600 dark:text-mahagony-300"
                 >
                     <div class="flex w-full flex-col">
                         <div class="text-2xl">
@@ -569,7 +571,7 @@ function blur(e: Event) {
                     </div>
                     <div class="flex w-full items-center justify-end">
                         <button
-                            class="w-40 rounded-md border-2 border-mahagony-500 bg-natural-50 px-2 text-text hover:border-mahagony-600 hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                            class="w-44 rounded-md border-2 border-mahagony-500 bg-natural-50 py-0.5 text-base font-medium text-text hover:border-mahagony-600 hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                             @click="
                                 isDeleteAccountDialogVisible =
                                     !isDeleteAccountDialogVisible

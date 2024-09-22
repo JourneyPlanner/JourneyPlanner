@@ -133,7 +133,7 @@ async function changePassword() {
                 },
                 footer: { class: 'h-0' },
                 icons: {
-                    class: 'justify-end items-center w-fit pl-10',
+                    class: 'justify-end items-center w-fit pl-5',
                 },
                 closeButtonIcon: {
                     class: 'z-30 self-center text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 focus:outline-none focus-ring-1 h-10 w-10 ',
@@ -146,9 +146,9 @@ async function changePassword() {
         >
             <template #header>
                 <div class="flex w-[90%] items-center">
-                    <div class="h-0.5 w-10 bg-calypso-400" />
+                    <div class="h-0.5 w-5 bg-calypso-400" />
                     <div
-                        class="flex-grow-5 mx-5 text-3xl text-text dark:text-natural-50"
+                        class="flex-grow-5 mx-3 text-3xl text-text dark:text-natural-50"
                     >
                         <T key-name="dashboard.user.settings.password.change" />
                     </div>
@@ -163,9 +163,9 @@ async function changePassword() {
                         key-name="dashboard.user.settings.password.change.description"
                     />
                 </div>
-                <div class="flex flex-col items-center justify-center pt-4">
+                <div class="flex flex-col items-center justify-center pt-5">
                     <div
-                        class="flex w-3/5 justify-start text-text dark:text-natural-50"
+                        class="flex w-4/6 justify-start text-text dark:text-natural-50"
                     >
                         <T
                             key-name="dashboard.user.settings.enter.current.password"
@@ -176,16 +176,16 @@ async function changePassword() {
                         v-model="password"
                         name="password"
                         type="password"
-                        class="focus-ring-1 w-3/5 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                        class="focus-ring-1 w-4/6 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                     />
                     <span
-                        class="flex w-3/5 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
+                        class="flex w-4/6 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
                         >{{ errors.password }}</span
                     >
                 </div>
-                <div class="flex flex-col items-center justify-center pt-4">
+                <div class="flex flex-col items-center justify-center pt-5">
                     <div
-                        class="flex w-3/5 justify-start text-text dark:text-natural-50"
+                        class="flex w-4/6 justify-start text-text dark:text-natural-50"
                     >
                         <T
                             key-name="dashboard.user.settings.enter.new.password"
@@ -196,15 +196,15 @@ async function changePassword() {
                         v-model="newPassword"
                         name="newPassword"
                         type="password"
-                        class="focus-ring-1 w-3/5 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                        class="focus-ring-1 w-4/6 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                     />
                     <span
-                        class="flex w-3/5 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
+                        class="flex w-4/6 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
                         >{{ errors.newPassword }}</span
                     >
                 </div>
-                <div class="flex flex-col items-center justify-center pt-4">
-                    <div class="flex w-3/5 justify-start dark:text-natural-50">
+                <div class="flex flex-col items-center justify-center pt-5">
+                    <div class="flex w-4/6 justify-start dark:text-natural-50">
                         <T
                             key-name="dashboard.user.settings.confirm.new.password"
                         />
@@ -214,17 +214,17 @@ async function changePassword() {
                         v-model="newPasswordConfirmation"
                         name="newPasswordConfirmation"
                         type="password"
-                        class="focus-ring-1 w-3/5 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                        class="focus-ring-1 w-4/6 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         @keyup.enter="onSubmit"
                     />
                     <span
-                        class="flex w-3/5 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
+                        class="flex w-4/6 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
                         >{{ errors.newPasswordConfirmation }}</span
                     >
                 </div>
-                <div class="flex w-full justify-center pb-6 pt-6">
+                <div class="flex w-full justify-center pb-4 pt-10">
                     <button
-                        class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                        class="w-44 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-base font-medium hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                         @click="onSubmit"
                     >
                         <T key-name="dashboard.user.settings.change.password" />
