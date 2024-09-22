@@ -79,7 +79,7 @@ function markerColor(activity: Activity) {
         : colorNotAdded;
 }
 
-const zoom = computed(() => ((long.value || lat) === null ? 1 : 8));
+const zoom = computed(() => ((long.value || lat.value) === null ? 1 : 8));
 const style = computed(() =>
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")

@@ -73,13 +73,11 @@ const { handleSubmit } = useForm({
     validationSchema: yup.object({
         name: yup
             .string()
-            .min(1, t.value("form.error.journey.name"))
             .required(t.value("form.error.journey.name"))
             .matches(/^(?!\s+$).*/, t.value("form.error.journey.name"))
             .label(t.value("form.input.journey.name")),
         destination: yup
             .string()
-            .min(1, t.value("form.error.journey.destination"))
             .required(t.value("form.error.journey.destination"))
             .matches(/^(?!\s+$).*/, t.value("form.error.journey.destination"))
             .label(t.value("form.input.journey.destination")),
