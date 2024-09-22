@@ -136,7 +136,10 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                     (event: MapBoxRetrieveEvent) => handleRetrieve(event)
                 "
             />
-            <div v-if="errorMessage" class="h-1.5 w-full text-left">
+            <div
+                v-if="errorMessage"
+                class="mt-1 h-1.5 w-full text-left leading-3"
+            >
                 <span
                     class="ml-3 text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
                     :class="{
