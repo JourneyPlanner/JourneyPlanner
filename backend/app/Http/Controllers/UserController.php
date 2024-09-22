@@ -60,7 +60,7 @@ class UserController extends Controller
         ]);
 
         $user = $request->user();
-        $user->display_name = $request->display_name;
+        $user->display_name = trim($request->display_name);
         $user->save();
 
         return response()->json([
