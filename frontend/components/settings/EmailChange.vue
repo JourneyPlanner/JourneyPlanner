@@ -109,7 +109,7 @@ async function changeEmail() {
             block-scroll
             :auto-z-index="true"
             :draggable="false"
-            class="z-50 flex w-2/3 flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-1/2 2xl:w-1/4"
+            class="z-50 flex w-2/3 flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-1/2 2xl:w-1/3"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -125,7 +125,7 @@ async function changeEmail() {
                 },
                 footer: { class: 'h-0' },
                 icons: {
-                    class: 'justify-end items-center w-fit pl-10',
+                    class: 'justify-end items-center w-fit pl-5',
                 },
                 closeButtonIcon: {
                     class: 'z-30 self-center text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 focus:outline-none focus-ring-1 h-10 w-10 ',
@@ -171,14 +171,14 @@ async function changeEmail() {
                             id="email"
                             v-model="newEmail"
                             name="newEmail"
-                            class="focus-ring-1 w-2/3 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                            class="focus-ring-1 w-2/3 rounded-md border-2 border-natural-300 bg-natural-50 py-0.5 pl-2 pr-1 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         />
                         <span
                             class="mb-3 flex w-2/3 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
                             >{{ errors.newEmail }}</span
                         >
                         <div
-                            class="flex w-2/3 items-start text-text dark:text-natural-50"
+                            class="mt-2 flex w-2/3 items-start text-text dark:text-natural-50"
                         >
                             <T
                                 key-name="dashboard.user.settings.enter.current.password"
@@ -189,7 +189,7 @@ async function changeEmail() {
                             v-model="password"
                             name="password"
                             type="password"
-                            class="focus-ring-1 w-2/3 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                            class="focus-ring-1 w-2/3 rounded-md border-2 border-natural-300 bg-natural-50 py-0.5 pl-2 pr-1 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                             @keyup.enter="onSubmit"
                         />
                         <span
@@ -198,9 +198,9 @@ async function changeEmail() {
                         >
                     </div>
                 </div>
-                <div class="flex w-full justify-center pb-6 pt-6">
+                <div class="flex w-full justify-center pb-4 pt-6">
                     <button
-                        class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                        class="w-44 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-base font-medium hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                         @click="onSubmit"
                     >
                         <T key-name="dashboard.user.settings.change.email" />
