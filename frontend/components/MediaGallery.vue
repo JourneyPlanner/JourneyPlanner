@@ -136,11 +136,8 @@ const downloadMedia = async () => {
  * @returns {String} The name of the media
  */
 const setName = (media, asHtml, withText = true) => {
-    let name = media.user_first_name;
-
-    if (media.user_first_name && media.user_last_name) {
-        name = media.user_first_name + " " + media.user_last_name;
-    }
+    console.log(media);
+    const name = media.user_display_name;
 
     if (!withText) {
         return name;

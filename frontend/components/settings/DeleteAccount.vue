@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
@@ -9,7 +11,6 @@ const isVisible = ref(props.visible);
 const isConfirmVisible = ref(false);
 const emit = defineEmits(["close", "changeEmail"]);
 const { t } = useTranslate();
-const password = ref("");
 const client = useSanctumClient();
 const toast = useToast();
 
@@ -20,9 +21,25 @@ watch(
     },
 );
 
+const { errors, handleSubmit, defineField, handleReset } = useForm({
+    validationSchema: yup.object({
+        password: yup
+            .string()
+            .min(8, t.value("form.input.password.error"))
+            .required(t.value("form.input.required")),
+    }),
+});
+
+const [password] = defineField("password");
+
 const close = () => {
+    handleReset();
     emit("close");
 };
+
+const onSubmit = handleSubmit(() => {
+    isConfirmVisible.value = true;
+});
 
 /**
  * deletes the account of the user
@@ -75,7 +92,7 @@ async function deleteAccount() {
                     class: 'justify-end items-center w-fit pl-10',
                 },
                 closeButtonIcon: {
-                    class: 'z-30 self-center text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-text h-10 w-10 ',
+                    class: 'z-30 self-center text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 focus:outline-none focus-ring-1 h-10 w-10 ',
                 },
                 mask: {
                     class: 'max-sm:collapse',
@@ -126,8 +143,12 @@ async function deleteAccount() {
                             v-model="password"
                             name="password"
                             type="password"
-                            class="w-2/3 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400"
+                            class="focus-ring-1 w-2/3 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         />
+                        <span
+                            class="flex w-2/3 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
+                            >{{ errors.password }}</span
+                        >
                     </div>
                 </div>
                 <div class="flex w-full justify-center pb-2 pt-6">
@@ -139,7 +160,7 @@ async function deleteAccount() {
                     </button>
                     <button
                         class="w-40 rounded-md border-2 border-mahagony-500 bg-natural-50 px-2 hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
-                        @click="isConfirmVisible = true"
+                        @click="onSubmit"
                     >
                         <T key-name="dashboard.user.settings.delete.account" />
                     </button>
@@ -170,7 +191,7 @@ async function deleteAccount() {
                     class: 'justify-end items-center w-fit pl-10',
                 },
                 closeButtonIcon: {
-                    class: 'z-30 self-center text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-text h-10 w-10 ',
+                    class: 'z-30 self-center text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 focus:outline-none focus-ring-1 h-10 w-10 ',
                 },
                 mask: {
                     class: 'max-sm:collapse',
@@ -212,7 +233,7 @@ async function deleteAccount() {
                 <div class="flex w-full justify-center pb-2 pt-6">
                     <button
                         class="w-40 rounded-md bg-natural-50 px-2 text-xl hover:underline dark:bg-background-dark dark:text-natural-50"
-                        @click="close"
+                        @click="isConfirmVisible = false"
                     >
                         <T key-name="common.button.cancel" />
                     </button>
@@ -297,8 +318,12 @@ async function deleteAccount() {
                             v-model="password"
                             name="password"
                             type="password"
-                            class="focus-ring-1 mb-3 mr-10 w-full rounded-md border-2 border-natural-400 bg-natural-100 py-1 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50 dark:hover:border-calypso-400"
+                            class="focus-ring-1 mb-3 mr-10 w-full rounded-md border-2 border-natural-400 bg-natural-100 py-1 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         />
+                        <span
+                            class="flex w-3/5 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
+                            >{{ errors.password }}</span
+                        >
                     </div>
                 </div>
                 <div class="mt-auto flex w-full flex-col justify-center">
@@ -312,7 +337,7 @@ async function deleteAccount() {
                     </div>
                     <button
                         class="ml-1 mr-6 mt-auto w-[93%] rounded-md border-[3px] border-mahagony-500 bg-natural-50 px-2 py-1 pl-2 text-2xl font-semibold hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
-                        @click="isConfirmVisible = true"
+                        @click="onSubmit"
                     >
                         <T key-name="dashboard.user.settings.delete" />
                     </button>

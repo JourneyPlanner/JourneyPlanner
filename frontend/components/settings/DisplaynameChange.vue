@@ -17,7 +17,15 @@ watch(
     },
 );
 
+watch(
+    () => props.displayname,
+    (value) => {
+        newDisplayname.value = value;
+    },
+);
+
 const close = () => {
+    newDisplayname.value = "";
     emit("close");
 };
 
@@ -87,7 +95,7 @@ function changeDisplayname() {
                     <input
                         id="displayname"
                         v-model="newDisplayname"
-                        class="focus-ring-1 mr-10 w-full rounded-md border-2 border-natural-400 bg-natural-100 py-1 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50 dark:hover:border-calypso-400"
+                        class="focus-ring-1 mr-10 w-full rounded-md border-2 border-natural-400 bg-natural-100 py-1 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         @keyup.enter="changeDisplayname"
                     />
                 </div>

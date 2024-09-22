@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { T, useTolgee, useTranslate } from "@tolgee/vue";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
@@ -8,8 +10,6 @@ const emit = defineEmits(["close"]);
 
 const isVisible = ref(props.visible);
 const { t } = useTranslate();
-const displayname = ref("");
-const username = ref("");
 const colorScheme = ref("");
 const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 const tolgee = useTolgee(["language"]);
@@ -27,6 +27,25 @@ const toast = useToast();
 const usernameRegex = /^[a-z0-9_-]+$/;
 const isUsernameInvalid = ref(false);
 const colorMode = useColorMode();
+
+const { errors, handleSubmit, defineField } = useForm({
+    validationSchema: yup.object({
+        username: yup
+            .string()
+            .matches(
+                usernameRegex,
+                t.value("dashboard.user.settings.username.invalid"),
+            )
+            .required(t.value("form.input.required")),
+        displayname: yup.string().required(t.value("form.input.required")),
+    }),
+});
+const [username] = defineField("username");
+const [displayname] = defineField("displayname");
+
+const onSubmitUsername = handleSubmit((values) => {
+    changeUsername(values.username);
+});
 
 onMounted(() => {
     if (
@@ -85,58 +104,42 @@ async function changeUsername(newUsername: string) {
         isUsernameInvalid.value = false;
     }
 
-    if (currUser.value.username == username.value) {
-        toast.add({
-            severity: "error",
-            summary: t.value("common.toast.error.heading"),
-            detail: t.value(
-                "dashboard.user.settings.toast.same.username.description",
-            ),
-            life: 6000,
-        });
-    } else {
-        if (username.value.length > 0 && !isUsernameInvalid.value) {
-            await client(`/api/user/change-username`, {
-                method: "PUT",
-                body: {
-                    username: username.value,
-                },
-                async onResponse({ response }) {
-                    if (response.ok) {
-                        toast.add({
-                            severity: "success",
-                            summary: t.value("common.toast.success.heading"),
-                            detail: t.value("username.changed.toast.success"),
-                            life: 6000,
-                        });
-                        currUser.value.username = username.value;
-                    }
-                },
-                async onResponseError({ response }) {
-                    if (
-                        response._data.message ==
-                        "The username has already been taken."
-                    ) {
-                        toast.add({
-                            severity: "error",
-                            summary: t.value("common.toast.error.heading"),
-                            detail: t.value(
-                                "username.already.taken.toast.error",
-                            ),
-                            life: 6000,
-                        });
-                    } else {
-                        toast.add({
-                            severity: "error",
-                            summary: t.value("common.toast.error.heading"),
-                            detail: t.value("common.error.unknown"),
-                            life: 6000,
-                        });
-                    }
-                },
-            });
-        }
-    }
+    await client(`/api/user/change-username`, {
+        method: "PUT",
+        body: {
+            username: username.value,
+        },
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("common.toast.success.heading"),
+                    detail: t.value("username.changed.toast.success"),
+                    life: 6000,
+                });
+                currUser.value.username = username.value;
+            }
+        },
+        async onResponseError({ response }) {
+            if (
+                response._data.message == "The username has already been taken."
+            ) {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("username.already.taken.toast.error"),
+                    life: 6000,
+                });
+            } else {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+            }
+        },
+    });
 }
 
 /**
@@ -148,36 +151,32 @@ async function changeDisplayname(newDisplayname: string) {
         displayname.value = newDisplayname;
         isDisplaynameChangeDialogVisible.value = false;
     }
-    if (
-        currUser.value.display_name != displayname.value &&
-        displayname.value.length > 0
-    ) {
-        await client(`/api/user/change-display-name`, {
-            method: "PUT",
-            body: {
-                display_name: displayname.value,
-            },
-            async onResponse({ response }) {
-                if (response.ok) {
-                    toast.add({
-                        severity: "success",
-                        summary: t.value("common.toast.success.heading"),
-                        detail: t.value("displayname.changed.toast.success"),
-                        life: 6000,
-                    });
-                    currUser.value.display_name = displayname.value;
-                }
-            },
-            async onResponseError() {
+    await client(`/api/user/change-display-name`, {
+        method: "PUT",
+        body: {
+            display_name: displayname.value,
+        },
+        async onResponse({ response }) {
+            if (response.ok) {
                 toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
+                    severity: "success",
+                    summary: t.value("common.toast.success.heading"),
+                    detail: t.value("displayname.changed.toast.success"),
                     life: 6000,
                 });
-            },
-        });
-    }
+
+                currUser.value.display_name = displayname.value;
+            }
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
 }
 
 async function logoutUser() {
@@ -205,6 +204,9 @@ const { data: currUser } = await useAsyncData("currUser", () =>
     client(`/api/user`),
 );
 
+username.value = currUser.value.username;
+displayname.value = currUser.value.display_name;
+
 /**
  * changes the email address
  * @param newEmail the new email
@@ -218,14 +220,6 @@ async function changeEmail(newEmail: Ref) {
         detail: t.value("change.email.toast.success.detail"),
         life: 3000,
     });
-}
-
-function validateUsername() {
-    if (usernameRegex.test(username.value)) {
-        isUsernameInvalid.value = false;
-    } else {
-        isUsernameInvalid.value = true;
-    }
 }
 
 function blur(e: Event) {
@@ -261,14 +255,14 @@ function blur(e: Event) {
                     class: 'justify-end w-full items-center',
                 },
                 closeButtonIcon: {
-                    class: 'z-30 self-center text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10 ',
+                    class: 'z-30 self-center text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 focus:outline-none focus-ring-1 h-10 w-10 ',
                 },
             }"
             @hide="close"
         >
             <div class="pl-4 pt-4 text-text dark:text-natural-50">
                 <div class="flex items-center pb-5">
-                    <div class="bg h-0.5 w-10 bg-calypso-400" />
+                    <div class="h-0.5 w-10 bg-calypso-400" />
                     <div class="flex-grow-5 mx-5 text-3xl font-semibold">
                         <T key-name="dashboard.user.settings.profile" />
                     </div>
@@ -287,16 +281,21 @@ function blur(e: Event) {
                             />
                         </div>
                     </div>
-                    <div class="flex w-full items-center justify-end">
+                    <div
+                        class="flex w-full flex-col items-center justify-end self-center"
+                    >
                         <input
                             id="displayname"
                             v-model="displayname"
                             name="displayname"
-                            :placeholder="currUser.display_name"
-                            class="rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400"
+                            class="focus-ring-1 self-end rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                             @blur="changeDisplayname('')"
                             @keyup.enter="blur"
                         />
+                        <span
+                            class="flex w-56 justify-start self-end text-sm text-mahagony-600 dark:text-mahagony-300"
+                            >{{ errors.displayname }}</span
+                        >
                     </div>
                 </div>
                 <div class="flex pb-14 pl-10">
@@ -310,21 +309,25 @@ function blur(e: Event) {
                             />
                         </div>
                     </div>
-                    <div class="flex w-full flex-col items-center justify-end">
+                    <div
+                        class="flex w-full flex-col items-center justify-end self-center"
+                    >
                         <input
                             id="username"
                             v-model="username"
                             name="username"
-                            :placeholder="currUser.username"
-                            class="self-end rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400"
-                            @blur="changeUsername('')"
+                            class="focus-ring-1 self-end rounded-md border-2 border-natural-400 bg-natural-100 pl-3 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                            @blur="onSubmitUsername"
                             @keyup.enter="blur"
-                            @keyup="validateUsername"
                         />
+                        <span
+                            class="flex w-56 justify-start self-end text-sm text-mahagony-600 dark:text-mahagony-300"
+                            >{{ errors.username }}</span
+                        >
                         <div class="w-44 self-end">
                             <div
                                 v-if="isUsernameInvalid"
-                                class="-ml-10 text-sm text-mahagony-600"
+                                class="-ml-10 text-sm text-mahagony-600 dark:text-mahagony-300"
                             >
                                 <T
                                     key-name="dashboard.user.settings.username.invalid"
@@ -334,13 +337,13 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div class="flex items-center pb-5">
-                    <div class="bg h-0.5 w-10 bg-calypso-400" />
+                    <div class="h-0.5 w-10 bg-calypso-400" />
                     <div class="flex-grow-5 mx-5 text-3xl font-semibold">
                         <T
                             key-name="dashboard.user.settings.account.security"
                         />
                     </div>
-                    <div class="bg h-0.5 flex-grow bg-calypso-400" />
+                    <div class="h-0.5 flex-grow bg-calypso-400" />
                 </div>
                 <div class="flex pb-5 pl-10">
                     <div class="flex w-full flex-col">
@@ -353,7 +356,9 @@ function blur(e: Event) {
                             <T
                                 key-name="dashboard.user.settings.user.email.description"
                             />
-                            {{ currUser.email }}
+                            <span class="font-semibold">
+                                {{ currUser.email }}
+                            </span>
                         </div>
                     </div>
                     <div class="flex w-full items-center justify-end">
@@ -396,11 +401,11 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div class="flex items-center pb-5">
-                    <div class="bg h-0.5 w-10 bg-calypso-400" />
+                    <div class="h-0.5 w-10 bg-calypso-400" />
                     <div class="flex-grow-5 mx-5 text-3xl font-semibold">
                         <T key-name="dashboard.user.settings.appearance" />
                     </div>
-                    <div class="bg h-0.5 flex-grow bg-calypso-400" />
+                    <div class="h-0.5 flex-grow bg-calypso-400" />
                 </div>
                 <div class="flex pb-5 pl-10">
                     <div class="flex w-full flex-col">
@@ -429,10 +434,13 @@ function blur(e: Event) {
                                     class: 'text-text dark:text-natural-50',
                                 },
                                 item: {
-                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900',
+                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 dark:hover:bg-pesto-600',
                                 },
                                 wrapper: {
                                     class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                                },
+                                trigger: {
+                                    class: 'text-text dark:text-natural-50',
                                 },
                             }"
                             @change="changeColorMode()"
@@ -489,10 +497,13 @@ function blur(e: Event) {
                                     class: 'text-text dark:text-natural-50',
                                 },
                                 item: {
-                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900',
+                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 dark:hover:bg-pesto-600',
                                 },
                                 wrapper: {
                                     class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                                },
+                                trigger: {
+                                    class: 'text-text dark:text-natural-50',
                                 },
                             }"
                             @change="changeLanguage"
@@ -576,7 +587,6 @@ function blur(e: Event) {
             block-scroll
             :auto-z-index="true"
             :draggable="false"
-            :header="t('dashboard.user.settings')"
             class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:hidden sm:w-4/5 sm:rounded-xl lg:-z-10"
             :pt="{
                 root: {
@@ -611,11 +621,11 @@ function blur(e: Event) {
             </template>
             <div class="pl-4 text-text dark:text-natural-50">
                 <div class="flex items-center pb-2">
-                    <div class="bg h-0.5 w-6 bg-calypso-400" />
+                    <div class="h-0.5 w-6 bg-calypso-400" />
                     <div class="flex-grow-5 mx-2 text-2xl font-semibold">
                         <T key-name="dashboard.user.settings.profile" />
                     </div>
-                    <div class="bg h-0.5 flex-grow bg-calypso-400" />
+                    <div class="h-0.5 flex-grow bg-calypso-400" />
                 </div>
                 <div class="flex pb-5 pl-4">
                     <div class="flex w-[55%] flex-col">
@@ -625,7 +635,7 @@ function blur(e: Event) {
                             />
                         </div>
                         <div
-                            class="overflow-hidden overflow-ellipsis text-sm dark:text-natural-300"
+                            class="overflow-hidden overflow-ellipsis text-sm text-text dark:text-natural-300"
                         >
                             <T
                                 key-name="dashboard.user.settings.display.name.description"
@@ -650,7 +660,7 @@ function blur(e: Event) {
 
                             <span class="pi pi-angle-right self-center" />
                         </button>
-                        <FormDisplaynameChange
+                        <SettingsDisplaynameChange
                             :visible="isDisplaynameChangeDialogVisible"
                             :displayname="currUser.display_name"
                             @close="isDisplaynameChangeDialogVisible = false"
@@ -690,7 +700,7 @@ function blur(e: Event) {
                                 <span class="pi pi-angle-right self-center" />
                             </div>
                         </button>
-                        <FormUsernameChange
+                        <SettingsUsernameChange
                             :visible="isUsernameChangeDialogVisible"
                             :username="currUser.username"
                             :username-regex="usernameRegex"
@@ -700,13 +710,13 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div class="flex items-center pb-2">
-                    <div class="bg h-0.5 w-6 bg-calypso-400" />
+                    <div class="h-0.5 w-6 bg-calypso-400" />
                     <div class="flex-grow-5 mx-2 text-2xl font-semibold">
                         <T
                             key-name="dashboard.user.settings.account.security"
                         />
                     </div>
-                    <div class="bg h-0.5 flex-grow bg-calypso-400" />
+                    <div class="h-0.5 flex-grow bg-calypso-400" />
                 </div>
                 <div class="flex pb-5 pl-4">
                     <div class="flex w-[55%] flex-col">
@@ -737,7 +747,7 @@ function blur(e: Event) {
                             <T key-name="common.change" />
                             <span class="pi pi-angle-right self-center" />
                         </button>
-                        <FormEmailChange
+                        <SettingsEmailChange
                             :visible="isEmailChangeDialogVisible"
                             :curr-email="currUser.email"
                             @close="isEmailChangeDialogVisible = false"
@@ -767,14 +777,14 @@ function blur(e: Event) {
                             <T key-name="common.change" />
                             <span class="pi pi-angle-right self-center" />
                         </button>
-                        <FormPasswordChange
+                        <SettingsPasswordChange
                             :visible="isPasswordChangeDialogVisible"
                             @close="isPasswordChangeDialogVisible = false"
                         />
                     </div>
                 </div>
                 <div class="flex items-center pb-2">
-                    <div class="bg h-0.5 w-6 bg-calypso-400" />
+                    <div class="h-0.5 w-6 bg-calypso-400" />
                     <div class="flex-grow-5 mx-2 text-2xl font-semibold">
                         <T key-name="dashboard.user.settings.appearance" />
                     </div>
@@ -807,10 +817,13 @@ function blur(e: Event) {
                                     class: 'text-text dark:text-natural-50',
                                 },
                                 item: {
-                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900',
+                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 dark:hover:bg-pesto-600',
                                 },
                                 wrapper: {
                                     class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                                },
+                                trigger: {
+                                    class: 'text-text dark:text-natural-50',
                                 },
                             }"
                             @change="changeColorMode()"
@@ -867,10 +880,13 @@ function blur(e: Event) {
                                     class: 'text-text dark:text-natural-50',
                                 },
                                 item: {
-                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900',
+                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 dark:hover:bg-pesto-600',
                                 },
                                 wrapper: {
                                     class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                                },
+                                trigger: {
+                                    class: 'text-text dark:text-natural-50',
                                 },
                             }"
                             @change="changeLanguage"
@@ -945,7 +961,7 @@ function blur(e: Event) {
                         >
                             <T key-name="dashboard.user.settings.delete" />
                         </button>
-                        <FormDeleteAccount
+                        <SettingsDeleteAccount
                             :visible="isDeleteAccountDialogVisible"
                             @close="isDeleteAccountDialogVisible = false"
                         />
