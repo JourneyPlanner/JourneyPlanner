@@ -615,9 +615,9 @@ function blur(e: Event) {
         >
             <template #header>
                 <button class="-ml-6 flex justify-center pr-4" @click="close">
-                    <span class="pi pi-angle-left text-3xl" />
+                    <span class="pi pi-angle-left text-2xl" />
                 </button>
-                <div class="font-nunito text-4xl font-semibold">
+                <div class="font-nunito text-3xl font-semibold">
                     <T key-name="dashboard.user.settings" />
                 </div>
             </template>
@@ -630,7 +630,7 @@ function blur(e: Event) {
                     <div class="h-0.5 flex-grow bg-calypso-400" />
                 </div>
                 <div class="flex pb-5 pl-4">
-                    <div class="flex w-[55%] flex-col">
+                    <div class="mr-5 flex w-[50%] flex-col">
                         <div class="text-xl">
                             <T
                                 key-name="dashboard.user.settings.display.name"
@@ -652,7 +652,7 @@ function blur(e: Event) {
                     </div>
                     <div class="flex w-[45%] items-center justify-end">
                         <button
-                            class="flex w-40 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 text-xl hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                            class="mr-4 flex w-32 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-base font-medium hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
                             @click="
                                 isDisplaynameChangeDialogVisible =
                                     !isDisplaynameChangeDialogVisible
@@ -671,7 +671,7 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div class="flex pb-5 pl-4">
-                    <div class="flex w-[55%] flex-col">
+                    <div class="mr-5 flex w-[50%] flex-col">
                         <div class="text-xl">
                             <T key-name="dashboard.user.settings.user.name" />
                         </div>
@@ -691,7 +691,7 @@ function blur(e: Event) {
                     </div>
                     <div class="flex w-[45%] items-center justify-end">
                         <button
-                            class="flex w-40 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 text-xl hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                            class="mr-4 flex w-32 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-base font-medium hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
                             @click="
                                 isUsernameChangeDialogVisible =
                                     !isUsernameChangeDialogVisible
@@ -721,7 +721,7 @@ function blur(e: Event) {
                     <div class="h-0.5 flex-grow bg-calypso-400" />
                 </div>
                 <div class="flex pb-5 pl-4">
-                    <div class="flex w-[55%] flex-col">
+                    <div class="mr-5 flex w-[50%] flex-col">
                         <div class="text-xl">
                             <T key-name="dashboard.user.settings.user.email" />
                         </div>
@@ -740,7 +740,7 @@ function blur(e: Event) {
                     </div>
                     <div class="flex w-[45%] items-center justify-end">
                         <button
-                            class="flex w-40 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 text-xl hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                            class="mr-4 flex w-32 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-base font-medium hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
                             @click="
                                 isEmailChangeDialogVisible =
                                     !isEmailChangeDialogVisible
@@ -758,7 +758,7 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div class="flex pb-5 pl-4">
-                    <div class="flex w-[55%] flex-col">
+                    <div class="mr-5 flex w-[50%] flex-col">
                         <div class="text-xl">
                             <T key-name="dashboard.user.settings.password" />
                         </div>
@@ -770,7 +770,7 @@ function blur(e: Event) {
                     </div>
                     <div class="flex w-[45%] items-center justify-end">
                         <button
-                            class="flex w-40 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 text-xl hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                            class="mr-4 flex w-32 justify-center rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-base font-medium hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
                             @click="
                                 isPasswordChangeDialogVisible =
                                     !isPasswordChangeDialogVisible
@@ -813,16 +813,16 @@ function blur(e: Event) {
                             :focus-on-hover="false"
                             :pt="{
                                 root: {
-                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
+                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10  hover:bg-natural-200',
                                 },
                                 input: {
                                     class: 'text-text dark:text-natural-50',
                                 },
                                 item: {
-                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 dark:hover:bg-pesto-600',
+                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600',
                                 },
                                 wrapper: {
-                                    class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
                                 },
                                 trigger: {
                                     class: 'text-text dark:text-natural-50',
@@ -882,10 +882,10 @@ function blur(e: Event) {
                                     class: 'text-text dark:text-natural-50',
                                 },
                                 item: {
-                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 dark:hover:bg-pesto-600',
+                                    class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600',
                                 },
                                 wrapper: {
-                                    class: 'bg-natural-100 dark:bg-natural-900 text-text dark:text-natural-50',
+                                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
                                 },
                                 trigger: {
                                     class: 'text-text dark:text-natural-50',
@@ -933,7 +933,7 @@ function blur(e: Event) {
                     </div>
                     <div class="flex w-full items-center justify-end">
                         <button
-                            class="w-40 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                            class="mr-4 w-32 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 font-medium hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
                             @click="logoutUser"
                         >
                             <T key-name="dashboard.user.settings.log.out" />
@@ -955,7 +955,7 @@ function blur(e: Event) {
                     </div>
                     <div class="flex w-full items-center justify-end">
                         <button
-                            class="w-40 rounded-md border-2 border-mahagony-500 bg-natural-50 px-2 text-text hover:border-mahagony-600 hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                            class="mr-4 w-32 rounded-md border-2 border-mahagony-500 bg-natural-50 px-2 py-0.5 font-medium text-text hover:border-mahagony-600 hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                             @click="
                                 isDeleteAccountDialogVisible =
                                     !isDeleteAccountDialogVisible
