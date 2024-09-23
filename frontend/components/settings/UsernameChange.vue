@@ -54,8 +54,8 @@ const close = () => {
  * emits to userSettings so that the username can be changed there
  */
 function changeUsername() {
-    handleReset();
     emit("changeUsername", newUsername.value);
+    handleReset();
 }
 </script>
 

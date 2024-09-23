@@ -175,7 +175,7 @@ async function changePassword() {
                         v-model="password"
                         name="password"
                         type="password"
-                        class="focus-ring-1 w-4/6 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                        class="focus-ring-1 w-4/6 rounded-md border-2 border-natural-400 bg-natural-50 py-0.5 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                     />
                     <span
                         class="flex w-4/6 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
@@ -195,7 +195,7 @@ async function changePassword() {
                         v-model="newPassword"
                         name="newPassword"
                         type="password"
-                        class="focus-ring-1 w-4/6 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                        class="focus-ring-1 w-4/6 rounded-md border-2 border-natural-400 bg-natural-50 py-0.5 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                     />
                     <span
                         class="flex w-4/6 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
@@ -213,7 +213,7 @@ async function changePassword() {
                         v-model="newPasswordConfirmation"
                         name="newPasswordConfirmation"
                         type="password"
-                        class="focus-ring-1 w-4/6 rounded-md border-2 border-natural-400 bg-natural-50 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                        class="focus-ring-1 w-4/6 rounded-md border-2 border-natural-400 bg-natural-50 py-0.5 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         @keyup.enter="onSubmit"
                     />
                     <span
@@ -338,7 +338,7 @@ async function changePassword() {
                 </div>
                 <div class="mt-auto flex w-full justify-center">
                     <button
-                        class="ml-1 mr-6 mt-auto w-full rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-xl font-semibold hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                        class="ml-1 mr-6 mt-auto w-full rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-1 pl-2 text-xl font-semibold hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                         @click="onSubmit"
                     >
                         <T key-name="common.save" />

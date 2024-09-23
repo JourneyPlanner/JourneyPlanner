@@ -80,6 +80,16 @@ async function changeEmail() {
                         detail: t.value("email.not.valid.toast.error"),
                         life: 6000,
                     });
+                } else if (
+                    response._data.message ==
+                    "The email has already been taken."
+                ) {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("email.already.taken.toast.error"),
+                        life: 6000,
+                    });
                 } else if (response.status === 401) {
                     toast.add({
                         severity: "error",

@@ -106,42 +106,45 @@ async function changeUsername(newUsername: string) {
         isUsernameInvalid.value = false;
     }
 
-    await client(`/api/user/change-username`, {
-        method: "PUT",
-        body: {
-            username: username.value,
-        },
-        async onResponse({ response }) {
-            if (response.ok) {
-                toast.add({
-                    severity: "success",
-                    summary: t.value("common.toast.success.heading"),
-                    detail: t.value("username.changed.toast.success"),
-                    life: 6000,
-                });
-                currUser.value.username = username.value;
-            }
-        },
-        async onResponseError({ response }) {
-            if (
-                response._data.message == "The username has already been taken."
-            ) {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("username.already.taken.toast.error"),
-                    life: 6000,
-                });
-            } else {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-            }
-        },
-    });
+    if (currUser.value.username != username.value) {
+        await client(`/api/user/change-username`, {
+            method: "PUT",
+            body: {
+                username: username.value,
+            },
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value("common.toast.success.heading"),
+                        detail: t.value("username.changed.toast.success"),
+                        life: 6000,
+                    });
+                    currUser.value.username = username.value;
+                }
+            },
+            async onResponseError({ response }) {
+                if (
+                    response._data.message ==
+                    "The username has already been taken."
+                ) {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("username.already.taken.toast.error"),
+                        life: 6000,
+                    });
+                } else {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("common.error.unknown"),
+                        life: 6000,
+                    });
+                }
+            },
+        });
+    }
 }
 
 /**
@@ -291,7 +294,7 @@ function blur(e: Event) {
                             v-model="displayname"
                             name="displayname"
                             :placeholder="currUser.display_name"
-                            class="w-60 self-end rounded-md border-2 border-natural-300 bg-natural-100 py-0.5 pl-3 pr-1 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400"
+                            class="focus-ring-1 w-60 self-end rounded-md border-2 border-natural-300 bg-natural-100 py-0.5 pl-3 pr-1 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                             @blur="changeDisplayname('')"
                             @keyup.enter="blur"
                         />
@@ -320,7 +323,7 @@ function blur(e: Event) {
                             v-model="username"
                             name="username"
                             :placeholder="currUser.username"
-                            class="w-60 self-end rounded-md border-2 border-natural-300 bg-natural-100 py-0.5 pl-3 pr-1 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400"
+                            class="focus-ring-1 w-60 self-end rounded-md border-2 border-natural-300 bg-natural-100 py-0.5 pl-3 pr-1 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                             @blur="onSubmitUsername"
                             @keyup.enter="blur"
                         />
