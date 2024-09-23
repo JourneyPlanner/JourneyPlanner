@@ -154,7 +154,7 @@ async function deleteAccount() {
                 </div>
                 <div class="flex w-full justify-center pb-2 pt-6">
                     <button
-                        class="mr-5 w-40 rounded-md bg-natural-50 px-2 pr-7 text-lg font-medium hover:underline dark:bg-background-dark dark:text-natural-50"
+                        class="mr-5 w-40 rounded-md bg-natural-50 px-2 pr-7 text-lg font-medium text-text hover:underline dark:bg-background-dark dark:text-natural-50"
                         @click="close"
                     >
                         <T key-name="common.button.cancel" />
@@ -233,13 +233,13 @@ async function deleteAccount() {
 
                 <div class="flex w-full justify-center pb-1 pt-7">
                     <button
-                        class="ml-2 w-40 rounded-md bg-natural-50 px-2 pr-5 text-xl hover:underline dark:bg-background-dark dark:text-natural-50"
+                        class="ml-2 w-40 rounded-md bg-natural-50 px-2 pr-5 text-xl text-text hover:underline dark:bg-background-dark dark:text-natural-50"
                         @click="isConfirmVisible = false"
                     >
                         <T key-name="common.button.cancel" />
                     </button>
                     <button
-                        class="ml-1 mr-6 mt-auto w-[93%] rounded-md border-[3px] border-mahagony-500 bg-natural-50 px-2 py-1 pl-2 text-base font-semibold hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                        class="ml-1 mr-6 mt-auto w-[93%] text-nowrap rounded-md border-[3px] border-mahagony-500 bg-natural-50 px-2 py-1 pl-2 text-base font-semibold text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                         @click="deleteAccount"
                     >
                         <T key-name="dashboard.user.settings.delete.account" />
