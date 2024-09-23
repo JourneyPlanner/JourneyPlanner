@@ -78,7 +78,7 @@ function changeDisplayname() {
         </template>
         <div class="flex h-full flex-col pl-8">
             <div
-                class="-pt-4 overflow-hidden overflow-ellipsis text-[0.95rem] text-natural-700 dark:text-natural-300"
+                class="-pt-4 overflow-hidden overflow-ellipsis text-[0.95rem] text-natural-700 dark:text-natural-200"
             >
                 <T
                     key-name="dashboard.user.settings.change.displayname.description"
@@ -102,7 +102,7 @@ function changeDisplayname() {
             </div>
             <div class="mt-auto flex w-full justify-center">
                 <button
-                    class="ml-1 mr-6 mt-auto w-full rounded-md border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-xl font-semibold hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                    class="ml-1 mr-6 mt-auto w-full rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-xl font-semibold hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                     @click="changeDisplayname"
                 >
                     <T key-name="common.save" />

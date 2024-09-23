@@ -186,7 +186,6 @@ async function logoutUser() {
         detail: t.value("being.logged.out.toast.info"),
         life: 6000,
     });
-    localStorage.removeItem("upload_token");
     await logout();
 }
 
@@ -814,7 +813,7 @@ function blur(e: Event) {
                             :focus-on-hover="false"
                             :pt="{
                                 root: {
-                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10  hover:bg-natural-200',
+                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
                                 },
                                 input: {
                                     class: 'text-text dark:text-natural-50',
