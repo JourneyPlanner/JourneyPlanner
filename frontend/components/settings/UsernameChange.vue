@@ -46,7 +46,7 @@ const onSubmit = handleSubmit(() => {
 });
 
 const close = () => {
-    handleReset();
+    newUsername.value = props.username;
     emit("close");
 };
 

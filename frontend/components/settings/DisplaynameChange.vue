@@ -25,7 +25,7 @@ watch(
 );
 
 const close = () => {
-    newDisplayname.value = "";
+    newDisplayname.value = props.displayname;
     emit("close");
 };
 

@@ -435,7 +435,7 @@ function blur(e: Event) {
                             :focus-on-hover="false"
                             :pt="{
                                 root: {
-                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 ',
+                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
                                 },
                                 input: {
                                     class: 'text-text dark:text-natural-50 ',
@@ -806,7 +806,7 @@ function blur(e: Event) {
                             />
                         </div>
                     </div>
-                    <div class="flex w-full items-center justify-end">
+                    <div class="mr-4 flex w-full items-center justify-end">
                         <Dropdown
                             v-model="selectedColorMode"
                             :options="colorModes"
@@ -869,7 +869,7 @@ function blur(e: Event) {
                             />
                         </div>
                     </div>
-                    <div class="flex w-full items-center justify-end">
+                    <div class="mr-4 flex w-full items-center justify-end">
                         <Dropdown
                             v-model="selectedLanguage"
                             :options="languages"
