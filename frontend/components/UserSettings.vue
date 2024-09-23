@@ -156,32 +156,34 @@ async function changeDisplayname(newDisplayname: string) {
         displayname.value = newDisplayname;
         isDisplaynameChangeDialogVisible.value = false;
     }
-    await client(`/api/user/change-display-name`, {
-        method: "PUT",
-        body: {
-            display_name: displayname.value,
-        },
-        async onResponse({ response }) {
-            if (response.ok) {
+    if (currUser.value.display_name != displayname.value) {
+        await client(`/api/user/change-display-name`, {
+            method: "PUT",
+            body: {
+                display_name: displayname.value,
+            },
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value("common.toast.success.heading"),
+                        detail: t.value("displayname.changed.toast.success"),
+                        life: 6000,
+                    });
+
+                    currUser.value.display_name = displayname.value;
+                }
+            },
+            async onResponseError() {
                 toast.add({
-                    severity: "success",
-                    summary: t.value("common.toast.success.heading"),
-                    detail: t.value("displayname.changed.toast.success"),
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
                     life: 6000,
                 });
-
-                currUser.value.display_name = displayname.value;
-            }
-        },
-        async onResponseError() {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value("common.error.unknown"),
-                life: 6000,
-            });
-        },
-    });
+            },
+        });
+    }
 }
 
 async function logoutUser() {
