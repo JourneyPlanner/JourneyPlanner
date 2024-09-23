@@ -8,8 +8,11 @@ import {
 import { useTranslate } from "@tolgee/vue";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-const journey = useJourneyStore();
+const journeyStore = useJourneyStore();
 const activitiesStore = useActivityStore();
+
+const { journey } = storeToRefs(journeyStore);
+const { activityData } = storeToRefs(activitiesStore);
 
 const config = useRuntimeConfig();
 const { t } = useTranslate();
@@ -35,22 +38,40 @@ const activities = ref();
 const activitiesWithLocation = ref();
 const activitiesWithoutLocation = ref();
 const isNotFoundActivitiesDialogVisible = ref(false);
+const lat = ref(Number(journeyStore.getLat()));
+const long = ref(Number(journeyStore.getLong()));
+
+onMounted(() => {
+    updateActivities();
+});
 
 watch(
-    activitiesStore.activityData,
+    activityData,
     () => {
-        activities.value = activitiesStore.activityData;
-
-        activitiesWithLocation.value = activities.value.filter(
-            (activity: Activity) => activity.latitude && activity.longitude,
-        );
-
-        activitiesWithoutLocation.value = activities.value.filter(
-            (activity: Activity) => !activity.latitude || !activity.longitude,
-        );
+        updateActivities();
     },
-    { immediate: true },
+    { deep: true },
 );
+
+watch(journey, () => {
+    lat.value = Number(journeyStore.getLat());
+    long.value = Number(journeyStore.getLong());
+});
+
+function updateActivities() {
+    activities.value = activityData.value.map((activity: Activity) => ({
+        ...activity,
+        color: markerColor(activity),
+    }));
+
+    activitiesWithLocation.value = activities.value.filter(
+        (activity: Activity) => activity.latitude && activity.longitude,
+    );
+
+    activitiesWithoutLocation.value = activities.value.filter(
+        (activity: Activity) => !activity.latitude || !activity.longitude,
+    );
+}
 
 function markerColor(activity: Activity) {
     return activity.calendar_activities?.length > 0
@@ -58,9 +79,7 @@ function markerColor(activity: Activity) {
         : colorNotAdded;
 }
 
-const lat = Number(journey.getLat());
-const long = Number(journey.getLong());
-const zoom = computed(() => ((long || lat) === null ? 1 : 8));
+const zoom = computed(() => ((long.value || lat.value) === null ? 1 : 8));
 const style = computed(() =>
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
@@ -79,7 +98,7 @@ const style = computed(() =>
                     <T key-name="journey.map" />
                 </div>
                 <span
-                    v-if="activitiesWithoutLocation.length > 0"
+                    v-if="activitiesWithoutLocation?.length > 0"
                     v-tooltip.top="{
                         value: t('journey.map.notfound.tooltip'),
                         pt: { root: 'font-nunito' },
@@ -106,7 +125,7 @@ const style = computed(() =>
                             v-for="activity in activitiesWithLocation"
                             :key="activity.id"
                             :lng-lat="[activity.longitude, activity.latitude]"
-                            :color="markerColor(activity)"
+                            :color="activity.color"
                             popup
                         >
                             <template #popup>
@@ -127,6 +146,8 @@ const style = computed(() =>
                 <Dialog
                     v-model:visible="isNotFoundActivitiesDialogVisible"
                     modal
+                    dismissable-mask
+                    close-on-escape
                     :header="t('journey.map.notfound.title')"
                     :draggable="false"
                     :style="{ width: '35rem' }"

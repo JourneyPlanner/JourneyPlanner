@@ -12,16 +12,6 @@ definePageMeta({
     middleware: ["sanctum:auth"],
 });
 
-interface Journey {
-    id: string;
-    name: string;
-    destination: string;
-    mapbox_full_address: string;
-    from: Date;
-    to: Date;
-    role: number;
-}
-
 const { t } = useTranslate();
 
 const store = useDashboardStore();
