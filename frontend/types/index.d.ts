@@ -1,6 +1,16 @@
 export {};
 
 declare global {
+    interface Journey {
+        id: string;
+        name: string;
+        destination: string;
+        mapbox_full_address: string;
+        from: Date;
+        to: Date;
+        role: number;
+    }
+
     interface Feature {
         type: string;
         geometry: {
@@ -103,5 +113,10 @@ declare global {
         end: string;
         allDay: boolean;
         activity_id: string;
+    }
+
+    interface Template {
+        name: string;
+        description: string;
     }
 }
