@@ -80,7 +80,6 @@ async function loginUser(userData: User) {
             (error as Error & { response?: { _data?: { message?: string } } })
                 .response?._data?.message == "CSRF token mismatch."
         ) {
-            console.log(true);
             location.reload();
         }
         toast.add({
