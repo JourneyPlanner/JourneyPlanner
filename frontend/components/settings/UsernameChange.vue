@@ -17,11 +17,10 @@ const { errors, handleSubmit, defineField, handleReset } = useForm({
     validationSchema: yup.object({
         newUsername: yup
             .string()
-            .matches(
-                props.usernameRegex,
+            .matches(props.usernameRegex, () =>
                 t.value("dashboard.user.settings.username.invalid"),
             )
-            .required(t.value("form.input.required")),
+            .required(() => t.value("form.input.required")),
     }),
 });
 
@@ -105,7 +104,15 @@ function changeUsername() {
                     class="-pt-4 overflow-hidden overflow-ellipsis text-[0.95rem] text-natural-700 dark:text-natural-200"
                 >
                     <T
-                        key-name="dashboard.user.settings.change.username.description"
+                        key-name="dashboard.user.settings.change.username.description.part1"
+                    />
+                    <br />
+                    <T
+                        key-name="dashboard.user.settings.change.username.description.part2"
+                    />
+                    <br />
+                    <T
+                        key-name="dashboard.user.settings.change.username.description.part3"
                     />
                     <b> {{ username }} </b>
                 </div>

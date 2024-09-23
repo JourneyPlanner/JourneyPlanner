@@ -18,9 +18,9 @@ const { errors, handleSubmit, defineField, handleReset } = useForm({
     validationSchema: yup.object({
         newEmail: yup
             .string()
-            .email(t.value("form.input.email.error"))
-            .required(t.value("form.input.required")),
-        password: yup.string().required(t.value("form.input.required")),
+            .email(() => t.value("form.input.email.error"))
+            .required(() => t.value("form.input.required")),
+        password: yup.string().required(() => t.value("form.input.required")),
     }),
 });
 
@@ -223,14 +223,14 @@ async function changeEmail() {
                     class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50 rounded-3xl',
                 },
                 title: {
-                    class: 'font-nunito text-4xl font-semibold',
+                    class: 'font-nunito text-4xl font-semibold w-full text-nowrap',
                 },
                 content: {
                     class: 'font-nunito bg-background dark:bg-background-dark px-0 -ml-2 sm:pr-12 h-full',
                 },
                 footer: { class: 'h-0' },
                 closeButton: {
-                    class: 'justify-start w-full h-full items-center collapse',
+                    class: 'justify-start w-full h-full items-center collapse hidden',
                 },
                 mask: {
                     class: 'sm:collapse bg-natural-50',

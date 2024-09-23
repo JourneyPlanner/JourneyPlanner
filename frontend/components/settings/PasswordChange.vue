@@ -19,16 +19,15 @@ const { errors, handleSubmit, defineField, handleReset } = useForm({
     validationSchema: yup.object({
         newPassword: yup
             .string()
-            .min(8, t.value("form.input.password.error"))
-            .required(t.value("form.input.required")),
+            .min(8, () => t.value("form.input.password.error"))
+            .required(() => t.value("form.input.required")),
         newPasswordConfirmation: yup
             .string()
-            .oneOf(
-                [yup.ref("newPassword")],
+            .oneOf([yup.ref("newPassword")], () =>
                 t.value("form.input.password.repeat.error"),
             )
-            .required(t.value("form.input.required")),
-        password: yup.string().required(t.value("form.input.required")),
+            .required(() => t.value("form.input.required")),
+        password: yup.string().required(() => t.value("form.input.required")),
     }),
 });
 
@@ -254,7 +253,7 @@ async function changePassword() {
                 },
                 footer: { class: 'h-0' },
                 closeButton: {
-                    class: 'justify-start w-full h-full items-center collapse',
+                    class: 'justify-start w-full h-full items-center collapse hidden',
                 },
                 mask: {
                     class: 'sm:collapse bg-natural-50',

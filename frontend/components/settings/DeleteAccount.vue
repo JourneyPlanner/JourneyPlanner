@@ -25,8 +25,8 @@ const { errors, handleSubmit, defineField, handleReset } = useForm({
     validationSchema: yup.object({
         password: yup
             .string()
-            .min(8, t.value("form.input.password.error"))
-            .required(t.value("form.input.required")),
+            .min(8, () => t.value("form.input.password.error"))
+            .required(() => t.value("form.input.required")),
     }),
 });
 
@@ -140,7 +140,7 @@ async function deleteAccount() {
                             <T key-name="common.enter.password" />
                         </div>
                         <input
-                            id="passwordDeleteMobile"
+                            id="passwordDelete"
                             v-model="password"
                             name="password"
                             type="password"
@@ -315,14 +315,14 @@ async function deleteAccount() {
                             />
                         </div>
                         <input
-                            id="passwordDelete"
+                            id="passwordDeleteMobile"
                             v-model="password"
                             name="password"
                             type="password"
                             class="focus-ring-1 mb-1 mr-12 w-full rounded-md border-2 border-natural-400 bg-natural-100 py-1 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         />
                         <span
-                            class="flex w-3/5 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
+                            class="mr-12 flex w-full justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
                             >{{ errors.password }}</span
                         >
                     </div>

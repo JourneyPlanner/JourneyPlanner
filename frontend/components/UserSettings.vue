@@ -32,14 +32,16 @@ const { errors, handleSubmit, defineField } = useForm({
     validationSchema: yup.object({
         username: yup
             .string()
-            .matches(
-                usernameRegex,
+            .matches(usernameRegex, () =>
                 t.value("dashboard.user.settings.username.invalid"),
             )
-            .required(t.value("form.input.required")),
-        displayname: yup.string().required(t.value("form.input.required")),
+            .required(() => t.value("form.input.required")),
+        displayname: yup
+            .string()
+            .required(() => t.value("form.input.required")),
     }),
 });
+
 const [username] = defineField("username");
 const [displayname] = defineField("displayname");
 
@@ -698,9 +700,7 @@ function blur(e: Event) {
                             "
                         >
                             <T key-name="common.change" />
-                            <div class="flex items-center">
-                                <span class="pi pi-angle-right self-center" />
-                            </div>
+                            <span class="pi pi-angle-right self-center" />
                         </button>
                         <SettingsUsernameChange
                             :visible="isUsernameChangeDialogVisible"
