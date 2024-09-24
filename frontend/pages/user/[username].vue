@@ -97,7 +97,7 @@ const navigateBack = () => {
             </div>
         </div>
         <div
-            class="ml-3 mt-10 xs:ml-6 xs:pr-10 sm:ml-[2.875rem] md:ml-[3.75rem] md:mt-16 md:pr-20"
+            class="ml-3 mt-6 xs:ml-6 xs:pr-10 sm:ml-[2.875rem] md:ml-[3.75rem] md:mt-16 md:pr-20 lg:mt-10"
         >
             <h1
                 class="text-lg font-medium text-text dark:text-natural-50 xs:text-xl md:text-2xl"
@@ -112,18 +112,21 @@ const navigateBack = () => {
                 <Skeleton
                     v-for="index in 12"
                     :key="index"
+                    animation="none"
                     height="7rem"
                     class="hidden w-full dark:bg-text lg:block"
                 />
                 <Skeleton
                     v-for="index in 6"
                     :key="index"
+                    animation="none"
                     height="7rem"
                     class="hidden w-full dark:bg-text sm:block lg:hidden"
                 />
                 <Skeleton
                     v-for="index in 6"
                     :key="index"
+                    animation="none"
                     height="4rem"
                     class="w-full dark:bg-text sm:hidden"
                 />

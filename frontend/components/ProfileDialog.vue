@@ -127,9 +127,9 @@ const close = () => {
                     {{ username }}
                 </h2>
             </div>
-            <div class="mt-10 flex flex-col">
+            <div class="mt-6 flex flex-col">
                 <h1
-                    class="text-lg font-medium text-text dark:text-natural-50 xs:text-xl md:text-2xl"
+                    class="text-lg font-medium text-text dark:text-natural-50 xs:text-xl md:text-xl"
                 >
                     <T key-name="profile.templates" />
                     {{ username }}
@@ -141,18 +141,21 @@ const close = () => {
                     <Skeleton
                         v-for="index in 10"
                         :key="index"
+                        animation="none"
                         height="7rem"
                         class="hidden w-full dark:bg-text lg:block"
                     />
                     <Skeleton
                         v-for="index in 6"
                         :key="index"
+                        animation="none"
                         height="7rem"
                         class="hidden w-full dark:bg-text sm:block lg:hidden"
                     />
                     <Skeleton
                         v-for="index in 4"
                         :key="index"
+                        animation="none"
                         height="4rem"
                         class="w-full dark:bg-text sm:hidden"
                     />
@@ -167,7 +170,7 @@ const close = () => {
                 </div>
                 <div class="flex flex-row justify-center">
                     <button
-                        class="mt-4 flex rounded-xl border-2 border-dandelion-300 bg-natural-50 px-4 py-1 text-center text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
+                        class="mt-6 flex rounded-xl border-2 border-dandelion-300 bg-natural-50 px-4 py-1 text-center text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
                         @click="router.push('/user/' + username)"
                     >
                         <T key-name="profile.see.full" />
