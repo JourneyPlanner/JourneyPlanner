@@ -78,11 +78,11 @@ const props = defineProps({
             class="block dark:hidden"
         />
 
-        <SvgWeatherCodeSunny
+        <SvgWeatherCodeSunyDark
             v-if="props.weatherCode == 0"
             class="hidden dark:block"
         />
-        <SvgWeatherCodeCloudy
+        <SvgWeatherCodeCloudyDark
             v-if="
                 props.weatherCode == 1 ||
                 props.weatherCode == 2 ||
@@ -90,11 +90,11 @@ const props = defineProps({
             "
             class="hidden dark:block"
         />
-        <SvgWeatherCodeFoggy
+        <SvgWeatherCodeFoggyDark
             v-if="props.weatherCode == 45 || props.weatherCode == 48"
             class="hidden dark:block"
         />
-        <SvgWeatherCodeDrizzle
+        <SvgWeatherCodeDrizzleDark
             v-if="
                 props.weatherCode == 51 ||
                 props.weatherCode == 53 ||
@@ -102,11 +102,11 @@ const props = defineProps({
             "
             class="hidden dark:block"
         />
-        <SvgWeatherCodeDrizzleFreezing
+        <SvgWeatherCodeDrizzleFreezingDark
             v-if="props.weatherCode == 56 || props.weatherCode == 57"
             class="hidden dark:block"
         />
-        <SvgWeatherCodeRain
+        <SvgWeatherCodeRainDark
             v-if="
                 props.weatherCode == 61 ||
                 props.weatherCode == 63 ||
@@ -114,11 +114,11 @@ const props = defineProps({
             "
             class="hidden dark:block"
         />
-        <SvgWeatherCodeRainFreezing
+        <SvgWeatherCodeRainFreezingDark
             v-if="props.weatherCode == 66 || props.weatherCode == 67"
             class="hidden dark:block"
         />
-        <SvgWeatherCodeSnowFall
+        <SvgWeatherCodeSnowFallDark
             v-if="
                 props.weatherCode == 71 ||
                 props.weatherCode == 73 ||
@@ -126,11 +126,11 @@ const props = defineProps({
             "
             class="hidden dark:block"
         />
-        <SvgWeatherCodeSnowGrains
+        <SvgWeatherCodeSnowGrainsDark
             v-if="weatherCode == 77"
             class="hidden dark:block"
         />
-        <SvgWeatherCodeRainShower
+        <SvgWeatherCodeRainShowerDark
             v-if="
                 props.weatherCode == 80 ||
                 props.weatherCode == 81 ||
@@ -138,15 +138,15 @@ const props = defineProps({
             "
             class="hidden dark:block"
         />
-        <SvgWeatherCodeSnowShower
+        <SvgWeatherCodeSnowShowerDark
             v-if="props.weatherCode == 85 || props.weatherCode == 86"
             class="hidden dark:block"
         />
-        <SvgWeatherCodeThunderstorm
+        <SvgWeatherCodeThunderstormDark
             v-if="props.weatherCode == 95"
             class="hidden dark:block"
         />
-        <SvgWeatherCodeThunderstormHail
+        <SvgWeatherCodeThunderstormHailDark
             v-if="props.weatherCode == 96 || props.weatherCode == 99"
             class="hidden dark:block"
         />

@@ -4,7 +4,6 @@ import { differenceInDays, differenceInHours, format } from "date-fns";
 import JSConfetti from "js-confetti";
 import QRCode from "qrcode";
 import resolveConfig from "tailwindcss/resolveConfig";
-import SmallWeather from "~/components/SmallWeather.vue";
 import TemplateDialog from "~/components/TemplateDialog.vue";
 import tailwindConfig from "~/tailwind.config.js";
 
@@ -716,7 +715,7 @@ function changeToFahrenheit() {
                                                 class="absolute right-0 z-0 w-[7.4rem]"
                                             />
                                             <div
-                                                class="absolute bottom-2 right-2 ml-10 flex h-16 w-16 cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-center text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
+                                                class="absolute bottom-2 right-1 ml-10 flex h-[3.8rem] w-[3.8rem] cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-center text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
                                             >
                                                 <T key-name="journey.turn" />
                                             </div>
@@ -756,13 +755,10 @@ function changeToFahrenheit() {
                                         class="relative flex h-full w-full flex-col overflow-hidden"
                                     >
                                         <div
-                                            class="absolute bottom-4 right-2 z-40 ml-10 flex h-16 w-16 cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
+                                            class="absolute bottom-4 right-1 z-40 ml-10 mt-1 flex h-[3.8rem] w-[3.8rem] cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
                                         >
                                             <T key-name="journey.turn" />
                                         </div>
-                                        <SvgOtherStripes
-                                            class="absolute bottom-1 z-0 -ml-1 w-32 self-start pb-2 md:w-2/3 lg:w-1/2"
-                                        />
                                         <div class="flex h-full">
                                             <div class="z-0 ml-6 h-full w-1/2">
                                                 <div
@@ -1005,7 +1001,7 @@ function changeToFahrenheit() {
                                                 °C
                                             </button>
                                             <div
-                                                class="h-1/2 border-l-2 border-natural-300 dark:border-natural-400"
+                                                class="h-2/5 border-l-2 border-natural-300 dark:border-natural-400"
                                             />
                                             <button
                                                 class="font mr-1 h-1/5 pl-1 text-xl"
@@ -1022,14 +1018,14 @@ function changeToFahrenheit() {
                                     </div>
                                     <div>
                                         <div
-                                            class="flex h-6 w-32 justify-center overflow-hidden overflow-ellipsis text-natural-800 dark:text-natural-200"
+                                            class="flex h-6 w-28 justify-center overflow-hidden overflow-ellipsis text-natural-800 dark:text-natural-200"
                                         >
                                             <span
                                                 v-tooltip.right="{
                                                     value: weatherType,
                                                     pt: { root: 'font-nunito' },
                                                 }"
-                                                class="h-6 w-32 overflow-hidden overflow-ellipsis text-nowrap"
+                                                class="-ml-1 flex h-6 w-32 justify-center overflow-hidden overflow-ellipsis text-nowrap"
                                                 >{{ weatherType }}</span
                                             >
                                         </div>

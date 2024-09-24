@@ -2,7 +2,6 @@
 const props = defineProps({
     maxTemp: { type: Number, required: true },
     minTemp: { type: Number, required: true },
-    qrCode: { type: String, required: true },
     day: { type: Number, required: true },
     rightLine: { type: Boolean, default: true },
     celsius: { type: Boolean, default: true },
@@ -47,18 +46,18 @@ function monthInDays(days: number) {
                 {{ monthInDays(props.day) }}
             </div>
             <div class="max-md:flex">
-                <div class="flex h-1/3 items-center justify-center pt-2">
+                <div class="flex h-12 items-center justify-center pt-1">
                     <WeatherIcon
                         v-tooltip.right="{
                             value: weatherType,
                             pt: { root: 'font-nunito' },
                         }"
-                        class="h-1/5 w-10"
+                        class="h-4/5 w-10"
                         :weather-code="weatherCode"
                     />
                 </div>
                 <div
-                    class="flex items-start justify-center pt-2 text-xs max-md:ml-2 max-md:flex-col lg:items-end"
+                    class="-mt-1 flex items-start justify-center pt-2 text-xs max-md:ml-2 max-md:flex-col lg:items-end"
                 >
                     <div>H: {{ highestTemp }}°</div>
                     <div class="lg:pl-1">T: {{ lowestTemp }}°</div>
