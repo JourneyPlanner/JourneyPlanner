@@ -141,7 +141,7 @@ const setName = (media, asHtml, withText = true) => {
         return displayname;
     } else {
         return asHtml
-            ? `<a href="/user/${username}"><p>${t.value("journey.media.uploadedby")}<strong>${displayname}</strong></p></a>`
+            ? `<a href="/user/${username}?journey=${journey.getID()}"><p>${t.value("journey.media.uploadedby")}<strong>${displayname}</strong></p></a>`
             : `${t.value("journey.media.uploadedby")}${name}`;
     }
 };

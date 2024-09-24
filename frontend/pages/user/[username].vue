@@ -54,12 +54,15 @@ const toggle = () => {
 
 const navigateBack = () => {
     const lastRoute = router.options.history.state.back as string;
+    console.log(lastRoute);
 
     if (
         lastRoute &&
         allowedRoutes.some((route) => lastRoute.startsWith(route))
     ) {
         router.back();
+    } else if (route?.query?.journey) {
+        router.push("/journey/" + route.query.journey);
     } else {
         router.push("/dashboard");
     }
