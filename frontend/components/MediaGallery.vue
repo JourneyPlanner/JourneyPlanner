@@ -104,9 +104,7 @@ const downloadMedia = async () => {
 
     const zip = new JSZip();
     const fetchFile = async (url, name) => {
-        console.log(url);
         const response = await client(url, { method: "GET" });
-        console.log(response);
 
         if (response) {
             zip.file(name, response);
@@ -136,11 +134,7 @@ const downloadMedia = async () => {
  * @returns {String} The name of the media
  */
 const setName = (media, asHtml, withText = true) => {
-    let name = media.user_first_name;
-
-    if (media.user_first_name && media.user_last_name) {
-        name = media.user_first_name + " " + media.user_last_name;
-    }
+    const name = media.user_display_name;
 
     if (!withText) {
         return name;

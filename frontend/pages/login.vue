@@ -76,7 +76,18 @@ async function loginUser(userData: User) {
                 life: 3000,
             });
             return;
+        } else if (
+            (error as Error & { response?: { _data?: { message?: string } } })
+                .response?._data?.message == "CSRF token mismatch."
+        ) {
+            location.reload();
         }
+        toast.add({
+            severity: "error",
+            summary: t.value("common.toast.error.heading"),
+            detail: t.value("common.error.unknown"),
+            life: 3000,
+        });
         throw error;
     }
 }

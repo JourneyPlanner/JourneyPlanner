@@ -18,7 +18,7 @@ const { handleSubmit } = useForm({
             .string()
             .email(t.value("form.input.email.error"))
             .required(t.value("form.input.required")),
-        firstName: yup.string().required(t.value("form.input.required")),
+        display_name: yup.string().required(t.value("form.input.required")),
         password: yup
             .string()
             .min(8, t.value("form.input.password.error"))
@@ -128,18 +128,12 @@ async function registerUser(userData: object) {
                             />
 
                             <FormInput
-                                id="firstName"
-                                name="firstName"
+                                id="display_name"
+                                name="display_name"
                                 autocomplete="given-name"
-                                translation-key="form.input.first.name"
+                                translation-key="form.input.display.name"
                             />
 
-                            <FormInput
-                                id="lastName"
-                                name="lastName"
-                                autocomplete="family-name"
-                                translation-key="form.input.last.name"
-                            />
                             <FormPassword
                                 id="password"
                                 name="password"

@@ -84,6 +84,7 @@ export default defineNuxtConfig({
                 "Skeleton",
                 "DeferredContent",
                 "Badge",
+                "Dropdown",
                 "Accordion",
                 "AccordionTab",
             ],
