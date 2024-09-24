@@ -5,6 +5,9 @@ import * as yup from "yup";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
+    propUsername: { type: String, required: true },
+    propDisplayname: { type: String, required: true },
+    propEmail: { type: String, required: true },
 });
 const emit = defineEmits(["close"]);
 
@@ -27,6 +30,9 @@ const toast = useToast();
 const usernameRegex = /^[a-z0-9_-]+$/;
 const isUsernameInvalid = ref(false);
 const colorMode = useColorMode();
+const currUsername = ref(props.propUsername);
+const currDisplayname = ref(props.propDisplayname);
+const currEmail = ref(props.propEmail);
 
 const { errors, handleSubmit, defineField } = useForm({
     validationSchema: yup.object({
@@ -44,6 +50,8 @@ const { errors, handleSubmit, defineField } = useForm({
 
 const [username] = defineField("username");
 const [displayname] = defineField("displayname");
+username.value = props.propUsername;
+displayname.value = props.propDisplayname;
 
 const onSubmitUsername = handleSubmit((values) => {
     changeUsername(values.username);
@@ -106,7 +114,7 @@ async function changeUsername(newUsername: string) {
         isUsernameInvalid.value = false;
     }
 
-    if (currUser.value.username != username.value) {
+    if (currUsername.value != username.value) {
         await client(`/api/user/change-username`, {
             method: "PUT",
             body: {
@@ -120,7 +128,7 @@ async function changeUsername(newUsername: string) {
                         detail: t.value("username.changed.toast.success"),
                         life: 6000,
                     });
-                    currUser.value.username = username.value;
+                    currUsername.value = username.value;
                 }
             },
             async onResponseError({ response }) {
@@ -156,7 +164,7 @@ async function changeDisplayname(newDisplayname: string) {
         displayname.value = newDisplayname;
         isDisplaynameChangeDialogVisible.value = false;
     }
-    if (currUser.value.display_name != displayname.value) {
+    if (currDisplayname.value != displayname.value) {
         await client(`/api/user/change-display-name`, {
             method: "PUT",
             body: {
@@ -171,7 +179,7 @@ async function changeDisplayname(newDisplayname: string) {
                         life: 6000,
                     });
 
-                    currUser.value.display_name = displayname.value;
+                    currDisplayname.value = displayname.value;
                 }
             },
             async onResponseError() {
@@ -207,19 +215,12 @@ const languages = ref([
     { name: "common.deutsch", value: "de" },
 ]);
 
-const { data: currUser } = await useAsyncData("currUser", () =>
-    client(`/api/user`),
-);
-
-username.value = currUser.value.username;
-displayname.value = currUser.value.display_name;
-
 /**
  * changes the email address
  * @param newEmail the new email
  */
 async function changeEmail(newEmail: Ref) {
-    currUser.value.email = newEmail.value;
+    currEmail.value = newEmail.value;
     isEmailChangeDialogVisible.value = false;
     toast.add({
         severity: "success",
@@ -295,7 +296,7 @@ function blur(e: Event) {
                             id="displayname"
                             v-model="displayname"
                             name="displayname"
-                            :placeholder="currUser.display_name"
+                            :placeholder="currDisplayname"
                             class="focus-ring-1 w-60 self-end rounded-md border-2 border-natural-300 bg-natural-100 py-0.5 pl-3 pr-1 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                             @blur="changeDisplayname('')"
                             @keyup.enter="blur"
@@ -324,7 +325,7 @@ function blur(e: Event) {
                             id="username"
                             v-model="username"
                             name="username"
-                            :placeholder="currUser.username"
+                            :placeholder="currUsername"
                             class="focus-ring-1 w-60 self-end rounded-md border-2 border-natural-300 bg-natural-100 py-0.5 pl-3 pr-1 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                             @blur="onSubmitUsername"
                             @keyup.enter="blur"
@@ -366,7 +367,7 @@ function blur(e: Event) {
                                 key-name="dashboard.user.settings.user.email.description"
                             />
                             <span class="font-semibold">
-                                {{ currUser.email }}
+                                {{ currEmail }}
                             </span>
                         </div>
                     </div>
@@ -653,7 +654,7 @@ function blur(e: Event) {
                             <T key-name="dashboard.user.display.name" />
                             <b
                                 class="overflow-hidden overflow-ellipsis text-text dark:text-natural-50"
-                                >{{ currUser.display_name }}</b
+                                >{{ currDisplayname }}</b
                             >
                         </div>
                     </div>
@@ -671,7 +672,7 @@ function blur(e: Event) {
                         </button>
                         <SettingsDisplaynameChange
                             :visible="isDisplaynameChangeDialogVisible"
-                            :displayname="currUser.display_name"
+                            :displayname="currDisplayname"
                             @close="isDisplaynameChangeDialogVisible = false"
                             @change-displayname="changeDisplayname"
                         />
@@ -692,7 +693,7 @@ function blur(e: Event) {
                             <T key-name="dashboard.user.username" />
                             <b
                                 class="overflow-hidden overflow-ellipsis text-text dark:text-natural-50"
-                                >{{ currUser.username }}</b
+                                >{{ currUsername }}</b
                             >
                         </div>
                     </div>
@@ -709,7 +710,7 @@ function blur(e: Event) {
                         </button>
                         <SettingsUsernameChange
                             :visible="isUsernameChangeDialogVisible"
-                            :username="currUser.username"
+                            :username="currUsername"
                             :username-regex="usernameRegex"
                             @close="isUsernameChangeDialogVisible = false"
                             @change-username="changeUsername"
@@ -739,7 +740,7 @@ function blur(e: Event) {
                             <b
                                 class="overflow-hidden overflow-ellipsis text-text dark:text-natural-50"
                             >
-                                {{ currUser.email }}
+                                {{ currEmail }}
                             </b>
                         </div>
                     </div>
@@ -756,7 +757,7 @@ function blur(e: Event) {
                         </button>
                         <SettingsEmailChange
                             :visible="isEmailChangeDialogVisible"
-                            :curr-email="currUser.email"
+                            :curr-email="currEmail"
                             @close="isEmailChangeDialogVisible = false"
                             @change-email="changeEmail"
                         />

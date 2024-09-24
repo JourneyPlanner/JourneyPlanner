@@ -82,7 +82,7 @@ const roleType = computed(() => {
     <ProfileDialog
         :visible="isProfileDialogVisible"
         :username="username"
-        :display_name="display_name"
+        :displayname="display_name"
         @close="isProfileDialogVisible = false"
     />
 </template>

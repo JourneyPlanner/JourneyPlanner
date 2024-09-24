@@ -4,7 +4,7 @@ import { useTranslate } from "@tolgee/vue";
 const props = defineProps({
     visible: { type: Boolean, required: true },
     username: { type: String, required: true },
-    display_name: { type: String, required: true },
+    displayname: { type: String, required: true },
 });
 
 const emit = defineEmits(["close"]);
@@ -109,7 +109,7 @@ const close = () => {
                     <h1
                         class="max-w-36 truncate text-nowrap text-2xl font-medium text-text dark:text-natural-50 xs:max-w-48 sm:max-w-72 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
                     >
-                        {{ display_name }}
+                        {{ displayname }}
                     </h1>
                 </div>
                 <span
@@ -173,20 +173,6 @@ const close = () => {
                         <T key-name="profile.see.full" />
                     </button>
                 </div>
-                <span
-                    v-if="
-                        !isNaN(created_at.day) &&
-                        !isNaN(created_at.month) &&
-                        !isNaN(created_at.year)
-                    "
-                    class="-mb-2 mt-2 text-center text-sm text-natural-700 dark:text-natural-300"
-                    ><T key-name="profile.created_at" />{{
-                        created_at.day +
-                        "." +
-                        created_at.month +
-                        "." +
-                        created_at.year
-                    }}</span
                 >
             </div>
         </Dialog>

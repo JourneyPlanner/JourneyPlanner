@@ -20,6 +20,7 @@ const searchInput = ref();
 const searchInputMobile = ref();
 const searchValue = ref<string>("");
 const currentJourneys = ref<Journey[]>([]);
+const user = ref();
 const isUserSettingsVisible = ref(false);
 
 currentJourneys.value = store.journeys;
@@ -102,6 +103,12 @@ const { data } = await useAsyncData("journeys", () => client("/api/journey"));
 journeys.value = data.value;
 currentJourneys.value = data.value;
 store.setJourneys(data.value);
+
+const { data: currUser } = await useAsyncData("currUser", () =>
+    client(`/api/user`),
+);
+
+user.value = currUser.value;
 
 /**
  * Searches for journeys based on the searchValue
@@ -225,11 +232,17 @@ function editJourney(journey: Journey, id: string) {
                         <T key-name="dashboard.new" />
                     </button>
                 </NuxtLink>
+                <NuxtLink :to="'/user/' + user.username" class="mr-2.5">
+                    <SvgUserIcon class="mt-1 h-9 w-9" />
+                </NuxtLink>
                 <button @click="isUserSettingsVisible = !isUserSettingsVisible">
-                    <SvgSettingsIcon class="-mt-1 h-9 w-9" />
+                    <SvgSettingsIcon class="mt-1 h-9 w-9" />
                 </button>
                 <UserSettings
                     :visible="isUserSettingsVisible"
+                    :prop-username="user.username"
+                    :prop-displayname="user.display_name"
+                    :prop-email="user.email"
                     @close="isUserSettingsVisible = false"
                 />
             </div>
