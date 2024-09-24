@@ -111,7 +111,7 @@ const navigateBack = () => {
                 >
                     <SvgDashboardIcon class="h-7 w-7 md:h-6 md:w-6" />
                     <p
-                        class="hidden text-xl group-hover:underline sm:block lg:text-2xl"
+                        class="hidden text-xl text-text group-hover:underline dark:text-natural-50 sm:block lg:text-2xl"
                     >
                         Dashboard
                     </p>
