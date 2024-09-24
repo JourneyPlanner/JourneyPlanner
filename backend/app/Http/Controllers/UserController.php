@@ -85,7 +85,7 @@ class UserController extends Controller
     {
         $request->validate([
             "username" =>
-            "required|string|alpha_dash|lowercase|max:255|unique:users",
+                "required|string|alpha_dash|lowercase|max:255|unique:users",
         ]);
 
         $user = $request->user();
