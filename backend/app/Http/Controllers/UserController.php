@@ -7,10 +7,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use App\Models\Journey;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
 class UserController extends Controller
 {
+    public function show(string $username)
+    {
+        $user = User::where("username", $username)->firstOrFail([
+            "username",
+            "display_name",
+            "created_at",
+        ]);
+
+        return response()->json($user);
+    }
+
     public function changePassword(Request $request): JsonResponse
     {
         $request->validate([

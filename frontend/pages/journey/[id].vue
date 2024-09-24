@@ -54,8 +54,8 @@ interface Journey {
 
 interface User {
     id: string;
-    firstName: string;
-    lastName: string;
+    display_name: string;
+    username: string;
     role: number;
 }
 
@@ -387,6 +387,7 @@ const handleUpload = (result: string) => {
                     v-for="user in users"
                     :id="user.id"
                     :key="user.id"
+                    :username="user.username"
                     :display_name="user.display_name"
                     :role="user.role"
                     :edit="editEnabled"
