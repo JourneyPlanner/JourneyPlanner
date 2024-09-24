@@ -30,4 +30,24 @@ class JourneyPolicy
             ->wherePivot("role", 1)
             ->exists();
     }
+
+    /**
+     * Determine whether a user is a template creator.
+     */
+    public function journeyTemplateCreator(User $user, Journey $journey): bool
+    {
+        $templates = $journey->templates()->get();
+        foreach ($templates as $template) {
+            if (
+                $template
+                    ->users()
+                    ->where("user_id", $user->id)
+                    ->wherePivot("role", 2)
+                    ->exists()
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

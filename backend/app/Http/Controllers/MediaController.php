@@ -21,8 +21,8 @@ class MediaController extends Controller
             return [
                 "id" => $media->id,
                 "user_id" => $media->user_id,
-                "user_first_name" => $media->user->firstName,
-                "user_last_name" => $media->user->lastName,
+                "user_display_name" => $media->user->display_name,
+                "user_username" => $media->user->username,
                 "name" => $media->name,
                 "link" => url(
                     "/api/journey/{$media->journey_id}/media/{$media->id}",

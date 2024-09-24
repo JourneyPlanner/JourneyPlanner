@@ -1,8 +1,7 @@
 <script setup lang="ts">
 const props = defineProps({
     id: { type: String, required: true },
-    firstName: { type: String, required: true },
-    lastName: { type: String, default: "" },
+    display_name: { type: String, required: true },
     role: { type: Number, required: true },
     edit: { type: Boolean, required: true },
     currentID: { type: String, required: true },
@@ -23,22 +22,18 @@ const roleType = computed(() => {
         ? "journey.sidebar.list.guide"
         : "journey.sidebar.list.member";
 });
-const name = computed(() => {
-    if (props.firstName && props.lastName) {
-        return props.firstName + " " + props.lastName;
-    } else {
-        return props.firstName;
-    }
-});
 </script>
 
 <template>
     <div class="flex flex-row items-center justify-between">
         <h2
-            v-tooltip.left="{ value: name, pt: { root: 'font-nunito' } }"
+            v-tooltip.left="{
+                value: props.display_name,
+                pt: { root: 'font-nunito' },
+            }"
             class="w-2/3 cursor-default overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50"
         >
-            {{ name }}
+            {{ props.display_name }}
         </h2>
         <div
             class="w-1/4 rounded-md p-0.5 px-1 text-center"

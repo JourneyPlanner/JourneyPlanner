@@ -21,7 +21,7 @@ class JourneyUserController extends Controller
 
         // return the users of the journey in json format
         return response()->json(
-            $journey->users()->get(["id", "firstName", "lastName", "role"])
+            $journey->users()->get(["id", "display_name", "username", "role"])
         );
     }
 
