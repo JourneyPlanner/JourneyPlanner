@@ -41,6 +41,23 @@ const showMore = ref(false);
 const toggleText = ref(t.value("profile.showMore") + username.value);
 const toggleTextShort = ref(t.value("profile.showMore.short"));
 const allowedRoutes = ["/journey"];
+const isCloseIcon = ref(false);
+
+onMounted(() => {
+    const lastRoute = router.options.history.state.back as string;
+    console.log(lastRoute);
+
+    if (
+        lastRoute &&
+        allowedRoutes.some((route) => lastRoute.startsWith(route))
+    ) {
+        isCloseIcon.value = true;
+    } else if (route?.query?.journey) {
+        isCloseIcon.value = true;
+    } else {
+        isCloseIcon.value = false;
+    }
+});
 
 const toggle = () => {
     showMore.value = !showMore.value;
@@ -54,7 +71,6 @@ const toggle = () => {
 
 const navigateBack = () => {
     const lastRoute = router.options.history.state.back as string;
-    console.log(lastRoute);
 
     if (
         lastRoute &&
@@ -87,9 +103,22 @@ const navigateBack = () => {
                     class="ml-1 h-0.5 w-full bg-calypso-400 xs:ml-2 sm:ml-3.5 md:ml-5 md:mr-5"
                 />
                 <span
+                    v-if="isCloseIcon"
                     class="pi pi-times cursor-pointer pl-2 pr-2 text-2xl text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 xs:text-3xl md:pr-3 md:text-3xl lg:pr-5"
                     @click="navigateBack"
                 />
+                <NuxtLink
+                    v-else
+                    to="/dashboard"
+                    class="group mx-2 flex items-center sm:ml-1 md:ml-2 lg:mr-5"
+                >
+                    <SvgDashboardIcon class="h-7 w-7 md:h-6 md:w-6" />
+                    <p
+                        class="hidden text-xl group-hover:underline sm:block lg:text-2xl"
+                    >
+                        Dashboard
+                    </p>
+                </NuxtLink>
             </div>
             <div class="mt-0.5 md:mt-2">
                 <h2
@@ -100,7 +129,7 @@ const navigateBack = () => {
             </div>
         </div>
         <div
-            class="ml-3 mt-10 xs:ml-6 xs:pr-10 sm:ml-[2.875rem] md:ml-[3.75rem] md:mt-16 md:pr-20"
+            class="ml-3 mt-10 pr-2 xs:ml-6 xs:pr-10 sm:ml-[2.875rem] md:ml-[3.75rem] md:mt-16 md:pr-20"
         >
             <h1
                 class="text-lg font-medium text-text dark:text-natural-50 xs:text-xl md:text-2xl"
