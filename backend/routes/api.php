@@ -8,6 +8,7 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TemplateController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -74,6 +75,35 @@ Route::apiResource("journey/{journey}/media", MediaController::class)
     ->middleware("auth:sanctum")
     ->only("index", "show");
 
+Route::apiResource("template", TemplateController::class)
+    ->middleware("auth:sanctum")
+    ->only("store");
+
 Route::get("project", [ProjectController::class, "getProjectData"]);
+
+Route::put("user/change-password", [
+    UserController::class,
+    "changePassword",
+])->middleware("auth:sanctum");
+
+Route::put("user/change-email", [
+    UserController::class,
+    "changeEmail",
+])->middleware("auth:sanctum");
+
+Route::put("user/change-display-name", [
+    UserController::class,
+    "changeDisplayName",
+])->middleware("auth:sanctum");
+
+Route::put("user/change-username", [
+    UserController::class,
+    "changeUsername",
+])->middleware("auth:sanctum");
+
+Route::delete("user/delete-account", [
+    UserController::class,
+    "deleteAccount",
+])->middleware("auth:sanctum");
 
 Route::get("user/{username}", [UserController::class, "show"]);

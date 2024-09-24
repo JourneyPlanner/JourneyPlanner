@@ -6,9 +6,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\Database\Eloquent\Builder;
 use App\Models\Journey;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserController extends Controller
 {
@@ -72,7 +72,7 @@ class UserController extends Controller
         ]);
 
         $user = $request->user();
-        $user->display_name = $request->display_name;
+        $user->display_name = trim($request->display_name);
         $user->save();
 
         return response()->json([
@@ -85,7 +85,7 @@ class UserController extends Controller
     {
         $request->validate([
             "username" =>
-                "required|string|alpha_dash|lowercase|max:255|unique:users",
+            "required|string|alpha_dash|lowercase|max:255|unique:users",
         ]);
 
         $user = $request->user();

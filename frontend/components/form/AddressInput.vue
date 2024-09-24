@@ -30,6 +30,9 @@ if (journey.getLat() && journey.getLong()) {
 }
 
 onMounted(async () => {
+    if (props.value) {
+        inputValue.value = props.value;
+    }
     Mapbox = await import("@mapbox/search-js-web");
     search.value = new Mapbox.MapboxSearchBox();
     isLoaded.value = true;
@@ -128,11 +131,15 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                     cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px ${border};} .Input:focus {border-radius: 0.5rem; border: solid 2px ${border};} .SearchBox {box-shadow: none;} .Results {font-family: Nunito;} .ResultsAttribution {color: ${placeholderColor}} .SearchIcon {fill: ${border};} .ActionIcon {color: ${placeholderColor}}  ${css} ${customClass}`,
                 }"
                 @input="changeInput"
+                @clear="inputValue = ''"
                 @retrieve="
                     (event: MapBoxRetrieveEvent) => handleRetrieve(event)
                 "
             />
-            <div v-if="errorMessage" class="h-1.5 w-full text-left">
+            <div
+                v-if="errorMessage"
+                class="mt-1 h-1.5 w-full text-left leading-3"
+            >
                 <span
                     class="ml-3 text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
                     :class="{

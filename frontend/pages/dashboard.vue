@@ -12,16 +12,6 @@ definePageMeta({
     middleware: ["sanctum:auth"],
 });
 
-interface Journey {
-    id: string;
-    name: string;
-    destination: string;
-    mapbox_full_address: string;
-    from: Date;
-    to: Date;
-    role: number;
-}
-
 const { t } = useTranslate();
 
 const store = useDashboardStore();
@@ -30,6 +20,7 @@ const searchInput = ref();
 const searchInputMobile = ref();
 const searchValue = ref<string>("");
 const currentJourneys = ref<Journey[]>([]);
+const isUserSettingsVisible = ref(false);
 
 currentJourneys.value = store.journeys;
 
@@ -234,9 +225,13 @@ function editJourney(journey: Journey, id: string) {
                         <T key-name="dashboard.new" />
                     </button>
                 </NuxtLink>
-                <NuxtLink to="/settings">
+                <button @click="isUserSettingsVisible = !isUserSettingsVisible">
                     <SvgSettingsIcon class="-mt-1 h-9 w-9" />
-                </NuxtLink>
+                </button>
+                <UserSettings
+                    :visible="isUserSettingsVisible"
+                    @close="isUserSettingsVisible = false"
+                />
             </div>
         </div>
         <div

@@ -19,6 +19,7 @@ class JourneyController extends Controller
         $journeys = auth()
             ->user()
             ->journeys()
+            ->where("is_template", false)
             ->get(["id", "name", "destination", "from", "to", "role"]);
 
         return response()->json($journeys);

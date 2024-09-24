@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const props = defineProps({
     id: { type: String, required: true },
-    username: { type: String, required: true },
     display_name: { type: String, required: true },
     role: { type: Number, required: true },
     edit: { type: Boolean, required: true },

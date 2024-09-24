@@ -3,6 +3,7 @@ import {
     DevTools,
     FormatSimple,
     LanguageDetector,
+    LanguageStorage,
     Tolgee,
     VueTolgee,
 } from "@tolgee/vue";
@@ -15,6 +16,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         .use(FormatSimple())
         .use(LanguageDetector())
         .use(BackendFetch())
+        .use(LanguageStorage())
         .init({
             defaultLanguage: "en",
             fallbackLanguage: "en",
