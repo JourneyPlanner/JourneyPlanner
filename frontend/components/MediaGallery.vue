@@ -134,13 +134,14 @@ const downloadMedia = async () => {
  * @returns {String} The name of the media
  */
 const setName = (media, asHtml, withText = true) => {
-    const name = media.user_display_name;
+    const displayname = media.user_display_name;
+    const username = media.user_username;
 
     if (!withText) {
-        return name;
+        return displayname;
     } else {
         return asHtml
-            ? `<p>${t.value("journey.media.uploadedby")}<strong>${name}</strong></p>`
+            ? `<a href="/user/${username}"><p>${t.value("journey.media.uploadedby")}<strong>${displayname}</strong></p></a>`
             : `${t.value("journey.media.uploadedby")}${name}`;
     }
 };
