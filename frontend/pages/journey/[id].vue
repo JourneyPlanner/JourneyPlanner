@@ -84,16 +84,25 @@ const { data: weather } = await useAsyncData("weather", () =>
     client(`/api/journey/${journeyId}/weather`),
 );
 
-console.log(weather.value.current.temperature);
-console.log(weather.value);
-console.log(weather.value.forecast[0].temperature_max);
-
 currTemperature.value = Math.round(weather.value.current.temperature);
 highestTemp.value = Math.round(weather.value.forecast[0].temperature_max);
 lowestTemp.value = Math.round(weather.value.forecast[0].temperature_min);
 weatherType.value = t.value(
     `weather.code.${weather.value.current.weather_code}`,
 );
+const weatherTypeTomorrow = t.value(
+    `weather.code.${weather.value.forecast[1].weather_code}`,
+);
+const weatherTypeInTwoDays = t.value(
+    `weather.code.${weather.value.forecast[2].weather_code}`,
+);
+const weatherTypeInThreeDays = t.value(
+    `weather.code.${weather.value.forecast[3].weather_code}`,
+);
+const weatherCodeToday = weather.value.current.weather_code;
+const weatherCodeTomorrow = weather.value.forecast[1].weather_code;
+const weatherCodeInTwoDays = weather.value.forecast[2].weather_code;
+const weatherCodeInThreeDays = weather.value.forecast[3].weather_code;
 
 const { data: users } = await useAsyncData("users", () =>
     client(`/api/journey/${journeyId}/user`),
@@ -143,8 +152,6 @@ QRCode.toDataURL(journeyData.value.invite, opts, function (error, url) {
     qrcode.value = url;
 });
 
-console.log(currentDate.getDate());
-console.log(currentDate.getMonth());
 const fromDate = new Date(journeyData.value.from);
 const toDate = new Date(journeyData.value.to);
 const days = ref(differenceInDays(fromDate, currentDate));
@@ -297,7 +304,6 @@ function changeToCelsius() {
 
     celsius.value = true;
     fahrenheit.value = false;
-    console.log(fahrenheit.value);
 }
 
 function changeToFahrenheit() {
@@ -314,7 +320,6 @@ function changeToFahrenheit() {
     }
     celsius.value = false;
     fahrenheit.value = true;
-    console.log(fahrenheit.value);
 }
 </script>
 
@@ -545,16 +550,17 @@ function changeToFahrenheit() {
                                                 <div
                                                     class="-ml-14 mt-3 flex h-1/2 items-center justify-center"
                                                 >
-                                                    <img
-                                                        class="w-20"
-                                                        :src="qrcode"
-                                                        alt="QR Code"
+                                                    <WeatherIcon
+                                                        class="-mt-2 ml-8 w-24"
+                                                        :weather-code="
+                                                            weatherCodeToday
+                                                        "
                                                     />
                                                 </div>
                                                 <div class="flex">
                                                     <div>
                                                         <div
-                                                            class="mt-1 flex h-full w-full items-center justify-start text-5xl"
+                                                            class="mt-1 flex h-full w-full items-center justify-start text-5xl text-text dark:text-natural-50"
                                                         >
                                                             {{
                                                                 currTemperature
@@ -563,7 +569,7 @@ function changeToFahrenheit() {
                                                     </div>
                                                     <div>
                                                         <div
-                                                            class="ml-4 flex h-full flex-col items-start justify-center pt-1 text-sm"
+                                                            class="ml-4 flex h-full flex-col items-start justify-center pt-1 text-sm text-natural-800 dark:text-natural-200"
                                                         >
                                                             <div>
                                                                 H:
@@ -594,6 +600,12 @@ function changeToFahrenheit() {
                                                     "
                                                     :qr-code="qrcode"
                                                     :day="1"
+                                                    :weather-code="
+                                                        weatherCodeTomorrow
+                                                    "
+                                                    :weather-type="
+                                                        weatherTypeTomorrow
+                                                    "
                                                 />
                                                 <SmallWeather
                                                     :celsius="celsius"
@@ -607,6 +619,12 @@ function changeToFahrenheit() {
                                                     "
                                                     :qr-code="qrcode"
                                                     :day="2"
+                                                    :weather-code="
+                                                        weatherCodeInTwoDays
+                                                    "
+                                                    :weather-type="
+                                                        weatherTypeInTwoDays
+                                                    "
                                                     :right-line="false"
                                                 />
                                             </div>
@@ -618,8 +636,8 @@ function changeToFahrenheit() {
                                                         class="h-1/5 pr-2 text-xl"
                                                         :class="
                                                             celsius === true
-                                                                ? 'font-bold text-calypso-600 dark:bg-gothic-600'
-                                                                : 'font-normal text-text dark:bg-natural-600'
+                                                                ? 'font-bold text-calypso-600 dark:text-natural-50'
+                                                                : 'font-normal text-text dark:text-natural-300'
                                                         "
                                                         @click.stop="
                                                             changeToCelsius
@@ -628,14 +646,14 @@ function changeToFahrenheit() {
                                                         °C
                                                     </button>
                                                     <div
-                                                        class="border-l border-natural-300"
+                                                        class="border-l border-natural-300 dark:border-natural-400"
                                                     />
                                                     <button
                                                         class="font ml-1 h-1/5 text-xl"
                                                         :class="
                                                             fahrenheit === true
-                                                                ? 'font-bold text-calypso-600 dark:bg-gothic-600'
-                                                                : 'font-normal text-text dark:bg-natural-600'
+                                                                ? 'font-bold text-calypso-600 dark:text-natural-50'
+                                                                : 'font-normal text-text dark:text-natural-300'
                                                         "
                                                         @click.stop="
                                                             changeToFahrenheit
@@ -740,10 +758,9 @@ function changeToFahrenheit() {
                                 <div
                                     class="flex w-1/2 items-center justify-center"
                                 >
-                                    <img
-                                        class="w-5/6"
-                                        :src="qrcode"
-                                        alt="QR Code"
+                                    <WeatherIcon
+                                        class="w-28"
+                                        :weather-code="weatherCodeToday"
                                     />
                                 </div>
                                 <div class="w-1/2">
@@ -759,25 +776,25 @@ function changeToFahrenheit() {
                                         </div>
                                         <div class="mr-2 flex w-1/3">
                                             <button
-                                                class="-ml-2 h-1/5 pr-2 text-xl"
+                                                class="-ml-1 h-1/5 pr-2 text-xl"
                                                 :class="
                                                     celsius === true
-                                                        ? 'font-bold text-calypso-600 dark:bg-gothic-600'
-                                                        : 'font-normal text-text dark:bg-natural-600'
+                                                        ? 'font-bold text-calypso-600 dark:text-natural-50'
+                                                        : 'font-normal text-text dark:text-natural-300'
                                                 "
                                                 @click="changeToCelsius"
                                             >
                                                 °C
                                             </button>
                                             <div
-                                                class="h-1/2 border-l-2 border-natural-300"
+                                                class="h-1/2 border-l-2 border-natural-300 dark:border-natural-400"
                                             />
                                             <button
-                                                class="font mr-2 h-1/5 pl-1 text-xl"
+                                                class="font mr-1 h-1/5 pl-1 text-xl"
                                                 :class="
                                                     fahrenheit === true
-                                                        ? 'font-bold text-calypso-600 dark:bg-gothic-600'
-                                                        : 'font-normal text-text dark:bg-natural-600'
+                                                        ? 'font-bold text-calypso-600 dark:text-natural-50'
+                                                        : 'font-normal text-text dark:text-natural-300'
                                                 "
                                                 @click="changeToFahrenheit"
                                             >
@@ -787,7 +804,7 @@ function changeToFahrenheit() {
                                     </div>
                                     <div>
                                         <div
-                                            class="flex h-6 w-32 justify-center overflow-hidden overflow-ellipsis"
+                                            class="flex h-6 w-32 justify-center overflow-hidden overflow-ellipsis text-natural-800 dark:text-natural-200"
                                         >
                                             <span
                                                 v-tooltip.right="{
@@ -822,6 +839,8 @@ function changeToFahrenheit() {
                                     "
                                     :qr-code="qrcode"
                                     :day="1"
+                                    :weather-code="weatherCodeTomorrow"
+                                    :weather-type="weatherTypeTomorrow"
                                 />
                                 <SmallWeather
                                     :celsius="celsius"
@@ -833,6 +852,8 @@ function changeToFahrenheit() {
                                     "
                                     :qr-code="qrcode"
                                     :day="2"
+                                    :weather-code="weatherCodeInTwoDays"
+                                    :weather-type="weatherTypeInTwoDays"
                                 />
                                 <SmallWeather
                                     :celsius="celsius"
@@ -845,6 +866,8 @@ function changeToFahrenheit() {
                                     :qr-code="qrcode"
                                     :day="3"
                                     :right-line="false"
+                                    :weather-code="weatherCodeInThreeDays"
+                                    :weather-type="weatherTypeInThreeDays"
                                 />
                             </div>
                         </div>
