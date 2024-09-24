@@ -33,11 +33,17 @@ const roleType = computed(() => {
                 value: display_name,
                 pt: { root: 'font-nunito' },
             }"
-            class="w-2/3 cursor-pointer overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50"
+            class="w-2/3 cursor-pointer overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50 max-sm:hidden"
             @click="isProfileDialogVisible = true"
         >
             {{ display_name }}
         </h2>
+        <NuxtLink
+            class="w-2/3 cursor-pointer overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50 sm:hidden"
+            :to="'/user/' + username"
+        >
+            {{ display_name }}
+        </NuxtLink>
         <div
             class="w-1/4 rounded-md p-0.5 px-1 text-center"
             :class="

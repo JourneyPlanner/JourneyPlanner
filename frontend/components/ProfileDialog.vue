@@ -173,7 +173,6 @@ const close = () => {
                         <T key-name="profile.see.full" />
                     </button>
                 </div>
-                >
             </div>
         </Dialog>
     </div>
