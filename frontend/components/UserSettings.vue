@@ -257,7 +257,7 @@ function blur(e: Event) {
                 content: {
                     class: 'font-nunito bg-background dark:bg-background-dark px-0 sm:pl-5 sm:pr-12 h-full',
                 },
-                footer: { class: 'h-10 bg-background rounded-xl' },
+                footer: { class: 'h-0' },
                 icons: {
                     class: 'justify-end w-full items-center',
                 },
@@ -596,7 +596,7 @@ function blur(e: Event) {
             block-scroll
             :auto-z-index="true"
             :draggable="false"
-            class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:hidden sm:w-4/5 sm:rounded-xl lg:-z-10"
+            class="z-50 flex w-full flex-col bg-background font-nunito dark:bg-background-dark sm:hidden sm:w-4/5 lg:-z-10"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden',
