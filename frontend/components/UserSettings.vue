@@ -54,9 +54,9 @@ onMounted(() => {
         colorMode.preference === "dark" ||
         (darkThemeMq.matches && colorMode.preference === "system")
     ) {
-        colorScheme.value = "darkmode";
+        colorScheme.value = "Darkmode";
     } else {
-        colorScheme.value = "lightmode";
+        colorScheme.value = "Lightmode";
     }
 
     if (tolgee.value.getLanguage() == "en") {
@@ -86,12 +86,12 @@ const changeLanguage = () => {
  * could be darkmode, lightmode or system
  */
 function changeColorMode() {
-    if (selectedColorMode.value.name == "darkmode") {
+    if (selectedColorMode.value.name == "Darkmode") {
         colorMode.preference = "dark";
-    } else if (selectedColorMode.value.name == "lightmode") {
+    } else if (selectedColorMode.value.name == "Lightmode") {
         colorMode.preference = "light";
     } else {
-        colorMode.preference = "system";
+        colorMode.preference = "System";
     }
 }
 
@@ -197,9 +197,9 @@ async function logoutUser() {
 }
 
 const colorModes = ref([
-    { name: "lightmode", code: "pi pi-sun" },
-    { name: "darkmode", code: "pi pi-moon" },
-    { name: "system", code: "pi pi-desktop" },
+    { name: "Lightmode", code: "pi pi-sun" },
+    { name: "Darkmode", code: "pi pi-moon" },
+    { name: "System", code: "pi pi-desktop" },
 ]);
 
 const languages = ref([
@@ -257,7 +257,7 @@ function blur(e: Event) {
                 content: {
                     class: 'font-nunito bg-background dark:bg-background-dark px-0 sm:pl-5 sm:pr-12 h-full',
                 },
-                footer: { class: 'h-0' },
+                footer: { class: 'h-10 bg-background rounded-xl' },
                 icons: {
                     class: 'justify-end w-full items-center',
                 },
@@ -437,7 +437,7 @@ function blur(e: Event) {
                             :focus-on-hover="false"
                             :pt="{
                                 root: {
-                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
+                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-9 flex items-center',
                                 },
                                 input: {
                                     class: 'text-text dark:text-natural-50 ',
@@ -500,7 +500,7 @@ function blur(e: Event) {
                             :focus-on-hover="false"
                             :pt="{
                                 root: {
-                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
+                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-9 flex items-center',
                                 },
                                 input: {
                                     class: 'text-text dark:text-natural-50',
@@ -818,7 +818,7 @@ function blur(e: Event) {
                             :focus-on-hover="false"
                             :pt="{
                                 root: {
-                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
+                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-9 flex items-center',
                                 },
                                 input: {
                                     class: 'text-text dark:text-natural-50',
@@ -881,7 +881,7 @@ function blur(e: Event) {
                             :focus-on-hover="false"
                             :pt="{
                                 root: {
-                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200',
+                                    class: 'font-nunito text-text bg-natural-100 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-9 flex items-center',
                                 },
                                 input: {
                                     class: 'text-text dark:text-natural-50',
