@@ -29,6 +29,9 @@ if (error.value) {
     }
 } else {
     displayname.value = data.value.display_name;
+    useHead({
+        title: `${displayname.value} (${username.value}) | JourneyPlanner`,
+    });
 }
 
 definePageMeta({
