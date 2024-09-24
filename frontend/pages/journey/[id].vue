@@ -971,7 +971,7 @@ function changeToFahrenheit() {
                             class="relative flex h-full w-full flex-col items-end"
                         >
                             <div
-                                class="flex w-full pt-4 font-nunito max-lg:h-1/2"
+                                class="flex w-full pt-2 font-nunito max-lg:h-1/2"
                             >
                                 <div
                                     class="flex w-1/2 items-center justify-center"
