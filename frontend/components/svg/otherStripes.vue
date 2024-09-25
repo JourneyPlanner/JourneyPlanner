@@ -1,0 +1,31 @@
+<template>
+    <svg viewBox="0 0 120 209" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line
+            x1="-59.4188"
+            y1="224.246"
+            x2="50.5848"
+            y2="4.96455"
+            stroke="#C7E9F9"
+            stroke-opacity="0.6"
+            stroke-width="18"
+        />
+        <line
+            x1="-40.648"
+            y1="233.662"
+            x2="69.3555"
+            y2="14.3806"
+            stroke="#ABD8EC"
+            stroke-opacity="0.6"
+            stroke-width="18"
+        />
+        <line
+            x1="-21.8775"
+            y1="243.078"
+            x2="88.126"
+            y2="23.7971"
+            stroke="#8CC4DD"
+            stroke-opacity="0.6"
+            stroke-width="18"
+        />
+    </svg>
+</template>
