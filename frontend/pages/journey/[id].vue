@@ -771,10 +771,10 @@ function changeToFahrenheit() {
                                                         "
                                                     />
                                                 </div>
-                                                <div class="flex">
+                                                <div class="mt-3 flex">
                                                     <div>
                                                         <div
-                                                            class="mt-1 flex h-full w-full items-center justify-start text-5xl text-text dark:text-natural-50"
+                                                            class="flex h-full w-full items-center justify-start text-5xl text-text dark:text-natural-50"
                                                         >
                                                             {{
                                                                 currTemperature

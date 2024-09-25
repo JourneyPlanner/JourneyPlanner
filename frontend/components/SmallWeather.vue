@@ -39,7 +39,7 @@ function monthInDays(days: number) {
 }
 </script>
 <template>
-    <div class="flex text-natural-700 dark:text-natural-300 max-md:flex-col">
+    <div class="flex text-natural-700 dark:text-natural-200 max-md:flex-col">
         <div class="w-[99%]">
             <div class="flex justify-center text-base underline">
                 {{ daysInTheFuture(props.day) }} /
@@ -66,7 +66,7 @@ function monthInDays(days: number) {
         </div>
         <div
             v-if="rightLine"
-            class="mb-3 w-full self-center border-b-2 border-calypso-300 pb-3 dark:border-gothic-400 md:mb-10 md:h-20 md:w-[1%] md:border-r-2"
+            class="mb-3 w-full self-center border-b-2 border-calypso-300 pb-3 dark:border-gothic-400 md:mb-10 md:h-24 md:w-[1%] md:border-r-2"
         />
     </div>
 </template>
