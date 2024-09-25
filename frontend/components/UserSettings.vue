@@ -129,6 +129,7 @@ async function changeUsername(newUsername: string) {
                         life: 6000,
                     });
                     currUsername.value = response._data.username;
+                    username.value = response._data.username;
                 }
             },
             async onResponseError({ response }) {
@@ -179,6 +180,7 @@ async function changeDisplayname(newDisplayname: string) {
                         life: 6000,
                     });
                     currDisplayname.value = response._data.display_name;
+                    displayname.value = response._data.display_name;
                 }
             },
             async onResponseError() {
