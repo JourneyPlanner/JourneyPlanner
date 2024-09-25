@@ -128,7 +128,7 @@ async function changeUsername(newUsername: string) {
                         detail: t.value("username.changed.toast.success"),
                         life: 6000,
                     });
-                    currUsername.value = username.value;
+                    currUsername.value = response._data.username;
                 }
             },
             async onResponseError({ response }) {
@@ -178,8 +178,7 @@ async function changeDisplayname(newDisplayname: string) {
                         detail: t.value("displayname.changed.toast.success"),
                         life: 6000,
                     });
-
-                    currDisplayname.value = displayname.value;
+                    currDisplayname.value = response._data.display_name;
                 }
             },
             async onResponseError() {
