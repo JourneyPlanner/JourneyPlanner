@@ -138,11 +138,7 @@ if (
     lightColor = fullConfig.theme.accentColor["text"] as string;
 }
 
-const op = ref();
-
-const toggle = (event: Event) => {
-    op.value.toggle(event);
-};
+const isQRCodeVisible = ref(false);
 
 const opts = {
     margin: 0,
@@ -425,9 +421,11 @@ function changeToFahrenheit() {
                 <div class="flex w-1/5 justify-end">
                     <button
                         class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                        @click="toggle"
+                        @click="isQRCodeVisible = true"
                     >
-                        <span class="pi pi-qrcode" />
+                        <span
+                            class="pi pi-qrcode text-text dark:text-natural-50"
+                        />
                     </button>
                 </div>
             </div>
@@ -466,11 +464,6 @@ function changeToFahrenheit() {
                     @change-role="changeRole"
                 />
             </div>
-            <OverlayPanel ref="op">
-                <div class="bg-background dark:bg-background-dark">
-                    <img class="w-full" :src="qrcode" alt="QR Code" />
-                </div>
-            </OverlayPanel>
             <div
                 class="sticky bottom-0 border-t-2 border-natural-200 dark:border-natural-900"
             >
@@ -1340,21 +1333,6 @@ function changeToFahrenheit() {
             />
         </div>
         <ActivityMap v-if="activityDataLoaded" />
-        <ConfirmDialog
-            :draggable="false"
-            group="journey"
-            :pt="{
-                header: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                content: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                footer: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-            }"
-        />
         <div
             ref="upload"
             class="flex items-center justify-center md:justify-start"
@@ -1387,6 +1365,27 @@ function changeToFahrenheit() {
             :is-create-template-visible="isCreateTemplateVisible"
             @close-template-dialog="isCreateTemplateVisible = false"
         />
+        <Dialog
+            v-model:visible="isQRCodeVisible"
+            modal
+            dismissable-mask
+            close-on-esc
+            :header="t('journey.qrcode')"
+            :pt="{
+                root: { class: 'bg-background dark:bg-background-dark' },
+                content: { class: 'bg-background dark:bg-background-dark' },
+                header: {
+                    class: 'bg-background dark:bg-background-dark text-text dark:text-natural-50 flex gap-x-5 font-nunito items-center',
+                },
+                closeButtonIcon: {
+                    class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10',
+                },
+            }"
+        >
+            <div class="bg-background dark:bg-background-dark">
+                <img class="w-full" :src="qrcode" alt="QR Code" />
+            </div>
+        </Dialog>
         <ConfirmDialog
             :draggable="false"
             group="journey"
