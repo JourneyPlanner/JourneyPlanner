@@ -27,10 +27,12 @@ const isMemberSidebarVisible = ref(false);
 const isMenuSidebarVisible = ref(false);
 const toast = useToast();
 const { t } = useTranslate();
-const op = ref();
-const toggle = (event: Event) => {
-    op.value.toggle(event);
-};
+const celsius = ref(true);
+const fahrenheit = ref(false);
+const currTemperature = ref();
+const weatherType = ref("");
+const highestTemp = ref(24);
+const lowestTemp = ref(9);
 const editEnabled = ref(false);
 const isActivityDialogVisible = ref(false);
 const uploadResult = ref();
@@ -81,6 +83,30 @@ await client(`/api/journey/${journeyId}/activity`, {
     },
 });
 
+const { data: weather } = await useAsyncData("weather", () =>
+    client(`/api/journey/${journeyId}/weather`),
+);
+
+currTemperature.value = Math.round(weather.value.current.temperature);
+highestTemp.value = Math.round(weather.value.forecast[0].temperature_max);
+lowestTemp.value = Math.round(weather.value.forecast[0].temperature_min);
+weatherType.value = t.value(
+    `weather.code.${weather.value.current.weather_code}`,
+);
+const weatherTypeTomorrow = t.value(
+    `weather.code.${weather.value.forecast[1].weather_code}`,
+);
+const weatherTypeInTwoDays = t.value(
+    `weather.code.${weather.value.forecast[2].weather_code}`,
+);
+const weatherTypeInThreeDays = t.value(
+    `weather.code.${weather.value.forecast[3].weather_code}`,
+);
+const weatherCodeToday = weather.value.current.weather_code;
+const weatherCodeTomorrow = weather.value.forecast[1].weather_code;
+const weatherCodeInTwoDays = weather.value.forecast[2].weather_code;
+const weatherCodeInThreeDays = weather.value.forecast[3].weather_code;
+
 const { data: users } = await useAsyncData("users", () =>
     client(`/api/journey/${journeyId}/user`),
 );
@@ -111,6 +137,12 @@ if (
     darkColor = fullConfig.theme.accentColor["background"] as string;
     lightColor = fullConfig.theme.accentColor["text"] as string;
 }
+
+const op = ref();
+
+const toggle = (event: Event) => {
+    op.value.toggle(event);
+};
 
 const opts = {
     margin: 0,
@@ -304,6 +336,37 @@ async function changeRole(userid: string, selectedRole: number) {
 const handleUpload = (result: string) => {
     uploadResult.value = result;
 };
+
+function changeToCelsius() {
+    if (fahrenheit.value == true) {
+        currTemperature.value = Math.round(weather.value.current.temperature);
+        highestTemp.value = Math.round(
+            weather.value.forecast[0].temperature_max,
+        );
+        lowestTemp.value = Math.round(
+            weather.value.forecast[0].temperature_min,
+        );
+    }
+
+    celsius.value = true;
+    fahrenheit.value = false;
+}
+
+function changeToFahrenheit() {
+    if (celsius.value == true) {
+        currTemperature.value = Math.round(
+            (weather.value.current.temperature * 9) / 5 + 32,
+        );
+        highestTemp.value = Math.round(
+            (weather.value.forecast[0].temperature_max * 9) / 5 + 32,
+        );
+        lowestTemp.value = Math.round(
+            (weather.value.forecast[0].temperature_min * 9) / 5 + 32,
+        );
+    }
+    celsius.value = false;
+    fahrenheit.value = true;
+}
 </script>
 
 <template>
@@ -359,6 +422,14 @@ const handleUpload = (result: string) => {
                         <SvgCopy class="w-4" />
                     </button>
                 </div>
+                <div class="flex w-1/5 justify-end">
+                    <button
+                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                        @click="toggle"
+                    >
+                        <span class="pi pi-qrcode" />
+                    </button>
+                </div>
             </div>
             <div
                 class="flex flex-row items-center justify-center border-b-2 border-natural-200 pb-1 pt-1 dark:border-natural-900"
@@ -395,6 +466,11 @@ const handleUpload = (result: string) => {
                     @change-role="changeRole"
                 />
             </div>
+            <OverlayPanel ref="op">
+                <div class="bg-background dark:bg-background-dark">
+                    <img class="w-full" :src="qrcode" alt="QR Code" />
+                </div>
+            </OverlayPanel>
             <div
                 class="sticky bottom-0 border-t-2 border-natural-200 dark:border-natural-900"
             >
@@ -640,7 +716,7 @@ const handleUpload = (result: string) => {
                                                 class="absolute right-0 z-0 w-[7.4rem]"
                                             />
                                             <div
-                                                class="absolute bottom-2 right-2 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-center text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
+                                                class="absolute bottom-2 right-1 ml-10 flex h-[3.8rem] w-[3.8rem] cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-center text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
                                             >
                                                 <T key-name="journey.turn" />
                                             </div>
@@ -648,7 +724,7 @@ const handleUpload = (result: string) => {
                                     </div>
                                 </div>
                                 <div
-                                    class="rounded-b-r-3xl h-[90%] w-0 border-r-2 border-dashed border-natural-200"
+                                    class="rounded-b-r-3xl h-[90%] w-0 cursor-pointer border-r-2 border-dashed border-natural-200"
                                 />
                             </div>
                         </div>
@@ -677,21 +753,132 @@ const handleUpload = (result: string) => {
                                     class="flex h-full w-full justify-center rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
                                 >
                                     <div
-                                        class="relative flex h-full w-full flex-col items-end"
+                                        class="relative flex h-full w-full flex-col overflow-hidden"
                                     >
-                                        <img
-                                            class="absolute right-[50%] top-[25%] z-20 w-40 -translate-y-[25%] translate-x-[50%] max-sm:mt-1"
-                                            :src="qrcode"
-                                            alt="QR Code"
-                                        />
                                         <div
-                                            class="absolute bottom-4 right-2 z-40 ml-10 flex h-16 w-16 items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
+                                            class="absolute bottom-4 right-1 z-40 ml-10 mt-1 flex h-[3.8rem] w-[3.8rem] cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
                                         >
                                             <T key-name="journey.turn" />
                                         </div>
-                                        <SvgStripes
-                                            class="z-0 md:w-2/3 lg:w-1/2"
-                                        />
+                                        <div class="flex h-full">
+                                            <div class="z-0 ml-6 h-full w-1/2">
+                                                <div
+                                                    class="-ml-14 mt-3 flex h-1/2 items-center justify-center"
+                                                >
+                                                    <WeatherIcon
+                                                        class="-mt-2 ml-8 w-24"
+                                                        :weather-code="
+                                                            weatherCodeToday
+                                                        "
+                                                    />
+                                                </div>
+                                                <div class="mt-3 flex">
+                                                    <div>
+                                                        <div
+                                                            class="flex h-full w-full items-center justify-start text-5xl text-text dark:text-natural-50"
+                                                        >
+                                                            {{
+                                                                currTemperature
+                                                            }}°
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div
+                                                            class="ml-4 flex h-full flex-col items-start justify-center pt-1 text-sm text-natural-800 dark:text-natural-200"
+                                                        >
+                                                            <div>
+                                                                H:
+                                                                {{
+                                                                    highestTemp
+                                                                }}°
+                                                            </div>
+                                                            <div class="pt-2">
+                                                                T:
+                                                                {{
+                                                                    lowestTemp
+                                                                }}°
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="z-0 h-full w-1/3 pt-2">
+                                                <SmallWeather
+                                                    :celsius="celsius"
+                                                    :max-temp="
+                                                        weather.forecast[1]
+                                                            .temperature_max
+                                                    "
+                                                    :min-temp="
+                                                        weather.forecast[1]
+                                                            .temperature_min
+                                                    "
+                                                    :qr-code="qrcode"
+                                                    :day="1"
+                                                    :weather-code="
+                                                        weatherCodeTomorrow
+                                                    "
+                                                    :weather-type="
+                                                        weatherTypeTomorrow
+                                                    "
+                                                />
+                                                <SmallWeather
+                                                    :celsius="celsius"
+                                                    :max-temp="
+                                                        weather.forecast[2]
+                                                            .temperature_max
+                                                    "
+                                                    :min-temp="
+                                                        weather.forecast[2]
+                                                            .temperature_min
+                                                    "
+                                                    :qr-code="qrcode"
+                                                    :day="2"
+                                                    :weather-code="
+                                                        weatherCodeInTwoDays
+                                                    "
+                                                    :weather-type="
+                                                        weatherTypeInTwoDays
+                                                    "
+                                                    :right-line="false"
+                                                />
+                                            </div>
+                                            <div class="z-0 h-full w-1/5">
+                                                <div
+                                                    class="mr-2 mt-2 flex w-1/3"
+                                                >
+                                                    <button
+                                                        class="h-1/5 pr-2 text-xl"
+                                                        :class="
+                                                            celsius === true
+                                                                ? 'font-bold text-calypso-600 dark:text-natural-50'
+                                                                : 'font-normal text-text dark:text-natural-300'
+                                                        "
+                                                        @click.stop="
+                                                            changeToCelsius
+                                                        "
+                                                    >
+                                                        °C
+                                                    </button>
+                                                    <div
+                                                        class="border-l border-natural-300 dark:border-natural-400"
+                                                    />
+                                                    <button
+                                                        class="font ml-1 h-1/5 text-xl"
+                                                        :class="
+                                                            fahrenheit === true
+                                                                ? 'font-bold text-calypso-600 dark:text-natural-50'
+                                                                : 'font-normal text-text dark:text-natural-300'
+                                                        "
+                                                        @click.stop="
+                                                            changeToFahrenheit
+                                                        "
+                                                    >
+                                                        °F
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -775,53 +962,129 @@ const handleUpload = (result: string) => {
                         class="rounded-b-l-3xl h-[90%] w-0 border-l-2 border-dashed border-natural-200"
                     />
                     <div
-                        class="flex h-full w-full justify-center rounded-b-3xl border-b-2 border-r-2 border-natural-200 dark:border-gothic-600 dark:bg-dark"
+                        class="flex h-full w-full cursor-default justify-center rounded-b-3xl border-b-2 border-r-2 border-natural-200 dark:border-gothic-600 dark:bg-dark"
                     >
                         <div
                             class="relative flex h-full w-full flex-col items-end"
                         >
-                            <SvgStripes
-                                class="absolute right-0 md:w-[8.8rem] lg:w-[10.15rem]"
-                            />
-                            <img
-                                class="absolute right-[50%] top-[25%] -translate-y-[25%] translate-x-[50%] md:w-[8rem] lg:w-[10rem]"
-                                :src="qrcode"
-                                alt="QR Code"
-                            />
-                            <button
-                                class="absolute right-[50%] top-[80%] flex h-1/6 w-2/5 translate-x-[50%] items-center justify-center rounded-xl border-2 border-dandelion-300 bg-background font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:-translate-y-[30%] lg:-translate-y-[2%]"
-                                @click="toggle"
+                            <div
+                                class="flex w-full pt-2 font-nunito max-lg:h-1/2"
                             >
-                                <T key-name="journey.button.invite" />
-                                <SvgShare class="ml-2 w-3" />
-                            </button>
-                            <OverlayPanel
-                                ref="op"
-                                class="rounded-lg bg-natural-50 font-nunito text-text dark:bg-natural-800 dark:text-natural-50"
-                            >
-                                <div class="flex-column w-25rem flex gap-3">
-                                    <div>
-                                        <span
-                                            class="mb-1 block text-lg font-medium"
+                                <div
+                                    class="flex w-1/2 items-center justify-center"
+                                >
+                                    <WeatherIcon
+                                        class="w-28"
+                                        :weather-code="weatherCodeToday"
+                                    />
+                                </div>
+                                <div class="w-1/2">
+                                    <div class="flex">
+                                        <div
+                                            class="flex w-2/3 flex-col justify-center"
                                         >
-                                            <T key-name="sidebar.invite.link" />
-                                        </span>
-                                        <div class="flex">
-                                            <input
-                                                class="w-full rounded-l-md border-2 border-natural-200 bg-natural-100 pb-1 pl-2.5 pt-1 text-base font-medium text-text shadow-sm focus:outline-none focus:ring-1 dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50"
-                                                disabled
-                                                :value="journeyData.invite"
+                                            <div
+                                                class="flex justify-center text-5xl lg:text-6xl"
+                                            >
+                                                {{ currTemperature }}
+                                            </div>
+                                        </div>
+                                        <div class="mr-2 flex w-1/3">
+                                            <button
+                                                class="-ml-1 h-1/5 pr-2 text-xl"
+                                                :class="
+                                                    celsius === true
+                                                        ? 'font-bold text-calypso-600 dark:text-natural-50'
+                                                        : 'font-normal text-text dark:text-natural-300'
+                                                "
+                                                @click="changeToCelsius"
+                                            >
+                                                °C
+                                            </button>
+                                            <div
+                                                class="h-2/5 border-l-2 border-natural-300 dark:border-natural-400"
                                             />
                                             <button
-                                                class="flex h-9 w-9 items-center justify-center rounded-r-md border-2 border-y-2 border-r-2 border-dandelion-300 bg-natural-100 shadow-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                                                @click="copyToClipboard"
+                                                class="font mr-1 h-1/5 pl-1 text-xl"
+                                                :class="
+                                                    fahrenheit === true
+                                                        ? 'font-bold text-calypso-600 dark:text-natural-50'
+                                                        : 'font-normal text-text dark:text-natural-300'
+                                                "
+                                                @click="changeToFahrenheit"
                                             >
-                                                <SvgCopy class="w-4" />
+                                                °F
                                             </button>
                                         </div>
                                     </div>
+                                    <div>
+                                        <div
+                                            class="flex h-6 w-28 justify-center overflow-hidden overflow-ellipsis text-natural-800 dark:text-natural-200"
+                                        >
+                                            <span
+                                                v-tooltip.right="{
+                                                    value: weatherType,
+                                                    pt: { root: 'font-nunito' },
+                                                }"
+                                                class="-ml-1 flex h-6 w-32 justify-center overflow-hidden overflow-ellipsis text-nowrap"
+                                                >{{ weatherType }}</span
+                                            >
+                                        </div>
+                                        <div
+                                            class="flex items-end justify-start pt-1 lg:text-xl"
+                                        >
+                                            <div>H: {{ highestTemp }}°</div>
+                                            <div class="pl-2">
+                                                T: {{ lowestTemp }}°
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </OverlayPanel>
+                            </div>
+                            <div
+                                class="grid h-1/2 w-full grid-cols-3 gap-2 pt-4"
+                            >
+                                <SmallWeather
+                                    :celsius="celsius"
+                                    :max-temp="
+                                        weather.forecast[1].temperature_max
+                                    "
+                                    :min-temp="
+                                        weather.forecast[1].temperature_min
+                                    "
+                                    :qr-code="qrcode"
+                                    :day="1"
+                                    :weather-code="weatherCodeTomorrow"
+                                    :weather-type="weatherTypeTomorrow"
+                                />
+                                <SmallWeather
+                                    :celsius="celsius"
+                                    :max-temp="
+                                        weather.forecast[2].temperature_max
+                                    "
+                                    :min-temp="
+                                        weather.forecast[2].temperature_min
+                                    "
+                                    :qr-code="qrcode"
+                                    :day="2"
+                                    :weather-code="weatherCodeInTwoDays"
+                                    :weather-type="weatherTypeInTwoDays"
+                                />
+                                <SmallWeather
+                                    :celsius="celsius"
+                                    :max-temp="
+                                        weather.forecast[3].temperature_max
+                                    "
+                                    :min-temp="
+                                        weather.forecast[3].temperature_min
+                                    "
+                                    :qr-code="qrcode"
+                                    :day="3"
+                                    :right-line="false"
+                                    :weather-code="weatherCodeInThreeDays"
+                                    :weather-type="weatherTypeInThreeDays"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1077,6 +1340,21 @@ const handleUpload = (result: string) => {
             />
         </div>
         <ActivityMap v-if="activityDataLoaded" />
+        <ConfirmDialog
+            :draggable="false"
+            group="journey"
+            :pt="{
+                header: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+                content: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+                footer: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+            }"
+        />
         <div
             ref="upload"
             class="flex items-center justify-center md:justify-start"

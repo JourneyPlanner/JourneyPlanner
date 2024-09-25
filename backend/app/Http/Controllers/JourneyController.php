@@ -297,4 +297,62 @@ class JourneyController extends Controller
 
         $journey->delete();
     }
+
+    public function getWeather(Journey $journey)
+    {
+        Gate::authorize("journeyMember", $journey);
+
+        $weatherData = [];
+        $weatherResponse = Http::get(
+            "https://api.open-meteo.com/v1/forecast?latitude=" .
+                $journey->latitude .
+                "&longitude=" .
+                $journey->longitude .
+                "&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=4"
+        );
+        $weatherData = $weatherResponse->json();
+
+        $weatherDataResponse = [
+            "current" => [
+                "temperature" => $weatherData["current"]["temperature_2m"],
+                "weather_code" => $weatherData["current"]["weather_code"],
+            ],
+            "forecast" => [
+                0 => [
+                    "date" => $weatherData["daily"]["time"][0],
+                    "temperature_max" =>
+                        $weatherData["daily"]["temperature_2m_max"][0],
+                    "temperature_min" =>
+                        $weatherData["daily"]["temperature_2m_min"][0],
+                    "weather_code" => $weatherData["daily"]["weather_code"][0],
+                ],
+                1 => [
+                    "date" => $weatherData["daily"]["time"][1],
+                    "temperature_max" =>
+                        $weatherData["daily"]["temperature_2m_max"][1],
+                    "temperature_min" =>
+                        $weatherData["daily"]["temperature_2m_min"][1],
+                    "weather_code" => $weatherData["daily"]["weather_code"][1],
+                ],
+                2 => [
+                    "date" => $weatherData["daily"]["time"][2],
+                    "temperature_max" =>
+                        $weatherData["daily"]["temperature_2m_max"][2],
+                    "temperature_min" =>
+                        $weatherData["daily"]["temperature_2m_min"][2],
+                    "weather_code" => $weatherData["daily"]["weather_code"][2],
+                ],
+                3 => [
+                    "date" => $weatherData["daily"]["time"][3],
+                    "temperature_max" =>
+                        $weatherData["daily"]["temperature_2m_max"][3],
+                    "temperature_min" =>
+                        $weatherData["daily"]["temperature_2m_min"][3],
+                    "weather_code" => $weatherData["daily"]["weather_code"][3],
+                ],
+            ],
+        ];
+
+        return response()->json($weatherDataResponse);
+    }
 }

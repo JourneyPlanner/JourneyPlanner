@@ -75,6 +75,11 @@ Route::apiResource("journey/{journey}/media", MediaController::class)
     ->middleware("auth:sanctum")
     ->only("index", "show");
 
+Route::get("journey/{journey}/weather", [
+    JourneyController::class,
+    "getWeather",
+])->middleware("auth:sanctum");
+
 Route::apiResource("template", TemplateController::class)
     ->middleware("auth:sanctum")
     ->only("store");
