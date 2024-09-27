@@ -31,11 +31,21 @@ defineProps({
         required: true,
     },
     calendarRef: {
-        type: Object as PropType<Ref>,
+        type: Object as PropType<{
+            scrollIntoView: (options: {
+                behavior: string;
+                block: string;
+            }) => void;
+        }>,
         required: true,
     },
     uploadRef: {
-        type: Object as PropType<Ref>,
+        type: Object as PropType<{
+            scrollIntoView: (options: {
+                behavior: string;
+                block: string;
+            }) => void;
+        }>,
         required: true,
     },
 });
