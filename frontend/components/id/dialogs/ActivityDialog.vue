@@ -413,6 +413,8 @@ function setSelectedDate(date: Date) {
         block-scroll
         :auto-z-index="true"
         :draggable="false"
+        dismissable-mask
+        close-on-escape
         class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-6/12 md:rounded-xl"
         :pt="{
             root: {
