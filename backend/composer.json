@@ -11,7 +11,7 @@
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9",
+        "laravel/tinker": "^2.10",
         "pbmedia/laravel-ffmpeg": "^8.5"
     },
     "require-dev": {
