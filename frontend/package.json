@@ -11,7 +11,8 @@
         "postinstall": "nuxt prepare",
         "prepare": "cd .. && husky frontend/.husky",
         "start": "concurrently \"infisical run --env=dev -- nuxt dev --host -o\" \"cd ../docker/dev && infisical run --env=dev -- docker compose up\" \"cd ../backend && wait-on tcp:3306 -d 5000 --log && infisical run --env=dev -- php artisan migrate\" \"cd ../backend && infisical run --env=dev -- php artisan serve\"",
-        "staging": "concurrently \"infisical run --env=dev -- nuxt dev --host -o\" \"cd ../backend && infisical run --env=staging -- php artisan serve\""
+        "staging": "concurrently \"infisical run --env=dev -- nuxt dev --host -o\" \"cd ../backend && infisical run --env=staging -- php artisan serve\"",
+        "clone-staging-db": "cd ../docker/dev && @powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./clone_db.ps1"
     },
     "dependencies": {
         "@fullcalendar/core": "^6.1.11",
