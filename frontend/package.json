@@ -10,7 +10,11 @@
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
         "prepare": "cd .. && husky frontend/.husky",
-        "start": "concurrently \"infisical run --env=dev -- nuxt dev --host -o\" \"cd ../backend && infisical run --env=staging -- php artisan serve\""
+        "start": "concurrently \"infisical run --env=dev -- nuxt dev -o\" \"cd ../docker/dev && infisical run --env=dev -- docker compose up\" \"cd ../backend && wait-on tcp:3306 -d 5000 --log && infisical run --env=dev -- php artisan migrate\" \"cd ../backend && infisical run --env=dev -- php artisan serve\"",
+        "start:host": "concurrently \"infisical run --env=dev -- nuxt dev --host 0 --port 3000 -o\" \"cd ../docker/dev && infisical run --env=dev -- docker compose up\" \"cd ../backend && wait-on tcp:3306 -d 5000 --log && infisical run --env=dev -- php artisan migrate\" \"cd ../backend && infisical run --env=dev -- php artisan serve\"",
+        "start:staging": "concurrently \"infisical run --env=dev -- nuxt dev -o\" \"cd ../backend && infisical run --env=staging -- php artisan serve\"",
+        "start:staging:host": "concurrently \"infisical run --env=dev -- nuxt dev --host 0 --port 3000 -o\" \"cd ../backend && infisical run --env=staging -- php artisan serve\"",
+        "clone-staging-db": "cd ../docker/dev && @powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./clone_db.ps1"
     },
     "dependencies": {
         "@fullcalendar/core": "^6.1.11",
@@ -21,10 +25,10 @@
         "@mapbox/mapbox-gl-geocoder": "^5.0.3",
         "@mapbox/search-js-web": "^1.0.0-beta.22",
         "@nuxt/eslint": "^0.3.13",
-        "@nuxt/image": "^1.8.0",
-        "@pinia/nuxt": "^0.5.4",
+        "@nuxt/image": "^1.8.1",
+        "@pinia/nuxt": "^0.5.5",
         "@studiometa/vue-mapbox-gl": "^2.5.0",
-        "@tolgee/vue": "^5.28.6",
+        "@tolgee/vue": "^5.29.1",
         "@uppy/core": "^3.11.2",
         "@uppy/dashboard": "^3.9.1",
         "@uppy/drag-drop": "^3.1.1",
@@ -42,12 +46,12 @@
         "jszip": "^3.10.1",
         "lightgallery": "^2.7.2",
         "nuxt": "^3.13.2",
-        "pinia": "^2.2.2",
+        "pinia": "^2.2.4",
         "primeicons": "^7.0.0",
         "primevue": "^3.52.0",
         "qrcode": "^1.5.4",
         "uuid": "^10.0.0",
-        "vue": "^3.5.6",
+        "vue": "^3.5.11",
         "vue-animated-counter": "^0.3.0",
         "vue-router": "^4.4.0",
         "yup": "^1.4.0"
@@ -62,13 +66,14 @@
         "@types/uuid": "^10.0.0",
         "husky": "^9.1.5",
         "lint-staged": "^15.2.10",
-        "mapbox-gl": "^3.4.0",
-        "nuxt-auth-sanctum": "^0.4.12",
+        "mapbox-gl": "^3.7.0",
+        "nuxt-auth-sanctum": "^0.5.0",
         "nuxt-primevue": "^3.0.0",
         "prettier": "^3.3.3",
-        "prettier-plugin-tailwindcss": "^0.6.6",
+        "prettier-plugin-tailwindcss": "^0.6.8",
         "typescript": "^5.6.2",
-        "vue-tsc": "^2.1.6"
+        "vue-tsc": "^2.1.6",
+        "wait-on": "^8.0.1"
     },
     "lint-staged": {
         "*.*": [
