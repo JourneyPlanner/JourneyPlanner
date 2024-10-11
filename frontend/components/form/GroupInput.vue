@@ -40,9 +40,11 @@ const isValidUrl = computed(() => {
                 v-if="name === 'link' && isValidUrl && disabled"
                 :to="value"
                 target="_blank"
-                class="border-border bg-input dark:bg-input-dark dark:text-input w-full overflow-hidden overflow-ellipsis whitespace-nowrap rounded-r-md border-b-2 border-r-2 border-t-2 px-2.5 pb-1 pt-1 font-nunito font-normal text-text hover:underline focus:outline-none focus:ring-1"
+                class="w-full overflow-hidden overflow-ellipsis whitespace-nowrap rounded-r-md border-2 border-b-2 border-r-2 border-t-2 border-calypso-300 px-2.5 pb-1 pt-1 font-nunito font-normal text-text hover:underline focus:outline-none focus:ring-1 dark:border-calypso-400 dark:text-natural-50"
                 :class="{
-                    'bg-input-disabled dark:bg-input-disabled-dark': disabled,
+                    'bg-natural-100 text-ronchi-500 dark:bg-natural-800':
+                        disabled,
+                    'bg-natural-50 dark:bg-natural-900': !disabled,
                 }"
                 >{{ value }}</NuxtLink
             >
@@ -56,7 +58,7 @@ const isValidUrl = computed(() => {
                 :disabled="disabled"
                 :value="value"
                 :placeholder="placeholder"
-                class="block w-full border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:bg-natural-100 dark:bg-natural-900 dark:text-natural-50 disabled:dark:bg-natural-800"
+                class="block w-full border-2 border-l-0 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:bg-natural-100 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 disabled:dark:bg-natural-800"
                 :class="customClass"
             />
         </InputGroup>

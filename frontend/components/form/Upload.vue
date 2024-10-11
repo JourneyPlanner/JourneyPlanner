@@ -144,7 +144,7 @@ const uppy = new Uppy({
 }
 
 .uppy-StatusBar-actionBtn {
-    @apply rounded-xl border-2 border-solid border-dandelion-300 bg-natural-50 font-semibold text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600 !important;
+    @apply rounded-xl border-2 border-solid border-dandelion-300 bg-natural-50 font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 !important;
 }
 
 .uppy-StatusBar-actionBtn--done {
@@ -172,6 +172,6 @@ const uppy = new Uppy({
 
 .uppy-StatusBar-actions,
 .uppy-StatusBar {
-    @apply z-50 !important;
+    @apply z-10 !important;
 }
 </style>

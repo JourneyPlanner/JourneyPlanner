@@ -21,7 +21,7 @@ if (props.value !== null && props.value !== "") {
 }
 
 const defaultClass =
-    "font-nunito block rounded-lg px-2.5 pb-1 pt-1 text-text dark:text-natural-50 font-normal border-2 border-calypso-300 focus:outline-none focus:ring-1 ";
+    "font-nunito block rounded-lg px-2.5 pb-1 pt-1 text-text dark:text-natural-50 font-normal border-2 border-calypso-300 dark:border-calypso-400 focus:outline-none focus:ring-1 ";
 const computedClass = computed(() => {
     return props.disabled === true
         ? defaultClass + "bg-natural-100 dark:bg-natural-800 cursor-not-allowed"

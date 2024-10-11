@@ -181,7 +181,7 @@ const confirmLeave = (event: Event) => {
         icon: "pi pi-exclamation-triangle",
         rejectClass: "hover:underline",
         acceptClass:
-            "text-error dark:text-error-dark hover:underline font-bold",
+            "text-mahagony-500 dark:text-mahagony-400 hover:underline font-bold",
         rejectLabel: t.value("common.button.cancel"),
         acceptLabel: t.value("journey.leave"),
         accept: () => {
@@ -1087,7 +1087,7 @@ function changeToFahrenheit() {
                 class="flex w-full justify-center md:justify-start lg:ml-10 lg:w-72 xl:ml-32"
             >
                 <div
-                    class="w-[90%] rounded-2xl border-2 border-solid border-calypso-300 bg-calypso-50 bg-opacity-20 dark:border-calypso-600 dark:bg-gothic-300 dark:bg-opacity-20 max-lg:mt-5 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
+                    class="w-[90%] rounded-2xl border-2 border-solid border-calypso-400 bg-calypso-50 bg-opacity-20 dark:border-calypso-600 dark:bg-gothic-300 dark:bg-opacity-20 max-lg:mt-5 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
                 >
                     <div
                         class="from-indigo-500 to-indigo-800 flex h-full flex-wrap items-center justify-center bg-gradient-to-br xs:justify-start lg:flex-col lg:justify-center"
@@ -1312,6 +1312,21 @@ function changeToFahrenheit() {
                 </button>
             </div>
         </div>
+        <ConfirmDialog
+            :draggable="false"
+            group="journey"
+            :pt="{
+                header: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+                content: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+                footer: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+            }"
+        />
         <ActivityDialog
             v-if="currUser.role === 1"
             :id="journeyId.toString()"

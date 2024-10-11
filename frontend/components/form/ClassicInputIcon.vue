@@ -41,7 +41,7 @@ const refValue = ref(props.value);
                 :disabled="disabled"
                 :as="inputType"
                 :name="name"
-                class="block w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:bg-natural-100 dark:bg-natural-900 dark:text-natural-50 disabled:dark:bg-natural-800"
+                class="block w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:bg-natural-100 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 disabled:dark:bg-natural-800"
                 :class="addClass"
                 placeholder=" "
             />

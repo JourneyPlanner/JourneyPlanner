@@ -164,7 +164,7 @@ const style = computed(() =>
                             class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
                         },
                         closeButtonIcon: {
-                            class: 'text-natural-600 hover:text-text dark:text-natural-600 dark:hover:text-natural-50 h-5 w-5',
+                            class: 'text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-5 w-5',
                         },
                     }"
                 >
