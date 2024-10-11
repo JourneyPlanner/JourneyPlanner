@@ -25,7 +25,10 @@ if (error.value) {
     });
 } else {
     await navigateTo(`/journey/${data.value.journey.id}`);
+    //TODO id aus local storage löschen wenn vorhanden
 }
+
+//TODO joining text ändern?
 </script>
 
 <template>

@@ -7,6 +7,7 @@ import * as yup from "yup";
 
 const { t } = useTranslate();
 const client = useSanctumClient();
+const { isAuthenticated } = useSanctumAuth();
 const toast = useToast();
 const store = useDashboardStore();
 const journeyStore = useJourneyStore();
@@ -16,14 +17,12 @@ const journeyInvite = uuidv4();
 const journeyInviteLink = ref(
     window.location.origin + "/invite/" + journeyInvite,
 );
-
+//TODO invite link rebranden zu account erstellen/reise saven link wenn kein account vorhanden
+//TODO id local storage speichern bei response und nicht auf dashboard sondern auf reise direkt leiten
+//TODO wenn id vorhanden direkt weiterleiten (vlt popup dann?)
 const title = t.value("title.journey.create");
 useHead({
     title: `${title} | JourneyPlanner`,
-});
-
-definePageMeta({
-    middleware: ["sanctum:auth"],
 });
 
 /**
@@ -166,7 +165,7 @@ function copyToClipboard() {
                             class="border-10 border text-calypso-300"
                         />
 
-                        <div class="relative my-2 flex">
+                        <div v-if="isAuthenticated" class="relative my-2 flex">
                             <input
                                 id="journey-invite"
                                 v-model="journeyInviteLink"

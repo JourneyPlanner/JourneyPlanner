@@ -180,7 +180,7 @@ function journeyEdited(journey: Journey) {
                 </Accordion>
             </div>
         </Sidebar>
-        <EditJourneyDialog
+        <JourneyEditJourneyDialog
             :id="journeyStore.getID()"
             :is-journey-dialog-visible="isJourneyEditMenuVisible"
             :name="journeyStore.getName()"
@@ -190,7 +190,7 @@ function journeyEdited(journey: Journey) {
             @close-edit-journey-dialog="isJourneyEditMenuVisible = false"
             @journey-edited="journeyEdited"
         />
-        <IdDialogsTemplateDialog
+        <JourneyIdDialogsTemplateDialog
             v-if="currUser?.role === 1"
             :is-create-template-visible="isCreateTemplateVisible"
             @close-template-dialog="isCreateTemplateVisible = false"

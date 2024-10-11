@@ -3,7 +3,7 @@ import { useTranslate } from "@tolgee/vue";
 import { format } from "date-fns";
 import JSConfetti from "js-confetti";
 
-import scroll from "../../utils/scroll";
+import scroll from "../../../utils/scroll";
 
 defineProps({
     hundredsDays: {
@@ -249,7 +249,7 @@ function toggleActivityDialog() {
                                             <div
                                                 class="-ml-14 mt-3 flex h-1/2 items-center justify-center"
                                             >
-                                                <WeatherIcon
+                                                <JourneyIdComponentsWeatherIcon
                                                     class="-mt-2 ml-8 w-24"
                                                     :weather-code="
                                                         weatherCodeToday
@@ -283,7 +283,7 @@ function toggleActivityDialog() {
                                             </div>
                                         </div>
                                         <div class="z-0 h-full w-1/3 pt-2">
-                                            <SmallWeather
+                                            <JourneyIdComponentsSmallWeather
                                                 :celsius="celsius"
                                                 :max-temp="
                                                     weather.forecast[1]
@@ -301,7 +301,7 @@ function toggleActivityDialog() {
                                                     weatherTypeTomorrow
                                                 "
                                             />
-                                            <SmallWeather
+                                            <JourneyIdComponentsSmallWeather
                                                 :celsius="celsius"
                                                 :max-temp="
                                                     weather.forecast[2]
@@ -451,7 +451,7 @@ function toggleActivityDialog() {
                     <div class="relative flex h-full w-full flex-col items-end">
                         <div class="flex w-full pt-2 font-nunito max-lg:h-1/2">
                             <div class="flex w-1/2 items-center justify-center">
-                                <WeatherIcon
+                                <JourneyIdComponentsWeatherIcon
                                     class="w-28"
                                     :weather-code="weatherCodeToday"
                                 />
@@ -520,7 +520,7 @@ function toggleActivityDialog() {
                             </div>
                         </div>
                         <div class="grid h-1/2 w-full grid-cols-3 gap-2 pt-4">
-                            <SmallWeather
+                            <JourneyIdComponentsSmallWeather
                                 :celsius="celsius"
                                 :max-temp="weather.forecast[1].temperature_max"
                                 :min-temp="weather.forecast[1].temperature_min"
@@ -528,7 +528,7 @@ function toggleActivityDialog() {
                                 :weather-code="weatherCodeTomorrow"
                                 :weather-type="weatherTypeTomorrow"
                             />
-                            <SmallWeather
+                            <JourneyIdComponentsSmallWeather
                                 :celsius="celsius"
                                 :max-temp="weather.forecast[2].temperature_max"
                                 :min-temp="weather.forecast[2].temperature_min"
@@ -536,7 +536,7 @@ function toggleActivityDialog() {
                                 :weather-code="weatherCodeInTwoDays"
                                 :weather-type="weatherTypeInTwoDays"
                             />
-                            <SmallWeather
+                            <JourneyIdComponentsSmallWeather
                                 :celsius="celsius"
                                 :max-temp="weather.forecast[3].temperature_max"
                                 :min-temp="weather.forecast[3].temperature_min"

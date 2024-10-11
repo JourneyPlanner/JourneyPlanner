@@ -27,13 +27,18 @@ const uploadResult = ref();
 const upload = ref();
 const calendar = ref();
 
-definePageMeta({
-    middleware: ["sanctum:auth"],
-});
+//TODO apis anpassen wenn kein acc
+//TODO nicht vorhandene funktionen ausgrauen (sidebar, invite) und popup
+//TODO dashboard ausgrauen
+//TODO neuer button für journey link saven? in menu sidebar? und halt im popup
+//TODO bei delete dialog mit anderen dude zu reiseleiter machen weggeben (idk ob das auftreten kann eig)
+//TODO bei delete id aus local storage löschen
 
 const { data, error } = await useAsyncData("journey", () =>
     client(`/api/journey/${journeyId}`),
 );
+console.log(data);
+console.log(error);
 
 if (error.value) {
     throw createError({
@@ -210,7 +215,7 @@ async function leaveJourney() {
 
 <template>
     <div class="flex flex-col font-nunito text-text dark:text-natural-50">
-        <IdMemberSidebar
+        <JourneyIdMemberSidebar
             :journey-i-d="String(journeyId)"
             :is-member-sidebar-visible="isMemberSidebarVisible"
             :invite="String(journeyStore.getInvite())"
@@ -219,7 +224,7 @@ async function leaveJourney() {
             @leave-journey="confirmLeave"
             @close="isMemberSidebarVisible = false"
         />
-        <IdMenuSidebar
+        <JourneyIdMenuSidebar
             :is-menu-sidebar-visible="isMenuSidebarVisible"
             :curr-user="currUser!"
             @leave-journey="confirmLeave"
@@ -250,7 +255,7 @@ async function leaveJourney() {
                 />
             </div>
         </div>
-        <IdTicketSection
+        <JourneyIdTicketSection
             :daysto-end="daystoEnd"
             :day="day"
             :tens-days="tensDays"
@@ -272,13 +277,13 @@ async function leaveJourney() {
                 />
             </div>
         </div>
-        <IdActivitySection
+        <JourneyIdActivitySection
             :curr-user="currUser!"
             :is-activity-dialog-visible="isActivityDialogVisible"
             @close="isActivityDialogVisible = false"
         />
         <div ref="calendar">
-            <IdJourneyCalendar
+            <JourneyIdJourneyCalendar
                 :id="journeyId.toString()"
                 :current-user-role="currUser?.role ?? 0"
                 :journey-ended="journeyEnded"
@@ -287,15 +292,15 @@ async function leaveJourney() {
                 :journey-enddate="journeyData.to"
             />
         </div>
-        <IdActivityMap v-if="activityDataLoaded" />
+        <JourneyIdActivityMap v-if="activityDataLoaded" />
         <div
             ref="upload"
             class="flex items-center justify-center md:justify-start"
         >
-            <IdUpload @uploaded="handleUpload" />
+            <JourneyIdUpload @uploaded="handleUpload" />
         </div>
         <div class="flex items-center justify-center md:justify-start">
-            <IdMediaGallery :upload-data="uploadResult" />
+            <JourneyIdMediaGallery :upload-data="uploadResult" />
         </div>
 
         <ConfirmDialog

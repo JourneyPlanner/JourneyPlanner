@@ -634,7 +634,7 @@ function moveActivity(start: Date, end: Date) {
                     class="w-full"
                 />
             </div>
-            <IdDialogsActivityDialog
+            <JourneyIdDialogsActivityDialog
                 :id="id.toString()"
                 :activity-id="activityId"
                 :visible="isActivityInfoVisible"
