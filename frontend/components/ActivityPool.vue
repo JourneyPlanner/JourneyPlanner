@@ -197,7 +197,7 @@ const itemsJourneyGuide = ref([
         class="flex w-full justify-center overflow-x-hidden md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
     >
         <div
-            class="h-40 w-[90%] rounded-2xl border-[3px] border-dashed border-calypso-300 dark:border-calypso-600 dark:bg-background-dark max-lg:mt-5 sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
+            class="h-40 w-[90%] rounded-2xl border-[3px] border-dashed border-calypso-400 dark:border-calypso-600 dark:bg-background-dark max-lg:mt-5 sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
         >
             <ScrollPanel
                 class="h-[9.7rem] w-full sm:h-[12.7rem] md:h-[16.7rem]"
@@ -220,7 +220,7 @@ const itemsJourneyGuide = ref([
                             v-if="activity.calendar_activities.length <= 0"
                             id="draggable-el"
                             :key="activity.id"
-                            class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-calypso-300 bg-light px-2 py-1 text-base font-normal dark:border-calypso-600 dark:bg-dark sm:h-16 sm:text-base lg:rounded-xl"
+                            class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-calypso-400 bg-light px-2 py-1 text-base font-normal dark:border-calypso-600 dark:bg-dark sm:h-16 sm:text-base lg:rounded-xl"
                             :data-event="
                                 JSON.stringify({
                                     title: activity.name,

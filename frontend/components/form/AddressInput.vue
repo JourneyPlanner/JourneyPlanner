@@ -89,6 +89,7 @@ if (
     (darkTheme.matches && colorMode.preference === "system")
 ) {
     input = "#3D3D3D";
+    input = "#3D3D3D";
     text = "#FCFCFC";
     placeholderColor = "#989898";
     hoverCancel = "#E58484";
