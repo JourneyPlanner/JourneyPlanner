@@ -370,7 +370,13 @@ function editJourney(journey: Journey, id: string) {
                     class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
                 footer: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
+                },
+                closeButton: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
+                },
+                closeButtonIcon: {
+                    class: 'h-5 w-5',
                 },
             }"
         />

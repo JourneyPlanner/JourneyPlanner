@@ -241,7 +241,7 @@ const setImage = (media) => {
             </div>
         </div>
         <div
-            class="h-[9.7rem] w-full rounded-2xl border-[3px] border-calypso-400 dark:border-calypso-600 sm:h-[12.7rem] md:h-[16.7rem] lg:rounded-3xl lg:p-1"
+            class="h-[9.7rem] w-full rounded-2xl border-[3px] border-calypso-300 dark:border-calypso-600 sm:h-[12.7rem] md:h-[16.7rem] lg:rounded-3xl lg:p-1"
         >
             <ScrollPanel
                 class="h-full w-full overflow-x-hidden"

@@ -39,18 +39,18 @@ defineEmits(["input"]);
             :show-button-bar="true"
             :number-of-months="1"
             date-format="dd/mm/yy"
-            panel-class="bg-natural-50 dark:bg-natural-800 dark:text-natural-50"
-            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 dark:bg-natural-800 border-2 border-calypso-300 dark:border-calypso-400 focus:outline-none focus:ring-1"
+            panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
+            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 dark:bg-natural-900 border-2 border-calypso-300 dark:border-calypso-400 focus:outline-none focus:ring-1"
             :pt="{
                 panel: { class: 'text-text font-nunito z-50' },
                 header: {
-                    class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-800 dark:text-natural-50',
+                    class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-900 dark:text-natural-50',
                 },
                 title: {
                     class: 'text-text dark:text-natural-50 flex gap-1 font-nunito',
                 },
                 dayLabel: { class: 'text-calypso-400' },
-                datepickerMask: { class: 'text-text bg-natural-800' },
+                datepickerMask: { class: 'text-text bg-natural-900' },
             }"
             @focus="handleFocus"
             @hide="handleBlur"

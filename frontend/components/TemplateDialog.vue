@@ -156,7 +156,9 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                 >
                     <T key-name="journey.template.create" />
                 </h3>
-                <span class="h-0.5 w-full bg-calypso-400 md:mr-2" />
+                <span
+                    class="h-0.5 w-full bg-calypso-300 dark:bg-calypso-600 md:mr-2"
+                />
             </template>
             <form
                 class="flex h-full flex-col justify-between bg-background font-nunito text-text dark:bg-background-dark dark:text-natural-50"

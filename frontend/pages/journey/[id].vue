@@ -387,7 +387,7 @@ function changeToFahrenheit() {
             }"
         >
             <template #header>
-                <span class="h-0.5 w-full bg-calypso-400" />
+                <span class="h-0.5 w-full bg-calypso-300 dark:bg-calypso-600" />
                 <div
                     class="col-span-5 flex w-full flex-row justify-center text-2xl font-medium text-text dark:text-natural-50"
                 >
@@ -396,7 +396,7 @@ function changeToFahrenheit() {
                     </h3>
                 </div>
                 <span
-                    class="col-span-4 col-start-7 h-0.5 w-full bg-calypso-400"
+                    class="col-span-4 col-start-7 h-0.5 w-full bg-calypso-300 dark:bg-calypso-600"
                 />
             </template>
             <div class="text-xl font-medium text-text dark:text-natural-50">
@@ -497,7 +497,7 @@ function changeToFahrenheit() {
             }"
         >
             <template #header>
-                <span class="h-0.5 w-full bg-calypso-400" />
+                <span class="h-0.5 w-full bg-calypso-300 dark:bg-calypso-600" />
                 <div
                     class="col-span-3 flex w-full flex-row justify-center text-2xl font-medium text-text dark:text-natural-50"
                 >
@@ -506,7 +506,7 @@ function changeToFahrenheit() {
                     </h3>
                 </div>
                 <span
-                    class="col-span-6 col-start-5 h-0.5 w-full bg-calypso-400"
+                    class="col-span-6 col-start-5 h-0.5 w-full bg-calypso-300 dark:bg-calypso-600"
                 />
             </template>
             <div>
@@ -1087,7 +1087,7 @@ function changeToFahrenheit() {
                 class="flex w-full justify-center md:justify-start lg:ml-10 lg:w-72 xl:ml-32"
             >
                 <div
-                    class="w-[90%] rounded-2xl border-2 border-solid border-calypso-400 bg-calypso-50 bg-opacity-20 dark:border-calypso-600 dark:bg-gothic-300 dark:bg-opacity-20 max-lg:mt-5 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
+                    class="w-[90%] rounded-2xl border-2 border-solid border-calypso-300 bg-calypso-50 bg-opacity-20 dark:border-calypso-600 dark:bg-gothic-300 dark:bg-opacity-20 max-lg:mt-5 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
                 >
                     <div
                         class="from-indigo-500 to-indigo-800 flex h-full flex-wrap items-center justify-center bg-gradient-to-br xs:justify-start lg:flex-col lg:justify-center"
@@ -1312,21 +1312,6 @@ function changeToFahrenheit() {
                 </button>
             </div>
         </div>
-        <ConfirmDialog
-            :draggable="false"
-            group="journey"
-            :pt="{
-                header: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                content: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                footer: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-            }"
-        />
         <ActivityDialog
             v-if="currUser.role === 1"
             :id="journeyId.toString()"
@@ -1412,7 +1397,13 @@ function changeToFahrenheit() {
                     class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
                 footer: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
+                },
+                closeButton: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
+                },
+                closeButtonIcon: {
+                    class: 'h-5 w-5',
                 },
             }"
         />

@@ -188,7 +188,9 @@ const onSave = handleSubmit(async (values) => {
             >
                 <T key-name="dashboard.edit.header" />
             </h3>
-            <span class="h-0.5 w-full bg-calypso-400 md:mr-2" />
+            <span
+                class="h-0.5 w-full bg-calypso-300 dark:bg-calypso-600 md:mr-2"
+            />
         </template>
         <form @submit.prevent="onSave()">
             <div class="flex flex-col">

@@ -33,7 +33,7 @@ const refValue = ref(props.value);
             <T :key-name="translationKey" />
         </label>
         <IconField :class="customClass" :icon-position="iconPos">
-            <InputIcon class="pi text-calypso-300" :class="icon" />
+            <InputIcon class="pi text-calypso-400" :class="icon" />
             <Field
                 :id="id"
                 v-model="refValue"

@@ -451,7 +451,9 @@ function setSelectedDate(date: Date) {
                     navContainer: {
                         class: 'border-b-2 border-natural-200 dark:border-natural-500',
                     },
-                    inkbar: { class: 'pt-0.5 bg-calypso-300' },
+                    inkbar: {
+                        class: 'pt-0.5 bg-calypso-400 dark:bg-calypso-400',
+                    },
                 }"
             >
                 <TabPanel
@@ -461,7 +463,7 @@ function setSelectedDate(date: Date) {
                             class: [
                                 'font-nunito bg-background dark:bg-background-dark',
                                 {
-                                    'text-calypso-300 border-b-2 border-calypso-300':
+                                    'text-calypso-600 text-border-600 dark:text-calypso-400 border-b-2 dark:border-calypso-400':
                                         activeIndex === 0,
                                     'text-natural-500': activeIndex !== 0,
                                 },
@@ -532,7 +534,7 @@ function setSelectedDate(date: Date) {
                             class: [
                                 'font-nunito bg-background dark:bg-background-dark',
                                 {
-                                    'text-calypso-300 border-b-2 border-calypso-300':
+                                    'text-calypso-600 text-border-600 dark:text-calypso-400 border-b-2 dark:border-calypso-400':
                                         activeIndex === 1,
                                     'text-natural-500': activeIndex !== 1,
                                 },
@@ -595,7 +597,7 @@ function setSelectedDate(date: Date) {
                             class: [
                                 'font-nunito bg-background dark:bg-background-dark',
                                 {
-                                    'text-calypso-300 border-b-2 border-calypso-300':
+                                    'text-calypso-600 text-border-600 dark:text-calypso-400 border-b-2 dark:border-calypso-400':
                                         activeIndex === 2,
                                     'text-natural-500': activeIndex !== 2,
                                 },
@@ -648,7 +650,7 @@ function setSelectedDate(date: Date) {
                     type="button"
                     :label="t('common.button.cancel')"
                     icon="pi pi-times"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
                         label: {
@@ -668,7 +670,7 @@ function setSelectedDate(date: Date) {
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
+                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                 />
             </div>
             <div
@@ -679,7 +681,7 @@ function setSelectedDate(date: Date) {
                     v-if="calendarActivity"
                     type="button"
                     :label="t('calendar.options.remove')"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                     icon="pi pi-calendar-times"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
@@ -692,7 +694,7 @@ function setSelectedDate(date: Date) {
                 <Button
                     type="button"
                     :label="t('dashboard.options.edit')"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 font-bold text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 font-bold text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                     icon="pi pi-pencil"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
@@ -714,7 +716,7 @@ function setSelectedDate(date: Date) {
                 <Button
                     type="button"
                     :label="t('dashboard.options.delete')"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                     icon="pi pi-trash"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
@@ -735,7 +737,7 @@ function setSelectedDate(date: Date) {
                             class: 'display-block flex-none font-bold font-nunito',
                         },
                     }"
-                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-atlantis-400 bg-natural-50 text-center text-text hover:bg-atlantis-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-atlantis-30040"
+                    class="mt-auto flex h-9 w-40 flex-row justify-center rounded-xl border-2 border-atlantis-400 bg-natural-50 text-center text-text hover:bg-atlantis-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-atlantis-30040"
                 />
             </div>
         </form>

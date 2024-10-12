@@ -164,6 +164,7 @@ function copyToClipboard() {
                         />
 
                         <div class="relative my-2 flex">
+                            <!-- TODO lightmode bg color anpassen? -->
                             <input
                                 id="journey-invite"
                                 v-model="journeyInviteLink"

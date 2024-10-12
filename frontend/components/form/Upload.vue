@@ -92,7 +92,7 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard .uppy-Dashboard-inner {
-    @apply h-40 w-full rounded-2xl border-[3px] border-dashed border-calypso-400 text-text dark:border-calypso-600 dark:bg-none dark:text-natural-50 sm:h-[13rem] md:h-[17rem] lg:rounded-3xl !important;
+    @apply h-40 w-full rounded-2xl border-[3px] border-dashed border-calypso-300 text-text dark:border-calypso-600 dark:bg-none dark:text-natural-50 sm:h-[13rem] md:h-[17rem] lg:rounded-3xl !important;
 }
 
 .uppy-Dashboard-AddFiles {
@@ -112,7 +112,7 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard-browse {
-    @apply text-calypso-500 hover:font-semibold hover:underline hover:decoration-calypso-500 dark:text-calypso-600 dark:hover:decoration-calypso-600 !important;
+    @apply text-calypso-600 hover:font-semibold hover:underline hover:decoration-calypso-600 dark:text-calypso-400 dark:hover:decoration-calypso-400 !important;
 }
 
 .uppy-c-btn-primary {

@@ -271,11 +271,15 @@ function blur(e: Event) {
         >
             <div class="pl-4 pt-4 text-text dark:text-natural-50">
                 <div class="flex items-center pb-3">
-                    <div class="h-[1.6px] w-10 bg-calypso-400" />
+                    <div
+                        class="h-[1.6px] w-10 bg-calypso-300 dark:bg-calypso-600"
+                    />
                     <div class="flex-grow-5 mx-4 text-[1.65rem] font-semibold">
                         <T key-name="dashboard.user.settings.profile" />
                     </div>
-                    <div class="h-[1.6px] flex-grow bg-calypso-400" />
+                    <div
+                        class="h-[1.6px] flex-grow bg-calypso-300 dark:bg-calypso-600"
+                    />
                 </div>
                 <div class="flex pb-5 pl-10">
                     <div class="flex w-full flex-col">
@@ -348,13 +352,17 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div class="flex items-center pb-3">
-                    <div class="bg h-[1.6px] w-10 bg-calypso-400" />
+                    <div
+                        class="bg h-[1.6px] w-10 bg-calypso-300 dark:bg-calypso-600"
+                    />
                     <div class="flex-grow-5 mx-4 text-[1.65rem] font-semibold">
                         <T
                             key-name="dashboard.user.settings.account.security"
                         />
                     </div>
-                    <div class="h-[1.6px] flex-grow bg-calypso-400" />
+                    <div
+                        class="h-[1.6px] flex-grow bg-calypso-300 dark:bg-calypso-600"
+                    />
                 </div>
                 <div class="flex pb-5 pl-10">
                     <div class="flex w-full flex-col">
@@ -412,11 +420,15 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div class="flex items-center pb-4">
-                    <div class="h-[1.6px] w-10 bg-calypso-400" />
+                    <div
+                        class="h-[1.6px] w-10 bg-calypso-300 dark:bg-calypso-600"
+                    />
                     <div class="flex-grow-5 mx-4 text-[1.65rem] font-semibold">
                         <T key-name="dashboard.user.settings.appearance" />
                     </div>
-                    <div class="h-[1.6px] flex-grow bg-calypso-400" />
+                    <div
+                        class="h-[1.6px] flex-grow bg-calypso-300 dark:bg-calypso-600"
+                    />
                 </div>
                 <div class="flex pb-5 pl-10">
                     <div class="flex w-full flex-col">
@@ -540,11 +552,15 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div class="flex items-center pb-4">
-                    <div class="h-[1.6px] w-10 bg-calypso-400" />
+                    <div
+                        class="h-[1.6px] w-10 bg-calypso-300 dark:bg-calypso-600"
+                    />
                     <div class="flex-grow-5 mx-4 text-[1.65rem] font-semibold">
                         <T key-name="dashboard.user.settings.delete.log.out" />
                     </div>
-                    <div class="h-[1.6px] flex-grow bg-calypso-400" />
+                    <div
+                        class="h-[1.6px] flex-grow bg-calypso-300 dark:bg-calypso-600"
+                    />
                 </div>
                 <div class="flex pb-5 pl-10">
                     <div class="flex w-full flex-col">
@@ -632,11 +648,13 @@ function blur(e: Event) {
             </template>
             <div class="pl-4 text-text dark:text-natural-50">
                 <div class="flex items-center pb-2">
-                    <div class="h-0.5 w-6 bg-calypso-400" />
+                    <div class="h-0.5 w-6 bg-calypso-300 dark:bg-calypso-600" />
                     <div class="flex-grow-5 mx-2 text-2xl font-semibold">
                         <T key-name="dashboard.user.settings.profile" />
                     </div>
-                    <div class="h-0.5 flex-grow bg-calypso-400" />
+                    <div
+                        class="h-0.5 flex-grow bg-calypso-300 dark:bg-calypso-600"
+                    />
                 </div>
                 <div class="flex pb-5 pl-4">
                     <div class="mr-5 flex w-[50%] flex-col">
@@ -719,13 +737,15 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div class="flex items-center pb-2">
-                    <div class="h-0.5 w-6 bg-calypso-400" />
+                    <div class="h-0.5 w-6 bg-calypso-300 dark:bg-calypso-600" />
                     <div class="flex-grow-5 mx-2 text-2xl font-semibold">
                         <T
                             key-name="dashboard.user.settings.account.security"
                         />
                     </div>
-                    <div class="h-0.5 flex-grow bg-calypso-400" />
+                    <div
+                        class="h-0.5 flex-grow bg-calypso-300 dark:bg-calypso-600"
+                    />
                 </div>
                 <div class="flex pb-5 pl-4">
                     <div class="mr-5 flex w-[50%] flex-col">
@@ -793,11 +813,13 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div class="flex items-center pb-2">
-                    <div class="h-0.5 w-6 bg-calypso-400" />
+                    <div class="h-0.5 w-6 bg-calypso-300 dark:bg-calypso-600" />
                     <div class="flex-grow-5 mx-2 text-2xl font-semibold">
                         <T key-name="dashboard.user.settings.appearance" />
                     </div>
-                    <div class="h-0.5 flex-grow bg-calypso-400" />
+                    <div
+                        class="h-0.5 flex-grow bg-calypso-300 dark:bg-calypso-600"
+                    />
                 </div>
                 <div class="flex pb-5 pl-4">
                     <div class="flex w-full flex-col">
@@ -921,11 +943,13 @@ function blur(e: Event) {
                     </div>
                 </div>
                 <div class="flex items-center pb-2">
-                    <div class="h-0.5 w-6 bg-calypso-400" />
+                    <div class="h-0.5 w-6 bg-calypso-300 dark:bg-calypso-600" />
                     <div class="flex-grow-5 mx-2 text-2xl font-semibold">
                         <T key-name="dashboard.user.settings.delete.log.out" />
                     </div>
-                    <div class="h-0.5 flex-grow bg-calypso-400" />
+                    <div
+                        class="h-0.5 flex-grow bg-calypso-300 dark:bg-calypso-600"
+                    />
                 </div>
                 <div class="flex pb-5 pl-4">
                     <div class="flex w-full flex-col">
