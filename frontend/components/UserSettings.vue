@@ -99,7 +99,15 @@ function changeColorMode() {
     } else if (selectedColorMode.value.name == "Lightmode") {
         colorMode.preference = "light";
     } else {
-        colorMode.preference = "System";
+        colorMode.preference = "system";
+    }
+}
+
+function checkUsername() {
+    if (username.value != "") {
+        onSubmitUsername();
+    } else {
+        username.value = currUsername.value;
     }
 }
 
@@ -151,6 +159,7 @@ async function changeUsername(newUsername: string) {
                         life: 6000,
                     });
                 }
+                username.value = currUsername.value;
             },
         });
     }
@@ -163,9 +172,13 @@ async function changeUsername(newUsername: string) {
 async function changeDisplayname(newDisplayname: string) {
     if (newDisplayname != "") {
         displayname.value = newDisplayname;
-        isDisplaynameChangeDialogVisible.value = false;
+    } else {
+        displayname.value = currDisplayname.value;
     }
-    if (currDisplayname.value != displayname.value) {
+
+    isDisplaynameChangeDialogVisible.value = false;
+
+    if (currDisplayname.value != displayname.value && displayname.value != "") {
         await client(`/api/user/change-display-name`, {
             method: "PUT",
             body: {
@@ -190,6 +203,7 @@ async function changeDisplayname(newDisplayname: string) {
                     detail: t.value("common.error.unknown"),
                     life: 6000,
                 });
+                displayname.value = currDisplayname.value;
             },
         });
     }
@@ -299,7 +313,7 @@ function blur(e: Event) {
                             name="displayname"
                             :placeholder="currDisplayname"
                             class="focus-ring-1 w-60 self-end rounded-md border-2 border-natural-300 bg-natural-100 py-0.5 pl-3 pr-1 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
-                            @blur="changeDisplayname('')"
+                            @blur="changeDisplayname(displayname)"
                             @keyup.enter="blur"
                         />
                         <span
@@ -328,7 +342,7 @@ function blur(e: Event) {
                             name="username"
                             :placeholder="currUsername"
                             class="focus-ring-1 w-60 self-end rounded-md border-2 border-natural-300 bg-natural-100 py-0.5 pl-3 pr-1 text-text placeholder:text-text hover:border-calypso-400 hover:bg-natural-50 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:placeholder:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
-                            @blur="onSubmitUsername"
+                            @blur="checkUsername()"
                             @keyup.enter="blur"
                         />
                         <span
