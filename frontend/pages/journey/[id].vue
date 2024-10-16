@@ -8,6 +8,7 @@ const toast = useToast();
 const journeyStore = useJourneyStore();
 const activityStore = useActivityStore();
 const client = useSanctumClient();
+const { isAuthenticated } = useSanctumAuth();
 const { t } = useTranslate();
 
 const journeyId = route.params.id;
@@ -28,19 +29,18 @@ const upload = ref();
 const calendar = ref();
 
 //TODO apis anpassen wenn kein acc
-//TODO nicht vorhandene funktionen ausgrauen (sidebar, invite) und popup
-//TODO dashboard ausgrauen
-//TODO neuer button für journey link saven? in menu sidebar? und halt im popup
+//TODO nicht vorhandene funktionen ausgrauen (sidebar, invite, create template, dashboard) und popup on click
 //TODO bei delete dialog mit anderen dude zu reiseleiter machen weggeben (idk ob das auftreten kann eig)
-//TODO bei delete id aus local storage löschen
+//TODO: prop type uploadRef in ticket section warning
 
 const { data, error } = await useAsyncData("journey", () =>
     client(`/api/journey/${journeyId}`),
 );
-console.log(data);
-console.log(error);
 
-if (error.value) {
+if (error.value?.statusCode === 404) {
+    if (!isAuthenticated) {
+        localStorage.removeItem("JP_guest_journey_id");
+    }
     throw createError({
         statusCode: 404,
         statusMessage: "Journey not found",
@@ -189,7 +189,12 @@ async function leaveJourney() {
                     detail: t.value("leave.journey.toast.success.detail"),
                     life: 3000,
                 });
-                await navigateTo("/dashboard");
+
+                if (!isAuthenticated) {
+                    await navigateTo("/journey/new");
+                } else {
+                    await navigateTo("/dashboard");
+                }
             }
         },
         async onResponseError({ response }) {

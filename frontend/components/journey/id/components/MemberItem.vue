@@ -85,7 +85,7 @@ const roleType = computed(() => {
             <T key-name="journey.sidebar.list.member" />
         </h4>
     </form>
-    <IdDialogsProfileDialog
+    <JourneyIdDialogsProfileDialog
         :visible="isProfileDialogVisible"
         :username="username"
         :displayname="displayName"

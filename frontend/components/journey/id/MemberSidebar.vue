@@ -213,7 +213,7 @@ function leave(event: Event) {
                 id="list"
                 class="mt-3 flex flex-grow flex-col gap-3 overflow-y-auto pr-0.5"
             >
-                <IdComponentsMemberItem
+                <JourneyIdComponentsMemberItem
                     v-for="user in users"
                     :id="user.id"
                     :key="user.id"
@@ -236,26 +236,11 @@ function leave(event: Event) {
                 </button>
             </div>
         </Sidebar>
-        <Dialog
-            v-model:visible="isQRCodeVisible"
-            modal
-            dismissable-mask
-            close-on-esc
-            :header="t('journey.qrcode')"
-            :pt="{
-                root: { class: 'bg-background dark:bg-background-dark' },
-                content: { class: 'bg-background dark:bg-background-dark' },
-                header: {
-                    class: 'bg-background dark:bg-background-dark text-text dark:text-natural-50 flex gap-x-5 font-nunito items-center',
-                },
-                closeButtonIcon: {
-                    class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10',
-                },
-            }"
-        >
-            <div class="bg-background dark:bg-background-dark">
-                <img class="w-full" :src="qrcode" alt="QR Code" />
-            </div>
-        </Dialog>
+        <JourneyIdDialogsQRCodeDialog
+            :qrcode="qrcode"
+            :visible="isQRCodeVisible"
+            :tolgee-key="'journey.qrcode'"
+            @close="isQRCodeVisible = false"
+        />
     </div>
 </template>

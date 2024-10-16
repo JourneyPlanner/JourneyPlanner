@@ -49,11 +49,11 @@ function close() {
                 </button>
             </div>
         </div>
-        <IdComponentsActivityPool
+        <JourneyIdComponentsActivityPool
             v-if="currUser?.role === 1"
             :id="journeyStore.getID()"
         />
-        <IdDialogsActivityDialog
+        <JourneyIdDialogsActivityDialog
             v-if="currUser?.role === 1"
             :id="journeyStore.getID()"
             :visible="isDialogVisible"

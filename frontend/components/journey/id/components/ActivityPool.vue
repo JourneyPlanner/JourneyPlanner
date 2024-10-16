@@ -321,7 +321,7 @@ const itemsJourneyGuide = ref([
                 </div>
             </ScrollPanel>
         </div>
-        <IdDialogsActivityDialog
+        <JourneyIdDialogsActivityDialog
             :id="id.toString()"
             :activity-id="activityId"
             :visible="isActivityInfoVisible"

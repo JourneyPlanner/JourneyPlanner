@@ -159,12 +159,20 @@ async function registerUser(userData: object) {
                                 <T key-name="form.button.register" />
                             </button>
                         </form>
-                        <NuxtLink
-                            to="/login"
-                            class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"
-                        >
-                            <T key-name="form.text.already_account" />
-                        </NuxtLink>
+                        <div class="flex flex-row gap-x-2">
+                            <NuxtLink
+                                to="/login"
+                                class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"
+                            >
+                                <T key-name="form.text.already_account" />
+                            </NuxtLink>
+                            <NuxtLink
+                                to="/journey/new"
+                                class="my-1 mt-auto border-l-2 border-natural-300 font-nunito font-semibold hover:underline dark:text-natural-50"
+                            >
+                                <T key-name="form.text.tryforfree" />
+                            </NuxtLink>
+                        </div>
                     </fieldset>
                 </div>
             </div>

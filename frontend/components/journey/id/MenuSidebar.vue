@@ -16,10 +16,12 @@ const emit = defineEmits(["leave-journey", "journey-edited", "close"]);
 
 const journeyStore = useJourneyStore();
 const { t } = useTranslate();
+const { isAuthenticated } = useSanctumAuth();
 
 const isVisible = ref(props.isMenuSidebarVisible);
 const isJourneyEditMenuVisible = ref(false);
 const isCreateTemplateVisible = ref(false);
+const isUnlockDialogVisible = ref(false);
 
 watch(
     () => props.isMenuSidebarVisible,
@@ -145,7 +147,6 @@ function journeyEdited(journey: Journey) {
                         </div>
                     </AccordionTab>
                     <AccordionTab
-                        v-if="currUser?.role === 1"
                         :header="t('dashboard.options.leave')"
                         :pt="{
                             root: {
@@ -165,7 +166,9 @@ function journeyEdited(journey: Journey) {
                             >
                                 <T key-name="journey.leave.detail" />
                                 <T
-                                    v-if="currUser.role === 1"
+                                    v-if="
+                                        currUser.role === 1 && isAuthenticated
+                                    "
                                     key-name="journey.leave.detail.journeyguide"
                                 />
                             </p>
@@ -177,10 +180,39 @@ function journeyEdited(journey: Journey) {
                             </button>
                         </div>
                     </AccordionTab>
+                    <AccordionTab
+                        :header="t('dashboard.options.unlock')"
+                        :pt="{
+                            root: {
+                                class: 'border-b-2 border-natural-300 dark:border-natural-700',
+                            },
+                            headerAction: {
+                                class: 'pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                            },
+                            content: {
+                                class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                            },
+                        }"
+                    >
+                        <!-- TODO: check für if not authenticated einbauen (auf backend warten, sonst kann ich nicht testen)-->
+                        <div>
+                            <p
+                                class="text-base font-medium text-natural-600 dark:text-natural-300"
+                            >
+                                <T key-name="journey.unlock.detail" />
+                            </p>
+                            <button
+                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                @click="isUnlockDialogVisible = true"
+                            >
+                                <T key-name="journey.unlock.short" />
+                            </button>
+                        </div>
+                    </AccordionTab>
                 </Accordion>
             </div>
         </Sidebar>
-        <JourneyEditJourneyDialog
+        <JourneyEditDialog
             :id="journeyStore.getID()"
             :is-journey-dialog-visible="isJourneyEditMenuVisible"
             :name="journeyStore.getName()"
@@ -194,6 +226,10 @@ function journeyEdited(journey: Journey) {
             v-if="currUser?.role === 1"
             :is-create-template-visible="isCreateTemplateVisible"
             @close-template-dialog="isCreateTemplateVisible = false"
+        />
+        <JourneyIdDialogsUnlockDialog
+            :is-unlock-dialog-visible="isUnlockDialogVisible"
+            @close-unlock-dialog="isUnlockDialogVisible = false"
         />
     </div>
 </template>

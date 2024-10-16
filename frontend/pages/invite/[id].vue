@@ -24,11 +24,11 @@ if (error.value) {
         fatal: true,
     });
 } else {
+    if (localStorage.getItem("JP_guest_journey_id")) {
+        localStorage.removeItem("JP_guest_journey_id");
+    }
     await navigateTo(`/journey/${data.value.journey.id}`);
-    //TODO id aus local storage löschen wenn vorhanden
 }
-
-//TODO joining text ändern?
 </script>
 
 <template>

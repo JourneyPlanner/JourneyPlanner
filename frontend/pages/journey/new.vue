@@ -13,17 +13,26 @@ const store = useDashboardStore();
 const journeyStore = useJourneyStore();
 journeyStore.resetJourney();
 
-const journeyInvite = uuidv4();
-const journeyInviteLink = ref(
-    window.location.origin + "/invite/" + journeyInvite,
-);
-//TODO invite link rebranden zu account erstellen/reise saven link wenn kein account vorhanden
-//TODO id local storage speichern bei response und nicht auf dashboard sondern auf reise direkt leiten
-//TODO wenn id vorhanden direkt weiterleiten (vlt popup dann?)
+const cancel = ref("/dashboard");
+const journeyInvite = ref("");
+const journeyInviteLink = ref("");
+
 const title = t.value("title.journey.create");
 useHead({
     title: `${title} | JourneyPlanner`,
 });
+
+if (!isAuthenticated.value) {
+    if (localStorage.getItem("JP_guest_journey_id") !== null) {
+        navigateTo("/journey/" + localStorage.getItem("JP_guest_journey_id"));
+    } else {
+        cancel.value = "/";
+    }
+} else {
+    journeyInvite.value = uuidv4();
+    journeyInviteLink.value =
+        window.location.origin + "/invite/" + journeyInvite.value;
+}
 
 /**
  * form validation
@@ -71,7 +80,7 @@ const onSubmit = handleSubmit(async (values) => {
     const destination = values.journeyDestination;
     const from = format(values.journeyRange[0], "yyyy-MM-dd");
     const to = format(values.journeyRange[1], "yyyy-MM-dd");
-    const invite = journeyInvite;
+    const invite = journeyInvite.value;
     const mapbox_full_address = values.mapbox?.properties.full_address;
     const mapbox_id = values.mapbox?.properties.mapbox_id;
 
@@ -98,7 +107,13 @@ const onSubmit = handleSubmit(async (values) => {
                     life: 3000,
                 });
                 store.addJourney(journey);
-                await navigateTo("/dashboard");
+                if (!isAuthenticated) {
+                    localStorage.setItem(
+                        "JP_guest_journey_id",
+                        response._data.id,
+                    );
+                }
+                await navigateTo("/journey/" + response._data.id);
             }
         },
         async onResponseError() {
@@ -127,15 +142,15 @@ function copyToClipboard() {
     <div>
         <div class="z-10 flex min-h-screen flex-col justify-between">
             <div
-                class="z-50 mt-16 flex items-center justify-center font-nunito"
+                class="z-50 mt-16 flex items-center justify-center px-4 font-nunito"
             >
                 <fieldset
                     id="create-journey"
-                    class="w-full rounded-2xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-5 shadow-sm dark:bg-gothic-300 dark:bg-opacity-20 sm:w-1/4 md:w-1/3"
+                    class="w-full rounded-2xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-2 shadow-sm dark:bg-gothic-300 dark:bg-opacity-20 xs:px-5 sm:w-1/4 md:w-1/3"
                 >
                     <legend
                         for="create-journey"
-                        class="ml-4 px-2 text-center text-2xl font-bold text-text dark:text-natural-50 lg:text-left lg:text-3xl"
+                        class="text-center text-2xl font-bold text-text dark:text-natural-50 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>
@@ -193,7 +208,7 @@ function copyToClipboard() {
                         </div>
 
                         <div class="mb-5 mt-6 flex justify-between gap-5">
-                            <NuxtLink to="/dashboard">
+                            <NuxtLink :to="cancel">
                                 <button
                                     type="button"
                                     class="rounded-xl border-2 border-mahagony-500 bg-natural-50 px-7 py-1 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-mahagony-500 dark:hover:bg-opacity-30"
