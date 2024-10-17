@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserController extends Controller
 {
+    /**
+     * Get a user by username.
+     */
     public function show(string $username)
     {
         $user = User::where("username", $username)->firstOrFail([
@@ -23,6 +26,9 @@ class UserController extends Controller
         return response()->json($user);
     }
 
+    /**
+     * Change the password of the authenticated user.
+     */
     public function changePassword(Request $request): JsonResponse
     {
         $request->validate([
@@ -46,6 +52,9 @@ class UserController extends Controller
         return response()->json(["message" => "Password changed"]);
     }
 
+    /**
+     * Change the email of the authenticated user.
+     */
     public function changeEmail(Request $request): JsonResponse
     {
         $request->validate([
@@ -65,6 +74,9 @@ class UserController extends Controller
         return response()->json(["message" => "Email changed"]);
     }
 
+    /**
+     * Change the display name of the authenticated user.
+     */
     public function changeDisplayName(Request $request): JsonResponse
     {
         $request->validate([
@@ -81,6 +93,9 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * Change the username of the authenticated user.
+     */
     public function changeUsername(Request $request): JsonResponse
     {
         $request->validate([
@@ -98,6 +113,9 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * Delete the account of the authenticated user.
+     */
     public function deleteAccount(Request $request): JsonResponse
     {
         $request->validate([
@@ -121,9 +139,10 @@ class UserController extends Controller
 
         $user->delete();
 
-        // Delete all journeys which don't have at least one journey guide
+        // Delete all journeys which don't have at least one journey guide and which are not in guest mode
         Journey::whereDoesntHave("users", function (Builder $query) {
             $query->whereIn("role", [1, 2]);
+            $query->where("is_guest", false);
         })->delete();
 
         return response()->json(["message" => "Account deleted"]);

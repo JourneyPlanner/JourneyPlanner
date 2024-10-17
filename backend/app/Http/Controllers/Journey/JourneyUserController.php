@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Journey;
 
+use App\Http\Controllers\Controller;
 use App\Models\Journey;
-use App\Models\JourneyUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class JourneyUserController extends Controller
@@ -13,11 +14,10 @@ class JourneyUserController extends Controller
     /**
      * Get the users of the journey.
      */
-    public function index($id): JsonResponse
+    public function index(Journey $journey): JsonResponse
     {
-        // get the journey by id and authorize the user
-        $journey = Journey::findOrFail($id);
-        Gate::authorize("journeyMember", $journey);
+        // authorize the user
+        Gate::authorize("view", [$journey, false]);
 
         // return the users of the journey in json format
         return response()->json(
@@ -32,7 +32,7 @@ class JourneyUserController extends Controller
     {
         $journey = Journey::where("invite", $invite)->firstOrFail(["id"]);
 
-        if ($request->user()->can("journeyMember", $journey)) {
+        if ($request->user()->can("view", $journey)) {
             return response()->json(
                 [
                     "message" => "You are already a member of this journey",
@@ -42,7 +42,15 @@ class JourneyUserController extends Controller
             );
         }
 
-        $journey->users()->attach(auth()->id(), ["role" => 0]);
+        // Add the user to the journey
+        if ($journey->is_guest) {
+            $journey->users()->attach(auth()->id(), ["role" => 1]);
+
+            $journey->guest_mode = false;
+            $journey->save();
+        } else {
+            $journey->users()->attach(auth()->id(), ["role" => 0]);
+        }
 
         return response()->json(
             [
@@ -54,21 +62,13 @@ class JourneyUserController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(JourneyUser $journeyUser)
-    {
-        //
-    }
-
-    /**
      * Get the role of the current user in the journey.
      */
     public function currentUserDetails(Journey $journey): JsonResponse
     {
         $journeyUser = $journey
             ->users()
-            ->where("user_id", auth()->id())
+            ->where("user_id", Auth::id())
             ->firstOrFail(["user_id", "role"]);
 
         return response()->json($journeyUser);
@@ -77,10 +77,12 @@ class JourneyUserController extends Controller
     /**
      * Update the role of the specified user in the journey.
      */
-    public function update(Request $request, $journey, $user): JsonResponse
-    {
-        $journey = Journey::findOrFail($journey);
-        Gate::authorize("journeyGuide", $journey);
+    public function update(
+        Request $request,
+        Journey $journey,
+        $user
+    ): JsonResponse {
+        Gate::authorize("update", [$journey, false]);
 
         if (auth()->user()->id == $user) {
             return response()->json(
@@ -111,9 +113,19 @@ class JourneyUserController extends Controller
     /**
      * Leave the journey.
      */
-    public function leave($journey)
+    public function leave(Journey $journey)
     {
-        $journey = Journey::findOrFail($journey);
+        if ($journey->is_guest) {
+            JourneyController::deleteJourney($journey);
+
+            return response()->json(
+                [
+                    "message" =>
+                        "Journey and journey user removed successfully",
+                ],
+                200
+            );
+        }
 
         // Prevent the user from leaving if they are the only guide
         if (
@@ -142,7 +154,8 @@ class JourneyUserController extends Controller
 
             return response()->json(
                 [
-                    "message" => "Journey and user removed successfully",
+                    "message" =>
+                        "Journey and journey user removed successfully",
                 ],
                 200
             );
@@ -150,7 +163,7 @@ class JourneyUserController extends Controller
 
         return response()->json(
             [
-                "message" => "User removed successfully",
+                "message" => "Journey user removed successfully",
             ],
             200
         );
