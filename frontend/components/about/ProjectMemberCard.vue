@@ -28,9 +28,12 @@ defineProps({
             <NuxtLink
                 :to="linkedinLink"
                 target="_blank"
-                class="pi pi-linkedin text-3xl text-text hover-scale dark:text-natural-200 sm:text-2xl"
+                class="pi pi-linkedin text-3xl text-text hover-scale hover:cursor-pointer dark:text-natural-200 sm:text-2xl"
             />
-            <NuxtLink :to="'mailto:' + mail" class="hover-scale">
+            <NuxtLink
+                :to="'mailto:' + mail"
+                class="hover-scale hover:cursor-pointer"
+            >
                 <SvgAboutMail class="w-9 sm:w-7" />
             </NuxtLink>
         </div>
