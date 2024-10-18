@@ -1,50 +1,18 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
-import QRCode from "qrcode";
-import resolveConfig from "tailwindcss/resolveConfig";
-import tailwindConfig from "~/tailwind.config.js";
 
 const props = defineProps({
     isUnlockDialogVisible: { type: Boolean, required: true },
 });
 
-const emit = defineEmits(["closeUnlockDialog"]);
+const emit = defineEmits(["closeUnlockDialog", "open-qrcode"]);
 
 const { t } = useTranslate();
 const toast = useToast();
-const fullConfig = resolveConfig(tailwindConfig);
 const journey = useJourneyStore();
 
 const invite = ref(journey.getInvite());
 const isVisible = ref();
-const qrcode = ref("");
-const isQRCodeVisible = ref(false);
-
-onMounted(() => {
-    const colorMode = useColorMode();
-    const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-    let darkColor = fullConfig.theme.accentColor["text"] as string;
-    let lightColor = fullConfig.theme.accentColor["background"] as string;
-
-    if (
-        colorMode.preference === "dark" ||
-        (darkThemeMq.matches && colorMode.preference === "system")
-    ) {
-        darkColor = fullConfig.theme.accentColor["background"] as string;
-        lightColor = fullConfig.theme.accentColor["text"] as string;
-    }
-
-    const opts = {
-        margin: 0,
-        color: {
-            dark: darkColor,
-            light: lightColor,
-        },
-    };
-    QRCode.toDataURL(invite.value, opts, function (error, url) {
-        qrcode.value = url;
-    });
-});
 
 watch(
     () => props.isUnlockDialogVisible,
@@ -68,6 +36,10 @@ function copyToClipboard() {
         detail: t.value("common.invite.toast.info"),
         life: 2000,
     });
+}
+
+function openQRCode(tolgeeKey: string) {
+    emit("open-qrcode", tolgeeKey);
 }
 </script>
 
@@ -130,9 +102,11 @@ function copyToClipboard() {
                     </button>
                     <button
                         class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                        @click="isQRCodeVisible = true"
+                        @click="openQRCode('journey.unlock.qr')"
                     >
-                        <span class="pi pi-qrcode" />
+                        <span
+                            class="pi pi-qrcode text-text dark:text-natural-50"
+                        />
                     </button>
                 </div>
                 <div class="flex justify-center">
@@ -145,11 +119,5 @@ function copyToClipboard() {
                 </div>
             </div>
         </Dialog>
-        <JourneyIdDialogsQRCodeDialog
-            :qrcode="qrcode"
-            :visible="isQRCodeVisible"
-            :tolgee-key="'journey.unlock.qr'"
-            @close="isQRCodeVisible = false"
-        />
     </div>
 </template>

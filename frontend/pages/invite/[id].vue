@@ -17,6 +17,8 @@ const { data, error } = await useAsyncData("journey", () =>
     }),
 );
 
+console.log(error);
+
 if (error.value) {
     throw createError({
         message: "No journey found for this invite",
@@ -24,9 +26,7 @@ if (error.value) {
         fatal: true,
     });
 } else {
-    if (localStorage.getItem("JP_guest_journey_id")) {
-        localStorage.removeItem("JP_guest_journey_id");
-    }
+    localStorage.setItem("JP_invite_journey_id", invite as string);
     await navigateTo(`/journey/${data.value.journey.id}`);
 }
 </script>

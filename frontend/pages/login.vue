@@ -6,6 +6,8 @@ import * as yup from "yup";
 const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
+const route = useRoute();
+console.log(route);
 
 const title = t.value("form.header.login");
 
@@ -15,6 +17,11 @@ useHead({
 
 definePageMeta({
     middleware: ["sanctum:guest"],
+});
+
+const registerRoute = computed(() => {
+    const redirect = route.query.redirect as string;
+    return redirect ? "/register?redirect=" + redirect : "/register";
 });
 
 const { handleSubmit } = useForm({
@@ -153,7 +160,7 @@ async function loginUser(userData: User) {
                         </button>
                     </form>
                     <NuxtLink
-                        to="/register"
+                        :to="registerRoute"
                         class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"
                     >
                         <T key-name="form.text.no_account" />

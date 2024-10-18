@@ -3,8 +3,6 @@ import { useTranslate } from "@tolgee/vue";
 import { format } from "date-fns";
 import JSConfetti from "js-confetti";
 
-import scroll from "../../../utils/scroll";
-
 defineProps({
     hundredsDays: {
         type: Number,
@@ -27,30 +25,12 @@ defineProps({
         required: true,
     },
     currUser: {
-        type: Object as PropType<User>,
-        required: true,
-    },
-    calendarRef: {
-        type: Object as PropType<{
-            scrollIntoView: (options: {
-                behavior: string;
-                block: string;
-            }) => void;
-        }>,
-        required: true,
-    },
-    uploadRef: {
-        type: Object as PropType<{
-            scrollIntoView: (options: {
-                behavior: string;
-                block: string;
-            }) => void;
-        }>,
+        type: (Object as PropType<User>) || undefined,
         required: true,
     },
 });
 
-const emits = defineEmits(["open-activity-dialog"]);
+const emits = defineEmits(["open-activity-dialog", "scrollToTarget"]);
 
 const client = useSanctumClient();
 const jsConfetti = new JSConfetti();
@@ -126,6 +106,10 @@ function changeToFahrenheit() {
 
 function toggleActivityDialog() {
     emits("open-activity-dialog");
+}
+
+function emitScroll(target: string) {
+    emits("scrollToTarget", target);
 }
 </script>
 
@@ -713,9 +697,13 @@ function toggleActivityDialog() {
                             <T key-name="journey.countdown.until" />
                         </p>
                         <button
-                            v-if="duringJourney || currUser?.role !== 1"
+                            v-if="
+                                duringJourney ||
+                                currUser?.role !== 1 ||
+                                currUser === undefined
+                            "
                             class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
-                            @click="scroll(calendarRef)"
+                            @click="emitScroll('calendarRef')"
                         >
                             <T key-name="journey.button.countdown.calendar" />
                         </button>
@@ -723,7 +711,7 @@ function toggleActivityDialog() {
                             v-else-if="journeyEnded"
                             class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
                             @click="
-                                scroll(uploadRef);
+                                emitScroll('uploadRef');
                                 jsConfetti.addConfetti();
                             "
                         >

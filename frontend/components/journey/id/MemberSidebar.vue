@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
-import QRCode from "qrcode";
-import resolveConfig from "tailwindcss/resolveConfig";
-import tailwindConfig from "~/tailwind.config.js";
 
 const props = defineProps({
     journeyID: {
@@ -18,53 +15,30 @@ const props = defineProps({
         required: true,
     },
     users: {
-        type: Array as PropType<User[]>,
+        type: Array as PropType<User[]> | undefined,
         required: true,
     },
     currUser: {
-        type: Object as PropType<User>,
+        type: Object as PropType<User> | undefined,
         required: true,
     },
 });
 
-const emit = defineEmits(["leave-journey", "close"]);
+const emit = defineEmits([
+    "leave-journey",
+    "close",
+    "open-qrcode",
+    "open-unlock-dialog",
+]);
 
 const toast = useToast();
 const { t } = useTranslate();
-const fullConfig = resolveConfig(tailwindConfig);
 const client = useSanctumClient();
+const { isAuthenticated } = useSanctumAuth();
 
-const qrcode = ref("");
-const isQRCodeVisible = ref(false);
 const isEditEnabled = ref(false);
 const users = ref(props.users);
 const isVisible = ref(props.isMemberSidebarVisible);
-
-onMounted(() => {
-    const colorMode = useColorMode();
-    const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-    let darkColor = fullConfig.theme.accentColor["text"] as string;
-    let lightColor = fullConfig.theme.accentColor["background"] as string;
-
-    if (
-        colorMode.preference === "dark" ||
-        (darkThemeMq.matches && colorMode.preference === "system")
-    ) {
-        darkColor = fullConfig.theme.accentColor["background"] as string;
-        lightColor = fullConfig.theme.accentColor["text"] as string;
-    }
-
-    const opts = {
-        margin: 0,
-        color: {
-            dark: darkColor,
-            light: lightColor,
-        },
-    };
-    QRCode.toDataURL(props.invite, opts, function (error, url) {
-        qrcode.value = url;
-    });
-});
 
 watch(
     () => props.isMemberSidebarVisible,
@@ -123,6 +97,14 @@ function close() {
 function leave(event: Event) {
     emit("leave-journey", event);
 }
+
+function openQRCode(tolgeeKey: string) {
+    emit("open-qrcode", tolgeeKey);
+}
+
+function openUnlockDialog() {
+    emit("open-unlock-dialog");
+}
 </script>
 
 <template>
@@ -140,7 +122,9 @@ function leave(event: Event) {
                     class: 'w-7 h-7 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50',
                 },
                 header: { class: 'p-2 pl-3 grid grid-rows-1 grid-cols-12' },
-                content: { class: 'pl-3 pr-2 py-2 flex flex-col h-full' },
+                content: {
+                    class: 'pl-3 pr-2 py-2 flex h-full flex-col',
+                },
                 root: {
                     class: 'dark:bg-background-dark font-nunito relative',
                 },
@@ -160,87 +144,97 @@ function leave(event: Event) {
                     class="col-span-4 col-start-7 h-0.5 w-full bg-calypso-400"
                 />
             </template>
-            <div class="text-xl font-medium text-text dark:text-natural-50">
-                <T key-name="sidebar.invite.link" />
-            </div>
             <div
-                class="flex items-center border-b-2 border-natural-200 pb-4 dark:border-natural-900"
+                class="flex h-full flex-col"
+                :class="!isAuthenticated ? 'blur-[1.75px]' : ''"
             >
-                <input
-                    class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
-                    disabled
-                    :value="props.invite"
-                />
-                <div class="flex w-1/5 justify-end">
-                    <button
-                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                        @click="copyToClipboard"
-                    >
-                        <SvgCopy class="w-4" />
-                    </button>
+                <div class="text-xl font-medium text-text dark:text-natural-50">
+                    <T key-name="sidebar.invite.link" />
                 </div>
-                <div class="flex w-1/5 justify-end">
-                    <button
-                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                        @click="isQRCodeVisible = true"
-                    >
-                        <span
-                            class="pi pi-qrcode text-text dark:text-natural-50"
-                        />
-                    </button>
-                </div>
-            </div>
-            <div
-                class="flex flex-row items-center justify-center border-b-2 border-natural-200 pb-1 pt-1 dark:border-natural-900"
-            >
-                <h1
-                    class="w-4/5 text-xl text-natural-600 dark:text-natural-200"
+                <div
+                    class="flex items-center border-b-2 border-natural-200 pb-4 dark:border-natural-900"
                 >
-                    <T key-name="journey.sidebar.list.header" />
-                </h1>
-                <div class="mb-1 mt-1 flex w-1/5 items-center justify-end">
-                    <button
-                        v-if="currUser.role === 1"
-                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                        @click="isEditEnabled = !isEditEnabled"
+                    <input
+                        class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
+                        disabled
+                        :value="props.invite"
+                    />
+                    <div class="flex w-1/5 justify-end">
+                        <button
+                            class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                            @click="copyToClipboard"
+                        >
+                            <SvgCopy class="w-4" />
+                        </button>
+                    </div>
+                    <div class="flex w-1/5 justify-end">
+                        <button
+                            class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                            @click="openQRCode('journey.qrcode')"
+                        >
+                            <span
+                                class="pi pi-qrcode text-text dark:text-natural-50"
+                            />
+                        </button>
+                    </div>
+                </div>
+                <div
+                    class="flex flex-row items-center justify-center border-b-2 border-natural-200 pb-1 pt-1 dark:border-natural-900"
+                >
+                    <h1
+                        class="w-4/5 text-xl text-natural-600 dark:text-natural-200"
                     >
-                        <SvgEdit v-if="!isEditEnabled" class="w-4" />
-                        <SvgEditOff v-if="isEditEnabled" class="w-4" />
+                        <T key-name="journey.sidebar.list.header" />
+                    </h1>
+                    <div class="mb-1 mt-1 flex w-1/5 items-center justify-end">
+                        <button
+                            v-if="currUser?.role === 1"
+                            class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                            @click="isEditEnabled = !isEditEnabled"
+                        >
+                            <SvgEdit v-if="!isEditEnabled" class="w-4" />
+                            <SvgEditOff v-if="isEditEnabled" class="w-4" />
+                        </button>
+                    </div>
+                </div>
+                <div
+                    id="list"
+                    class="mt-3 flex flex-grow flex-col gap-3 overflow-y-auto pr-0.5"
+                >
+                    <JourneyIdComponentsMemberItem
+                        v-for="user in users"
+                        :id="user.id"
+                        :key="user.id"
+                        :username="user.username"
+                        :display-name="user.display_name"
+                        :role="user.role"
+                        :edit="isEditEnabled"
+                        :current-id="currUser.id"
+                        @change-role="changeRole"
+                    />
+                </div>
+                <div
+                    class="sticky bottom-0 border-t-2 border-natural-200 dark:border-natural-900"
+                >
+                    <button
+                        class="my-4 w-full rounded-lg border-2 border-mahagony-500 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                        @click="leave($event)"
+                    >
+                        <T key-name="journey.leave.short" />
                     </button>
                 </div>
             </div>
             <div
-                id="list"
-                class="mt-3 flex flex-grow flex-col gap-3 overflow-y-auto pr-0.5"
-            >
-                <JourneyIdComponentsMemberItem
-                    v-for="user in users"
-                    :id="user.id"
-                    :key="user.id"
-                    :username="user.username"
-                    :display-name="user.display_name"
-                    :role="user.role"
-                    :edit="isEditEnabled"
-                    :current-id="currUser.id"
-                    @change-role="changeRole"
-                />
-            </div>
-            <div
-                class="sticky bottom-0 border-t-2 border-natural-200 dark:border-natural-900"
+                v-if="!isAuthenticated"
+                class="absolute -mt-14 flex h-full w-full items-center justify-center"
             >
                 <button
-                    class="my-4 w-full rounded-lg border-2 border-mahagony-500 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
-                    @click="leave($event)"
+                    class="w-32 rounded-md border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 text-center font-medium hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                    @click="openUnlockDialog"
                 >
-                    <T key-name="journey.leave.short" />
+                    <T key-name="journey.unlock.button" />
                 </button>
             </div>
         </Sidebar>
-        <JourneyIdDialogsQRCodeDialog
-            :qrcode="qrcode"
-            :visible="isQRCodeVisible"
-            :tolgee-key="'journey.qrcode'"
-            @close="isQRCodeVisible = false"
-        />
     </div>
 </template>

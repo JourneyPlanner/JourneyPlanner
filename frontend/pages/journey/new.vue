@@ -14,7 +14,7 @@ const journeyStore = useJourneyStore();
 journeyStore.resetJourney();
 
 const cancel = ref("/dashboard");
-const journeyInvite = ref("");
+const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
 
 const title = t.value("title.journey.create");
@@ -29,7 +29,6 @@ if (!isAuthenticated.value) {
         cancel.value = "/";
     }
 } else {
-    journeyInvite.value = uuidv4();
     journeyInviteLink.value =
         window.location.origin + "/invite/" + journeyInvite.value;
 }
@@ -107,13 +106,13 @@ const onSubmit = handleSubmit(async (values) => {
                     life: 3000,
                 });
                 store.addJourney(journey);
-                if (!isAuthenticated) {
+                if (!isAuthenticated.value) {
                     localStorage.setItem(
                         "JP_guest_journey_id",
-                        response._data.id,
+                        response._data.journey.id,
                     );
                 }
-                await navigateTo("/journey/" + response._data.id);
+                await navigateTo("/journey/" + response._data.journey.id);
             }
         },
         async onResponseError() {

@@ -14,6 +14,7 @@ const journey = useJourneyStore();
 const config = useRuntimeConfig();
 const emit = defineEmits(["uploaded"]);
 const client = useSanctumClient();
+const { isAuthenticated } = useSanctumAuth();
 
 interface ExtendedUploadResult extends UploadResult {
     uploadID: string;
@@ -21,7 +22,7 @@ interface ExtendedUploadResult extends UploadResult {
 
 let upload_token = localStorage.getItem("upload_token");
 
-if (!upload_token) {
+if (!upload_token && isAuthenticated.value) {
     const { token } = await client("/api/user/tokens/upload");
     localStorage.setItem("upload_token", token || "");
     upload_token = token;
@@ -57,7 +58,7 @@ const uppy = new Uppy({
     <div
         class="relative mt-4 flex w-[90%] items-center sm:mt-7 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
     >
-        <div class="w-full flex-col">
+        <div class="relative w-full flex-col">
             <div class="mb-1.5 flex flex-row justify-between sm:mb-3">
                 <h1
                     class="mt-2 text-2xl font-semibold text-text dark:text-natural-50"
@@ -77,6 +78,7 @@ const uppy = new Uppy({
                 :props="{
                     showProgressDetails: true,
                     locale: locale,
+                    disabled: !isAuthenticated,
                 }"
             />
             <div class="flex justify-center lg:hidden">

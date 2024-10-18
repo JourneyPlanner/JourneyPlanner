@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
 import { differenceInDays, differenceInHours } from "date-fns";
+import QRCode from "qrcode";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "~/tailwind.config.js";
 
 const route = useRoute();
+const router = useRouter();
 const confirm = useConfirm();
 const toast = useToast();
 const journeyStore = useJourneyStore();
@@ -10,6 +14,7 @@ const activityStore = useActivityStore();
 const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 const { t } = useTranslate();
+const fullConfig = resolveConfig(tailwindConfig);
 
 const journeyId = route.params.id;
 const activityDataLoaded = ref(false);
@@ -20,18 +25,23 @@ const day = ref(0);
 const tensDays = ref(0);
 const hundredsDays = ref(0);
 
+const users = ref<User[]>();
+const currUser = ref<User>();
+
 const isMemberSidebarVisible = ref(false);
 const isMenuSidebarVisible = ref(false);
 const isActivityDialogVisible = ref(false);
+
+const isUnlockDialogVisible = ref(false);
+const qrcode = ref("");
+const qrcodeTolgeeKey = ref("");
+const isQRCodeVisible = ref(false);
 
 const uploadResult = ref();
 const upload = ref();
 const calendar = ref();
 
-//TODO apis anpassen wenn kein acc
-//TODO nicht vorhandene funktionen ausgrauen (sidebar, invite, create template, dashboard) und popup on click
 //TODO bei delete dialog mit anderen dude zu reiseleiter machen weggeben (idk ob das auftreten kann eig)
-//TODO: prop type uploadRef in ticket section warning
 
 const { data, error } = await useAsyncData("journey", () =>
     client(`/api/journey/${journeyId}`),
@@ -57,16 +67,6 @@ await client(`/api/journey/${journeyId}/activity`, {
     },
 });
 
-const { data: users } = await useAsyncData<User[]>("users", () =>
-    client(`/api/journey/${journeyId}/user`),
-);
-
-const { data: currUser } = await useAsyncData<User>("userRole", async () => {
-    const response = await client(`/api/journey/${journeyId}/user/me`);
-    const { user_id, ...rest } = response;
-    return { id: user_id, ...rest };
-});
-
 const journeyData = data as Ref<Journey>;
 journeyStore.setJourney(journeyData);
 
@@ -75,6 +75,50 @@ journeyData.value.invite =
     window.location.origin + "/invite/" + journeyData.value.invite;
 useHead({
     title: `${title} | JourneyPlanner`,
+});
+
+if (isAuthenticated.value) {
+    const { data } = await useAsyncData<User[]>("users", () =>
+        client(`/api/journey/${journeyId}/user`),
+    );
+
+    if (data.value !== null) {
+        users.value = data.value;
+    }
+
+    const { data: curr } = await useAsyncData<User>("userRole", async () => {
+        const response = await client(`/api/journey/${journeyId}/user/me`);
+        const { user_id, ...rest } = response;
+        return { id: user_id, ...rest };
+    });
+
+    if (curr.value !== null) {
+        currUser.value = curr.value;
+    }
+}
+
+const colorMode = useColorMode();
+const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+let darkColor = fullConfig.theme.accentColor["text"] as string;
+let lightColor = fullConfig.theme.accentColor["background"] as string;
+
+if (
+    colorMode.preference === "dark" ||
+    (darkThemeMq.matches && colorMode.preference === "system")
+) {
+    darkColor = fullConfig.theme.accentColor["background"] as string;
+    lightColor = fullConfig.theme.accentColor["text"] as string;
+}
+
+const opts = {
+    margin: 0,
+    color: {
+        dark: darkColor,
+        light: lightColor,
+    },
+};
+QRCode.toDataURL(journeyStore.getInvite(), opts, function (error, url) {
+    qrcode.value = url;
 });
 
 const fromDate = ref(new Date(journeyData.value.from.split("T")[0]));
@@ -190,7 +234,8 @@ async function leaveJourney() {
                     life: 3000,
                 });
 
-                if (!isAuthenticated) {
+                if (!isAuthenticated.value) {
+                    localStorage.removeItem("JP_guest_journey_id");
                     await navigateTo("/journey/new");
                 } else {
                     await navigateTo("/dashboard");
@@ -216,6 +261,21 @@ async function leaveJourney() {
         },
     });
 }
+
+function openQRCode(tolgeeKey: string) {
+    console.log("openQRCode", tolgeeKey);
+
+    isQRCodeVisible.value = true;
+    qrcodeTolgeeKey.value = tolgeeKey;
+}
+
+function scrollToTarget(target: string) {
+    if (target === "uploadRef") {
+        scroll(upload.value);
+    } else if (target === "calendarRef") {
+        scroll(calendar.value);
+    }
+}
 </script>
 
 <template>
@@ -224,31 +284,40 @@ async function leaveJourney() {
             :journey-i-d="String(journeyId)"
             :is-member-sidebar-visible="isMemberSidebarVisible"
             :invite="String(journeyStore.getInvite())"
-            :users="users!"
-            :curr-user="currUser!"
+            :users="users! || undefined"
+            :curr-user="currUser! || undefined"
             @leave-journey="confirmLeave"
             @close="isMemberSidebarVisible = false"
+            @open-qrcode="openQRCode"
+            @open-unlock-dialog="isUnlockDialogVisible = true"
         />
         <JourneyIdMenuSidebar
             :is-menu-sidebar-visible="isMenuSidebarVisible"
-            :curr-user="currUser!"
+            :curr-user="currUser! || undefined"
             @leave-journey="confirmLeave"
             @journey-edited="journeyEdited"
             @close="isMenuSidebarVisible = false"
+            @open-unlock-dialog="isUnlockDialogVisible = true"
         />
         <div
             id="header"
             class="mt-5 flex w-full items-center justify-between px-4 font-semibold"
         >
-            <NuxtLink
+            <button
                 to="/dashboard"
-                class="group flex items-center sm:ml-1 md:ml-2"
+                class="flex items-center sm:ml-1 md:ml-2"
+                :class="!isAuthenticated ? 'blur-[2px]' : 'group'"
+                @click="
+                    !isAuthenticated
+                        ? (isUnlockDialogVisible = true)
+                        : router.push('/dashboard')
+                "
             >
                 <SvgDashboardIcon class="h-7 w-7 md:h-6 md:w-6" />
                 <p class="hidden text-2xl group-hover:underline sm:block">
                     Dashboard
                 </p>
-            </NuxtLink>
+            </button>
             <div class="flex flex-row items-center">
                 <span
                     class="pi pi-users ml-10 mr-5 text-3xl hover:cursor-pointer"
@@ -267,9 +336,8 @@ async function leaveJourney() {
             :hundreds-days="hundredsDays"
             :during-journey="duringJourney"
             :journey-ended="journeyEnded"
-            :curr-user="currUser!"
-            :calendar-ref="calendar"
-            :upload-ref="upload"
+            :curr-user="currUser! || undefined"
+            @scroll-to-target="scrollToTarget"
             @open-activity-dialog="isActivityDialogVisible = true"
         />
         <div id="divider" class="flex justify-center md:justify-start">
@@ -300,28 +368,80 @@ async function leaveJourney() {
         <JourneyIdActivityMap v-if="activityDataLoaded" />
         <div
             ref="upload"
-            class="flex items-center justify-center md:justify-start"
+            class="relative flex items-center justify-center md:justify-start"
+            :class="!isAuthenticated ? 'cursor-not-allowed' : ''"
+            @click="!isAuthenticated ? (isUnlockDialogVisible = true) : null"
         >
-            <JourneyIdUpload @uploaded="handleUpload" />
+            <JourneyIdUpload
+                :class="!isAuthenticated ? 'blur-[1.75px]' : ''"
+                @uploaded="handleUpload"
+            />
+            <div
+                v-if="!isAuthenticated"
+                class="absolute bottom-0 flex h-40 w-[90%] items-center sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            >
+                <div class="flex w-full items-center justify-center">
+                    <button
+                        class="w-32 rounded-md border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 text-center font-medium hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="isUnlockDialogVisible = true"
+                    >
+                        <T key-name="journey.unlock.button" />
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center justify-center md:justify-start">
-            <JourneyIdMediaGallery :upload-data="uploadResult" />
+        <div
+            class="relative flex items-center justify-center md:justify-start"
+            :class="!isAuthenticated ? 'cursor-not-allowed' : ''"
+            @click="!isAuthenticated ? (isUnlockDialogVisible = true) : null"
+        >
+            <JourneyIdMediaGallery
+                :upload-data="uploadResult"
+                :class="!isAuthenticated ? 'blur-[1.75px]' : ''"
+            />
+            <div
+                v-if="!isAuthenticated"
+                class="absolute bottom-0 flex h-40 w-[90%] items-center sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+            >
+                <div class="flex w-full items-center justify-center">
+                    <button
+                        class="w-32 rounded-md border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 text-center font-medium hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="isUnlockDialogVisible = true"
+                    >
+                        <T key-name="journey.unlock.button" />
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <ConfirmDialog
-            :draggable="false"
-            group="journey"
-            :pt="{
-                header: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                content: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                footer: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-            }"
-        />
+        <div id="extra-dialogs">
+            <JourneyIdDialogsUnlockDialog
+                :is-unlock-dialog-visible="isUnlockDialogVisible"
+                @close-unlock-dialog="isUnlockDialogVisible = false"
+                @open-qrcode="openQRCode"
+            />
+
+            <JourneyIdDialogsQRCodeDialog
+                :qrcode="qrcode"
+                :visible="isQRCodeVisible"
+                :tolgee-key="qrcodeTolgeeKey"
+                @close="isQRCodeVisible = false"
+            />
+            <ConfirmDialog
+                :draggable="false"
+                group="journey"
+                :pt="{
+                    header: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    content: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    footer: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                }"
+            />
+        </div>
     </div>
 </template>

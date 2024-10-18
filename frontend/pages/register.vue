@@ -5,11 +5,18 @@ import * as yup from "yup";
 
 const { t } = useTranslate();
 const toast = useToast();
+const client = useSanctumClient();
+const route = useRoute();
 
 const title = t.value("form.header.register");
 
 useHead({
     title: `${title} | JourneyPlanner`,
+});
+
+const loginRoute = computed(() => {
+    const redirect = route.query.redirect as string;
+    return redirect ? "/login?redirect=" + redirect : "/login";
 });
 
 const { handleSubmit } = useForm({
@@ -54,7 +61,6 @@ async function registerUser(userData: object) {
         life: 3000,
     });
 
-    const client = useSanctumClient();
     await client("/register", {
         method: "POST",
         body: userData,
@@ -66,7 +72,7 @@ async function registerUser(userData: object) {
                     detail: t.value("form.registration.toast.success"),
                     life: 3000,
                 });
-                await navigateTo("/dashboard");
+                navigateTo(loginRoute.value);
             } else if (response.status === 422) {
                 toast.add({
                     severity: "error",
@@ -166,9 +172,10 @@ async function registerUser(userData: object) {
                             >
                                 <T key-name="form.text.already_account" />
                             </NuxtLink>
+                            <span class="my-1 border-l-2 border-natural-300" />
                             <NuxtLink
                                 to="/journey/new"
-                                class="my-1 mt-auto border-l-2 border-natural-300 font-nunito font-semibold hover:underline dark:text-natural-50"
+                                class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"
                             >
                                 <T key-name="form.text.tryforfree" />
                             </NuxtLink>

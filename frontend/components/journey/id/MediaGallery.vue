@@ -18,6 +18,7 @@ import LightGallery from "lightgallery/vue/LightGalleryVue.umd.js";
 const plugins = [lgVideo, lgZoom, lgAutoplay, lgRotate, lgFullscreen];
 const journey = useJourneyStore();
 const client = useSanctumClient();
+const { isAuthenticated } = useSanctumAuth();
 const config = useRuntimeConfig();
 const { t } = useTranslate();
 const multimedia = ref([]);
@@ -58,72 +59,80 @@ const onInit = (detail) => {
  * and sorts them into multimedia and docs
  */
 async function fetchMedia() {
-    let data = null;
+    if (isAuthenticated.value) {
+        let data = null;
 
-    await client(`/api/journey/${journey.getID()}/media`, {
-        method: "GET",
-        async onResponse({ response }) {
-            if (response.ok) {
-                data = response._data;
-            }
-        },
-    });
-
-    if (data && data !== null) {
-        data.forEach((media) => {
-            if (
-                media.type.startsWith("image") ||
-                media.type.startsWith("video")
-            ) {
-                if (!multimedia.value.some((item) => item.id === media.id)) {
-                    multimedia.value.push(media);
+        await client(`/api/journey/${journey.getID()}/media`, {
+            method: "GET",
+            async onResponse({ response }) {
+                if (response.ok) {
+                    data = response._data;
                 }
-            } else {
-                if (!docs.value.some((item) => item.id === media.id)) {
-                    docs.value.push(media);
-                }
-            }
+            },
         });
-    }
 
-    journey.setMedia(multimedia.value);
-    journey.setDocs(docs.value);
+        if (data && data !== null) {
+            data.forEach((media) => {
+                if (
+                    media.type.startsWith("image") ||
+                    media.type.startsWith("video")
+                ) {
+                    if (
+                        !multimedia.value.some((item) => item.id === media.id)
+                    ) {
+                        multimedia.value.push(media);
+                    }
+                } else {
+                    if (!docs.value.some((item) => item.id === media.id)) {
+                        docs.value.push(media);
+                    }
+                }
+            });
+        }
+
+        journey.setMedia(multimedia.value);
+        journey.setDocs(docs.value);
+    }
 }
 
 /**
  * Downloads all media as a zip file
  */
 const downloadMedia = async () => {
-    downloading.value = true;
-    toast.add({
-        severity: "info",
-        summary: t.value("journey.download.start"),
-        detail: t.value("journey.download.detail"),
-        life: 6000,
-    });
+    if (isAuthenticated.value) {
+        downloading.value = true;
+        toast.add({
+            severity: "info",
+            summary: t.value("journey.download.start"),
+            detail: t.value("journey.download.detail"),
+            life: 6000,
+        });
 
-    const zip = new JSZip();
-    const fetchFile = async (url, name) => {
-        const response = await client(url, { method: "GET" });
+        const zip = new JSZip();
+        const fetchFile = async (url, name) => {
+            const response = await client(url, { method: "GET" });
 
-        if (response) {
-            zip.file(name, response);
-        }
-    };
+            if (response) {
+                zip.file(name, response);
+            }
+        };
 
-    const multimediaPromises = multimedia.value.map((media) =>
-        fetchFile(media.link, media.name),
-    );
+        const multimediaPromises = multimedia.value.map((media) =>
+            fetchFile(media.link, media.name),
+        );
 
-    const docsPromises = docs.value.map((doc) => fetchFile(doc.link, doc.name));
+        const docsPromises = docs.value.map((doc) =>
+            fetchFile(doc.link, doc.name),
+        );
 
-    await Promise.all([...multimediaPromises, ...docsPromises]);
+        await Promise.all([...multimediaPromises, ...docsPromises]);
 
-    zip.generateAsync({ type: "blob" }).then((content) => {
-        saveAs(content, `JourneyPlanner_${journey.getName()}.zip`);
-    });
+        zip.generateAsync({ type: "blob" }).then((content) => {
+            saveAs(content, `JourneyPlanner_${journey.getName()}.zip`);
+        });
 
-    downloading.value = false;
+        downloading.value = false;
+    }
 };
 
 /**
@@ -217,16 +226,25 @@ const setImage = (media) => {
                     <i
                         v-badge.info="docs.length"
                         v-tooltip.top="{
-                            value: t('journey.media.docs.tooltip'),
+                            value: isAuthenticated
+                                ? t('journey.media.docs.tooltip')
+                                : '',
                             pt: { root: 'font-nunito' },
                         }"
-                        class="pi pi-file-pdf text-2xl hover:cursor-pointer"
+                        class="pi pi-file-pdf text-2xl"
+                        :class="
+                            isAuthenticated
+                                ? 'hover:cursor-pointer'
+                                : 'cursor-not-allowed'
+                        "
                         @click="isDocDialogOpen = true"
                     />
 
                     <Button
                         v-tooltip.top="{
-                            value: t('journey.media.download.tooltip'),
+                            value: isAuthenticated
+                                ? t('journey.media.download.tooltip')
+                                : '',
                             pt: { root: 'font-nunito text-nowrap' },
                         }"
                         :label="t('journey.media.download')"
@@ -238,7 +256,12 @@ const setImage = (media) => {
                                 class: 'display-block flex-none font-bold font-nunito',
                             },
                         }"
-                        class="ml-auto flex items-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-sm font-bold hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600 sm:text-base lg:mb-1"
+                        class="ml-auto flex items-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-sm font-bold dark:bg-background-dark dark:text-natural-50 sm:text-base lg:mb-1"
+                        :class="
+                            isAuthenticated
+                                ? 'hover:bg-dandelion-200 dark:hover:bg-pesto-600'
+                                : 'cursor-not-allowed'
+                        "
                         @click="downloadMedia"
                     />
                 </div>
