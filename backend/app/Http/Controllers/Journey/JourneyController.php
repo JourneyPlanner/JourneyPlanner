@@ -84,7 +84,7 @@ class JourneyController extends Controller
 
         if (!$guestMode) {
             // Add the authenticated user to the journey with the role of 1 (journey guide)
-            $journey->users()->attach(auth()->id, ["role" => 1]);
+            $journey->users()->attach(Auth::id(), ["role" => 1]);
         }
 
         return response()->json(
