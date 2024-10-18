@@ -96,7 +96,7 @@ class UploadController extends Controller
         if (!$journey) {
             return $this->rejectWithReason("Journey not found", 404);
         }
-        if ($request->user()->cannot("journeyMember", $journey)) {
+        if ($request->user()->cannot("view", [$journey, false])) {
             return $this->rejectWithReason(
                 "User is not a member of given journey",
                 403
