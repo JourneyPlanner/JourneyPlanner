@@ -30,13 +30,13 @@ class JourneyUserController extends Controller
      */
     public function store(Request $request, $invite): JsonResponse
     {
-        $journey = Journey::where("invite", $invite)->firstOrFail(["id"]);
+        $journey = Journey::where("invite", $invite)->firstOrFail();
 
-        if ($request->user()->can("view", $journey)) {
+        if ($request->user()->can("view", [$journey, false])) {
             return response()->json(
                 [
                     "message" => "You are already a member of this journey",
-                    "journey" => $journey,
+                    "journey" => $journey->id,
                 ],
                 200
             );
@@ -55,7 +55,7 @@ class JourneyUserController extends Controller
         return response()->json(
             [
                 "message" => "You have successfully joined the journey",
-                "journey" => $journey,
+                "journey" => $journey->id,
             ],
             201
         );
@@ -121,7 +121,7 @@ class JourneyUserController extends Controller
             return response()->json(
                 [
                     "message" =>
-                        "Journey and journey user removed successfully",
+                    "Journey and journey user removed successfully",
                 ],
                 200
             );
@@ -130,17 +130,17 @@ class JourneyUserController extends Controller
         // Prevent the user from leaving if they are the only guide
         if (
             $journey
-                ->users()
-                ->wherePivot("user_id", auth()->id())
-                ->wherePivot("role", 1)
-                ->exists() &&
+            ->users()
+            ->wherePivot("user_id", auth()->id())
+            ->wherePivot("role", 1)
+            ->exists() &&
             $journey->users()->wherePivot("role", 1)->count() === 1 &&
             $journey->users()->count() !== 1
         ) {
             return response()->json(
                 [
                     "message" =>
-                        "You cannot leave the journey if you are the only guide",
+                    "You cannot leave the journey if you are the only guide",
                 ],
                 403
             );
@@ -155,7 +155,7 @@ class JourneyUserController extends Controller
             return response()->json(
                 [
                     "message" =>
-                        "Journey and journey user removed successfully",
+                    "Journey and journey user removed successfully",
                 ],
                 200
             );
