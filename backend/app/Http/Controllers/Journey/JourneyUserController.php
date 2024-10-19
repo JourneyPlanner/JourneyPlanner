@@ -44,12 +44,12 @@ class JourneyUserController extends Controller
 
         // Add the user to the journey
         if ($journey->is_guest) {
-            $journey->users()->attach(auth()->id(), ["role" => 1]);
+            $journey->users()->attach(Auth::id(), ["role" => 1]);
 
             $journey->guest_mode = false;
             $journey->save();
         } else {
-            $journey->users()->attach(auth()->id(), ["role" => 0]);
+            $journey->users()->attach(Auth::id(), ["role" => 0]);
         }
 
         return response()->json(
@@ -84,7 +84,7 @@ class JourneyUserController extends Controller
     ): JsonResponse {
         Gate::authorize("update", [$journey, false]);
 
-        if (auth()->user()->id == $user) {
+        if (Auth::id() == $user) {
             return response()->json(
                 [
                     "message" => "You cannot update your own role",
@@ -131,7 +131,7 @@ class JourneyUserController extends Controller
         if (
             $journey
             ->users()
-            ->wherePivot("user_id", auth()->id())
+            ->wherePivot("user_id", Auth::id())
             ->wherePivot("role", 1)
             ->exists() &&
             $journey->users()->wherePivot("role", 1)->count() === 1 &&
@@ -146,7 +146,7 @@ class JourneyUserController extends Controller
             );
         }
 
-        $journey->users()->detach(auth()->id());
+        $journey->users()->detach(Auth::id());
 
         // Remove the journey if the user was the last member
         if ($journey->users()->count() === 0) {
