@@ -8,31 +8,29 @@ definePageMeta({
     middleware: ["sanctum:auth"],
 });
 
-const invite = useRoute().params.id;
+onMounted(async () => {
+    const invite = useRoute().params.id;
+    const client = useSanctumClient();
+    const { data, error } = await useAsyncData("invite", () =>
+        client(`/api/invite/${invite}`, {
+            method: "POST",
+        }),
+    );
 
-const client = useSanctumClient();
-const { data, error } = await useAsyncData("journey", () =>
-    client(`/api/invite/${invite}`, {
-        method: "POST",
-    }),
-);
-
-console.log(error);
-
-if (error.value) {
-    throw createError({
-        message: "No journey found for this invite",
-        status: 404,
-        fatal: true,
-    });
-} else {
-    localStorage.setItem("JP_invite_journey_id", invite as string);
-    await navigateTo(`/journey/${data.value.journey.id}`);
-}
+    if (error.value) {
+        throw createError({
+            message: "No journey found for this invite",
+            status: 404,
+            fatal: true,
+        });
+    } else {
+        await navigateTo(`/journey/${data.value.journey}`);
+    }
+});
 </script>
 
 <template>
-    <div>
+    <div class="flex justify-center">
         <p>Joining...</p>
     </div>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
 
+//TODO props types
 const props = defineProps({
     journeyID: {
         type: String,

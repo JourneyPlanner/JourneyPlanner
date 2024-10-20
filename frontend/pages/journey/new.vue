@@ -107,6 +107,11 @@ const onSubmit = handleSubmit(async (values) => {
                 });
                 store.addJourney(journey);
                 if (!isAuthenticated.value) {
+                    console.log(
+                        "new: setting guest journey id",
+                        response._data.journey.id,
+                    );
+
                     localStorage.setItem(
                         "JP_guest_journey_id",
                         response._data.journey.id,

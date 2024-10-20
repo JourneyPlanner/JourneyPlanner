@@ -41,15 +41,19 @@ const uploadResult = ref();
 const upload = ref();
 const calendar = ref();
 
-//TODO bei delete dialog mit anderen dude zu reiseleiter machen weggeben (idk ob das auftreten kann eig)
-
 const { data, error } = await useAsyncData("journey", () =>
     client(`/api/journey/${journeyId}`),
 );
 
 if (error.value?.statusCode === 404) {
-    if (!isAuthenticated) {
+    if (
+        (!isAuthenticated.value &&
+            localStorage.getItem("JP_guest_journey_id")) ||
+        localStorage.getItem("JP_invite_journey_id")
+    ) {
+        console.log("id: Journey not found, deleting local storage");
         localStorage.removeItem("JP_guest_journey_id");
+        localStorage.removeItem("JP_invite_journey_id");
     }
     throw createError({
         statusCode: 404,

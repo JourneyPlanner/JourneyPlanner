@@ -6,17 +6,11 @@ import * as yup from "yup";
 const { t } = useTranslate();
 const toast = useToast();
 const client = useSanctumClient();
-const route = useRoute();
 
 const title = t.value("form.header.register");
 
 useHead({
     title: `${title} | JourneyPlanner`,
-});
-
-const loginRoute = computed(() => {
-    const redirect = route.query.redirect as string;
-    return redirect ? "/login?redirect=" + redirect : "/login";
 });
 
 const { handleSubmit } = useForm({
@@ -72,7 +66,13 @@ async function registerUser(userData: object) {
                     detail: t.value("form.registration.toast.success"),
                     life: 3000,
                 });
-                navigateTo(loginRoute.value);
+                if (localStorage.getItem("JP_invite_journey_id")) {
+                    await navigateTo(
+                        localStorage.getItem("JP_invite_journey_id"),
+                    );
+                } else {
+                    await navigateTo("/dashboard");
+                }
             } else if (response.status === 422) {
                 toast.add({
                     severity: "error",

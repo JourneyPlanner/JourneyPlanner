@@ -7,7 +7,6 @@ const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
 const route = useRoute();
-console.log(route);
 
 const title = t.value("form.header.login");
 
@@ -19,10 +18,12 @@ definePageMeta({
     middleware: ["sanctum:guest"],
 });
 
-const registerRoute = computed(() => {
-    const redirect = route.query.redirect as string;
-    return redirect ? "/register?redirect=" + redirect : "/register";
-});
+if (route.query.redirect) {
+    localStorage.setItem(
+        "JP_invite_journey_id",
+        route.query.redirect as string,
+    );
+}
 
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
@@ -70,7 +71,11 @@ async function loginUser(userData: User) {
             detail: t.value("form.login.toast.success"),
             life: 3000,
         });
-        await navigateTo("/dashboard");
+        if (localStorage.getItem("JP_invite_journey_id")) {
+            await navigateTo(localStorage.getItem("JP_invite_journey_id"));
+        } else {
+            await navigateTo("/dashboard");
+        }
     } catch (error: unknown) {
         if (
             (error as Error & { response?: { status?: number } }).response
@@ -160,7 +165,7 @@ async function loginUser(userData: User) {
                         </button>
                     </form>
                     <NuxtLink
-                        :to="registerRoute"
+                        to="/register"
                         class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"
                     >
                         <T key-name="form.text.no_account" />

@@ -93,8 +93,6 @@ const toggle = (event: Event) => {
     menu.value.toggle(event);
 };
 
-console.log(localStorage.getItem("JP_invite_journey_id"));
-
 if (localStorage.getItem("JP_invite_journey_id")) {
     await navigateTo("/invite/" + localStorage.getItem("JP_invite_journey_id"));
     localStorage.removeItem("JP_guest_journey_id");
