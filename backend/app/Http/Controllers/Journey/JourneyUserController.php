@@ -46,7 +46,7 @@ class JourneyUserController extends Controller
         if ($journey->is_guest) {
             $journey->users()->attach(Auth::id(), ["role" => 1]);
 
-            $journey->guest_mode = false;
+            $journey->is_guest = false;
             $journey->save();
         } else {
             $journey->users()->attach(Auth::id(), ["role" => 0]);
