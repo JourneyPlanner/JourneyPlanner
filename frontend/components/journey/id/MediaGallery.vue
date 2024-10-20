@@ -237,7 +237,9 @@ const setImage = (media) => {
                                 ? 'hover:cursor-pointer'
                                 : 'cursor-not-allowed'
                         "
-                        @click="isDocDialogOpen = true"
+                        @click="
+                            isAuthenticated ? (isDocDialogOpen = true) : null
+                        "
                     />
 
                     <Button

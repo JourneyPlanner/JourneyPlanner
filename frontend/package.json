@@ -10,7 +10,7 @@
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
         "prepare": "cd .. && husky frontend/.husky",
-        "start": "concurrently \"infisical run --env=dev -- nuxt dev -o\" \"cd ../docker/dev && infisical run --env=dev -- docker compose up\" \"cd ../backend && wait-on tcp:3306 -d 5000 --log && infisical run --env=dev -- php artisan migrate\" \"cd ../backend && infisical run --env=dev -- php artisan serve\"",
+        "start": "concurrently \"infisical run --env=dev -- nuxt dev -o\" \"cd ../docker/dev && infisical run --env=dev -- docker compose up\" \"cd ../backend && wait-on tcp:3306 -d 10000 --log && infisical run --env=dev -- php artisan migrate\" \"cd ../backend && infisical run --env=dev -- php artisan serve\"",
         "start:host": "concurrently \"infisical run --env=dev -- nuxt dev --host 0 --port 3000 -o\" \"cd ../docker/dev && infisical run --env=dev -- docker compose up\" \"cd ../backend && wait-on tcp:3306 -d 5000 --log && infisical run --env=dev -- php artisan migrate\" \"cd ../backend && infisical run --env=dev -- php artisan serve\"",
         "start:staging": "concurrently \"infisical run --env=dev -- nuxt dev -o\" \"cd ../backend && infisical run --env=staging -- php artisan serve\"",
         "start:staging:host": "concurrently \"infisical run --env=dev -- nuxt dev --host 0 --port 3000 -o\" \"cd ../backend && infisical run --env=staging -- php artisan serve\"",

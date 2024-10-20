@@ -25,7 +25,7 @@ defineProps({
         required: true,
     },
     currUser: {
-        type: (Object as PropType<User>) || undefined,
+        type: Object as PropType<User> | undefined,
         required: true,
     },
 });
