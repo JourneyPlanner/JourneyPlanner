@@ -48,7 +48,7 @@ class JourneyPolicy
      * Determine whether the user can permanently delete the journey.
      */
     public function delete(
-        User $user,
+        ?User $user,
         Journey $journey,
         bool $allowGuests
     ): bool {
