@@ -163,7 +163,7 @@ async function deleteJourney(id: string) {
                     detail: t.value("delete.journey.toast.success"),
                     life: 6000,
                 });
-                if (!isAuthenticated) {
+                if (!isAuthenticated.value) {
                     localStorage.removeItem("JP_guest_journey_id");
                     await navigateTo("/journey/new");
                 } else {
