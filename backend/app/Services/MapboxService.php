@@ -18,7 +18,8 @@ class MapboxService
     public function fetchAddressDetails(
         array $validated,
         $previousFullAddress = null,
-        $previousDestinationOrAddress = null
+        $previousDestinationOrAddress = null,
+        Journey $activityOwnerJourney = null
     ): array {
         if (
             isset($validated["mapbox_full_address"]) &&
@@ -30,12 +31,17 @@ class MapboxService
             ($validated["destination"] ?? ($validated["address"] ?? "")) !==
             $previousDestinationOrAddress
         ) {
-            $searchData = $this->searchMapbox($validated["destination"]);
+            $searchData = $this->searchMapbox(
+                $validated["destination"],
+                $activityOwnerJourney?->longitude ?? 0,
+                $activityOwnerJourney?->latitude ?? 0
+            );
             if (isset($searchData["features"][0])) {
                 $feature = $searchData["features"][0];
                 $validated["mapbox_full_address"] =
                     $feature["properties"]["full_address"] ??
-                    $feature["properties"]["place_formatted"];
+                    ($feature["properties"]["name_preferred"] ??
+                        $feature["properties"]["name"]);
                 $validated["mapbox_id"] = $feature["properties"]["mapbox_id"];
             } else {
                 $validated["mapbox_full_address"] =
@@ -54,14 +60,17 @@ class MapboxService
      */
     public function setGeocodeData(
         Journey|Activity $journeyOrActivity,
-        array $validated
+        array $validated,
+        Journey $activityOwnerJourney = null
     ): Journey|Activity {
         if (
             isset($validated["mapbox_full_address"]) &&
             $validated["mapbox_full_address"]
         ) {
             $geocodingData = $this->geocodeAddress(
-                $validated["mapbox_full_address"]
+                $validated["mapbox_full_address"],
+                $activityOwnerJourney?->longitude ?? 0,
+                $activityOwnerJourney?->latitude ?? 0
             );
             if (isset($geocodingData["features"][0])) {
                 $feature = $geocodingData["features"][0];
@@ -93,14 +102,20 @@ class MapboxService
     /**
      * Search for a location on Mapbox.
      */
-    private function searchMapbox(string $query): array
-    {
+    private function searchMapbox(
+        string $query,
+        float $longitude = 0,
+        float $latitude = 0
+    ): array {
         $response = Http::withHeaders([
             "Origin" => config("app.url"),
             "Referer" => config("app.url"),
         ])->get(
             "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
                 urlencode($query) .
+                ($longitude && $latitude
+                    ? "&proximity=$longitude,$latitude"
+                    : "") .
                 "&limit=1&access_token=" .
                 config("map.mapbox_api_key")
         );
@@ -111,14 +126,20 @@ class MapboxService
     /**
      * Geocode an address on Mapbox.
      */
-    private function geocodeAddress(string $address): array
-    {
+    private function geocodeAddress(
+        string $address,
+        float $longitude = 0,
+        float $latitude = 0
+    ): array {
         $response = Http::withHeaders([
             "Origin" => config("app.url"),
             "Referer" => config("app.url"),
         ])->get(
             "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                 urlencode($address) .
+                ($longitude && $latitude
+                    ? "&proximity=$longitude,$latitude"
+                    : "") .
                 "&permanent=true&autocomplete=true&limit=1&access_token=" .
                 config("map.mapbox_api_key")
         );
