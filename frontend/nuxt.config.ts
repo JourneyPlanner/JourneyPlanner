@@ -10,6 +10,24 @@ export default defineNuxtConfig({
     app: {
         pageTransition: { name: "page", mode: "out-in" },
         layoutTransition: { name: "page", mode: "out-in" },
+        head: {
+            link: [
+                {
+                    rel: "icon",
+                    type: "image/png",
+                    href: "/favicon-48x48.png",
+                    sizes: "48x48",
+                },
+                { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+                { rel: "shortcut icon", href: "/favicon.ico" },
+                {
+                    rel: "apple-touch-icon",
+                    href: "/apple-touch-icon.png",
+                    sizes: "180x180",
+                },
+                { rel: "manifest", href: "/site.webmanifest" },
+            ],
+        },
     },
     vue: {
         compilerOptions: {
