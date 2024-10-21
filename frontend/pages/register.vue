@@ -6,12 +6,20 @@ import * as yup from "yup";
 const { t } = useTranslate();
 const toast = useToast();
 const client = useSanctumClient();
+const route = useRoute();
 
 const title = t.value("form.header.register");
 
 useHead({
     title: `${title} | JourneyPlanner`,
 });
+
+if (route.query.redirect?.toString().startsWith("/invite")) {
+    localStorage.setItem(
+        "JP_invite_journey_id",
+        route.query.redirect as string,
+    );
+}
 
 const { handleSubmit } = useForm({
     validationSchema: yup.object({

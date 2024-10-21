@@ -3,7 +3,6 @@ import { T, useTranslate } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 
-//TODO checken obs auch wirklich ein invite redirect ist
 const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
@@ -19,7 +18,7 @@ definePageMeta({
     middleware: ["sanctum:guest"],
 });
 
-if (route.query.redirect) {
+if (route.query.redirect?.toString().startsWith("/invite")) {
     localStorage.setItem(
         "JP_invite_journey_id",
         route.query.redirect as string,

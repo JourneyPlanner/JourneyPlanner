@@ -133,11 +133,14 @@ function openUnlockDialog() {
                                 class: `pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50 ${!isAuthenticated ? 'blur-[1.75px]' : ''}`,
                             },
                             content: {
-                                class: `pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50 relative ${!isAuthenticated ? 'blur-[1.75px]' : ''}`,
+                                class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50 relative',
                             },
                         }"
                     >
-                        <div class="relative">
+                        <div
+                            class="relative"
+                            :class="!isAuthenticated ? 'blur-[1.75px]' : ''"
+                        >
                             <p
                                 class="text-base font-medium text-natural-600 dark:text-natural-300"
                             >
@@ -153,17 +156,18 @@ function openUnlockDialog() {
                             >
                                 <T key-name="journey.template.create" />
                             </button>
-                            <div
-                                v-if="!isAuthenticated"
-                                class="absolute flex h-full w-full items-center justify-center"
+                        </div>
+
+                        <div
+                            v-if="!isAuthenticated"
+                            class="absolute top-0 -mt-10 flex h-full w-full items-center justify-center"
+                        >
+                            <button
+                                class="flex w-32 justify-center rounded-md border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 text-base font-medium text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                @click="openUnlockDialog"
                             >
-                                <button
-                                    class="w-32 rounded-md border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 text-center font-medium text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
-                                    @click="openUnlockDialog"
-                                >
-                                    <T key-name="journey.unlock.button" />
-                                </button>
-                            </div>
+                                <T key-name="journey.unlock.button" />
+                            </button>
                         </div>
                     </AccordionTab>
                     <AccordionTab

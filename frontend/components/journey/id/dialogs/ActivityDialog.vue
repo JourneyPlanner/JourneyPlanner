@@ -293,7 +293,16 @@ async function onSuccess(values: ActivityForm) {
                 });
                 loadingSave.value = false;
             },
-            async onResponseError() {
+            async onResponseError({ response }) {
+                if (response.status === 403) {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("journey.unlock.activities"),
+                        life: 6000,
+                    });
+                }
+
                 toast.add({
                     severity: "error",
                     summary: t.value("common.toast.error.heading"),

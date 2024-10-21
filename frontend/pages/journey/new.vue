@@ -18,6 +18,8 @@ const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
 const loading = ref(false);
 
+console.log(isAuthenticated.value);
+
 const title = t.value("title.journey.create");
 useHead({
     title: `${title} | JourneyPlanner`,
@@ -26,7 +28,6 @@ useHead({
 if (!isAuthenticated.value) {
     if (localStorage.getItem("JP_guest_journey_id") !== null) {
         navigateTo("/journey/" + localStorage.getItem("JP_guest_journey_id"));
-    } else {
         cancel.value = "/";
     }
 } else {
