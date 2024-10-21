@@ -40,8 +40,9 @@ class MapboxService
                 $feature = $searchData["features"][0];
                 $validated["mapbox_full_address"] =
                     $feature["properties"]["full_address"] ??
-                    ($feature["properties"]["name_preferred"] ??
-                        $feature["properties"]["name"]);
+                    $feature["properties"]["name_preferred"] ??
+                    $feature["properties"]["name"] ??
+                    $feature["properties"]["place_formatted"];
                 $validated["mapbox_id"] = $feature["properties"]["mapbox_id"];
             } else {
                 $validated["mapbox_full_address"] =
