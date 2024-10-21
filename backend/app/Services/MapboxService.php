@@ -113,9 +113,7 @@ class MapboxService
         ])->get(
             "https://api.mapbox.com/search/searchbox/v1/forward?q=" .
                 urlencode($query) .
-                ($longitude && $latitude
-                    ? "&proximity=$longitude,$latitude"
-                    : "") .
+                "&proximity=$longitude,$latitude" .
                 "&limit=1&access_token=" .
                 config("map.mapbox_api_key")
         );
@@ -137,9 +135,7 @@ class MapboxService
         ])->get(
             "https://api.mapbox.com/search/geocode/v6/forward?q=" .
                 urlencode($address) .
-                ($longitude && $latitude
-                    ? "&proximity=$longitude,$latitude"
-                    : "") .
+                "&proximity=$longitude,$latitude" .
                 "&permanent=true&autocomplete=true&limit=1&access_token=" .
                 config("map.mapbox_api_key")
         );
