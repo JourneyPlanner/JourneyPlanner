@@ -25,7 +25,7 @@ defineProps({
         required: true,
     },
     currUser: {
-        type: Object as PropType<User> | undefined,
+        type: Object as PropType<User>,
         required: true,
     },
 });
@@ -36,6 +36,7 @@ const client = useSanctumClient();
 const jsConfetti = new JSConfetti();
 const journeyStore = useJourneyStore();
 const { t } = useTranslate();
+const { isAuthenticated } = useSanctumAuth();
 
 const isFlipped = ref(false);
 const celsius = ref(true);
@@ -700,7 +701,7 @@ function emitScroll(target: string) {
                             v-if="
                                 duringJourney ||
                                 currUser?.role !== 1 ||
-                                currUser === undefined
+                                !isAuthenticated
                             "
                             class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
                             @click="emitScroll('calendarRef')"

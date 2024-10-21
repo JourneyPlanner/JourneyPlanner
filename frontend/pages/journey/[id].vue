@@ -292,8 +292,8 @@ function scrollToTarget(target: string) {
             :journey-i-d="String(journeyId)"
             :is-member-sidebar-visible="isMemberSidebarVisible"
             :invite="String(journeyStore.getInvite())"
-            :users="users! || undefined"
-            :curr-user="currUser! || undefined"
+            :users="users! || []"
+            :curr-user="currUser! || {}"
             @leave-journey="confirmLeave"
             @close="isMemberSidebarVisible = false"
             @open-qrcode="openQRCode"
@@ -301,7 +301,7 @@ function scrollToTarget(target: string) {
         />
         <JourneyIdMenuSidebar
             :is-menu-sidebar-visible="isMenuSidebarVisible"
-            :curr-user="currUser! || undefined"
+            :curr-user="currUser! || {}"
             @leave-journey="confirmLeave"
             @journey-edited="journeyEdited"
             @close="isMenuSidebarVisible = false"
@@ -344,7 +344,7 @@ function scrollToTarget(target: string) {
             :hundreds-days="hundredsDays"
             :during-journey="duringJourney"
             :journey-ended="journeyEnded"
-            :curr-user="currUser! || undefined"
+            :curr-user="currUser! || {}"
             @scroll-to-target="scrollToTarget"
             @open-activity-dialog="isActivityDialogVisible = true"
         />
@@ -359,7 +359,7 @@ function scrollToTarget(target: string) {
             </div>
         </div>
         <JourneyIdActivitySection
-            :curr-user="currUser! || undefined"
+            :curr-user="currUser! || {}"
             :is-activity-dialog-visible="isActivityDialogVisible"
             @close="isActivityDialogVisible = false"
         />

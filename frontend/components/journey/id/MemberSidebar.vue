@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
 
-//TODO props types
 const props = defineProps({
     journeyID: {
         type: String,
@@ -16,11 +15,11 @@ const props = defineProps({
         required: true,
     },
     users: {
-        type: Array as PropType<User[]> | undefined,
+        type: Array as PropType<User[]>,
         required: true,
     },
     currUser: {
-        type: Object as PropType<User> | undefined,
+        type: Object as PropType<User>,
         required: true,
     },
 });
