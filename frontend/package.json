@@ -38,7 +38,7 @@
         "@uppy/tus": "^3.5.4",
         "@uppy/vue": "^1.1.2",
         "@vee-validate/nuxt": "^4.14.3",
-        "@vee-validate/yup": "^4.13.2",
+        "@vee-validate/yup": "^4.14.3",
         "concurrently": "^9.0.0",
         "date-fns": "^3.6.0",
         "file-saver": "^2.0.5",
