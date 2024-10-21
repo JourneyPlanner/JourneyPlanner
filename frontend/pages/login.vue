@@ -3,6 +3,7 @@ import { T, useTranslate } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 
+//TODO checken obs auch wirklich ein invite redirect ist
 const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
@@ -71,11 +72,8 @@ async function loginUser(userData: User) {
             detail: t.value("form.login.toast.success"),
             life: 3000,
         });
-        if (localStorage.getItem("JP_invite_journey_id")) {
-            await navigateTo(localStorage.getItem("JP_invite_journey_id"));
-        } else {
-            await navigateTo("/dashboard");
-        }
+
+        await navigateTo("/dashboard");
     } catch (error: unknown) {
         if (
             (error as Error & { response?: { status?: number } }).response
@@ -92,7 +90,8 @@ async function loginUser(userData: User) {
             (error as Error & { response?: { _data?: { message?: string } } })
                 .response?._data?.message == "CSRF token mismatch."
         ) {
-            location.reload();
+            //location.reload();
+            console.log("CSRF token mismatch");
         }
         toast.add({
             severity: "error",

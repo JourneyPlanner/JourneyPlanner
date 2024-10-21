@@ -92,7 +92,7 @@ function openQRCode(tolgeeKey: string) {
                 <div class="flex items-center justify-center">
                     <input
                         id="invite-link"
-                        class="w-3/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-natural-300 focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-200"
+                        class="w-3/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-natural-900 focus:outline-none focus:ring-1 dark:bg-natural-900 dark:text-natural-200"
                         disabled
                         :value="invite"
                     />

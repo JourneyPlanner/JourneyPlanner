@@ -66,6 +66,8 @@ async function registerUser(userData: object) {
                     detail: t.value("form.registration.toast.success"),
                     life: 3000,
                 });
+                await navigateTo("/dashboard");
+                /*
                 if (localStorage.getItem("JP_invite_journey_id")) {
                     await navigateTo(
                         localStorage.getItem("JP_invite_journey_id"),
@@ -73,6 +75,7 @@ async function registerUser(userData: object) {
                 } else {
                     await navigateTo("/dashboard");
                 }
+                */
             } else if (response.status === 422) {
                 toast.add({
                     severity: "error",

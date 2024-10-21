@@ -51,7 +51,6 @@ if (error.value?.statusCode === 404) {
             localStorage.getItem("JP_guest_journey_id")) ||
         localStorage.getItem("JP_invite_journey_id")
     ) {
-        console.log("id: Journey not found, deleting local storage");
         localStorage.removeItem("JP_guest_journey_id");
         localStorage.removeItem("JP_invite_journey_id");
     }
@@ -60,6 +59,11 @@ if (error.value?.statusCode === 404) {
         statusMessage: "Journey not found",
         fatal: true,
     });
+}
+
+if (isAuthenticated.value) {
+    localStorage.removeItem("JP_guest_journey_id");
+    localStorage.removeItem("JP_invite_journey_id");
 }
 
 await client(`/api/journey/${journeyId}/activity`, {
@@ -355,7 +359,7 @@ function scrollToTarget(target: string) {
             </div>
         </div>
         <JourneyIdActivitySection
-            :curr-user="currUser!"
+            :curr-user="currUser! || undefined"
             :is-activity-dialog-visible="isActivityDialogVisible"
             @close="isActivityDialogVisible = false"
         />

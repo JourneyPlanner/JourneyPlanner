@@ -5,12 +5,14 @@ const props = defineProps({
         required: true,
     },
     currUser: {
-        type: Object as PropType<User>,
+        type: Object as PropType<User> | undefined,
         required: true,
     },
 });
 
 const emit = defineEmits(["close"]);
+
+const { isAuthenticated } = useSanctumAuth();
 
 const journeyStore = useJourneyStore();
 const isDialogVisible = ref(false);
@@ -31,7 +33,7 @@ function close() {
 <template>
     <div>
         <div
-            v-if="currUser?.role === 1"
+            v-if="currUser?.role === 1 || !isAuthenticated"
             class="flex justify-center md:justify-start"
         >
             <div
@@ -50,11 +52,11 @@ function close() {
             </div>
         </div>
         <JourneyIdComponentsActivityPool
-            v-if="currUser?.role === 1"
+            v-if="currUser?.role === 1 || !isAuthenticated"
             :id="journeyStore.getID()"
         />
         <JourneyIdDialogsActivityDialog
-            v-if="currUser?.role === 1"
+            v-if="currUser?.role === 1 || !isAuthenticated"
             :id="journeyStore.getID()"
             :visible="isDialogVisible"
             :only-show="false"

@@ -108,7 +108,18 @@ function changeInput(event: InputEvent) {
 
 function handleRetrieve(event: MapBoxRetrieveEvent) {
     mapbox.value = event.detail.features[0];
-    inputValue.value = event.detail.features[0].properties.full_address;
+
+    if (event.detail.features[0].properties.full_address) {
+        inputValue.value = event.detail.features[0].properties.full_address;
+    } else if (event.detail.features[0].properties.name_preferred) {
+        inputValue.value = event.detail.features[0].properties.name_preferred;
+    } else if (event.detail.features[0].properties.name) {
+        inputValue.value = event.detail.features[0].properties.name;
+    } else if (event.detail.features[0].properties.place_formatted) {
+        inputValue.value = event.detail.features[0].properties.place_formatted;
+    } else {
+        inputValue.value = "";
+    }
 }
 </script>
 <template>
@@ -126,6 +137,7 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                 :options="{
                     language: tolgee.getLanguage(),
                     proximity: longlat,
+                    types: ['country', 'region', 'postcode'],
                 }"
                 :theme="{
                     cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px ${border};} .Input:focus {border-radius: 0.5rem; border: solid 2px ${border};} .SearchBox {box-shadow: none;} .Results {font-family: Nunito;} .ResultsAttribution {color: ${placeholderColor}} .SearchIcon {fill: ${border};} .ActionIcon {color: ${placeholderColor}}  ${css} ${customClass}`,

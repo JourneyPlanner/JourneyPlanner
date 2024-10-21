@@ -16,6 +16,7 @@ journeyStore.resetJourney();
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
+const loading = ref(false);
 
 const title = t.value("title.journey.create");
 useHead({
@@ -68,6 +69,7 @@ const { handleSubmit } = useForm({
  * and then a journey object is created and sent to the backend
  */
 const onSubmit = handleSubmit(async (values) => {
+    loading.value = true;
     toast.add({
         severity: "info",
         summary: t.value("common.toast.info.heading"),
@@ -118,6 +120,7 @@ const onSubmit = handleSubmit(async (values) => {
                     );
                 }
                 await navigateTo("/journey/" + response._data.journey.id);
+                loading.value = false;
             }
         },
         async onResponseError() {
@@ -127,6 +130,7 @@ const onSubmit = handleSubmit(async (values) => {
                 detail: t.value("common.error.unknown"),
                 life: 6000,
             });
+            loading.value = false;
         },
     });
 });
@@ -221,12 +225,20 @@ function copyToClipboard() {
                                 </button>
                             </NuxtLink>
 
-                            <button
+                            <Button
+                                :loading="loading"
                                 type="submit"
+                                :label="t('common.button.create')"
+                                :pt="{
+                                    root: {
+                                        class: 'flex items-center justify-center',
+                                    },
+                                    label: {
+                                        class: 'display-block flex-none font-bold font-nunito',
+                                    },
+                                }"
                                 class="rounded-xl border-2 border-dandelion-300 bg-natural-50 px-7 py-1 font-bold text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
-                            >
-                                <T key-name="common.button.create" />
-                            </button>
+                            />
                         </div>
                     </form>
                 </fieldset>

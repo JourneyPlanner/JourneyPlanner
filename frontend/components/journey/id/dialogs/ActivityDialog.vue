@@ -189,7 +189,7 @@ const { handleSubmit } = useForm<ActivityForm>({
 });
 
 const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
-
+//TODO wenn zu viele aktivitäten
 async function onSuccess(values: ActivityForm) {
     const durationDate = new Date(values.duration);
     const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}:00`;

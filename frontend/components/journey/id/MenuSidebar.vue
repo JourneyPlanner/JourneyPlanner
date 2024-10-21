@@ -8,7 +8,7 @@ const props = defineProps({
     },
     currUser: {
         type: Object as PropType<User> | undefined,
-        required: false,
+        required: true,
     },
 });
 
@@ -123,21 +123,21 @@ function openUnlockDialog() {
                         </div>
                     </AccordionTab>
                     <AccordionTab
-                        v-if="currUser?.role === 1"
+                        v-if="currUser?.role === 1 || !isAuthenticated"
                         :header="t('journey.template.create')"
                         :pt="{
                             root: {
                                 class: 'border-b-2 border-natural-300 dark:border-natural-700',
                             },
                             headerAction: {
-                                class: 'pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                                class: `pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50 ${!isAuthenticated ? 'blur-[1.75px]' : ''}`,
                             },
                             content: {
-                                class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                                class: `pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50 relative ${!isAuthenticated ? 'blur-[1.75px]' : ''}`,
                             },
                         }"
                     >
-                        <div>
+                        <div class="relative">
                             <p
                                 class="text-base font-medium text-natural-600 dark:text-natural-300"
                             >
@@ -146,12 +146,24 @@ function openUnlockDialog() {
                             <button
                                 class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                                 @click="
-                                    isCreateTemplateVisible =
-                                        !isCreateTemplateVisible
+                                    isAuthenticated
+                                        ? (isCreateTemplateVisible = true)
+                                        : openUnlockDialog()
                                 "
                             >
                                 <T key-name="journey.template.create" />
                             </button>
+                            <div
+                                v-if="!isAuthenticated"
+                                class="absolute flex h-full w-full items-center justify-center"
+                            >
+                                <button
+                                    class="w-32 rounded-md border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 text-center font-medium text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                    @click="openUnlockDialog"
+                                >
+                                    <T key-name="journey.unlock.button" />
+                                </button>
+                            </div>
                         </div>
                     </AccordionTab>
                     <AccordionTab

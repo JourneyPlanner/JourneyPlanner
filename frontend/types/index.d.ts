@@ -25,6 +25,7 @@ declare global {
             address: string;
             full_address: string;
             place_formatted: string;
+            name_preferred: string;
             context: {
                 country: {
                     id: string;

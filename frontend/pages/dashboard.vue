@@ -94,9 +94,7 @@ const toggle = (event: Event) => {
 };
 
 if (localStorage.getItem("JP_invite_journey_id")) {
-    await navigateTo("/invite/" + localStorage.getItem("JP_invite_journey_id"));
-    localStorage.removeItem("JP_guest_journey_id");
-    localStorage.removeItem("JP_invite_journey_id");
+    await navigateTo(localStorage.getItem("JP_invite_journey_id"));
 }
 
 /*
