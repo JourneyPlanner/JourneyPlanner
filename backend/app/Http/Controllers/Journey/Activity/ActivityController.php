@@ -130,7 +130,7 @@ class ActivityController extends Controller
      */
     public function destroy(Journey $journey, Activity $activity)
     {
-        Gate::authorize("delete", [$journey, $activity, true]);
+        Gate::authorize("delete", [$activity, $journey, true]);
 
         $activity->delete();
     }
