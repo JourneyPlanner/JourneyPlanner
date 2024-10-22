@@ -105,8 +105,8 @@ async function loginUser(userData: User) {
 
 <template>
     <div>
-        <div class="absolute left-4 top-4">
-            <NuxtLink to="/">
+        <div class="absolute left-4 top-4 z-50">
+            <NuxtLink to="/" class="z-50">
                 <SvgLogoHorizontalBlue class="w-44 lg:w-56" />
             </NuxtLink>
         </div>
