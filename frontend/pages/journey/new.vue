@@ -18,8 +18,6 @@ const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
 const loading = ref(false);
 
-console.log(isAuthenticated.value);
-
 const title = t.value("title.journey.create");
 useHead({
     title: `${title} | JourneyPlanner`,
@@ -117,11 +115,6 @@ const onSubmit = handleSubmit(async (values) => {
                 });
                 store.addJourney(journey);
                 if (!isAuthenticated.value) {
-                    console.log(
-                        "new: setting guest journey id",
-                        response._data.journey.id,
-                    );
-
                     localStorage.setItem(
                         "JP_guest_journey_id",
                         response._data.journey.id,
