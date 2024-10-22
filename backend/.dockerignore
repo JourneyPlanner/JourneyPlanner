@@ -1,3 +1,10 @@
+Dockerfile
+.dockerignore
+.gitignore
+./vendor
+./node_modules
+
+# Gitignore
 /.phpunit.cache
 /node_modules
 /public/build
