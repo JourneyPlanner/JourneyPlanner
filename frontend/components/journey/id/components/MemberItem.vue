@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const props = defineProps({
     id: { type: String, required: true },
-    display_name: { type: String, required: true },
+    displayName: { type: String, required: true },
     username: { type: String, required: true },
     role: { type: Number, required: true },
     edit: { type: Boolean, required: true },
-    currentID: { type: String, required: true },
+    currentId: { type: String, required: true },
 });
 
 const currentRole = ref(props.role);
@@ -13,7 +13,7 @@ const isProfileDialogVisible = ref(false);
 const emit = defineEmits(["changeRole"]);
 
 function changeRole(selectedRole: number) {
-    if (props.currentID === props.id) return;
+    if (props.currentId === props.id) return;
 
     emit("changeRole", props.id, selectedRole);
     currentRole.value = selectedRole;
@@ -30,19 +30,19 @@ const roleType = computed(() => {
     <div class="flex flex-row items-center justify-between">
         <h2
             v-tooltip.left="{
-                value: display_name,
+                value: displayName,
                 pt: { root: 'font-nunito' },
             }"
             class="w-2/3 cursor-pointer overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50 max-sm:hidden"
             @click="isProfileDialogVisible = true"
         >
-            {{ display_name }}
+            {{ displayName }}
         </h2>
         <NuxtLink
             class="w-2/3 cursor-pointer overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50 sm:hidden"
             :to="'/user/' + username"
         >
-            {{ display_name }}
+            {{ displayName }}
         </NuxtLink>
         <div
             class="w-1/4 rounded-md p-0.5 px-1 text-center"
@@ -58,7 +58,7 @@ const roleType = computed(() => {
         </div>
     </div>
     <form
-        v-if="edit && currentID !== props.id"
+        v-if="edit && currentId !== props.id"
         class="flex justify-end text-end font-nunito"
     >
         <h4
@@ -85,10 +85,10 @@ const roleType = computed(() => {
             <T key-name="journey.sidebar.list.member" />
         </h4>
     </form>
-    <ProfileDialog
+    <JourneyIdDialogsProfileDialog
         :visible="isProfileDialogVisible"
         :username="username"
-        :displayname="display_name"
+        :displayname="displayName"
         @close="isProfileDialogVisible = false"
     />
 </template>

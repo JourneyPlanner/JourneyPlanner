@@ -22,6 +22,10 @@ export const useJourneyStore = defineStore("journey", () => {
         return this.journey.name;
     }
 
+    function getInvite() {
+        return this.journey.invite;
+    }
+
     function getDestination() {
         return this.journey.destination;
     }
@@ -66,6 +70,7 @@ export const useJourneyStore = defineStore("journey", () => {
         resetJourney,
         getID,
         getName,
+        getInvite,
         getDestination,
         getFromDate,
         getToDate,

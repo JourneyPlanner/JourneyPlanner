@@ -7,24 +7,37 @@ import * as yup from "yup";
 
 const { t } = useTranslate();
 const client = useSanctumClient();
+const { isAuthenticated } = useSanctumAuth();
 const toast = useToast();
 const store = useDashboardStore();
 const journeyStore = useJourneyStore();
 journeyStore.resetJourney();
 
-const journeyInvite = uuidv4();
-const journeyInviteLink = ref(
-    window.location.origin + "/invite/" + journeyInvite,
-);
+const cancel = ref("/dashboard");
+const journeyInvite = ref(uuidv4());
+const journeyInviteLink = ref("");
+const loading = ref(false);
 
 const title = t.value("title.journey.create");
 useHead({
     title: `${title} | JourneyPlanner`,
 });
 
-definePageMeta({
-    middleware: ["sanctum:auth"],
-});
+if (!isAuthenticated.value) {
+    if (localStorage.getItem("JP_guest_journey_id") !== null) {
+        navigateTo("/journey/" + localStorage.getItem("JP_guest_journey_id"));
+        toast.add({
+            severity: "info",
+            summary: t.value("journey.unlock.create.heading"),
+            detail: t.value("journey.unlock.create.detail"),
+            life: 2000,
+        });
+    }
+    cancel.value = "/";
+} else {
+    journeyInviteLink.value =
+        window.location.origin + "/invite/" + journeyInvite.value;
+}
 
 /**
  * form validation
@@ -35,6 +48,7 @@ const { handleSubmit } = useForm({
         journeyName: yup
             .string()
             .required(t.value("form.error.journey.name"))
+            .matches(/^(?!\s+$).*/, t.value("form.error.journey.name"))
             .label(t.value("form.input.journey.name")),
         journeyDestination: yup
             .string()
@@ -61,6 +75,7 @@ const { handleSubmit } = useForm({
  * and then a journey object is created and sent to the backend
  */
 const onSubmit = handleSubmit(async (values) => {
+    loading.value = true;
     toast.add({
         severity: "info",
         summary: t.value("common.toast.info.heading"),
@@ -72,7 +87,7 @@ const onSubmit = handleSubmit(async (values) => {
     const destination = values.journeyDestination;
     const from = format(values.journeyRange[0], "yyyy-MM-dd");
     const to = format(values.journeyRange[1], "yyyy-MM-dd");
-    const invite = journeyInvite;
+    const invite = journeyInvite.value;
     const mapbox_full_address = values.mapbox?.properties.full_address;
     const mapbox_id = values.mapbox?.properties.mapbox_id;
 
@@ -99,7 +114,14 @@ const onSubmit = handleSubmit(async (values) => {
                     life: 3000,
                 });
                 store.addJourney(journey);
-                await navigateTo("/dashboard");
+                if (!isAuthenticated.value) {
+                    localStorage.setItem(
+                        "JP_guest_journey_id",
+                        response._data.journey.id,
+                    );
+                }
+                await navigateTo("/journey/" + response._data.journey.id);
+                loading.value = false;
             }
         },
         async onResponseError() {
@@ -109,6 +131,7 @@ const onSubmit = handleSubmit(async (values) => {
                 detail: t.value("common.error.unknown"),
                 life: 6000,
             });
+            loading.value = false;
         },
     });
 });
@@ -133,15 +156,15 @@ function copyToClipboard() {
         </div>
         <div class="z-10 flex min-h-screen flex-col justify-between">
             <div
-                class="z-50 mt-16 flex items-center justify-center font-nunito"
+                class="z-50 mt-16 flex items-center justify-center px-4 font-nunito"
             >
                 <fieldset
                     id="create-journey"
-                    class="w-full rounded-2xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-5 shadow-sm dark:bg-gothic-300 dark:bg-opacity-20 sm:w-1/4 md:w-1/3"
+                    class="w-full rounded-2xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-2 shadow-sm dark:bg-gothic-300 dark:bg-opacity-20 xs:px-5 sm:w-1/4 md:w-1/3"
                 >
                     <legend
                         for="create-journey"
-                        class="ml-4 px-2 text-center text-2xl font-bold text-text dark:text-natural-50 lg:text-left lg:text-3xl"
+                        class="text-center text-2xl font-bold text-text dark:text-natural-50 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>
@@ -167,11 +190,12 @@ function copyToClipboard() {
                             translation-key="form.input.journey.dates"
                         />
                         <Divider
+                            v-if="isAuthenticated"
                             type="solid"
                             class="border-10 border text-calypso-300"
                         />
 
-                        <div class="relative my-2 flex">
+                        <div v-if="isAuthenticated" class="relative my-2 flex">
                             <input
                                 id="journey-invite"
                                 v-model="journeyInviteLink"
@@ -199,7 +223,7 @@ function copyToClipboard() {
                         </div>
 
                         <div class="mb-5 mt-6 flex justify-between gap-5">
-                            <NuxtLink to="/dashboard">
+                            <NuxtLink :to="cancel">
                                 <button
                                     type="button"
                                     class="rounded-xl border-2 border-mahagony-500 bg-natural-50 px-7 py-1 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-mahagony-500 dark:hover:bg-opacity-30"
@@ -208,12 +232,20 @@ function copyToClipboard() {
                                 </button>
                             </NuxtLink>
 
-                            <button
+                            <Button
+                                :loading="loading"
                                 type="submit"
+                                :label="t('common.button.create')"
+                                :pt="{
+                                    root: {
+                                        class: 'flex items-center justify-center',
+                                    },
+                                    label: {
+                                        class: 'display-block flex-none font-bold font-nunito',
+                                    },
+                                }"
                                 class="rounded-xl border-2 border-dandelion-300 bg-natural-50 px-7 py-1 font-bold text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
-                            >
-                                <T key-name="common.button.create" />
-                            </button>
+                            />
                         </div>
                     </form>
                 </fieldset>

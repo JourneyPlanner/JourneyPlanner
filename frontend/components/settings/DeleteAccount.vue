@@ -12,6 +12,7 @@ const isConfirmVisible = ref(false);
 const emit = defineEmits(["close", "changeEmail"]);
 const { t } = useTranslate();
 const client = useSanctumClient();
+const { refreshIdentity } = useSanctumAuth();
 const toast = useToast();
 
 watch(
@@ -62,6 +63,7 @@ async function deleteAccount() {
         },
     });
     localStorage.removeItem("upload_token");
+    await refreshIdentity();
     await navigateTo("/");
 }
 </script>

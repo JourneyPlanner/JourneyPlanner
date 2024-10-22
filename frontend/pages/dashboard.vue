@@ -93,6 +93,10 @@ const toggle = (event: Event) => {
     menu.value.toggle(event);
 };
 
+if (localStorage.getItem("JP_invite_journey_id")) {
+    await navigateTo(localStorage.getItem("JP_invite_journey_id"));
+}
+
 /*
 Fetches all journeys from the backend
 stores response in journeys and currentJourneys

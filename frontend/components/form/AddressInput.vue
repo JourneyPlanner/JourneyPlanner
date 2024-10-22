@@ -108,7 +108,18 @@ function changeInput(event: InputEvent) {
 
 function handleRetrieve(event: MapBoxRetrieveEvent) {
     mapbox.value = event.detail.features[0];
-    inputValue.value = event.detail.features[0].properties.full_address;
+
+    if (event.detail.features[0].properties.full_address) {
+        inputValue.value = event.detail.features[0].properties.full_address;
+    } else if (event.detail.features[0].properties.name_preferred) {
+        inputValue.value = event.detail.features[0].properties.name_preferred;
+    } else if (event.detail.features[0].properties.name) {
+        inputValue.value = event.detail.features[0].properties.name;
+    } else if (event.detail.features[0].properties.place_formatted) {
+        inputValue.value = event.detail.features[0].properties.place_formatted;
+    } else {
+        inputValue.value = "";
+    }
 }
 </script>
 <template>

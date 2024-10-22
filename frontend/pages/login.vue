@@ -6,6 +6,7 @@ import * as yup from "yup";
 const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
+const route = useRoute();
 
 const title = t.value("form.header.login");
 
@@ -16,6 +17,13 @@ useHead({
 definePageMeta({
     middleware: ["sanctum:guest"],
 });
+
+if (route.query.redirect?.toString().startsWith("/invite")) {
+    localStorage.setItem(
+        "JP_invite_journey_id",
+        route.query.redirect as string,
+    );
+}
 
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
@@ -63,6 +71,7 @@ async function loginUser(userData: User) {
             detail: t.value("form.login.toast.success"),
             life: 3000,
         });
+
         await navigateTo("/dashboard");
     } catch (error: unknown) {
         if (
@@ -80,7 +89,8 @@ async function loginUser(userData: User) {
             (error as Error & { response?: { _data?: { message?: string } } })
                 .response?._data?.message == "CSRF token mismatch."
         ) {
-            location.reload();
+            //location.reload();
+            console.log("CSRF token mismatch");
         }
         toast.add({
             severity: "error",

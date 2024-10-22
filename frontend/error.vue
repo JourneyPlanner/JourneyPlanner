@@ -7,7 +7,7 @@ const error = useError();
 
 const handleError = () => {
     clearError({
-        redirect: "/dashboard",
+        redirect: "/",
     });
 };
 </script>
@@ -26,7 +26,7 @@ const handleError = () => {
                     class="m-3 rounded-lg border-2 border-dandelion-300 p-1 px-2 text-sm text-text hover:bg-dandelion-200 dark:text-natural-50 dark:hover:bg-pesto-600 md:text-base"
                     @click="handleError"
                 >
-                    Back to dashboard
+                    Back to start page
                 </button>
             </p>
             <span class="text-sm">--- Site is still in development ---</span>
