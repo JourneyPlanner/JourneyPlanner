@@ -1319,9 +1319,16 @@ function changeToFahrenheit() {
             :only-show="false"
             :create="true"
             :create-address="true"
+            :journey-start="fromDate"
+            :journey-end="toDate"
             @close="isActivityDialogVisible = false"
         />
-        <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
+        <ActivityPool
+            v-if="currUser.role === 1"
+            :id="journeyId.toString()"
+            :journey-start="fromDate"
+            :journey-end="toDate"
+        />
         <div ref="calendar">
             <CalendarFull
                 :id="journeyId.toString()"

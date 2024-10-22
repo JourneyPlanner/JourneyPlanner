@@ -88,6 +88,9 @@ const phone = ref("");
 const updated_at = ref("");
 const tolgee = useTolgee(["language"]);
 
+const journeyStartDate = new Date(props.journeyStartdate);
+const journeyEndDate = new Date(props.journeyEnddate);
+
 interface EventObject {
     event: Event;
     draggedEl: HTMLElement;
@@ -657,6 +660,8 @@ function moveActivity(start: Date, end: Date) {
                 :updated-at="updated_at"
                 :update="update"
                 :calendar-clicked="calendarClicked"
+                :journey-start="journeyStartDate"
+                :journey-end="journeyEndDate"
                 @close="isActivityInfoVisible = false"
                 @delete-activity="deleteActivity"
                 @remove-from-calendar="removeFromCalendar"

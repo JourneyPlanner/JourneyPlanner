@@ -19,6 +19,8 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    journeyStart: { type: Date, required: true },
+    journeyEnd: { type: Date, required: true },
 });
 
 const activityId = ref("");
@@ -344,6 +346,8 @@ const itemsJourneyGuide = ref([
             :phone="phone"
             :updated-at="updated_at"
             :update="update"
+            :journey-start="props.journeyStart"
+            :journey-end="props.journeyEnd"
             @close="isActivityInfoVisible = false"
             @delete-activity="deleteActivity"
         />
