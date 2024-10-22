@@ -50,6 +50,7 @@ const { handleSubmit } = useForm({
         journeyName: yup
             .string()
             .required(t.value("form.error.journey.name"))
+            .matches(/^(?!\s+$).*/, t.value("form.error.journey.name"))
             .label(t.value("form.input.journey.name")),
         journeyDestination: yup
             .string()
