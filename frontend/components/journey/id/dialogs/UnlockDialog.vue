@@ -127,7 +127,7 @@ function openQRCode(tolgeeKey: string) {
             position="bottom"
             :auto-z-index="true"
             :draggable="false"
-            class="z-50 mt-auto flex h-[75%] w-full flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden lg:-z-10"
+            class="z-50 mt-auto flex h-auto flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden lg:-z-10"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden ',
@@ -155,12 +155,12 @@ function openQRCode(tolgeeKey: string) {
                 <button class="-ml-6 flex justify-center pr-4" @click="close">
                     <span class="pi pi-angle-down text-2xl" />
                 </button>
-                <div class="font-nunito text-3xl font-semibold">
+                <div class="text-nowrap font-nunito text-3xl font-semibold">
                     <T key-name="journey.unlock.short" />
                 </div>
             </template>
             <div
-                class="flex h-full flex-col gap-y-5 pl-6 text-natural-700 dark:text-natural-300"
+                class="flex h-full flex-col gap-y-5 pl-6 pr-2 text-natural-700 dark:text-natural-300"
             >
                 <p><T key-name="journey.unlock.detail" /></p>
                 <p><T key-name="journey.unlock.link.info" /></p>
@@ -187,10 +187,10 @@ function openQRCode(tolgeeKey: string) {
                     </button>
                 </div>
                 <div
-                    class="mt-auto flex w-full justify-center text-text dark:text-natural-50"
+                    class="mt-5 flex w-full justify-center text-text dark:text-natural-50"
                 >
                     <NuxtLink
-                        class="mt-auto w-full rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-xl font-semibold hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        class="w-full rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-xl font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
                         :to="invite"
                     >
                         <T key-name="journey.unlock.button" />
