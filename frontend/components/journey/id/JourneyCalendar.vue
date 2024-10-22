@@ -13,6 +13,7 @@ import tailwindConfig from "~/tailwind.config.js";
 const fullConfig = resolveConfig(tailwindConfig);
 const colorMode = useColorMode();
 const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+const { isAuthenticated } = useSanctumAuth();
 
 let text = "";
 let bg = "";
@@ -535,7 +536,7 @@ function showData(info: EventObject) {
     calendarId.value = info.event._def.publicId;
     activities.value.forEach((activity: Activity) => {
         if (activity.id === activityId.value) {
-            if (props.currentUserRole === 1) {
+            if (props.currentUserRole === 1 || !isAuthenticated.value) {
                 update.value = false;
                 onlyShow.value = true;
                 calendarClicked.value = true;

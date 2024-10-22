@@ -152,7 +152,6 @@ const onSave = handleSubmit(async (values) => {
  * delete the journey
  */
 async function deleteJourney(id: string) {
-    //TODO: error wegen Backend template not null
     await client(`/api/journey/${id}`, {
         method: "DELETE",
         async onResponse({ response }) {

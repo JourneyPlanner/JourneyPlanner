@@ -50,9 +50,8 @@ class ActivityController extends Controller
     ): JsonResponse {
         // Validate the request
         $validated = $request->validated();
-        //TODO wieder auf 20 setzen
         // Limit the number of activities for guests
-        if ($journey->is_guest && $journey->activities()->count() > 1) {
+        if ($journey->is_guest && $journey->activities()->count() >= 20) {
             abort(403, "You have reached the maximum number of activities.");
         }
 

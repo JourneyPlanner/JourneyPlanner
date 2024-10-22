@@ -8,6 +8,7 @@ import { useActivityStore } from "~/stores/activities";
 const store = useActivityStore();
 const { t } = useTranslate();
 const menu = ref();
+
 const toggle = (event: Event) => {
     menu.value[0].toggle(event);
 };
