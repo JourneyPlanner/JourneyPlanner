@@ -50,7 +50,7 @@ const changeColorMode = () => {
                     <h3
                         class="text-lg font-bold text-calypso-400 dark:text-gothic-400"
                     >
-                        <SvgLogoHorizontalBlue class="w-44 lg:w-80" />
+                        <SvgLogoHorizontalBlue class="w-44 lg:w-52" />
                     </h3>
                 </NuxtLink>
                 <nav class="flex flex-row gap-4">
