@@ -191,6 +191,7 @@ function copyToClipboard() {
                             translation-key="form.input.journey.dates"
                         />
                         <Divider
+                            v-if="isAuthenticated"
                             type="solid"
                             class="border-10 border text-calypso-300"
                         />
