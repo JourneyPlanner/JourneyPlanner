@@ -114,6 +114,11 @@ async function registerUser(userData: object) {
 
 <template>
     <div>
+        <div class="absolute left-4 top-4">
+            <NuxtLink to="/">
+                <SvgLogoHorizontalBlue class="w-44 lg:w-52" />
+            </NuxtLink>
+        </div>
         <div
             class="flex w-full items-center justify-center bg-background font-nunito dark:bg-background-dark"
         >

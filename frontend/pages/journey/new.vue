@@ -149,6 +149,11 @@ function copyToClipboard() {
 
 <template>
     <div>
+        <div class="absolute left-4 top-4">
+            <NuxtLink :to="cancel">
+                <SvgLogoHorizontalBlue class="w-44 lg:w-56" />
+            </NuxtLink>
+        </div>
         <div class="z-10 flex min-h-screen flex-col justify-between">
             <div
                 class="z-50 mt-16 flex items-center justify-center px-4 font-nunito"
