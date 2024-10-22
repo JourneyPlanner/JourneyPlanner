@@ -347,7 +347,7 @@ function emitScroll(target: string) {
                 <div
                     class="bg-calypso-300-gray absolute ml-5 inline-block h-7 w-7 self-center rounded-full"
                 />
-                <SvgLogoHorizontalWhite class="ml-10 w-56" />
+                <SvgLogoHorizontalWhite class="ml-3 w-56" />
 
                 <div class="flex h-full w-full items-center justify-end">
                     <SvgAirplaneIcon class="mr-5 w-7" />
