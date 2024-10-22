@@ -5,11 +5,10 @@ import { format, parse } from "date-fns";
 import type { MenuItemCommandEvent } from "primevue/menuitem";
 import { useActivityStore } from "~/stores/activities";
 
-import ActivityDialog from "./ActivityDialog.vue";
-
 const store = useActivityStore();
 const { t } = useTranslate();
 const menu = ref();
+
 const toggle = (event: Event) => {
     menu.value[0].toggle(event);
 };
@@ -323,7 +322,7 @@ const itemsJourneyGuide = ref([
                 </div>
             </ScrollPanel>
         </div>
-        <ActivityDialog
+        <JourneyIdDialogsActivityDialog
             :id="id.toString()"
             :activity-id="activityId"
             :visible="isActivityInfoVisible"

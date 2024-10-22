@@ -189,7 +189,6 @@ const { handleSubmit } = useForm<ActivityForm>({
 });
 
 const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
-
 async function onSuccess(values: ActivityForm) {
     const durationDate = new Date(values.duration);
     const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}:00`;
@@ -300,6 +299,7 @@ async function onSuccess(values: ActivityForm) {
                     detail: t.value("common.error.unknown"),
                     life: 6000,
                 });
+
                 loadingSave.value = false;
             },
         });
@@ -354,13 +354,23 @@ async function onSuccess(values: ActivityForm) {
                 });
                 loadingSave.value = false;
             },
-            async onResponseError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
+            async onResponseError({ response }) {
+                if (response.status === 403) {
+                    close();
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("journey.unlock.activities"),
+                        life: 6000,
+                    });
+                } else {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("common.error.unknown"),
+                        life: 6000,
+                    });
+                }
                 loadingSave.value = false;
             },
         });
@@ -413,6 +423,8 @@ function setSelectedDate(date: Date) {
         block-scroll
         :auto-z-index="true"
         :draggable="false"
+        dismissable-mask
+        close-on-escape
         class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-6/12 md:rounded-xl"
         :pt="{
             root: {

@@ -9,9 +9,9 @@ definePageMeta({
 });
 
 const invite = useRoute().params.id;
-
 const client = useSanctumClient();
-const { data, error } = await useAsyncData("journey", () =>
+
+const { data, error } = await useAsyncData("invite", () =>
     client(`/api/invite/${invite}`, {
         method: "POST",
     }),
@@ -24,12 +24,12 @@ if (error.value) {
         fatal: true,
     });
 } else {
-    await navigateTo(`/journey/${data.value.journey.id}`);
+    await navigateTo(`/journey/${data.value.journey}`);
 }
 </script>
 
 <template>
-    <div>
+    <div class="flex justify-center">
         <p>Joining...</p>
     </div>
 </template>

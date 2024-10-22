@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Journey;
 
+use App\Http\Controllers\Controller;
 use App\Models\Journey;
-use App\Models\JourneyUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class JourneyUserController extends Controller
@@ -13,11 +14,10 @@ class JourneyUserController extends Controller
     /**
      * Get the users of the journey.
      */
-    public function index($id): JsonResponse
+    public function index(Journey $journey): JsonResponse
     {
-        // get the journey by id and authorize the user
-        $journey = Journey::findOrFail($id);
-        Gate::authorize("journeyMember", $journey);
+        // authorize the user
+        Gate::authorize("view", [$journey, false]);
 
         // return the users of the journey in json format
         return response()->json(
@@ -30,35 +30,35 @@ class JourneyUserController extends Controller
      */
     public function store(Request $request, $invite): JsonResponse
     {
-        $journey = Journey::where("invite", $invite)->firstOrFail(["id"]);
+        $journey = Journey::where("invite", $invite)->firstOrFail();
 
-        if ($request->user()->can("journeyMember", $journey)) {
+        if ($request->user()->can("view", [$journey, false])) {
             return response()->json(
                 [
                     "message" => "You are already a member of this journey",
-                    "journey" => $journey,
+                    "journey" => $journey->id,
                 ],
                 200
             );
         }
 
-        $journey->users()->attach(auth()->id(), ["role" => 0]);
+        // Add the user to the journey
+        if ($journey->is_guest) {
+            $journey->users()->attach(Auth::id(), ["role" => 1]);
+
+            $journey->is_guest = false;
+            $journey->save();
+        } else {
+            $journey->users()->attach(Auth::id(), ["role" => 0]);
+        }
 
         return response()->json(
             [
                 "message" => "You have successfully joined the journey",
-                "journey" => $journey,
+                "journey" => $journey->id,
             ],
             201
         );
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(JourneyUser $journeyUser)
-    {
-        //
     }
 
     /**
@@ -68,7 +68,7 @@ class JourneyUserController extends Controller
     {
         $journeyUser = $journey
             ->users()
-            ->where("user_id", auth()->id())
+            ->where("user_id", Auth::id())
             ->firstOrFail(["user_id", "role"]);
 
         return response()->json($journeyUser);
@@ -77,12 +77,14 @@ class JourneyUserController extends Controller
     /**
      * Update the role of the specified user in the journey.
      */
-    public function update(Request $request, $journey, $user): JsonResponse
-    {
-        $journey = Journey::findOrFail($journey);
-        Gate::authorize("journeyGuide", $journey);
+    public function update(
+        Request $request,
+        Journey $journey,
+        $user
+    ): JsonResponse {
+        Gate::authorize("update", [$journey, false]);
 
-        if (auth()->user()->id == $user) {
+        if (Auth::id() == $user) {
             return response()->json(
                 [
                     "message" => "You cannot update your own role",
@@ -111,15 +113,25 @@ class JourneyUserController extends Controller
     /**
      * Leave the journey.
      */
-    public function leave($journey)
+    public function leave(Journey $journey)
     {
-        $journey = Journey::findOrFail($journey);
+        if ($journey->is_guest) {
+            JourneyController::deleteJourney($journey);
+
+            return response()->json(
+                [
+                    "message" =>
+                        "Journey and journey user removed successfully",
+                ],
+                200
+            );
+        }
 
         // Prevent the user from leaving if they are the only guide
         if (
             $journey
                 ->users()
-                ->wherePivot("user_id", auth()->id())
+                ->wherePivot("user_id", Auth::id())
                 ->wherePivot("role", 1)
                 ->exists() &&
             $journey->users()->wherePivot("role", 1)->count() === 1 &&
@@ -134,7 +146,7 @@ class JourneyUserController extends Controller
             );
         }
 
-        $journey->users()->detach(auth()->id());
+        $journey->users()->detach(Auth::id());
 
         // Remove the journey if the user was the last member
         if ($journey->users()->count() === 0) {
@@ -142,7 +154,8 @@ class JourneyUserController extends Controller
 
             return response()->json(
                 [
-                    "message" => "Journey and user removed successfully",
+                    "message" =>
+                        "Journey and journey user removed successfully",
                 ],
                 200
             );
@@ -150,7 +163,7 @@ class JourneyUserController extends Controller
 
         return response()->json(
             [
-                "message" => "User removed successfully",
+                "message" => "Journey user removed successfully",
             ],
             200
         );

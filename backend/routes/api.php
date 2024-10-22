@@ -1,14 +1,14 @@
 <?php
 
-use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\JourneyController;
-use App\Http\Controllers\JourneyUserController;
-use App\Http\Controllers\CalendarActivityController;
-use App\Http\Controllers\MediaController;
+use App\Http\Controllers\Journey\Activity\ActivityController;
+use App\Http\Controllers\Journey\Activity\CalendarActivityController;
+use App\Http\Controllers\Journey\JourneyController;
+use App\Http\Controllers\Journey\JourneyUserController;
+use App\Http\Controllers\Journey\MediaController;
+use App\Http\Controllers\Journey\TemplateController;
+use App\Http\Controllers\Journey\UploadController;
 use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\TemplateController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,23 +35,18 @@ Route::get("/user/tokens/upload", function (Request $request) {
     ]);
 });
 
-Route::apiResource("journey", JourneyController::class)->middleware(
-    "auth:sanctum"
-);
+Route::apiResource("journey", JourneyController::class);
 
-Route::apiResource(
-    "journey/{id}/activity",
-    ActivityController::class
-)->middleware("auth:sanctum");
+Route::apiResource("journey/{journey}/activity", ActivityController::class);
 
-Route::apiResource("journey/{id}/user", JourneyUserController::class)
+Route::apiResource("journey/{journey}/user", JourneyUserController::class)
     ->only("index", "update")
     ->middleware("auth:sanctum");
 
 Route::delete("journey/{journey}/leave", [
     JourneyUserController::class,
     "leave",
-])->middleware("auth:sanctum");
+]);
 
 Route::get("journey/{journey}/user/me", [
     JourneyUserController::class,
@@ -61,7 +56,7 @@ Route::get("journey/{journey}/user/me", [
 Route::apiResource(
     "journey/{journey}/activity/{activity}/calendarActivity",
     CalendarActivityController::class
-)->middleware("auth:sanctum");
+);
 
 Route::post("invite/{id}", [JourneyUserController::class, "store"])->middleware(
     "auth:sanctum"
@@ -78,7 +73,7 @@ Route::apiResource("journey/{journey}/media", MediaController::class)
 Route::get("journey/{journey}/weather", [
     JourneyController::class,
     "getWeather",
-])->middleware("auth:sanctum");
+]);
 
 Route::apiResource("template", TemplateController::class)
     ->middleware("auth:sanctum")

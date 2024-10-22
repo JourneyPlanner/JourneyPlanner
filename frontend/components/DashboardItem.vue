@@ -348,7 +348,7 @@ const itemsJourneyMember = ref([
                 icon: { class: 'text-text dark:text-natural-50' },
             }"
         />
-        <EditJourneyDialog
+        <JourneyEditDialog
             :id="props.id"
             :is-journey-dialog-visible="isEditMenuVisible"
             :name="props.name"
