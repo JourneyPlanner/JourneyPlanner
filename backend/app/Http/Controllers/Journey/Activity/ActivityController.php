@@ -51,7 +51,7 @@ class ActivityController extends Controller
         // Validate the request
         $validated = $request->validated();
         // Limit the number of activities for guests
-        if ($journey->is_guest && $journey->activities()->count() >= 20) {
+        if ($journey->is_guest && $journey->activities()->count() >= 10) {
             abort(403, "You have reached the maximum number of activities.");
         }
 
