@@ -14,9 +14,11 @@ class CalendarActivityController extends Controller
 {
     /**
      * Add an activity to the calendar of the journey.
+     * Do not remove the journey parameter, it is used for authorization.
      */
     public function store(
         StoreCalendarActivityRequest $request,
+        Journey $journey,
         Activity $activity
     ) {
         $validated = $request->validated();
@@ -31,9 +33,12 @@ class CalendarActivityController extends Controller
 
     /**
      * Update the specified calendar activity in storage.
+     * Do not remove the journey and actvitity parameter, they're used for authorization.
      */
     public function update(
         UpdateCalendarActivityRequest $request,
+        Journey $journey,
+        Activity $activity,
         CalendarActivity $calendarActivity
     ) {
         $validated = $request->validated();

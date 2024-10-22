@@ -28,11 +28,12 @@ class MapboxService
             $validated["destination"] = "";
             $validated["address"] = "";
         } elseif (
-            ($validated["destination"] ?? ($validated["address"] ?? "")) !==
-            $previousDestinationOrAddress
+            (($validated["destination"] ?? $validated["address"] ?? "") !==
+                $previousDestinationOrAddress) &&
+            (($validated["destination"] ?? $validated["address"] ?? "") !== "")
         ) {
             $searchData = $this->searchMapbox(
-                $validated["destination"],
+                $validated["destination"] ?? ($validated["address"] ?? ""),
                 $activityOwnerJourney?->longitude ?? 0,
                 $activityOwnerJourney?->latitude ?? 0
             );
@@ -49,6 +50,7 @@ class MapboxService
                     $validated["destination"] ?? ($validated["adress"] ?? "");
             }
         }
+
 
         return $validated;
     }

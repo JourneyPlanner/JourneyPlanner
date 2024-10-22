@@ -137,7 +137,6 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                 :options="{
                     language: tolgee.getLanguage(),
                     proximity: longlat,
-                    types: ['country', 'region', 'postcode'],
                 }"
                 :theme="{
                     cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px ${border};} .Input:focus {border-radius: 0.5rem; border: solid 2px ${border};} .SearchBox {box-shadow: none;} .Results {font-family: Nunito;} .ResultsAttribution {color: ${placeholderColor}} .SearchIcon {fill: ${border};} .ActionIcon {color: ${placeholderColor}}  ${css} ${customClass}`,
