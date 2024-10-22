@@ -28,8 +28,14 @@ useHead({
 if (!isAuthenticated.value) {
     if (localStorage.getItem("JP_guest_journey_id") !== null) {
         navigateTo("/journey/" + localStorage.getItem("JP_guest_journey_id"));
-        cancel.value = "/";
+        toast.add({
+            severity: "info",
+            summary: t.value("journey.unlock.create.heading"),
+            detail: t.value("journey.unlock.create.detail"),
+            life: 2000,
+        });
     }
+    cancel.value = "/";
 } else {
     journeyInviteLink.value =
         window.location.origin + "/invite/" + journeyInvite.value;
