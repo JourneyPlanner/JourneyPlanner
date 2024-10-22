@@ -150,7 +150,7 @@ function copyToClipboard() {
 <template>
     <div>
         <div class="absolute left-4 top-4">
-            <NuxtLink to="/">
+            <NuxtLink :to="cancel">
                 <SvgLogoHorizontalBlue class="w-44 lg:w-56" />
             </NuxtLink>
         </div>

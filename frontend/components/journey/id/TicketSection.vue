@@ -129,12 +129,7 @@ function emitScroll(target: string) {
                         <div
                             class="relative flex h-10 items-center rounded-t-2xl border-x-2 border-t-2 border-calypso-400 bg-calypso-300 dark:border-gothic-500 dark:bg-gothic-400"
                         >
-                            <div
-                                class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-natural-200"
-                            />
-                            <p class="ml-16 text-xl font-bold text-natural-50">
-                                JourneyPlanner
-                            </p>
+                            <SvgLogoHorizontalWhite class="ml-5 w-56" />
                             <div
                                 class="flex h-full w-full items-center justify-end"
                             >
@@ -205,12 +200,7 @@ function emitScroll(target: string) {
                         <div
                             class="relative flex h-10 items-center rounded-t-2xl border-x-2 border-t-2 border-calypso-400 bg-calypso-300 dark:border-gothic-500 dark:bg-gothic-400"
                         >
-                            <div
-                                class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-natural-200"
-                            />
-                            <p class="ml-16 text-xl font-bold text-natural-50">
-                                JourneyPlanner
-                            </p>
+                            <SvgLogoHorizontalWhite class="ml-5 w-56" />
                             <div
                                 class="flex h-full w-full items-center justify-end"
                             >
@@ -357,9 +347,8 @@ function emitScroll(target: string) {
                 <div
                     class="bg-calypso-300-gray absolute ml-5 inline-block h-7 w-7 self-center rounded-full"
                 />
-                <p class="ml-14 text-xl font-bold text-natural-50">
-                    JourneyPlanner
-                </p>
+                <SvgLogoHorizontalWhite class="ml-10 w-56" />
+
                 <div class="flex h-full w-full items-center justify-end">
                     <SvgAirplaneIcon class="mr-5 w-7" />
                 </div>
