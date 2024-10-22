@@ -28,9 +28,9 @@ class MapboxService
             $validated["destination"] = "";
             $validated["address"] = "";
         } elseif (
-            (($validated["destination"] ?? $validated["address"] ?? "") !==
-                $previousDestinationOrAddress) &&
-            (($validated["destination"] ?? $validated["address"] ?? "") !== "")
+            ($validated["destination"] ?? ($validated["address"] ?? "")) !==
+                $previousDestinationOrAddress &&
+            ($validated["destination"] ?? ($validated["address"] ?? "")) !== ""
         ) {
             $searchData = $this->searchMapbox(
                 $validated["destination"] ?? ($validated["address"] ?? ""),
@@ -41,16 +41,15 @@ class MapboxService
                 $feature = $searchData["features"][0];
                 $validated["mapbox_full_address"] =
                     $feature["properties"]["full_address"] ??
-                    $feature["properties"]["name_preferred"] ??
-                    $feature["properties"]["name"] ??
-                    $feature["properties"]["place_formatted"];
+                    ($feature["properties"]["name_preferred"] ??
+                        ($feature["properties"]["name"] ??
+                            $feature["properties"]["place_formatted"]));
                 $validated["mapbox_id"] = $feature["properties"]["mapbox_id"];
             } else {
                 $validated["mapbox_full_address"] =
                     $validated["destination"] ?? ($validated["adress"] ?? "");
             }
         }
-
 
         return $validated;
     }

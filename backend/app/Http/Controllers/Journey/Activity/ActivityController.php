@@ -88,8 +88,11 @@ class ActivityController extends Controller
      * Update the specified activity in storage.
      * Do not remove the journey parameter, it is required for authorization.
      */
-    public function update(UpdateActivityRequest $request, Journey $journey, Activity $activity)
-    {
+    public function update(
+        UpdateActivityRequest $request,
+        Journey $journey,
+        Activity $activity
+    ) {
         // Validate the request
         $validated = $request->validated();
 
