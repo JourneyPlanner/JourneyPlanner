@@ -27,7 +27,7 @@ if (error.value) {
     });
 } else {
     localStorage.removeItem("JP_invite_journey_id");
-    localStorage.removeItem("JP_invite_journey_id");
+    localStorage.removeItem("JP_guest_journey_id");
     await navigateTo(`/journey/${data.value.journey}`);
 }
 </script>
