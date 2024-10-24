@@ -100,7 +100,7 @@ onMounted(async () => {
             severity: "info",
             summary: t.value("common.toast.info.heading"),
             detail: t.value("invite.joining"),
-            life: 2000,
+            life: 6000,
         });
         await navigateTo(localStorage.getItem("JP_invite_journey_id"));
     }

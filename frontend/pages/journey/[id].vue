@@ -271,8 +271,6 @@ async function leaveJourney() {
 }
 
 function openQRCode(tolgeeKey: string) {
-    console.log("openQRCode", tolgeeKey);
-
     isQRCodeVisible.value = true;
     qrcodeTolgeeKey.value = tolgeeKey;
 }
