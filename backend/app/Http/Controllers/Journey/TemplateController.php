@@ -4,17 +4,62 @@ namespace App\Http\Controllers\Journey;
 
 use App\Http\Controllers\Controller;
 use App\Models\Journey;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class TemplateController extends Controller
 {
+    private array $columns = [
+        "id",
+        "name",
+        "destination",
+        "from",
+        "to",
+        "description"
+    ];
+
+    private int $perPage = 20;
+
     /**
-     * Display a listing of the resource.
+     * Display all available templates.
      */
     public function index()
     {
-        //
+        $templates = Journey::where("is_template", true)
+            ->with(["users" => function ($query) {
+                $query->select("id", "username");
+            }])
+            ->cursorPaginate(
+                $this->perPage,
+                $this->columns
+            )->withQueryString();
+
+        foreach ($templates as $template) {
+            $from = Carbon::parse($template->from);
+            $to = Carbon::parse($template->to);
+            $template->days = $from->diffInDays($to) + 1;
+        }
+
+        return response()->json($templates);
+    }
+
+    /**
+     * Display all templates created by the user.
+     */
+    public function userTemplatesIndex(string $username)
+    {
+        $user = User::where("username", $username)->firstOrFail();
+        return response()->json(
+            $user
+                ->journeys()
+                ->where("is_template", true)
+                ->cursorPaginate(
+                    $this->perPage,
+                    $this->columns
+                )
+        );
     }
 
     /**
@@ -34,7 +79,7 @@ class TemplateController extends Controller
             return response()->json(
                 [
                     "message" =>
-                        "You have already created a template from this journey.",
+                    "You have already created a template from this journey.",
                 ],
                 409
             );
@@ -78,14 +123,6 @@ class TemplateController extends Controller
         $journeyTemplate->users()->attach(auth()->id(), ["role" => 2]); // 2 is the role for the creator of the template
 
         return response()->json($journeyTemplate);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Journey $journey)
-    {
-        //
     }
 
     /**

@@ -75,9 +75,17 @@ Route::get("journey/{journey}/weather", [
     "getWeather",
 ]);
 
-Route::apiResource("template", TemplateController::class)
-    ->middleware("auth:sanctum")
-    ->only("store");
+Route::post("template", [TemplateController::class, "store"])->middleware(
+    "auth:sanctum"
+);
+
+Route::get("template", [TemplateController::class, "index"]);
+Route::get("template/{journey}", [JourneyController::class, "show"]);
+Route::get("template/{journey}/activity", [ActivityController::class, "index"]);
+Route::get("user/{username}/template", [
+    TemplateController::class,
+    "userTemplatesIndex",
+]);
 
 Route::get("project", [ProjectController::class, "getProjectData"]);
 
