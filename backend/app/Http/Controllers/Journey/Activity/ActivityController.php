@@ -36,9 +36,12 @@ class ActivityController extends Controller
     {
         Gate::authorize("viewAny", [Activity::class, $journey, true]);
 
-        return response()->json(
-            $journey->activities()->with("calendarActivities")->get()
-        );
+        $activities = $journey->activities()->with("calendarActivities")->get();
+
+        return response()->json([
+            "activities" => $activities,
+            "count" => $activities->count(),
+        ]);
     }
 
     /**
