@@ -5,44 +5,36 @@ namespace App\Http\Controllers\Journey;
 use App\Http\Controllers\Controller;
 use App\Models\Journey;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class TemplateController extends Controller
 {
-    private array $columns = [
-        "id",
-        "name",
-        "destination",
-        "from",
-        "to",
-        "description"
-    ];
-
+    private $columns;
     private int $perPage = 20;
+
+    public function __construct()
+    {
+        $this->columns = [
+            "id",
+            "name",
+            "destination",
+            "from",
+            "to",
+            "description",
+            "mapbox_full_address",
+            DB::raw("DATEDIFF(`to`, `from`) + 1 AS length"), // Only works with MySQL
+        ];
+    }
 
     /**
      * Display all available templates.
      */
     public function index()
     {
-        $templates = Journey::where("is_template", true)
-            ->with(["users" => function ($query) {
-                $query->select("id", "username");
-            }])
-            ->cursorPaginate(
-                $this->perPage,
-                $this->columns
-            )->withQueryString();
-
-        foreach ($templates as $template) {
-            $from = Carbon::parse($template->from);
-            $to = Carbon::parse($template->to);
-            $template->days = $from->diffInDays($to) + 1;
-        }
-
-        return response()->json($templates);
+        return $this->getTemplates();
     }
 
     /**
@@ -50,16 +42,70 @@ class TemplateController extends Controller
      */
     public function userTemplatesIndex(string $username)
     {
-        $user = User::where("username", $username)->firstOrFail();
-        return response()->json(
-            $user
-                ->journeys()
-                ->where("is_template", true)
-                ->cursorPaginate(
-                    $this->perPage,
-                    $this->columns
-                )
-        );
+        return $this->getTemplates($username);
+    }
+
+    /**
+     * Get templates based on the provided filters.
+     */
+    private function getTemplates(string $username = null)
+    {
+        // Validate the request
+        $validated = request()->validate([
+            "sort_by" => "nullable|string|in:id,name,destination,length",
+            "order" => "nullable|string|in:asc,desc",
+            "per_page" => "nullable|integer|min:1|max:100",
+            "template_name" => "nullable|string",
+            "template_journey_length_min" => "nullable|integer|min:1",
+            "template_journey_length_max" => "nullable|integer|min:1",
+            "template_destination" => "nullable|string",
+            "template_creator" => "nullable|string",
+        ]);
+
+        // Get the validated values or use the default values
+        $sortBy = $validated["sort_by"] ?? "id";
+        $order = $validated["order"] ?? "asc";
+        $perPage = $validated["per_page"] ?? $this->perPage;
+
+        $name = $validated["template_name"] ?? "";
+        $lengthMin = $validated["template_journey_length_min"] ?? 1;
+        $lengthMax = $validated["template_journey_length_max"] ?? PHP_INT_MAX;
+        $destination = $validated["template_destination"] ?? "";
+        $creator = $validated["template_creator"] ?? "";
+
+        // Select all templates that match the search criteria
+        $query = Journey::where("is_template", true)
+            ->where(function ($query) use ($destination) {
+                $query
+                    ->where("destination", "like", "%$destination%")
+                    ->orWhere("mapbox_full_address", "like", "%$destination%");
+            })
+            ->where("name", "like", "%$name%")
+            ->where(DB::raw("DATEDIFF(`to`, `from`) + 1"), ">=", $lengthMin)
+            ->where(DB::raw("DATEDIFF(`to`, `from`) + 1"), "<=", $lengthMax)
+            ->with([
+                "users" => function ($query) {
+                    $query->select("id", "username");
+                },
+            ]);
+
+        if ($username) {
+            $user = User::where("username", $username)->firstOrFail();
+            $query->whereHas("users", function ($query) use ($user) {
+                $query->where("users.id", $user->id);
+            });
+        } else {
+            $query->whereHas("users", function ($query) use ($creator) {
+                $query->where("username", "like", "%$creator%");
+            });
+        }
+
+        $templates = $query
+            ->orderBy($sortBy, $order)
+            ->cursorPaginate($perPage, $this->columns)
+            ->withQueryString();
+
+        return response()->json($templates);
     }
 
     /**
@@ -79,7 +125,7 @@ class TemplateController extends Controller
             return response()->json(
                 [
                     "message" =>
-                    "You have already created a template from this journey.",
+                        "You have already created a template from this journey.",
                 ],
                 409
             );
@@ -120,7 +166,7 @@ class TemplateController extends Controller
             }
         }
 
-        $journeyTemplate->users()->attach(auth()->id(), ["role" => 2]); // 2 is the role for the creator of the template
+        $journeyTemplate->users()->attach(Auth::id(), ["role" => 2]); // 2 is the role for the creator of the template
 
         return response()->json($journeyTemplate);
     }
