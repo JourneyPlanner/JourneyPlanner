@@ -69,7 +69,7 @@ if (isAuthenticated.value) {
 await client(`/api/journey/${journeyId}/activity`, {
     async onResponse({ response }) {
         if (response.ok) {
-            activityStore.setActivities(response._data);
+            activityStore.setActivities(response._data.activities);
             activityDataLoaded.value = true;
         }
     },
@@ -321,7 +321,9 @@ function scrollToTarget(target: string) {
                         : router.push('/dashboard')
                 "
             >
-                <SvgDashboardIcon class="h-7 w-7 md:h-6 md:w-6" />
+                <SvgDashboardIcon
+                    class="h-7 w-7 fill-text dark:fill-natural-50 md:h-6 md:w-6"
+                />
                 <p class="hidden text-2xl group-hover:underline sm:block">
                     Dashboard
                 </p>

@@ -202,8 +202,11 @@ const itemsJourneyMember = ref([
             id="journey-desktop"
             class="relative hidden hover:cursor-pointer lg:block"
         >
-            <SvgDashboardJourney :link="link" class="dark:hidden" />
-            <SvgDashboardJourneyDark :link="link" class="hidden dark:block" />
+            <SvgDashboardJourneyCard :link="link" class="dark:hidden" />
+            <SvgDashboardJourneyCardDark
+                :link="link"
+                class="hidden dark:block"
+            />
             <div class="absolute left-10 top-6">
                 <div class="flex w-56 justify-between">
                     <NuxtLink

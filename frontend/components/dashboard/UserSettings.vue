@@ -259,7 +259,7 @@ function blur(e: Event) {
             :auto-z-index="true"
             :draggable="false"
             :header="t('dashboard.user.settings')"
-            class="-z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-4/5 md:rounded-xl"
+            class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-4/5 md:rounded-xl"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',

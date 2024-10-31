@@ -105,6 +105,7 @@ export default defineNuxtConfig({
                 "Dropdown",
                 "Accordion",
                 "AccordionTab",
+                "Slider",
             ],
         },
     },

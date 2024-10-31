@@ -246,7 +246,7 @@ function openUnlockDialog() {
             @close-edit-journey-dialog="isJourneyEditMenuVisible = false"
             @journey-edited="journeyEdited"
         />
-        <JourneyIdDialogsTemplateDialog
+        <JourneyIdDialogsCreateTemplateDialog
             v-if="currUser?.role === 1"
             :is-create-template-visible="isCreateTemplateVisible"
             @close-template-dialog="isCreateTemplateVisible = false"

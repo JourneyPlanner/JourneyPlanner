@@ -24,6 +24,10 @@
 </template>
 
 <style>
+:root {
+    --p-focus-ring-color: #327597;
+}
+
 /* default background in light and dark: mode  */
 body {
     @apply min-h-screen bg-background font-nunito dark:bg-background-dark;

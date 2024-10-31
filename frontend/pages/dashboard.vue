@@ -13,88 +13,213 @@ definePageMeta({
 });
 
 const { t } = useTranslate();
-
+const router = useRouter();
+const route = useRoute();
 const store = useDashboardStore();
-const journeys = ref<Journey[]>([]);
+const client = useSanctumClient();
+
 const searchInput = ref();
-const searchInputMobile = ref();
+//TODO search auf journey & template anpassen
+//TODO mobile
+//const searchInputMobile = ref();
 const searchValue = ref<string>("");
+const tabIndex = ref(0);
+const menu = ref();
+const items = ref();
+
+//journeys
+const journeys = ref<Journey[]>([]);
 const currentJourneys = ref<Journey[]>([]);
+currentJourneys.value = store.journeys;
+
+//user settings
 const user = ref();
 const isUserSettingsVisible = ref(false);
 
-currentJourneys.value = store.journeys;
-
-const menu = ref();
-const items = ref([
-    {
-        label: t.value("dashboard.sort.name"),
-        icon: "pi pi-book",
-        items: [
-            {
-                label: t.value("dashboard.sort.ascending"),
-                icon: "pi pi-sort-alpha-up",
-                command: () => {
-                    sortJourneys("name-asc");
-                },
-            },
-            {
-                label: t.value("dashboard.sort.descending"),
-                icon: "pi pi-sort-alpha-down",
-                command: () => {
-                    sortJourneys("name-desc");
-                },
-            },
-        ],
-    },
-    {
-        label: t.value("dashboard.sort.startdate"),
-        icon: "pi pi-calendar",
-        items: [
-            {
-                label: t.value("dashboard.sort.oldestToNewest"),
-                icon: "pi pi-sort-amount-up",
-                command: () => {
-                    sortJourneys("startdate-asc");
-                },
-            },
-            {
-                label: t.value("dashboard.sort.newestToOldest"),
-                icon: "pi pi-sort-amount-down",
-                command: () => {
-                    sortJourneys("startdate-desc");
-                },
-            },
-        ],
-    },
-    {
-        label: t.value("dashboard.sort.destination"),
-        icon: "pi pi-map-marker",
-        items: [
-            {
-                label: t.value("dashboard.sort.ascending"),
-                icon: "pi pi-sort-alpha-up",
-                command: () => {
-                    sortJourneys("destination-asc");
-                },
-            },
-            {
-                label: t.value("dashboard.sort.descending"),
-                icon: "pi pi-sort-alpha-down",
-                command: () => {
-                    sortJourneys("destination-desc");
-                },
-            },
-        ],
-    },
-]);
+//templates
+const isFilterVisible = ref(false);
+const templateJourneyLengthMinMax = ref([1, 31]);
+const sortby = ref("");
+const sortorder = ref("asc");
+const templateName = ref("");
+const templateDestination = ref("");
+const templateCreator = ref("");
 
 const toggle = (event: Event) => {
     menu.value.toggle(event);
 };
 
+//redirect to invite if an invite is stored in local storage
 if (localStorage.getItem("JP_invite_journey_id")) {
     await navigateTo(localStorage.getItem("JP_invite_journey_id"));
+}
+
+if (route.query.tab === "templates") {
+    tabIndex.value = 1;
+}
+
+watch(
+    tabIndex,
+    () => {
+        if (tabIndex.value === 1) {
+            router.replace({ path: "/dashboard", query: { tab: "templates" } });
+            items.value = [
+                {
+                    label: t.value("dashboard.sort.length"),
+                    icon: "pi pi-calendar-clock",
+                    items: [
+                        {
+                            label: t.value("dashboard.sort.ascending.numeric"),
+                            icon: "pi pi-sort-amount-up",
+                            command: () => {
+                                sortby.value = "length";
+                                sortorder.value = "asc";
+                            },
+                        },
+                        {
+                            label: t.value("dashboard.sort.descending.numeric"),
+                            icon: "pi pi-sort-amount-down",
+                            command: () => {
+                                sortby.value = "length";
+                                sortorder.value = "desc";
+                            },
+                        },
+                    ],
+                },
+                {
+                    label: t.value("dashboard.sort.name"),
+                    icon: "pi pi-book",
+                    items: [
+                        {
+                            label: t.value("dashboard.sort.ascending"),
+                            icon: "pi pi-sort-alpha-up",
+                            command: () => {
+                                sortby.value = "name";
+                                sortorder.value = "asc";
+                            },
+                        },
+                        {
+                            label: t.value("dashboard.sort.descending"),
+                            icon: "pi pi-sort-alpha-down",
+                            command: () => {
+                                sortby.value = "name";
+                                sortorder.value = "desc";
+                            },
+                        },
+                    ],
+                },
+                {
+                    label: t.value("dashboard.sort.destination"),
+                    icon: "pi pi-map-marker",
+                    items: [
+                        {
+                            label: t.value("dashboard.sort.ascending"),
+                            icon: "pi pi-sort-alpha-up",
+                            command: () => {
+                                sortby.value = "destination";
+                                sortorder.value = "asc";
+                            },
+                        },
+                        {
+                            label: t.value("dashboard.sort.descending"),
+                            icon: "pi pi-sort-alpha-down",
+                            command: () => {
+                                sortby.value = "destination";
+                                sortorder.value = "desc";
+                            },
+                        },
+                    ],
+                },
+            ];
+        } else {
+            router.replace({ path: "/dashboard" });
+            items.value = [
+                {
+                    label: t.value("dashboard.sort.name"),
+                    icon: "pi pi-book",
+                    items: [
+                        {
+                            label: t.value("dashboard.sort.ascending"),
+                            icon: "pi pi-sort-alpha-up",
+                            command: () => {
+                                sortJourneys("name-asc");
+                            },
+                        },
+                        {
+                            label: t.value("dashboard.sort.descending"),
+                            icon: "pi pi-sort-alpha-down",
+                            command: () => {
+                                sortJourneys("name-desc");
+                            },
+                        },
+                    ],
+                },
+                {
+                    label: t.value("dashboard.sort.startdate"),
+                    icon: "pi pi-calendar",
+                    items: [
+                        {
+                            label: t.value("dashboard.sort.oldestToNewest"),
+                            icon: "pi pi-sort-amount-up",
+                            command: () => {
+                                sortJourneys("startdate-asc");
+                            },
+                        },
+                        {
+                            label: t.value("dashboard.sort.newestToOldest"),
+                            icon: "pi pi-sort-amount-down",
+                            command: () => {
+                                sortJourneys("startdate-desc");
+                            },
+                        },
+                    ],
+                },
+                {
+                    label: t.value("dashboard.sort.destination"),
+                    icon: "pi pi-map-marker",
+                    items: [
+                        {
+                            label: t.value("dashboard.sort.ascending"),
+                            icon: "pi pi-sort-alpha-up",
+                            command: () => {
+                                sortJourneys("destination-asc");
+                            },
+                        },
+                        {
+                            label: t.value("dashboard.sort.descending"),
+                            icon: "pi pi-sort-alpha-down",
+                            command: () => {
+                                sortJourneys("destination-desc");
+                            },
+                        },
+                    ],
+                },
+            ];
+        }
+    },
+    { immediate: true },
+);
+
+/**
+ * Fetches all templates from the backend
+ * stores response in templates ref
+ */
+const {
+    data: templateData,
+    refresh,
+    status,
+} = await useAsyncData("templates", () =>
+    client(
+        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=100&template_name=${templateName.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_destination=${templateDestination.value}&template_creator=${templateCreator.value}`,
+    ),
+);
+
+function clearFilters() {
+    templateJourneyLengthMinMax.value = [1, 31];
+    templateName.value = "";
+    templateDestination.value = "";
+    templateCreator.value = "";
+    refresh();
 }
 
 /*
@@ -102,7 +227,6 @@ Fetches all journeys from the backend
 stores response in journeys and currentJourneys
 also sets journeys in the store
 */
-const client = useSanctumClient();
 const { data } = await useAsyncData("journeys", () => client("/api/journey"));
 journeys.value = data.value;
 currentJourneys.value = data.value;
@@ -171,9 +295,382 @@ function editJourney(journey: Journey, id: string) {
     journeys.value[index].to = journey.to;
     journeys.value[index].name = journey.name;
 }
+
+//TODO filter params in die site url geben falls reload?
+
+//TODO endlos scrollen
 </script>
 
 <template>
+    <div>
+        <div class="absolute right-0 z-10 mt-5 pr-2 md:pr-8 lg:pr-20">
+            <div id="right-header" class="flex flex-row items-center">
+                <div
+                    id="search-and-filter"
+                    class="mr-4 hidden flex-row border-r-2 border-natural-200 lg:flex"
+                >
+                    <div
+                        id="search"
+                        v-tooltip.top="{
+                            value: t('dashboard.tooltip.search'),
+                            pt: { root: 'font-nunito' },
+                        }"
+                        class="relative mr-2.5"
+                    >
+                        <input
+                            ref="searchInput"
+                            v-model="searchValue"
+                            type="text"
+                            class="rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200"
+                            :placeholder="t('dashboard.search')"
+                            @input="searchJourneys"
+                        />
+                        <button @click="searchInput.focus()">
+                            <SvgSearchIcon
+                                class="absolute right-1 top-1 h-7 w-7"
+                            />
+                        </button>
+                    </div>
+                    <div id="sort" class="mr-4">
+                        <SvgDashboardSort
+                            aria-haspopup="true"
+                            aria-controls="overlay_tmenu"
+                            class="h-9 w-9 hover:cursor-pointer"
+                            @click="toggle"
+                        />
+                    </div>
+                    <div v-if="tabIndex === 1" id="filter" class="mr-4">
+                        <SvgDashboardFilter
+                            class="h-9 w-9 hover:cursor-pointer"
+                            :is-active="isFilterVisible"
+                            @click="isFilterVisible = !isFilterVisible"
+                        />
+                    </div>
+                </div>
+                <NuxtLink
+                    v-if="tabIndex === 0"
+                    to="/journey/new"
+                    class="mr-2.5 hidden flex-row items-center lg:flex"
+                >
+                    <button
+                        class="flex flex-row rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text dark:border-ronchi-300 dark:bg-ronchi-300"
+                    >
+                        <SvgCreateNewJourneyIcon
+                            class="mr-1 h-5 w-5 fill-text"
+                        />
+                        <T key-name="dashboard.new" />
+                    </button>
+                </NuxtLink>
+                <NuxtLink :to="'/user/' + user.username" class="mr-2.5">
+                    <SvgUserIcon class="mt-1 h-9 w-9" />
+                </NuxtLink>
+                <button @click="isUserSettingsVisible = !isUserSettingsVisible">
+                    <SvgDashboardSettings class="mt-1 h-9 w-9" />
+                </button>
+            </div>
+        </div>
+        <TabView
+            v-model:active-index="tabIndex"
+            class="mt-5 bg-background px-2 dark:bg-background-dark md:px-8 lg:px-20"
+            :pt="{
+                root: {
+                    class: 'font-nunito bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                },
+                panelContainer: {
+                    class: 'text-text dark:text-natural-50 font-nunito bg-background dark:bg-background-dark',
+                },
+                nav: {
+                    class: 'font-nunito bg-background dark:bg-background-dark text-lg',
+                },
+                navContainer: {
+                    class: 'border-b-2 border-calypso-300 rounded', //TODO dark mode border
+                },
+                inkbar: { class: 'pt-0.5 bg-calypso-600' }, //TODO dark mode border
+            }"
+        >
+            <TabPanel
+                :pt="{
+                    headerAction: () => ({
+                        class: [
+                            'font-nunito bg-background dark:bg-background-dark',
+                            {
+                                'text-text': tabIndex === 0,
+                                'text-natural-500': tabIndex !== 0,
+                            },
+                        ],
+                    }),
+                }"
+            >
+                <template #header>
+                    <div class="flex flex-row items-center">
+                        <SvgDashboardIcon
+                            class="mr-1 mt-0.5 md:h-7 md:w-7"
+                            :class="
+                                tabIndex !== 0
+                                    ? 'fill-natural-500'
+                                    : 'fill-text dark:fill-natural-50'
+                            "
+                        />
+                        <h1 class="mt-1 text-2xl font-medium md:text-3xl">
+                            <T key-name="common.dashboard" />
+                        </h1>
+                    </div>
+                </template>
+                <div class="flex justify-center">
+                    <div
+                        id="journeys"
+                        class="mt-2 grid gap-5 md:gap-4 lg:gap-6"
+                        :class="
+                            currentJourneys.length === 0
+                                ? 'grid-cols-1'
+                                : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'
+                        "
+                    >
+                        <DashboardJourneyCard
+                            v-for="journey in currentJourneys"
+                            :id="String(journey.id)"
+                            :key="journey.id"
+                            :name="journey.name"
+                            :destination="journey.destination"
+                            :from="new Date(journey.from)"
+                            :to="new Date(journey.to)"
+                            :role="Number(journey.role)"
+                            @journey-deleted="removeJourney"
+                            @journey-leave="removeJourney"
+                            @journey-edited="editJourney"
+                        />
+                        <NuxtLink to="/journey/new">
+                            <SvgCreateNewJourneyCard
+                                class="hidden dark:hidden lg:block"
+                            />
+                            <SvgCreateNewJourneyCardDark
+                                class="hidden dark:lg:block"
+                            />
+                            <div
+                                class="flex h-32 min-w-36 flex-grow items-center justify-center rounded-md border border-dandelion-300 bg-dandelion-100 dark:bg-pesto-600 lg:hidden"
+                            >
+                                <SvgCreateNewJourneyIcon
+                                    class="h-14 w-14 fill-text dark:fill-natural-50"
+                                />
+                            </div>
+                        </NuxtLink>
+                    </div>
+                </div>
+            </TabPanel>
+            <TabPanel
+                :pt="{
+                    headerAction: () => ({
+                        class: [
+                            'font-nunito bg-background dark:bg-background-dark',
+                            {
+                                'text-text': tabIndex === 1,
+                                'text-natural-500': tabIndex !== 1,
+                            },
+                        ],
+                    }),
+                }"
+            >
+                <template #header>
+                    <div class="flex flex-row items-center">
+                        <i class="pi pi-objects-column mr-2 text-2xl" />
+                        <h1 class="mt-1 text-2xl font-medium md:text-3xl">
+                            <T key-name="common.templates" />
+                        </h1>
+                    </div>
+                </template>
+                <div id="templates" class="grid grid-cols-4 gap-5">
+                    <TemplateCard
+                        v-for="template in templateData.data"
+                        :id="template.id"
+                        :key="template.id"
+                        :name="template.name"
+                        :destination="template.destination"
+                        :description="template.description"
+                        :length="template.length"
+                        :mapbox-full-address="template.mapbox_full_address"
+                        :creator="template.users[0].username"
+                    />
+                    <h4
+                        v-if="
+                            status === 'success' &&
+                            templateData.data.length === 0
+                        "
+                        class="col-span-full font-bold"
+                    >
+                        <T key-name="dashboard.templates.filter.none" />
+                        <button
+                            class="text-mahagony-400 underline"
+                            @click="clearFilters"
+                        >
+                            <T key-name="dashboard.template.filter.clear" />
+                        </button>
+                    </h4>
+                    <ProgressSpinner
+                        v-if="status === 'pending'"
+                        class="col-start-2"
+                    />
+                    <div
+                        v-if="isFilterVisible"
+                        id="filter-placeholder"
+                        class="col-start-4 row-span-full"
+                    />
+                    <div
+                        v-if="isFilterVisible"
+                        id="filter"
+                        class="absolute right-0 mr-20 flex h-72 w-64 flex-col rounded-lg bg-natural-50 px-3 pt-2 shadow-lg"
+                    >
+                        <div id="length">
+                            <div class="flex items-center">
+                                <h3 class="text-xl">
+                                    <T key-name="dashboard.sort.length" />
+                                </h3>
+                                <span
+                                    class="ml-1 h-0.5 w-full bg-calypso-400"
+                                />
+                            </div>
+                            <div class="mt-3 px-1">
+                                <Slider
+                                    v-model="templateJourneyLengthMinMax"
+                                    range
+                                    :min="1"
+                                    :max="31"
+                                    class="w-full"
+                                    :pt="{
+                                        range: {
+                                            class: 'bg-calypso-400',
+                                        },
+                                    }"
+                                    @slideend="refresh()"
+                                />
+                                <div
+                                    class="-px-1 mt-2.5 flex justify-between text-natural-500"
+                                >
+                                    <span>1</span>
+                                    <span>31+</span>
+                                </div>
+                                <div class="flex flex-row gap-x-3">
+                                    <T
+                                        key-name="dashboard.template.filter.length.from"
+                                    />
+                                    <input
+                                        v-model="templateJourneyLengthMinMax[0]"
+                                        type="number"
+                                        class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1"
+                                        @input="refresh()"
+                                    />
+                                    <T
+                                        key-name="dashboard.template.filter.length.to"
+                                    />
+                                    <input
+                                        v-model="templateJourneyLengthMinMax[1]"
+                                        type="number"
+                                        class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1"
+                                        @input="refresh()"
+                                    />
+                                    <T key-name="template.days" />
+                                </div>
+                            </div>
+                        </div>
+                        <div id="destination" />
+                        <div id="creator" class="mt-5">
+                            <div class="flex items-center">
+                                <h3 class="whitespace-nowrap text-xl">
+                                    <T
+                                        key-name="dashboard.template.filter.creator"
+                                    />
+                                </h3>
+                                <span
+                                    class="ml-1 h-0.5 w-full bg-calypso-400"
+                                />
+                            </div>
+                            <p class="text-natural-700">
+                                <T
+                                    key-name="dashboard.template.filter.creator.description"
+                                />
+                            </p>
+                        </div>
+                        <div class="mt-auto flex justify-end pb-1">
+                            <button
+                                class="text-mahagony-400 underline"
+                                @click="clearFilters"
+                            >
+                                <T key-name="dashboard.template.filter.clear" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </TabPanel>
+        </TabView>
+        <div class="dialogs z-50">
+            <DashboardUserSettings
+                :visible="isUserSettingsVisible"
+                :prop-username="user.username"
+                :prop-displayname="user.display_name"
+                :prop-email="user.email"
+                @close="isUserSettingsVisible = false"
+            />
+            <TemplatePopup />
+            <TieredMenu
+                id="overlay_tmenu"
+                ref="menu"
+                :model="items"
+                popup
+                class="z-30 rounded-xl border-2 border-natural-200 bg-natural-50 dark:border-natural-900 dark:bg-natural-800"
+                :pt="{
+                    menuitem: {
+                        class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-300 rounded-md',
+                    },
+                    content: { class: 'hover:bg-dandelion-300 rounded-md' },
+                    submenu: { class: 'bg-natural-50 dark:bg-natural-800' },
+                }"
+            >
+                <template #start>
+                    <h1
+                        class="ml-2 text-sm text-natural-400 dark:text-natural-200"
+                    >
+                        <T
+                            v-if="tabIndex === 0"
+                            key-name="dashboard.sort.journeys.header"
+                        />
+                        <T v-else key-name="dashboard.sort.templates.header" />
+                    </h1>
+                    <Divider
+                        type="solid"
+                        class="mb-1 mt-1 border-b text-[#E3E3E3]"
+                    />
+                </template>
+                <template #item="{ item, props, hasSubmenu }">
+                    <a
+                        v-ripple
+                        class="align-items-center flex rounded-md bg-natural-50 text-sm text-text hover:bg-dandelion-100 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                        v-bind="props.action"
+                    >
+                        <span :class="item.icon" />
+                        <span class="ml-2">{{ item.label }}</span>
+                        <i
+                            v-if="hasSubmenu"
+                            class="pi pi-angle-right ml-auto"
+                        />
+                    </a>
+                </template>
+            </TieredMenu>
+            <ConfirmDialog
+                :draggable="false"
+                group="dashboard"
+                :pt="{
+                    header: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    content: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    footer: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                }"
+            />
+        </div>
+        <!--
     <div
         class="px-2 font-nunito text-text dark:text-natural-50 md:px-8 lg:px-20"
     >
@@ -328,55 +825,7 @@ function editJourney(journey: Journey, id: string) {
                 </NuxtLink>
             </div>
         </div>
-        <TieredMenu
-            id="overlay_tmenu"
-            ref="menu"
-            :model="items"
-            popup
-            class="rounded-xl border-2 border-natural-200 bg-natural-50 dark:border-natural-900 dark:bg-natural-800"
-            :pt="{
-                menuitem: {
-                    class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-300 rounded-md',
-                },
-                content: { class: 'hover:bg-dandelion-300 rounded-md' },
-                submenu: { class: 'bg-natural-50 dark:bg-natural-800' },
-            }"
-        >
-            <template #start>
-                <h1 class="ml-2 text-sm text-natural-400 dark:text-natural-200">
-                    <T key-name="dashboard.sort.header" />
-                </h1>
-                <Divider
-                    type="solid"
-                    class="mb-1 mt-1 border-b text-[#E3E3E3]"
-                />
-            </template>
-            <template #item="{ item, props, hasSubmenu }">
-                <a
-                    v-ripple
-                    class="align-items-center flex rounded-md bg-natural-50 text-sm text-text hover:bg-dandelion-100 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
-                    v-bind="props.action"
-                >
-                    <span :class="item.icon" />
-                    <span class="ml-2">{{ item.label }}</span>
-                    <i v-if="hasSubmenu" class="pi pi-angle-right ml-auto" />
-                </a>
-            </template>
-        </TieredMenu>
-        <ConfirmDialog
-            :draggable="false"
-            group="dashboard"
-            :pt="{
-                header: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                content: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                footer: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-            }"
-        />
+
     </div>
+    --></div>
 </template>

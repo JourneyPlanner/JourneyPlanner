@@ -125,7 +125,12 @@ declare global {
     }
 
     interface Template {
+        id: string;
         name: string;
         description: string;
+        destination: string;
+        length: number;
+        mapbox_full_address: string;
+        users: User[];
     }
 }
