@@ -115,3 +115,4 @@ Route::delete("user/delete-account", [
 ])->middleware("auth:sanctum");
 
 Route::get("user/{username}", [UserController::class, "show"]);
+Route::get("user", [UserController::class, "index"]);
