@@ -26,8 +26,9 @@ class UserController extends Controller
         $search = $validated["search"] ?? "";
 
         $users = User::where("username", "like", "%$search%")
+            ->orWhere("display_name", "like", "%$search%")
             ->orderBy("username", "asc")
-            ->simplePaginate($perPage, ["username"])
+            ->simplePaginate($perPage, ["username", "display_name"])
             ->withQueryString();
 
         return response()->json($users);
