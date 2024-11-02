@@ -85,7 +85,7 @@ class TemplateController extends Controller
             ->where(DB::raw("DATEDIFF(`to`, `from`) + 1"), "<=", $lengthMax)
             ->with([
                 "users" => function ($query) {
-                    $query->select("id", "username");
+                    $query->select("id", "username", "display_name");
                 },
             ]);
 
