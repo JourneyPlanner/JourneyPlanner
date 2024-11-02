@@ -37,13 +37,17 @@ const user = ref();
 const isUserSettingsVisible = ref(false);
 
 //templates
-const isFilterVisible = ref(false);
+const openedTemplate = ref();
+const isTemplatePopupVisible = ref(false);
+const isFilterVisible = ref(route.query.filter === "true");
+const usernames = ref<string[]>([]);
 const templateJourneyLengthMinMax = ref([1, 31]);
 const sortby = ref("");
-const sortorder = ref("asc");
-const templateName = ref("");
+const sortorder = ref("");
 const templateDestination = ref("");
 const templateCreator = ref("");
+const borderColor = "#BDBDBD"; //TODO darkmode
+const addressCss = `.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor}; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none}`;
 
 const toggle = (event: Event) => {
     menu.value.toggle(event);
@@ -58,147 +62,186 @@ if (route.query.tab === "templates") {
     tabIndex.value = 1;
 }
 
-watch(
-    tabIndex,
-    () => {
-        if (tabIndex.value === 1) {
-            router.replace({ path: "/dashboard", query: { tab: "templates" } });
-            items.value = [
-                {
-                    label: t.value("dashboard.sort.length"),
-                    icon: "pi pi-calendar-clock",
-                    items: [
-                        {
-                            label: t.value("dashboard.sort.ascending.numeric"),
-                            icon: "pi pi-sort-amount-up",
-                            command: () => {
-                                sortby.value = "length";
-                                sortorder.value = "asc";
+onMounted(() => {
+    watch(
+        tabIndex,
+        () => {
+            if (tabIndex.value === 1) {
+                router.replace({
+                    path: "/dashboard",
+                    query: {
+                        tab: "templates",
+                    },
+                });
+                items.value = [
+                    {
+                        label: t.value("dashboard.sort.length"),
+                        icon: "pi pi-calendar-clock",
+                        items: [
+                            {
+                                label: t.value(
+                                    "dashboard.sort.ascending.numeric",
+                                ),
+                                icon: "pi pi-sort-amount-up",
+                                command: () => {
+                                    sortby.value = "length";
+                                    sortorder.value = "asc";
+                                },
                             },
-                        },
-                        {
-                            label: t.value("dashboard.sort.descending.numeric"),
-                            icon: "pi pi-sort-amount-down",
-                            command: () => {
-                                sortby.value = "length";
-                                sortorder.value = "desc";
+                            {
+                                label: t.value(
+                                    "dashboard.sort.descending.numeric",
+                                ),
+                                icon: "pi pi-sort-amount-down",
+                                command: () => {
+                                    sortby.value = "length";
+                                    sortorder.value = "desc";
+                                },
                             },
-                        },
-                    ],
-                },
-                {
-                    label: t.value("dashboard.sort.name"),
-                    icon: "pi pi-book",
-                    items: [
-                        {
-                            label: t.value("dashboard.sort.ascending"),
-                            icon: "pi pi-sort-alpha-up",
-                            command: () => {
-                                sortby.value = "name";
-                                sortorder.value = "asc";
+                        ],
+                    },
+                    {
+                        label: t.value("dashboard.sort.name"),
+                        icon: "pi pi-book",
+                        items: [
+                            {
+                                label: t.value("dashboard.sort.ascending"),
+                                icon: "pi pi-sort-alpha-up",
+                                command: () => {
+                                    sortby.value = "name";
+                                    sortorder.value = "asc";
+                                },
                             },
-                        },
-                        {
-                            label: t.value("dashboard.sort.descending"),
-                            icon: "pi pi-sort-alpha-down",
-                            command: () => {
-                                sortby.value = "name";
-                                sortorder.value = "desc";
+                            {
+                                label: t.value("dashboard.sort.descending"),
+                                icon: "pi pi-sort-alpha-down",
+                                command: () => {
+                                    sortby.value = "name";
+                                    sortorder.value = "desc";
+                                },
                             },
-                        },
-                    ],
-                },
-                {
-                    label: t.value("dashboard.sort.destination"),
-                    icon: "pi pi-map-marker",
-                    items: [
-                        {
-                            label: t.value("dashboard.sort.ascending"),
-                            icon: "pi pi-sort-alpha-up",
-                            command: () => {
-                                sortby.value = "destination";
-                                sortorder.value = "asc";
+                        ],
+                    },
+                    {
+                        label: t.value("dashboard.sort.destination"),
+                        icon: "pi pi-map-marker",
+                        items: [
+                            {
+                                label: t.value("dashboard.sort.ascending"),
+                                icon: "pi pi-sort-alpha-up",
+                                command: () => {
+                                    sortby.value = "destination";
+                                    sortorder.value = "asc";
+                                },
                             },
-                        },
-                        {
-                            label: t.value("dashboard.sort.descending"),
-                            icon: "pi pi-sort-alpha-down",
-                            command: () => {
-                                sortby.value = "destination";
-                                sortorder.value = "desc";
+                            {
+                                label: t.value("dashboard.sort.descending"),
+                                icon: "pi pi-sort-alpha-down",
+                                command: () => {
+                                    sortby.value = "destination";
+                                    sortorder.value = "desc";
+                                },
                             },
-                        },
-                    ],
-                },
-            ];
-        } else {
-            router.replace({ path: "/dashboard" });
-            items.value = [
-                {
-                    label: t.value("dashboard.sort.name"),
-                    icon: "pi pi-book",
-                    items: [
-                        {
-                            label: t.value("dashboard.sort.ascending"),
-                            icon: "pi pi-sort-alpha-up",
-                            command: () => {
-                                sortJourneys("name-asc");
+                        ],
+                    },
+                ];
+            } else {
+                router.replace({ path: "/dashboard" });
+                items.value = [
+                    {
+                        label: t.value("dashboard.sort.name"),
+                        icon: "pi pi-book",
+                        items: [
+                            {
+                                label: t.value("dashboard.sort.ascending"),
+                                icon: "pi pi-sort-alpha-up",
+                                command: () => {
+                                    sortJourneys("name-asc");
+                                },
                             },
-                        },
-                        {
-                            label: t.value("dashboard.sort.descending"),
-                            icon: "pi pi-sort-alpha-down",
-                            command: () => {
-                                sortJourneys("name-desc");
+                            {
+                                label: t.value("dashboard.sort.descending"),
+                                icon: "pi pi-sort-alpha-down",
+                                command: () => {
+                                    sortJourneys("name-desc");
+                                },
                             },
-                        },
-                    ],
-                },
-                {
-                    label: t.value("dashboard.sort.startdate"),
-                    icon: "pi pi-calendar",
-                    items: [
-                        {
-                            label: t.value("dashboard.sort.oldestToNewest"),
-                            icon: "pi pi-sort-amount-up",
-                            command: () => {
-                                sortJourneys("startdate-asc");
+                        ],
+                    },
+                    {
+                        label: t.value("dashboard.sort.startdate"),
+                        icon: "pi pi-calendar",
+                        items: [
+                            {
+                                label: t.value("dashboard.sort.oldestToNewest"),
+                                icon: "pi pi-sort-amount-up",
+                                command: () => {
+                                    sortJourneys("startdate-asc");
+                                },
                             },
-                        },
-                        {
-                            label: t.value("dashboard.sort.newestToOldest"),
-                            icon: "pi pi-sort-amount-down",
-                            command: () => {
-                                sortJourneys("startdate-desc");
+                            {
+                                label: t.value("dashboard.sort.newestToOldest"),
+                                icon: "pi pi-sort-amount-down",
+                                command: () => {
+                                    sortJourneys("startdate-desc");
+                                },
                             },
-                        },
-                    ],
-                },
-                {
-                    label: t.value("dashboard.sort.destination"),
-                    icon: "pi pi-map-marker",
-                    items: [
-                        {
-                            label: t.value("dashboard.sort.ascending"),
-                            icon: "pi pi-sort-alpha-up",
-                            command: () => {
-                                sortJourneys("destination-asc");
+                        ],
+                    },
+                    {
+                        label: t.value("dashboard.sort.destination"),
+                        icon: "pi pi-map-marker",
+                        items: [
+                            {
+                                label: t.value("dashboard.sort.ascending"),
+                                icon: "pi pi-sort-alpha-up",
+                                command: () => {
+                                    sortJourneys("destination-asc");
+                                },
                             },
-                        },
-                        {
-                            label: t.value("dashboard.sort.descending"),
-                            icon: "pi pi-sort-alpha-down",
-                            command: () => {
-                                sortJourneys("destination-desc");
+                            {
+                                label: t.value("dashboard.sort.descending"),
+                                icon: "pi pi-sort-alpha-down",
+                                command: () => {
+                                    sortJourneys("destination-desc");
+                                },
                             },
-                        },
-                    ],
-                },
-            ];
-        }
-    },
-    { immediate: true },
-);
+                        ],
+                    },
+                ];
+            }
+        },
+        { immediate: true },
+    );
+
+    watch(
+        isFilterVisible,
+        () => {
+            if (isFilterVisible.value === true) {
+                router.replace({
+                    path: "/dashboard",
+                    query: {
+                        tab: "templates",
+                        filter: "true",
+                        min: templateJourneyLengthMinMax.value[0],
+                        max: templateJourneyLengthMinMax.value[1],
+                        destination: templateDestination.value,
+                        creator: templateCreator.value,
+                    },
+                });
+            } else {
+                router.replace({
+                    path: "/dashboard",
+                    query: {
+                        tab: "templates",
+                        filter: "false",
+                    },
+                });
+            }
+        },
+        { immediate: true },
+    );
+});
 
 /**
  * Fetches all templates from the backend
@@ -210,16 +253,31 @@ const {
     status,
 } = await useAsyncData("templates", () =>
     client(
-        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=100&template_name=${templateName.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_destination=${templateDestination.value}&template_creator=${templateCreator.value}`,
+        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=100&template_name=${searchValue.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_destination=${templateDestination.value}&template_creator=${templateCreator.value}`,
     ),
 );
 
+/**
+ * clear template filters
+ */
 function clearFilters() {
     templateJourneyLengthMinMax.value = [1, 31];
-    templateName.value = "";
     templateDestination.value = "";
     templateCreator.value = "";
     refresh();
+}
+
+/**
+ * get username(s) for AutoComplete for created by template filter
+ */
+function searchUser() {
+    client(`/api/user?search=${templateCreator.value}&per_page=25`).then(
+        (res) => {
+            usernames.value = res.data.map(
+                (user: User) => user.display_name + " (@" + user.username + ")",
+            );
+        },
+    );
 }
 
 /*
@@ -233,10 +291,18 @@ currentJourneys.value = data.value;
 store.setJourneys(data.value);
 
 const { data: currUser } = await useAsyncData("currUser", () =>
-    client(`/api/user`),
+    client(`/api/me`),
 );
 
 user.value = currUser.value;
+
+function search() {
+    if (tabIndex.value === 0) {
+        searchJourneys();
+    } else {
+        route.query.name = searchValue.value;
+    }
+}
 
 /**
  * Searches for journeys based on the searchValue
@@ -297,8 +363,10 @@ function editJourney(journey: Journey, id: string) {
 }
 
 //TODO filter params in die site url geben falls reload?
-
+//TODO z index alles scuffed
 //TODO endlos scrollen
+//TODO address input form und style
+//TODO name createor input style
 </script>
 
 <template>
@@ -312,7 +380,10 @@ function editJourney(journey: Journey, id: string) {
                     <div
                         id="search"
                         v-tooltip.top="{
-                            value: t('dashboard.tooltip.search'),
+                            value:
+                                tabIndex === 0
+                                    ? t('dashboard.search.journey.tooltip')
+                                    : t('dashboard.search.template.tooltip'),
                             pt: { root: 'font-nunito' },
                         }"
                         class="relative mr-2.5"
@@ -323,7 +394,7 @@ function editJourney(journey: Journey, id: string) {
                             type="text"
                             class="rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200"
                             :placeholder="t('dashboard.search')"
-                            @input="searchJourneys"
+                            @input="search()"
                         />
                         <button @click="searchInput.focus()">
                             <SvgSearchIcon
@@ -342,7 +413,7 @@ function editJourney(journey: Journey, id: string) {
                     <div v-if="tabIndex === 1" id="filter" class="mr-4">
                         <SvgDashboardFilter
                             class="h-9 w-9 hover:cursor-pointer"
-                            :is-active="isFilterVisible"
+                            :is-active="!!isFilterVisible"
                             @click="isFilterVisible = !isFilterVisible"
                         />
                     </div>
@@ -481,14 +552,13 @@ function editJourney(journey: Journey, id: string) {
                 <div id="templates" class="grid grid-cols-4 gap-5">
                     <TemplateCard
                         v-for="template in templateData.data"
-                        :id="template.id"
                         :key="template.id"
-                        :name="template.name"
-                        :destination="template.destination"
-                        :description="template.description"
-                        :length="template.length"
-                        :mapbox-full-address="template.mapbox_full_address"
-                        :creator="template.users[0].username"
+                        :class="status === 'pending' ? 'hidden' : ''"
+                        :template="template"
+                        @open-template="
+                            openedTemplate = template;
+                            isTemplatePopupVisible = true;
+                        "
                     />
                     <h4
                         v-if="
@@ -505,10 +575,12 @@ function editJourney(journey: Journey, id: string) {
                             <T key-name="dashboard.template.filter.clear" />
                         </button>
                     </h4>
-                    <ProgressSpinner
+                    <div
                         v-if="status === 'pending'"
-                        class="col-start-2"
-                    />
+                        class="col-span-full flex h-full items-center justify-center"
+                    >
+                        <ProgressSpinner />
+                    </div>
                     <div
                         v-if="isFilterVisible"
                         id="filter-placeholder"
@@ -517,7 +589,7 @@ function editJourney(journey: Journey, id: string) {
                     <div
                         v-if="isFilterVisible"
                         id="filter"
-                        class="absolute right-0 mr-20 flex h-72 w-64 flex-col rounded-lg bg-natural-50 px-3 pt-2 shadow-lg"
+                        class="absolute right-0 mr-20 flex w-64 flex-col rounded-lg bg-natural-50 px-3 pt-2 shadow-lg"
                     >
                         <div id="length">
                             <div class="flex items-center">
@@ -548,30 +620,58 @@ function editJourney(journey: Journey, id: string) {
                                     <span>1</span>
                                     <span>31+</span>
                                 </div>
-                                <div class="flex flex-row gap-x-3">
+                                <div class="mt-1 flex flex-row gap-x-3">
                                     <T
                                         key-name="dashboard.template.filter.length.from"
                                     />
-                                    <input
+                                    <InputNumber
                                         v-model="templateJourneyLengthMinMax[0]"
-                                        type="number"
-                                        class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1"
+                                        input-class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1 font-nunito focus:border-calypso-300"
+                                        input-id="min"
+                                        :min="1"
+                                        :max="31"
+                                        :allow-empty="false"
                                         @input="refresh()"
                                     />
                                     <T
                                         key-name="dashboard.template.filter.length.to"
                                     />
-                                    <input
+                                    <InputNumber
                                         v-model="templateJourneyLengthMinMax[1]"
-                                        type="number"
-                                        class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1"
+                                        input-class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1 font-nunito focus:border-calypso-300"
+                                        input-id="max"
+                                        :min="1"
+                                        :max="31"
+                                        :allow-empty="false"
                                         @input="refresh()"
                                     />
                                     <T key-name="template.days" />
                                 </div>
                             </div>
                         </div>
-                        <div id="destination" />
+                        <div id="destination" class="mt-3">
+                            <div class="flex items-center">
+                                <h3 class="whitespace-nowrap text-xl">
+                                    <T
+                                        key-name="dashboard.template.filter.destination"
+                                    />
+                                </h3>
+                                <span
+                                    class="ml-1 h-0.5 w-full bg-calypso-400"
+                                />
+                            </div>
+                            <p class="text-natural-700">
+                                <T
+                                    key-name="dashboard.template.filter.destination.description"
+                                />
+                            </p>
+                            <FormAddressInput
+                                id="template-destination"
+                                name="destination"
+                                value=""
+                                :custom-class="addressCss"
+                            />
+                        </div>
                         <div id="creator" class="mt-5">
                             <div class="flex items-center">
                                 <h3 class="whitespace-nowrap text-xl">
@@ -588,8 +688,21 @@ function editJourney(journey: Journey, id: string) {
                                     key-name="dashboard.template.filter.creator.description"
                                 />
                             </p>
+                            <AutoComplete
+                                v-model="templateCreator"
+                                input-class="bg-natural-50 border-2 border-natural-300 rounded-md pl-1.5 text-base focus:border-calypso-300 py-1"
+                                :suggestions="usernames"
+                                :force-selection="true"
+                                :complete-on-focus="true"
+                                :empty-search-message="
+                                    t('dashboard.template.filter.creator.empty')
+                                "
+                                @complete="searchUser()"
+                                @item-select="refresh()"
+                                @clear="refresh(), searchUser()"
+                            />
                         </div>
-                        <div class="mt-auto flex justify-end pb-1">
+                        <div class="flex justify-end pb-1 pt-20">
                             <button
                                 class="text-mahagony-400 underline"
                                 @click="clearFilters"
@@ -609,7 +722,11 @@ function editJourney(journey: Journey, id: string) {
                 :prop-email="user.email"
                 @close="isUserSettingsVisible = false"
             />
-            <TemplatePopup />
+            <TemplatePopup
+                :template="openedTemplate"
+                :is-template-dialog-visible="isTemplatePopupVisible"
+                @close="isTemplatePopupVisible = false"
+            />
             <TieredMenu
                 id="overlay_tmenu"
                 ref="menu"

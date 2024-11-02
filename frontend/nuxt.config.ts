@@ -96,6 +96,7 @@ export default defineNuxtConfig({
                 "InputGroupAddon",
                 "InputIcon",
                 "IconField",
+                "InputNumber",
                 "ProgressSpinner",
                 "DataTable",
                 "Column",
@@ -106,6 +107,7 @@ export default defineNuxtConfig({
                 "Accordion",
                 "AccordionTab",
                 "Slider",
+                "AutoComplete",
             ],
         },
     },
@@ -129,6 +131,9 @@ export default defineNuxtConfig({
             onLogout: "/login",
             onAuthOnly: "/login",
             onGuestOnly: "/dashboard",
+        },
+        endpoints: {
+            user: "/api/me",
         },
     },
 });

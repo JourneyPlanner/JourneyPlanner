@@ -117,6 +117,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
         },
     });
 });
+//TODO länge description error message und vlt auch irgendwo so mitzählen im frontend
 </script>
 
 <template>
@@ -173,7 +174,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                     >
                         <label
                             for="template-name"
-                            class="text-md col-start-1 row-start-1 font-medium md:text-lg"
+                            class="text-md col-start-1 row-start-1 text-nowrap font-medium md:text-lg"
                         >
                             <T key-name="form.input.template.name" />
                         </label>

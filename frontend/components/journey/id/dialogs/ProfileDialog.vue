@@ -16,6 +16,9 @@ const { t } = useTranslate();
 
 const isVisible = ref(props.visible);
 const created_at = ref({ day: NaN, month: NaN, year: NaN });
+const templates = ref();
+const openedTemplate = ref();
+const isTemplatePopupVisible = ref(false);
 
 watch(
     () => props.visible,
@@ -58,6 +61,14 @@ watch(
                             detail: t.value("common.error.unknown"),
                             life: 5000,
                         });
+                    }
+                },
+            });
+
+            await client(`/api/user/${props.username}/template?per_page=6`, {
+                async onResponse({ response }) {
+                    if (response.ok) {
+                        templates.value = response._data.data;
                     }
                 },
             });
@@ -124,7 +135,7 @@ const close = () => {
                 <h2
                     class="ml-4 max-w-36 truncate text-xl text-natural-500 dark:text-natural-300 xs:ml-6 xs:max-w-48 sm:ml-[2.875rem] sm:max-w-72 md:ml-8 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
                 >
-                    {{ username }}
+                    @{{ username }}
                 </h2>
             </div>
             <div class="mt-6 flex flex-col">
@@ -136,44 +147,38 @@ const close = () => {
                 </h1>
                 <div
                     id="templates"
-                    class="relative mt-2 grid grid-cols-2 grid-rows-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-5"
+                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-3"
                 >
-                    <Skeleton
-                        v-for="index in 10"
-                        :key="index"
-                        height="7rem"
-                        class="hidden w-full dark:bg-text lg:block"
+                    <TemplateCard
+                        v-for="template in templates"
+                        :key="template.id"
+                        :template="template"
+                        :displayed-in-profile="true"
+                        @open-template="
+                            openedTemplate = template;
+                            isTemplatePopupVisible = true;
+                        "
                     />
-                    <Skeleton
-                        v-for="index in 6"
-                        :key="index"
-                        height="7rem"
-                        class="hidden w-full dark:bg-text sm:block lg:hidden"
-                    />
-                    <Skeleton
-                        v-for="index in 4"
-                        :key="index"
-                        height="4rem"
-                        class="w-full dark:bg-text sm:hidden"
-                    />
-                    <div
-                        class="pointer-events-none absolute inset-0 flex items-center justify-center"
-                    >
-                        <span
-                            class="font-nunito text-xl font-bold text-text dark:text-natural-50 md:text-2xl"
-                            >Coming Soon</span
-                        >
+                    <div v-if="templates.length === 0" class="col-span-full">
+                        <T key-name="template.none" />
                     </div>
                 </div>
                 <div class="flex flex-row justify-center">
-                    <button
+                    <NuxtLink
                         class="mt-6 flex rounded-xl border-2 border-dandelion-300 bg-natural-50 px-4 py-1 text-center text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
-                        @click="router.push('/user/' + username)"
+                        :to="'/user/' + username"
                     >
                         <T key-name="profile.see.full" />
-                    </button>
+                    </NuxtLink>
                 </div>
             </div>
         </Dialog>
+        <div id="dialogs">
+            <TemplatePopup
+                :template="openedTemplate"
+                :is-template-dialog-visible="isTemplatePopupVisible"
+                @close="isTemplatePopupVisible = false"
+            />
+        </div>
     </div>
 </template>
