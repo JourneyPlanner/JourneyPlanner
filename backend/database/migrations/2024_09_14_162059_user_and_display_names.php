@@ -22,11 +22,11 @@ return new class extends Migration {
         foreach (User::all() as $user) {
             // username should only contain lowercase letters, numbers and underscores
             // it should also be unique
-            $username = Str::lower(
+            $username = Str::slug(
                 $user->firstName .
-                    ($user->lastName ? "_" . $user->lastName : "")
+                    ($user->lastName ? "_" . $user->lastName : ""),
+                "_"
             );
-            $username = preg_replace("/[^a-z0-9_-]/", "", $username);
             while (User::where("username", $username)->exists()) {
                 $username .= Str::lower(Str::random(4));
             }

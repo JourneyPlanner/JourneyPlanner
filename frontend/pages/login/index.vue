@@ -7,6 +7,7 @@ const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
 const route = useRoute();
+const client = useSanctumClient();
 
 const title = t.value("form.header.login");
 
@@ -100,6 +101,67 @@ async function loginUser(userData: User) {
         throw error;
     }
 }
+
+async function loginWithMicrosoft() {
+    const response = await client("/auth/redirect/microsoft");
+
+    // Redirect to the Microsoft login page in popup
+    navigateTo(response.url, {
+        external: true,
+        open: {
+            target: "_blank",
+            windowFeatures: { popup: true, width: 600 },
+        },
+    });
+}
+
+async function handleMicrosoftLoginCallback(event: MessageEvent) {
+    if (event.origin !== window.location.origin) {
+        return;
+    }
+
+    if (event.data.code) {
+        await client("/auth/callback/microsoft", {
+            params: { code: event.data.code },
+        });
+
+        await fakeLoginAndRedirect();
+    }
+}
+
+async function fakeLoginAndRedirect() {
+    // This is needed for the nuxt-sanctum-auth package to recognize the login
+    await login({});
+    navigateTo("/dashboard");
+}
+
+declare global {
+    interface Window {
+        handleGoogleCredentialResponse: (response: any) => void;
+    }
+}
+
+window.handleGoogleCredentialResponse = async (response: any) => {
+    await client("/auth/callback/google", {
+        method: "POST",
+        body: { token: response.credential },
+    });
+    await fakeLoginAndRedirect();
+};
+
+onMounted(() => {
+    let googleLoginScript = document.createElement("script");
+    googleLoginScript.setAttribute(
+        "src",
+        "https://accounts.google.com/gsi/client",
+    );
+    document.head.appendChild(googleLoginScript);
+    window.addEventListener("message", handleMicrosoftLoginCallback);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("message", handleMicrosoftLoginCallback);
+});
 </script>
 
 <template>
@@ -169,6 +231,28 @@ async function loginUser(userData: User) {
                                 <T key-name="form.button.login" />
                             </button>
                         </form>
+                        <div>
+                            <div
+                                id="g_id_onload"
+                                data-client_id="423199431986-rhc219kl54r6k1mf4dkvuceo1hl6b041.apps.googleusercontent.com"
+                                data-context="signup"
+                                data-ux_mode="popup"
+                                data-callback="handleGoogleCredentialResponse"
+                                data-itp_support="true"
+                            ></div>
+                            <div
+                                class="g_id_signin"
+                                data-type="standard"
+                                data-shape="rectangular"
+                                data-theme="outline"
+                                data-text="signup_with"
+                                data-size="large"
+                                data-logo_alignment="left"
+                            ></div>
+                        </div>
+                        <button type="button" @click="loginWithMicrosoft">
+                            MS Login
+                        </button>
                         <NuxtLink
                             to="/register"
                             class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"

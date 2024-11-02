@@ -11,8 +11,11 @@
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.28",
         "laravel/sanctum": "^4.0",
+        "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.10",
-        "pbmedia/laravel-ffmpeg": "^8.5"
+        "pbmedia/laravel-ffmpeg": "^8.5",
+        "serdud/socialite-google-one-tap": "^2.1",
+        "socialiteproviders/microsoft": "^4.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23.1",
