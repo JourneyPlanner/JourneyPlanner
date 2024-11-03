@@ -7,14 +7,16 @@ const { t } = useTranslate();
 const client = useSanctumClient();
 const { login } = useSanctumAuth();
 
+useHead({
+    title: `Microsoft Auth | JourneyPlanner`,
+});
+
 // Get the code from the URL
 const route = useRoute();
 const code = route.query.code as string;
 
 onMounted(async () => {
-    // Send the code to the other window
     try {
-        //window.opener.postMessage({ code }, window.location.origin);
         if (code) {
             await client("/auth/callback/microsoft", {
                 params: { code: code },

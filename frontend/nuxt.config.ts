@@ -11,6 +11,7 @@ export default defineNuxtConfig({
         pageTransition: { name: "page", mode: "out-in" },
         layoutTransition: { name: "page", mode: "out-in" },
         head: {
+            script: [{ src: "https://accounts.google.com/gsi/client" }],
             link: [
                 {
                     rel: "icon",

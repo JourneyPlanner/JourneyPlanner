@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import { T, useTranslate } from "@tolgee/vue";
+import { T, useTolgee, useTranslate } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
+import { useGoogleAuth } from "~/composable/useGoogleAuth";
+import { useMicrosoftAuth } from "~/composable/useMicrosoftAuth";
 
 const { t } = useTranslate();
 const toast = useToast();
 const client = useSanctumClient();
 const route = useRoute();
+const config = useRuntimeConfig();
+const tolgee = useTolgee(["language"]);
 
 const title = t.value("form.header.register");
 
 useHead({
     title: `${title} | JourneyPlanner`,
 });
+
+useGoogleAuth();
+const { loginWithMicrosoft } = useMicrosoftAuth();
 
 if (route.query.redirect?.toString().startsWith("/invite")) {
     localStorage.setItem(
@@ -75,15 +82,6 @@ async function registerUser(userData: object) {
                     life: 3000,
                 });
                 await navigateTo("/dashboard");
-                /*
-                if (localStorage.getItem("JP_invite_journey_id")) {
-                    await navigateTo(
-                        localStorage.getItem("JP_invite_journey_id"),
-                    );
-                } else {
-                    await navigateTo("/dashboard");
-                }
-                */
             } else if (response.status === 422) {
                 toast.add({
                     severity: "error",
@@ -176,11 +174,41 @@ async function registerUser(userData: object) {
                             </div>
 
                             <button
-                                class="text-md my-4 mt-4 rounded-2xl border-2 border-dandelion-300 bg-natural-50 px-6 py-2.5 font-nunito font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                class="text-md mb-5 rounded-2xl border-2 border-dandelion-300 bg-natural-50 px-6 py-2.5 font-nunito font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
                             >
                                 <T key-name="form.button.register" />
                             </button>
                         </form>
+                        <div
+                            class="mb-4 flex flex-col justify-center gap-x-5 gap-y-2"
+                        >
+                            <div class="flex justify-center">
+                                <div
+                                    id="g_id_onload"
+                                    :data-client_id="
+                                        config.public.NUXT_GOOGLE_CLIENT_ID
+                                    "
+                                    data-context="signin"
+                                    data-ux_mode="popup"
+                                    data-callback="handleGoogleCredentialResponse"
+                                    data-itp_support="true"
+                                ></div>
+
+                                <div
+                                    class="g_id_signin"
+                                    data-type="standard"
+                                    data-shape="rectangular"
+                                    data-theme="outline"
+                                    data-text="continue_with"
+                                    data-size="large"
+                                    :data-locale="tolgee.getLanguage()"
+                                    data-logo_alignment="left"
+                                ></div>
+                            </div>
+                            <button @click="loginWithMicrosoft">
+                                <SvgMicrosoft />
+                            </button>
+                        </div>
                         <div class="flex flex-row gap-x-2">
                             <NuxtLink
                                 to="/login"

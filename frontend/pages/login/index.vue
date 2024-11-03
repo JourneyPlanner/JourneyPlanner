@@ -2,17 +2,17 @@
 import { T, useTolgee, useTranslate } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
+import { useGoogleAuth } from "~/composable/useGoogleAuth";
+import { useMicrosoftAuth } from "~/composable/useMicrosoftAuth";
 
 const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
 const route = useRoute();
-const client = useSanctumClient();
 const config = useRuntimeConfig();
 
 const title = t.value("form.header.login");
 const tolgee = useTolgee(["language"]);
-console.log(config);
 
 useHead({
     title: `${title} | JourneyPlanner`,
@@ -21,6 +21,9 @@ useHead({
 definePageMeta({
     middleware: ["sanctum:guest"],
 });
+
+useGoogleAuth();
+const { loginWithMicrosoft } = useMicrosoftAuth();
 
 if (route.query.redirect?.toString().startsWith("/invite")) {
     localStorage.setItem(
@@ -104,50 +107,6 @@ async function loginUser(userData: User) {
         throw error;
     }
 }
-
-async function loginWithMicrosoft() {
-    const response = await client("/auth/redirect/microsoft");
-
-    // Redirect to the Microsoft login page in popup
-    navigateTo(response.url, {
-        external: true,
-    });
-}
-
-async function fakeLoginAndRedirect() {
-    // This is needed for the nuxt-sanctum-auth package to recognize the login
-    toast.add({
-        severity: "success",
-        summary: t.value("common.toast.success.heading"),
-        detail: t.value("form.login.toast.success"),
-        life: 3000,
-    });
-    await login({});
-    navigateTo("/dashboard");
-}
-
-declare global {
-    interface Window {
-        handleGoogleCredentialResponse: (response: any) => void;
-    }
-}
-
-window.handleGoogleCredentialResponse = async (response: any) => {
-    await client("/auth/callback/google", {
-        method: "POST",
-        body: { token: response.credential },
-    });
-    await fakeLoginAndRedirect();
-};
-
-onMounted(() => {
-    let googleLoginScript = document.createElement("script");
-    googleLoginScript.setAttribute(
-        "src",
-        "https://accounts.google.com/gsi/client",
-    );
-    document.head.appendChild(googleLoginScript);
-});
 </script>
 
 <template>

@@ -33,7 +33,7 @@ const validationSchema = !props.isOauth
     : "";
 
 const { errors, handleSubmit, defineField, handleReset } = useForm({
-    validationSchema,
+    validationSchema: validationSchema,
 });
 
 const [password] = defineField("password");

@@ -121,8 +121,6 @@ const { data: currUser } = await useAsyncData("currUser", () =>
     client(`/api/user`),
 );
 
-console.log(currUser.value);
-
 user.value = currUser.value;
 
 /**
@@ -255,7 +253,7 @@ function editJourney(journey: Journey, id: string) {
                 </button>
                 <UserSettings
                     :visible="isUserSettingsVisible"
-                    :is-oauth="user.microsoft_id || user.google_id"
+                    :is-oauth="!!user.microsoft_id || !!user.google_id"
                     :prop-username="user.username"
                     :prop-displayname="user.display_name"
                     :prop-email="user.email"

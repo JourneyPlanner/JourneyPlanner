@@ -5,6 +5,7 @@ import * as yup from "yup";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
+    isOauth: { type: Boolean, required: true },
 });
 
 const isVisible = ref(props.visible);
@@ -15,20 +16,35 @@ const passwordConfirmInvalid = ref(false);
 const client = useSanctumClient();
 const toast = useToast();
 
+const validationSchema = props.isOauth
+    ? yup.object({
+          newPassword: yup
+              .string()
+              .min(8, () => t.value("form.input.password.error"))
+              .required(() => t.value("form.input.required")),
+          newPasswordConfirmation: yup
+              .string()
+              .oneOf([yup.ref("newPassword")], () =>
+                  t.value("form.input.password.repeat.error"),
+              )
+              .required(() => t.value("form.input.required")),
+      })
+    : yup.object({
+          password: yup.string().required(() => t.value("form.input.required")),
+          newPassword: yup
+              .string()
+              .min(8, () => t.value("form.input.password.error"))
+              .required(() => t.value("form.input.required")),
+          newPasswordConfirmation: yup
+              .string()
+              .oneOf([yup.ref("newPassword")], () =>
+                  t.value("form.input.password.repeat.error"),
+              )
+              .required(() => t.value("form.input.required")),
+      });
+
 const { errors, handleSubmit, defineField, handleReset } = useForm({
-    validationSchema: yup.object({
-        newPassword: yup
-            .string()
-            .min(8, () => t.value("form.input.password.error"))
-            .required(() => t.value("form.input.required")),
-        newPasswordConfirmation: yup
-            .string()
-            .oneOf([yup.ref("newPassword")], () =>
-                t.value("form.input.password.repeat.error"),
-            )
-            .required(() => t.value("form.input.required")),
-        password: yup.string().required(() => t.value("form.input.required")),
-    }),
+    validationSchema,
 });
 
 const [password] = defineField("password");

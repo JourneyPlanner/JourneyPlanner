@@ -803,6 +803,7 @@ function blur(e: Event) {
                         </button>
                         <SettingsPasswordChange
                             :visible="isPasswordChangeDialogVisible"
+                            :is-oauth="isOauth"
                             @close="isPasswordChangeDialogVisible = false"
                         />
                     </div>
