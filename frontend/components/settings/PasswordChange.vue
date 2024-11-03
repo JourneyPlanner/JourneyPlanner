@@ -301,7 +301,7 @@ async function changePassword() {
                             class="mb-1 mr-10 mt-2 flex w-full items-start pt-2 text-[0.95rem] text-text dark:text-natural-50"
                         >
                             <T
-                                key-name="dashboard.user.settings.enter.current.password"
+                                key-name="dashboard.user.settings.enter.new.password"
                             />
                         </div>
                         <input

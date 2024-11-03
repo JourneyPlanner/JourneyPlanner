@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { T, useTranslate } from "@tolgee/vue";
+import { T, useTolgee, useTranslate } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 
@@ -8,8 +8,11 @@ const toast = useToast();
 const { login } = useSanctumAuth();
 const route = useRoute();
 const client = useSanctumClient();
+const config = useRuntimeConfig();
 
 const title = t.value("form.header.login");
+const tolgee = useTolgee(["language"]);
+console.log(config);
 
 useHead({
     title: `${title} | JourneyPlanner`,
@@ -108,29 +111,17 @@ async function loginWithMicrosoft() {
     // Redirect to the Microsoft login page in popup
     navigateTo(response.url, {
         external: true,
-        open: {
-            target: "_blank",
-            windowFeatures: { popup: true, width: 600 },
-        },
     });
-}
-
-async function handleMicrosoftLoginCallback(event: MessageEvent) {
-    if (event.origin !== window.location.origin) {
-        return;
-    }
-
-    if (event.data.code) {
-        await client("/auth/callback/microsoft", {
-            params: { code: event.data.code },
-        });
-
-        await fakeLoginAndRedirect();
-    }
 }
 
 async function fakeLoginAndRedirect() {
     // This is needed for the nuxt-sanctum-auth package to recognize the login
+    toast.add({
+        severity: "success",
+        summary: t.value("common.toast.success.heading"),
+        detail: t.value("form.login.toast.success"),
+        life: 3000,
+    });
     await login({});
     navigateTo("/dashboard");
 }
@@ -156,11 +147,6 @@ onMounted(() => {
         "https://accounts.google.com/gsi/client",
     );
     document.head.appendChild(googleLoginScript);
-    window.addEventListener("message", handleMicrosoftLoginCallback);
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener("message", handleMicrosoftLoginCallback);
 });
 </script>
 
@@ -231,28 +217,36 @@ onBeforeUnmount(() => {
                                 <T key-name="form.button.login" />
                             </button>
                         </form>
-                        <div>
-                            <div
-                                id="g_id_onload"
-                                data-client_id="423199431986-rhc219kl54r6k1mf4dkvuceo1hl6b041.apps.googleusercontent.com"
-                                data-context="signup"
-                                data-ux_mode="popup"
-                                data-callback="handleGoogleCredentialResponse"
-                                data-itp_support="true"
-                            ></div>
-                            <div
-                                class="g_id_signin"
-                                data-type="standard"
-                                data-shape="rectangular"
-                                data-theme="outline"
-                                data-text="signup_with"
-                                data-size="large"
-                                data-logo_alignment="left"
-                            ></div>
+                        <div
+                            class="mb-2 flex flex-col justify-center gap-x-5 gap-y-2"
+                        >
+                            <div class="flex justify-center">
+                                <div
+                                    id="g_id_onload"
+                                    :data-client_id="
+                                        config.public.NUXT_GOOGLE_CLIENT_ID
+                                    "
+                                    data-context="signin"
+                                    data-ux_mode="popup"
+                                    data-callback="handleGoogleCredentialResponse"
+                                    data-itp_support="true"
+                                ></div>
+
+                                <div
+                                    class="g_id_signin"
+                                    data-type="standard"
+                                    data-shape="rectangular"
+                                    data-theme="outline"
+                                    data-text="continue_with"
+                                    data-size="large"
+                                    :data-locale="tolgee.getLanguage()"
+                                    data-logo_alignment="left"
+                                ></div>
+                            </div>
+                            <button @click="loginWithMicrosoft">
+                                <SvgMicrosoft />
+                            </button>
                         </div>
-                        <button type="button" @click="loginWithMicrosoft">
-                            MS Login
-                        </button>
                         <NuxtLink
                             to="/register"
                             class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"

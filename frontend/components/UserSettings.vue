@@ -5,6 +5,7 @@ import * as yup from "yup";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
+    isOauth: { type: Boolean, required: true },
     propUsername: { type: String, required: true },
     propDisplayname: { type: String, required: true },
     propEmail: { type: String, required: true },
@@ -986,6 +987,7 @@ function blur(e: Event) {
                         </button>
                         <SettingsDeleteAccount
                             :visible="isDeleteAccountDialogVisible"
+                            :is-oauth="isOauth"
                             @close="isDeleteAccountDialogVisible = false"
                         />
                     </div>

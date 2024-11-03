@@ -1,11 +1,54 @@
 <script setup lang="ts">
+import { useTranslate } from "@tolgee/vue";
 import { useRoute } from "vue-router";
+
+const toast = useToast();
+const { t } = useTranslate();
+const client = useSanctumClient();
+const { login } = useSanctumAuth();
 
 // Get the code from the URL
 const route = useRoute();
 const code = route.query.code as string;
-// Send the code to the other window
-window.opener.postMessage({ code }, window.location.origin);
-// Close the window
-window.close();
+
+onMounted(async () => {
+    // Send the code to the other window
+    try {
+        //window.opener.postMessage({ code }, window.location.origin);
+        if (code) {
+            await client("/auth/callback/microsoft", {
+                params: { code: code },
+            });
+
+            toast.add({
+                severity: "success",
+                summary: t.value("common.toast.success.heading"),
+                detail: t.value("form.login.toast.success"),
+                life: 3000,
+            });
+            await login({});
+            navigateTo("/dashboard");
+        } else {
+            navigateTo("/login");
+        }
+    } catch (e) {
+        toast.add({
+            severity: "error",
+            summary: t.value("common.toast.error.heading"),
+            detail: t.value("common.error.unknown"),
+            life: 3000,
+        });
+        navigateTo("/login");
+    }
+});
 </script>
+
+<template>
+    <div class="mt-32 flex flex-col items-center justify-center">
+        <SvgLogin class="w-72" />
+        <ProgressSpinner class="mt-2" />
+        <span class="mt-5 text-xl font-medium"
+            ><T key-name="login.microsoft"
+        /></span>
+    </div>
+</template>
