@@ -27,6 +27,12 @@ Route::middleware(["auth:sanctum"])->get("/user", function (Request $request) {
     return $request->user();
 });
 
+Route::middleware(["auth:sanctum"])->get("/me/requiresPassword", function (
+    Request $request
+) {
+    return !($request->user()->password ?? "" === "");
+});
+
 Route::get("/user/tokens/upload", function (Request $request) {
     return response()->json([
         "token" => $request
