@@ -1,25 +1,18 @@
 <script setup lang="ts">
-import { T, useTolgee, useTranslate } from "@tolgee/vue";
+import { T, useTranslate } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { useGoogleAuth } from "~/composable/useGoogleAuth";
-import { useMicrosoftAuth } from "~/composable/useMicrosoftAuth";
 
 const { t } = useTranslate();
 const toast = useToast();
 const client = useSanctumClient();
 const route = useRoute();
-const config = useRuntimeConfig();
-const tolgee = useTolgee(["language"]);
 
 const title = t.value("form.header.register");
 
 useHead({
     title: `${title} | JourneyPlanner`,
 });
-
-useGoogleAuth();
-const { loginWithMicrosoft } = useMicrosoftAuth();
 
 if (route.query.redirect?.toString().startsWith("/invite")) {
     localStorage.setItem(
@@ -183,31 +176,9 @@ async function registerUser(userData: object) {
                             class="mb-4 flex flex-col justify-center gap-x-5 gap-y-2"
                         >
                             <div class="flex justify-center">
-                                <div
-                                    id="g_id_onload"
-                                    :data-client_id="
-                                        config.public.NUXT_GOOGLE_CLIENT_ID
-                                    "
-                                    data-context="signin"
-                                    data-ux_mode="popup"
-                                    data-callback="handleGoogleCredentialResponse"
-                                    data-itp_support="true"
-                                ></div>
-
-                                <div
-                                    class="g_id_signin"
-                                    data-type="standard"
-                                    data-shape="rectangular"
-                                    data-theme="outline"
-                                    data-text="continue_with"
-                                    data-size="large"
-                                    :data-locale="tolgee.getLanguage()"
-                                    data-logo_alignment="left"
-                                ></div>
+                                <FormGoogleButton />
                             </div>
-                            <button @click="loginWithMicrosoft">
-                                <SvgMicrosoft />
-                            </button>
+                            <FormMicrosoftButton />
                         </div>
                         <div class="flex flex-row gap-x-2">
                             <NuxtLink

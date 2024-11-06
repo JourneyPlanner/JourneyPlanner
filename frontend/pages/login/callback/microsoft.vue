@@ -11,7 +11,6 @@ useHead({
     title: `Microsoft Auth | JourneyPlanner`,
 });
 
-// Get the code from the URL
 const route = useRoute();
 const code = route.query.code as string;
 

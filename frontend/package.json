@@ -15,7 +15,7 @@
         "start:staging": "concurrently \"infisical run --env=dev -- nuxt dev -o\" \"cd ../backend && infisical run --env=staging -- php artisan serve\"",
         "start:staging:host": "concurrently \"infisical run --env=dev -- nuxt dev --host 0 --port 3000 -o\" \"cd ../backend && infisical run --env=staging -- php artisan serve\"",
         "clone-staging-db": "cd ../docker/dev && @powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./clone_db.ps1",
-        "install-all": "npm install && cd ../backend && npm install && composer install && cd ../docker/dev && docker compose pull"    
+        "install-all": "npm install && cd ../backend && npm install && composer install && cd ../docker/dev && docker compose pull"
     },
     "dependencies": {
         "@fullcalendar/core": "^6.1.11",
