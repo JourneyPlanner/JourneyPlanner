@@ -49,7 +49,7 @@ onMounted(async () => {
     <div class="mt-32 flex flex-col items-center justify-center">
         <SvgLogin class="w-72" />
         <ProgressSpinner class="mt-2" />
-        <span class="mt-5 text-xl font-medium"
+        <span class="mt-5 text-xl font-medium text-text dark:text-natural-50"
             ><T key-name="login.microsoft"
         /></span>
     </div>

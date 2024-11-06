@@ -5,19 +5,20 @@ import * as yup from "yup";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
-    isOauth: { type: Boolean, required: true },
+    requiresPassword: { type: Boolean, required: true },
 });
 
 const isVisible = ref(props.visible);
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "changedPassword"]);
 const { t } = useTranslate();
 const passwordInvalid = ref(false);
 const passwordConfirmInvalid = ref(false);
 const client = useSanctumClient();
 const toast = useToast();
 
-const validationSchema = props.isOauth
+const validationSchema = props.requiresPassword
     ? yup.object({
+          password: yup.string().required(() => t.value("form.input.required")),
           newPassword: yup
               .string()
               .min(8, () => t.value("form.input.password.error"))
@@ -30,7 +31,6 @@ const validationSchema = props.isOauth
               .required(() => t.value("form.input.required")),
       })
     : yup.object({
-          password: yup.string().required(() => t.value("form.input.required")),
           newPassword: yup
               .string()
               .min(8, () => t.value("form.input.password.error"))
@@ -89,6 +89,7 @@ async function changePassword() {
                         life: 6000,
                     });
                     close();
+                    emit("changedPassword");
                 }
             },
             async onResponseError({ response }) {
@@ -178,7 +179,10 @@ async function changePassword() {
                         key-name="dashboard.user.settings.password.change.description"
                     />
                 </div>
-                <div class="flex flex-col items-center justify-center pt-5">
+                <div
+                    class="flex flex-col items-center justify-center pt-5"
+                    v-if="requiresPassword"
+                >
                     <div
                         class="flex w-4/6 justify-start text-text dark:text-natural-50"
                     >
@@ -296,6 +300,7 @@ async function changePassword() {
                 <div class="flex items-center pl-6 pt-4">
                     <div class="flex w-full flex-col items-center">
                         <div
+                            v-if="requiresPassword"
                             class="mb-1 mr-10 flex w-full items-start text-[0.95rem] text-text dark:text-natural-50"
                         >
                             <T
@@ -303,6 +308,7 @@ async function changePassword() {
                             />
                         </div>
                         <input
+                            v-if="requiresPassword"
                             id="passwordMobile"
                             v-model="password"
                             name="password"
@@ -310,11 +316,13 @@ async function changePassword() {
                             class="focus-ring-1 mr-10 w-full rounded-md border-2 border-natural-400 bg-natural-100 py-1 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-800 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         />
                         <span
+                            v-if="requiresPassword"
                             class="mr-10 flex w-full justify-start pt-0.5 text-sm text-mahagony-600 dark:text-mahagony-300"
                             >{{ errors.password }}</span
                         >
                         <div
-                            class="mb-1 mr-10 mt-2 flex w-full items-start pt-2 text-[0.95rem] text-text dark:text-natural-50"
+                            class="mb-1 mr-10 flex w-full items-start pt-2 text-[0.95rem] text-text dark:text-natural-50"
+                            :class="requiresPassword ? 'mt-2' : 'mt-0'"
                         >
                             <T
                                 key-name="dashboard.user.settings.enter.new.password"

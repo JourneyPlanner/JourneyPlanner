@@ -5,7 +5,7 @@ import * as yup from "yup";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
-    isOauth: { type: Boolean, required: true },
+    requiresPassword: { type: Boolean, required: true },
 });
 
 const isVisible = ref(props.visible);
@@ -23,17 +23,17 @@ watch(
     },
 );
 
-const validationSchema = !props.isOauth
-    ? yup.object({
+const validationSchema = props.requiresPassword
+    ? ""
+    : yup.object({
           password: yup
               .string()
               .min(8, () => t.value("form.input.password.error"))
               .required(() => t.value("form.input.required")),
-      })
-    : "";
+      });
 
 const { errors, handleSubmit, defineField, handleReset } = useForm({
-    validationSchema: validationSchema,
+    validationSchema,
 });
 
 const [password] = defineField("password");
@@ -133,7 +133,7 @@ async function deleteAccount() {
                     <T
                         key-name="dashboard.user.settings.delete.account.description.part3"
                     />
-                    <div class="mt-2" v-if="!isOauth">
+                    <div class="mt-2" v-if="requiresPassword">
                         <T
                             key-name="dashboard.user.settings.delete.account.description.part4"
                         />
@@ -142,7 +142,7 @@ async function deleteAccount() {
                 <div class="flex items-center pl-6 pt-4">
                     <div
                         class="flex w-full flex-col items-center"
-                        v-if="!isOauth"
+                        v-if="requiresPassword"
                     >
                         <div
                             class="flex w-2/3 items-start text-text dark:text-natural-50"
@@ -309,13 +309,16 @@ async function deleteAccount() {
                     <T
                         key-name="dashboard.user.settings.delete.account.description.part3"
                     />
-                    <div class="mt-2" v-if="!isOauth">
+                    <div class="mt-2" v-if="requiresPassword">
                         <T
                             key-name="dashboard.user.settings.delete.account.description.part4"
                         />
                     </div>
                 </div>
-                <div class="flex items-center pl-6 pt-4" v-if="!isOauth">
+                <div
+                    class="flex items-center pl-6 pt-4"
+                    v-if="requiresPassword"
+                >
                     <div class="flex w-full flex-col items-center">
                         <div
                             class="</div> mb-2 mr-12 mt-2 flex w-full items-start dark:text-natural-50"
