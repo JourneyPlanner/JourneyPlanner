@@ -45,6 +45,16 @@ const currTemperature = ref();
 const weatherType = ref("");
 const highestTemp = ref(24);
 const lowestTemp = ref(9);
+const isLicenseVisible = ref(false);
+
+const weatherTypeTomorrow = ref();
+const weatherTypeInTwoDays = ref();
+const weatherTypeInThreeDays = ref();
+const weatherCodeToday = ref();
+const weatherCodeTomorrow = ref();
+const weatherCodeInTwoDays = ref();
+const weatherCodeInThreeDays = ref();
+const locationFound = ref(true);
 
 const flip = () => {
     isFlipped.value = !isFlipped.value;
@@ -54,25 +64,30 @@ const { data: weather } = await useAsyncData("weather", () =>
     client(`/api/journey/${journeyStore.getID()}/weather`),
 );
 
-currTemperature.value = Math.round(weather.value.current.temperature);
-highestTemp.value = Math.round(weather.value.forecast[0].temperature_max);
-lowestTemp.value = Math.round(weather.value.forecast[0].temperature_min);
-weatherType.value = t.value(
-    `weather.code.${weather.value.current.weather_code}`,
-);
-const weatherTypeTomorrow = t.value(
-    `weather.code.${weather.value.forecast[1].weather_code}`,
-);
-const weatherTypeInTwoDays = t.value(
-    `weather.code.${weather.value.forecast[2].weather_code}`,
-);
-const weatherTypeInThreeDays = t.value(
-    `weather.code.${weather.value.forecast[3].weather_code}`,
-);
-const weatherCodeToday = weather.value.current.weather_code;
-const weatherCodeTomorrow = weather.value.forecast[1].weather_code;
-const weatherCodeInTwoDays = weather.value.forecast[2].weather_code;
-const weatherCodeInThreeDays = weather.value.forecast[3].weather_code;
+if (weather.value) {
+    currTemperature.value = Math.round(weather.value.current.temperature);
+    highestTemp.value = Math.round(weather.value.forecast[0].temperature_max);
+    lowestTemp.value = Math.round(weather.value.forecast[0].temperature_min);
+    weatherType.value = t.value(
+        `weather.code.${weather.value.current.weather_code}`,
+    );
+
+    weatherTypeTomorrow.value = t.value(
+        `weather.code.${weather.value.forecast[1].weather_code}`,
+    );
+    weatherTypeInTwoDays.value = t.value(
+        `weather.code.${weather.value.forecast[2].weather_code}`,
+    );
+    weatherTypeInThreeDays.value = t.value(
+        `weather.code.${weather.value.forecast[3].weather_code}`,
+    );
+    weatherCodeToday.value = weather.value.current.weather_code;
+    weatherCodeTomorrow.value = weather.value.forecast[1].weather_code;
+    weatherCodeInTwoDays.value = weather.value.forecast[2].weather_code;
+    weatherCodeInThreeDays.value = weather.value.forecast[3].weather_code;
+} else {
+    locationFound.value = false;
+}
 
 function changeToCelsius() {
     if (fahrenheit.value == true) {
@@ -212,8 +227,81 @@ function emitScroll(target: string) {
                                 class="flex h-full w-full justify-center rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
                             >
                                 <div
+                                    v-if="locationFound"
                                     class="relative flex h-full w-full flex-col overflow-hidden"
                                 >
+                                    <div
+                                        class="absolute left-2 top-2 z-50 flex h-[1.25rem] w-[1.25rem] cursor-pointer items-center justify-center rounded-full border border-natural-500 text-center text-sm text-natural-500 hover:border-natural-900 hover:text-natural-900 dark:border-natural-400 dark:text-natural-400"
+                                        @click.stop="
+                                            isLicenseVisible = !isLicenseVisible
+                                        "
+                                    >
+                                        <div class="pl-[1px]">i</div>
+                                    </div>
+                                    <Sidebar
+                                        v-model:visible="isLicenseVisible"
+                                        modal
+                                        position="bottom"
+                                        :auto-z-index="true"
+                                        :draggable="false"
+                                        class="z-50 mt-auto flex h-fit w-full flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden sm:w-4/5 md:rounded-xl lg:-z-10"
+                                        :pt="{
+                                            root: {
+                                                class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden ',
+                                            },
+                                            header: {
+                                                class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50 rounded-3xl',
+                                            },
+                                            title: {
+                                                class: 'font-nunito text-4xl font-semibold',
+                                            },
+                                            content: {
+                                                class: 'font-nunito bg-background dark:bg-background-dark px-0 -ml-2 sm:pr-12 h-full',
+                                            },
+                                            footer: { class: 'h-0' },
+                                            closeButton: {
+                                                class: 'justify-start w-full h-full items-center collapse',
+                                            },
+                                            mask: {
+                                                class: 'sm:collapse bg-natural-50',
+                                            },
+                                        }"
+                                    >
+                                        <template #header>
+                                            <button
+                                                class="-ml-6 flex justify-center pr-4"
+                                                @click="
+                                                    isLicenseVisible = false
+                                                "
+                                            >
+                                                <span
+                                                    class="pi pi-angle-down text-2xl"
+                                                />
+                                            </button>
+                                            <div
+                                                class="font-nunito text-3xl font-semibold"
+                                            >
+                                                <T
+                                                    key-name="journey.weather.license.info"
+                                                />
+                                            </div>
+                                        </template>
+                                        <div
+                                            class="flex items-center justify-center"
+                                        >
+                                            <div
+                                                class="ml-2 w-11/12 flex-col gap-y-5 pb-5 font-semibold text-natural-950 dark:text-natural-50"
+                                            >
+                                                <T
+                                                    key-name="journey.weather.license.part1"
+                                                />
+                                                <br />
+                                                <T
+                                                    key-name="journey.weather.license.part2"
+                                                />
+                                            </div>
+                                        </div>
+                                    </Sidebar>
                                     <div
                                         class="absolute bottom-4 right-1 z-40 ml-10 mt-1 flex h-[3.8rem] w-[3.8rem] cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
                                     >
@@ -331,6 +419,40 @@ function emitScroll(target: string) {
                                         </div>
                                     </div>
                                 </div>
+                                <div v-if="!locationFound">
+                                    <div
+                                        class="absolute bottom-4 right-1 z-40 ml-10 mt-1 flex h-[3.8rem] w-[3.8rem] cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
+                                    >
+                                        <T key-name="journey.turn" />
+                                    </div>
+                                    <div class="flex">
+                                        <div
+                                            class="flex w-full items-center justify-center"
+                                        >
+                                            <SvgWeatherNotFound
+                                                class="-ml-2 mt-10 w-28"
+                                            />
+                                        </div>
+                                        <div
+                                            class="mt-6 text-natural-800 dark:text-natural-200"
+                                        >
+                                            <h1
+                                                class="-ml-2 mt-2 pr-10 text-left text-xl font-semibold"
+                                            >
+                                                <T
+                                                    key-name="journey.weather.not.found"
+                                                />
+                                            </h1>
+                                            <div
+                                                class="-ml-2 text-left text-sm"
+                                            >
+                                                <T
+                                                    key-name="journey.weather.not.found.solution"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -422,7 +544,68 @@ function emitScroll(target: string) {
                 <div
                     class="flex h-full w-full cursor-default justify-center rounded-b-3xl border-b-2 border-r-2 border-natural-200 dark:border-gothic-600 dark:bg-dark"
                 >
-                    <div class="relative flex h-full w-full flex-col items-end">
+                    <Dialog
+                        v-model:visible="isLicenseVisible"
+                        modal
+                        :block-scroll="true"
+                        :auto-z-index="true"
+                        :draggable="false"
+                        close-on-escape
+                        dismissable-mask
+                        class="mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-1/3"
+                        :pt="{
+                            root: {
+                                class: 'font-nunito bg-background dark:bg-background-dark z-10',
+                            },
+                            header: {
+                                class: 'flex gap-x-3 pb-2 font-nunito bg-background dark:bg-background-dark px-4 sm:px-7',
+                            },
+                            title: {
+                                class: 'font-nunito text-2xl font-semibold text-text dark:text-natural-50',
+                            },
+                            content: {
+                                class: 'font-nunito bg-background dark:bg-background-dark px-4 sm:px-7 h-full',
+                            },
+                            footer: { class: 'h-0' },
+                            closeButtonIcon: {
+                                class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10 ',
+                            },
+                            mask: {
+                                class: 'max-sm:collapse bg-natural-50',
+                            },
+                        }"
+                    >
+                        <template #header>
+                            <span
+                                class="h-1 w-5 rounded-l-sm bg-calypso-400 dark:bg-calypso-600"
+                            />
+                            <h3
+                                class="text-nowrap text-3xl font-medium text-text dark:text-natural-50"
+                            >
+                                <T key-name="journey.weather.license.info" />
+                            </h3>
+                            <span
+                                class="h-1 w-full rounded-r-sm bg-calypso-400 dark:bg-calypso-600 md:mr-2"
+                            />
+                        </template>
+                        <div
+                            class="flex flex-col gap-y-5 font-semibold text-natural-950 dark:text-natural-50"
+                        >
+                            <T key-name="journey.weather.license.part1" />
+                            <br />
+                            <T key-name="journey.weather.license.part2" />
+                        </div>
+                    </Dialog>
+                    <div
+                        v-if="locationFound"
+                        class="relative flex h-full w-full flex-col items-end"
+                    >
+                        <div
+                            class="absolute left-2 top-2 flex h-[1.25rem] w-[1.25rem] cursor-pointer items-center justify-center rounded-full border border-natural-500 text-center text-sm text-natural-500 hover:border-natural-900 hover:text-natural-900 dark:border-natural-400 dark:text-natural-400"
+                            @click="isLicenseVisible = !isLicenseVisible"
+                        >
+                            <div class="pl-[1px]">i</div>
+                        </div>
                         <div class="flex w-full pt-2 font-nunito max-lg:h-1/2">
                             <div class="flex w-1/2 items-center justify-center">
                                 <JourneyIdComponentsWeatherIcon
@@ -478,9 +661,9 @@ function emitScroll(target: string) {
                                                 value: weatherType,
                                                 pt: { root: 'font-nunito' },
                                             }"
-                                            class="-ml-1 flex h-6 w-32 justify-center overflow-hidden overflow-ellipsis text-nowrap"
-                                            >{{ weatherType }}</span
-                                        >
+                                            class="z-50 h-6 w-32 overflow-hidden overflow-ellipsis text-nowrap text-center"
+                                            >{{ weatherType }}
+                                        </span>
                                     </div>
                                     <div
                                         class="flex items-end justify-start pt-1 lg:text-xl"
@@ -519,6 +702,20 @@ function emitScroll(target: string) {
                                 :weather-code="weatherCodeInThreeDays"
                                 :weather-type="weatherTypeInThreeDays"
                             />
+                        </div>
+                    </div>
+                    <div
+                        v-if="!locationFound"
+                        class="text-natural-800 dark:text-natural-200"
+                    >
+                        <div class="flex w-full items-center justify-center">
+                            <SvgWeatherNotFound class="mt-8 w-32" />
+                        </div>
+                        <h1 class="mt-2 text-center text-xl font-semibold">
+                            <T key-name="journey.weather.not.found" />
+                        </h1>
+                        <div class="px-5 text-center text-sm">
+                            <T key-name="journey.weather.not.found.solution" />
                         </div>
                     </div>
                 </div>
