@@ -34,6 +34,9 @@ declare global {
                             shape: string;
                             text: string;
                             locale: string;
+                            type: string;
+                            width: string;
+                            logo_alignment: string;
                         },
                     ) => void;
                 };
@@ -64,7 +67,6 @@ window.handleGoogleCredentialResponse = async (
 };
 
 onMounted(async () => {
-    await nextTick();
     if (!document.getElementById("google-login-script")) {
         const googleLoginScript = document.createElement("script");
         googleLoginScript.id = "google-login-script";
@@ -78,16 +80,32 @@ onMounted(async () => {
 
 const initializeGoogleSignIn = () => {
     if (window.google && window.google.accounts) {
+        const colorMode = useColorMode();
+        const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+        let theme;
+
+        if (
+            colorMode.preference === "dark" ||
+            (darkThemeMq.matches && colorMode.preference === "system")
+        ) {
+            theme = "filled_black";
+        } else {
+            theme = "outline";
+        }
+
         window.google.accounts.id.initialize({
             client_id: config.public.NUXT_GOOGLE_CLIENT_ID,
             callback: window.handleGoogleCredentialResponse,
         });
 
         window.google.accounts.id.renderButton(google.value, {
-            theme: "outline",
+            theme: theme,
+            type: "standard",
             size: "large",
             shape: "rectangular",
             text: "continue_with",
+            logo_alignment: "left",
+            width: "290",
             locale: tolgee.value.getLanguage() || "en",
         });
     }
@@ -95,12 +113,7 @@ const initializeGoogleSignIn = () => {
 </script>
 
 <template>
-    <div
-        id="g_id_onload"
-        :data-client_id="config.public.NUXT_GOOGLE_CLIENT_ID"
-        data-context="use"
-        data-callback="handleGoogleCredentialResponse"
-        data-itp_support="true"
-    ></div>
-    <div id="g_id_signin" ref="google"></div>
+    <div class="flex w-full justify-center">
+        <div id="g_id_signin" ref="google"></div>
+    </div>
 </template>

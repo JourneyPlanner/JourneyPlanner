@@ -121,7 +121,7 @@ async function registerUser(userData: object) {
             <div
                 class="mt-32 flex w-full items-center justify-center sm:w-full md:w-2/4 xl:w-2/5"
             >
-                <div class="z-20 -mt-20 h-3/4 w-full text-center sm:w-3/4">
+                <div class="z-20 -mt-24 h-3/4 w-full text-center sm:w-3/4">
                     <fieldset
                         id="outerBlock"
                         class="focus:ring-indigo-500 focus:border-indigo-500 flex h-auto flex-col items-center rounded-3xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-3 py-2 shadow-sm focus:outline-none dark:border-calypso-400 dark:bg-gothic-300 dark:bg-opacity-20"
@@ -167,7 +167,7 @@ async function registerUser(userData: object) {
                             </div>
 
                             <button
-                                class="text-md mb-5 rounded-2xl border-2 border-dandelion-300 bg-natural-50 px-6 py-2.5 font-nunito font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                class="text-md mb-2 rounded-2xl border-2 border-dandelion-300 bg-natural-50 px-6 py-2.5 font-nunito font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
                             >
                                 <T key-name="form.button.register" />
                             </button>
@@ -175,10 +175,7 @@ async function registerUser(userData: object) {
                         <div
                             class="mb-4 flex flex-col justify-center gap-x-5 gap-y-2"
                         >
-                            <div class="flex justify-center">
-                                <FormGoogleButton />
-                            </div>
-                            <FormMicrosoftButton />
+                            <FormOAuth />
                         </div>
                         <div class="flex flex-row gap-x-2">
                             <NuxtLink
