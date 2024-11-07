@@ -69,17 +69,19 @@ const isVisible = ref(props.visible);
             >
                 <div class="">
                     <T key-name="journey.weather.license.part1" />
-                    <a
-                        href="https://open-meteo.com/"
+                    <NuxtLink
+                        to="https://open-meteo.com/"
+                        target="_blank"
                         class="underline hover:text-calypso-600 dark:hover:text-calypso-300"
                         ><T key-name="journey.weather.license.open.meteo"
-                    /></a>
+                    /></NuxtLink>
                     <T key-name="journey.weather.license.part2" />
-                    <a
-                        href="https://creativecommons.org/licenses/by/4.0/"
+                    <NuxtLink
+                        to="https://creativecommons.org/licenses/by/4.0/"
+                        target="_blank"
                         class="underline hover:text-calypso-600 dark:hover:text-calypso-300"
                         ><T key-name="journey.weather.license.cc.4" />
-                    </a>
+                    </NuxtLink>
                 </div>
                 <T key-name="journey.weather.license.part3" />
             </div>
@@ -127,17 +129,19 @@ const isVisible = ref(props.visible);
                 >
                     <div class="">
                         <T key-name="journey.weather.license.part1" />
-                        <a
-                            href="https://open-meteo.com/"
+                        <NuxtLink
+                            to="https://open-meteo.com/"
+                            target="_blank"
                             class="underline hover:text-calypso-600 dark:hover:text-calypso-300"
                             ><T key-name="journey.weather.license.open.meteo"
-                        /></a>
+                        /></NuxtLink>
                         <T key-name="journey.weather.license.part2" />
-                        <a
-                            href="https://creativecommons.org/licenses/by/4.0/"
+                        <NuxtLink
+                            to="https://creativecommons.org/licenses/by/4.0/"
+                            target="_blank"
                             class="underline hover:text-calypso-600 dark:hover:text-calypso-300"
                             ><T key-name="journey.weather.license.cc.4" />
-                        </a>
+                        </NuxtLink>
                     </div>
                     <T key-name="journey.weather.license.part3" />
                 </div>
