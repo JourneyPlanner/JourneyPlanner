@@ -430,7 +430,7 @@ function emitScroll(target: string) {
                                             class="flex w-full items-center justify-center"
                                         >
                                             <SvgWeatherNotFound
-                                                class="-ml-2 mt-10 w-28"
+                                                class="-ml-2 mt-6 w-28"
                                             />
                                         </div>
                                         <div
@@ -709,7 +709,7 @@ function emitScroll(target: string) {
                         class="text-natural-800 dark:text-natural-200"
                     >
                         <div class="flex w-full items-center justify-center">
-                            <SvgWeatherNotFound class="mt-8 w-32" />
+                            <SvgWeatherNotFound class="mt-6 w-32" />
                         </div>
                         <h1 class="mt-2 text-center text-xl font-semibold">
                             <T key-name="journey.weather.not.found" />
