@@ -104,7 +104,7 @@ const initializeGoogleSignIn = () => {
             size: "large",
             shape: "rectangular",
             text: "continue_with",
-            logo_alignment: "left",
+            logo_alignment: "center",
             width: "290",
             locale: tolgee.value.getLanguage() || "en",
         });
