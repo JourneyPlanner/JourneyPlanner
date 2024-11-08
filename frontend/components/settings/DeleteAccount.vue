@@ -24,13 +24,13 @@ watch(
 );
 
 const validationSchema = props.requiresPassword
-    ? ""
-    : yup.object({
+    ? yup.object({
           password: yup
               .string()
               .min(8, () => t.value("form.input.password.error"))
               .required(() => t.value("form.input.required")),
-      });
+      })
+    : "";
 
 const { errors, handleSubmit, defineField, handleReset } = useForm({
     validationSchema,
