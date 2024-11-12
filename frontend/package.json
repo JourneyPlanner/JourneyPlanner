@@ -63,7 +63,6 @@
         "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
         "@types/mapbox-gl": "^3.4.1",
         "@types/qrcode": "^1.5.5",
-        "@types/uuid": "^10.0.0",
         "husky": "^9.1.5",
         "lint-staged": "^15.2.10",
         "mapbox-gl": "^3.7.0",
