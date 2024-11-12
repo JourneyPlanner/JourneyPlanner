@@ -2,6 +2,7 @@
 import { useDashboardStore } from "@/stores/dashboard";
 import { useTranslate } from "@tolgee/vue";
 import { compareAsc, compareDesc } from "date-fns";
+import debounce from "~/utils/debounce";
 
 const title = "Dashboard";
 useHead({
@@ -19,7 +20,6 @@ const store = useDashboardStore();
 const client = useSanctumClient();
 
 const searchInput = ref();
-//TODO search auf journey & template anpassen
 //TODO mobile
 //const searchInputMobile = ref();
 const searchValue = ref<string>("");
@@ -249,13 +249,22 @@ onMounted(() => {
  */
 const {
     data: templateData,
-    refresh,
+    refresh: refreshTemplates,
     status,
 } = await useAsyncData("templates", () =>
     client(
         `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=100&template_name=${searchValue.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_destination=${templateDestination.value}&template_creator=${templateCreator.value}`,
     ),
 );
+
+console.log(templateData);
+
+/**
+ * debounce search input to prevent too many requests
+ */
+const searchTemplate = debounce(() => {
+    refreshTemplates();
+});
 
 /**
  * clear template filters
@@ -264,7 +273,8 @@ function clearFilters() {
     templateJourneyLengthMinMax.value = [1, 31];
     templateDestination.value = "";
     templateCreator.value = "";
-    refresh();
+    searchValue.value = "";
+    refreshTemplates();
 }
 
 /**
@@ -296,7 +306,7 @@ const { data: currUser } = await useAsyncData("currUser", () =>
 
 user.value = currUser.value;
 
-function search() {
+function searchJourney() {
     if (tabIndex.value === 0) {
         searchJourneys();
     } else {
@@ -362,11 +372,11 @@ function editJourney(journey: Journey, id: string) {
     journeys.value[index].name = journey.name;
 }
 
-//TODO filter params in die site url geben falls reload?
 //TODO z index alles scuffed
 //TODO endlos scrollen
 //TODO address input form und style
 //TODO name createor input style
+//TODO template type scuffed
 </script>
 
 <template>
@@ -394,7 +404,11 @@ function editJourney(journey: Journey, id: string) {
                             type="text"
                             class="rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200"
                             :placeholder="t('dashboard.search')"
-                            @input="search()"
+                            @input="
+                                tabIndex === 0
+                                    ? searchJourney()
+                                    : searchTemplate()
+                            "
                         />
                         <button @click="searchInput.focus()">
                             <SvgSearchIcon
@@ -612,7 +626,7 @@ function editJourney(journey: Journey, id: string) {
                                             class: 'bg-calypso-400',
                                         },
                                     }"
-                                    @slideend="refresh()"
+                                    @slideend="refreshTemplates()"
                                 />
                                 <div
                                     class="-px-1 mt-2.5 flex justify-between text-natural-500"
@@ -631,7 +645,7 @@ function editJourney(journey: Journey, id: string) {
                                         :min="1"
                                         :max="31"
                                         :allow-empty="false"
-                                        @input="refresh()"
+                                        @input="refreshTemplates()"
                                     />
                                     <T
                                         key-name="dashboard.template.filter.length.to"
@@ -643,7 +657,7 @@ function editJourney(journey: Journey, id: string) {
                                         :min="1"
                                         :max="31"
                                         :allow-empty="false"
-                                        @input="refresh()"
+                                        @input="refreshTemplates()"
                                     />
                                     <T key-name="template.days" />
                                 </div>
@@ -660,7 +674,7 @@ function editJourney(journey: Journey, id: string) {
                                     class="ml-1 h-0.5 w-full bg-calypso-400"
                                 />
                             </div>
-                            <p class="text-natural-700">
+                            <p class="mb-1 text-natural-700">
                                 <T
                                     key-name="dashboard.template.filter.destination.description"
                                 />
@@ -683,14 +697,17 @@ function editJourney(journey: Journey, id: string) {
                                     class="ml-1 h-0.5 w-full bg-calypso-400"
                                 />
                             </div>
-                            <p class="text-natural-700">
+                            <p class="mb-1 text-natural-700">
                                 <T
                                     key-name="dashboard.template.filter.creator.description"
                                 />
                             </p>
                             <AutoComplete
                                 v-model="templateCreator"
-                                input-class="bg-natural-50 border-2 border-natural-300 rounded-md pl-1.5 text-base focus:border-calypso-300 py-1"
+                                input-class="bg-natural-50 border-2 border-natural-300 rounded-lg pl-1.5 text-base focus:border-calypso-300 py-[0.275rem]"
+                                :pt="{
+                                    panel: 'w-20',
+                                }"
                                 :suggestions="usernames"
                                 :force-selection="true"
                                 :complete-on-focus="true"
@@ -698,8 +715,8 @@ function editJourney(journey: Journey, id: string) {
                                     t('dashboard.template.filter.creator.empty')
                                 "
                                 @complete="searchUser()"
-                                @item-select="refresh()"
-                                @clear="refresh(), searchUser()"
+                                @item-select="refreshTemplates()"
+                                @clear="refreshTemplates(), searchUser()"
                             />
                         </div>
                         <div class="flex justify-end pb-1 pt-20">

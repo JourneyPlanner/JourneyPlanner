@@ -16,7 +16,7 @@ const { t } = useTranslate();
 
 const isVisible = ref(props.visible);
 const created_at = ref({ day: NaN, month: NaN, year: NaN });
-const templates = ref();
+const templates = ref<Template[]>();
 const openedTemplate = ref();
 const isTemplatePopupVisible = ref(false);
 
@@ -76,7 +76,7 @@ watch(
     },
 );
 
-const close = () => {
+const close = (): void => {
     emit("close");
 };
 </script>
@@ -159,7 +159,10 @@ const close = () => {
                             isTemplatePopupVisible = true;
                         "
                     />
-                    <div v-if="templates.length === 0" class="col-span-full">
+                    <div
+                        v-if="templates && templates.length === 0"
+                        class="col-span-full"
+                    >
                         <T key-name="template.none" />
                     </div>
                 </div>

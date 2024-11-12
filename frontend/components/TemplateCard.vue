@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
     template: {
         type: Object as PropType<Template>,
         required: true,
@@ -9,6 +9,10 @@ defineProps({
         default: false,
     },
 });
+
+console.log(props.template);
+
+//console.log(props.template.users[0].username);
 
 defineEmits(["openTemplate"]);
 
