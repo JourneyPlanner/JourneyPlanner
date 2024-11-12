@@ -143,8 +143,8 @@ async function deleteActivity() {
                         activities.value.splice(
                             activities.value.indexOf(activity),
                             1,
-                        ),
-                            store.setActivities(activities.value);
+                        );
+                        store.setActivities(activities.value);
                     });
             }
         },

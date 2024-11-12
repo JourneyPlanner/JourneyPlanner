@@ -144,8 +144,8 @@ async function deleteActivity() {
                         activities.value.splice(
                             activities.value.indexOf(activity),
                             1,
-                        ),
-                            store.setActivities(activities.value);
+                        );
+                        store.setActivities(activities.value);
                     });
             }
         },
@@ -201,10 +201,8 @@ async function removeFromCalendar() {
                                                 calendar_activity,
                                             ),
                                             1,
-                                        ),
-                                            store.setActivities(
-                                                activities.value,
-                                            );
+                                        );
+                                        store.setActivities(activities.value);
                                     },
                                 );
                         });
@@ -416,8 +414,6 @@ async function initializeDrop(info: EventObject) {
                     activities.value
                         .filter((activity) => activity.id === activityId)
                         .forEach((activity: Activity) => {
-                            activities.value[activities.value.indexOf(activity)]
-                                .calendar_activities;
                             activities.value[
                                 activities.value.indexOf(activity)
                             ].calendar_activities.push(response._data);
