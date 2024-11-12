@@ -130,8 +130,9 @@ async function deleteActivity() {
                     ),
                     life: 6000,
                 });
-                activities.value.forEach((activity: Activity) => {
-                    if (activity.id === activityId.value) {
+                activities.value
+                    .filter((activity) => activity.id === activityId.value)
+                    .forEach((activity: Activity) => {
                         activity.calendar_activities.forEach(
                             (calendar_activity: CalendarActivity) => {
                                 fullCalendar.value
@@ -145,8 +146,7 @@ async function deleteActivity() {
                             1,
                         ),
                             store.setActivities(activities.value);
-                    }
-                });
+                    });
             }
         },
         async onRequestError() {
@@ -183,14 +183,17 @@ async function removeFromCalendar() {
                         life: 6000,
                     });
                     calApi.getEventById(calendarId.value).remove();
-                    activities.value.forEach((activity: Activity) => {
-                        if (activity.id === activityId.value) {
-                            activity.calendar_activities.forEach(
-                                (calendar_activity: CalendarActivity) => {
-                                    if (
+                    activities.value
+                        .filter((activity) => activity.id === activityId.value)
+                        .forEach((activity: Activity) => {
+                            activity.calendar_activities
+                                .filter(
+                                    (calendar_activity) =>
                                         calendar_activity.id ===
-                                        calendarId.value
-                                    ) {
+                                        calendarId.value,
+                                )
+                                .forEach(
+                                    (calendar_activity: CalendarActivity) => {
                                         activities.value[
                                             activities.value.indexOf(activity)
                                         ].calendar_activities.splice(
@@ -202,11 +205,9 @@ async function removeFromCalendar() {
                                             store.setActivities(
                                                 activities.value,
                                             );
-                                    }
-                                },
-                            );
-                        }
-                    });
+                                    },
+                                );
+                        });
                 }
             },
             async onRequestError() {
@@ -403,21 +404,24 @@ async function initializeDrop(info: EventObject) {
                         detail: t.value("calendar.add.toast.success.detail"),
                         life: 6000,
                     });
-                    activities.value.forEach((activity: Activity) => {
-                        if (activity.id == response._data.activity_id) {
+                    activities.value
+                        .filter(
+                            (activity) =>
+                                activity.id == response._data.activity_id,
+                        )
+                        .forEach((activity: Activity) => {
                             response._data.title = activity.name;
                             calApi.addEvent(response._data);
-                        }
-                    });
-                    activities.value.forEach((activity: Activity) => {
-                        if (activity.id === activityId) {
+                        });
+                    activities.value
+                        .filter((activity) => activity.id === activityId)
+                        .forEach((activity: Activity) => {
                             activities.value[activities.value.indexOf(activity)]
                                 .calendar_activities;
                             activities.value[
                                 activities.value.indexOf(activity)
                             ].calendar_activities.push(response._data);
-                        }
-                    });
+                        });
                     store.setActivities(activities.value);
                 }
             },
@@ -510,15 +514,17 @@ async function editDrop(info: EventObject) {
 
     const activities = store.activityData as Activity[];
     let newActivity;
-    activities.forEach((activity: Activity) => {
-        if (activity.id === activityId) {
-            if (activity.estimated_duration !== newDuration) {
-                activities[activities.indexOf(activity)].estimated_duration =
-                    newDuration;
-                newActivity = activities[activities.indexOf(activity)];
-            }
-        }
-    });
+    activities
+        .filter(
+            (activity) =>
+                activity.id === activityId &&
+                activity.estimated_duration !== newDuration,
+        )
+        .forEach((activity: Activity) => {
+            activities[activities.indexOf(activity)].estimated_duration =
+                newDuration;
+            newActivity = activities[activities.indexOf(activity)];
+        });
     if (newActivity !== undefined) {
         await client(`/api/journey/${props.id}/activity/${activityId}`, {
             method: "PATCH",
@@ -534,8 +540,9 @@ async function editDrop(info: EventObject) {
 function showData(info: EventObject) {
     activityId.value = info.event._def.extendedProps.activity_id;
     calendarId.value = info.event._def.publicId;
-    activities.value.forEach((activity: Activity) => {
-        if (activity.id === activityId.value) {
+    activities.value
+        .filter((activity) => activity.id === activityId.value)
+        .forEach((activity: Activity) => {
             if (props.currentUserRole === 1 || !isAuthenticated.value) {
                 update.value = false;
                 onlyShow.value = true;
@@ -566,8 +573,7 @@ function showData(info: EventObject) {
                 (calendar_activity: CalendarActivity) =>
                     calendar_activity.id === calendarId.value,
             )[0];
-        }
-    });
+        });
 }
 
 /**
@@ -576,8 +582,9 @@ function showData(info: EventObject) {
  */
 async function editCalendarActivity(name: string) {
     const calApi = fullCalendar.value.getApi();
-    activities.value.forEach((activity: Activity) => {
-        if (activity.id === activityId.value) {
+    activities.value
+        .filter((activity) => activity.id === activityId.value)
+        .forEach((activity: Activity) => {
             activity.calendar_activities.forEach(
                 (calendar_activity: CalendarActivity) => {
                     if (calApi.getEventById(calendar_activity.id) !== null) {
@@ -603,8 +610,7 @@ async function editCalendarActivity(name: string) {
                     }
                 },
             );
-        }
-    });
+        });
 }
 
 /**

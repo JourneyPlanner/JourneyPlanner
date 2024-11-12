@@ -137,15 +137,15 @@ async function deleteActivity() {
                     ),
                     life: 6000,
                 });
-                activities.value.forEach((activity: Activity) => {
-                    if (activity.id === activityId.value) {
+                activities.value
+                    .filter((activity) => activity.id === activityId.value)
+                    .forEach((activity: Activity) => {
                         activities.value.splice(
                             activities.value.indexOf(activity),
                             1,
                         ),
                             store.setActivities(activities.value);
-                    }
-                });
+                    });
             }
         },
         async onRequestError() {
