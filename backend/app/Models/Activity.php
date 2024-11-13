@@ -31,6 +31,12 @@ class Activity extends Model
         "cost",
         "description",
         "location",
+        "repeat_type",
+        "repeat_interval",
+        "repeat_interval_unit",
+        "repeat_on",
+        "repeat_end_date",
+        "repeat_end_occurrences",
     ];
 
     /**

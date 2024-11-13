@@ -42,6 +42,14 @@ class StoreActivityRequest extends FormRequest
             "description" => "nullable|string",
             "date" => "nullable|date",
             "time" => "nullable|date_format:H:i",
+            "repeat_type" => "nullable|in:daily,weekly,custom",
+            "repeat_interval" => "required_if:repeat_type,custom|integer",
+            "repeat_interval_unit" =>
+                "required_if:repeat_type,custom|in:days,weeks",
+            "repeat_on" => "required_if:repeat_interval_unit,weeks|array",
+            "repeat_on.*" => "in:Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+            "repeat_end_date" => "nullable|date",
+            "repeat_end_occurrences" => "nullable|integer",
         ];
     }
 }
