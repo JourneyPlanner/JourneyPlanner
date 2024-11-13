@@ -17,7 +17,7 @@ const isValidUrl = computed(() => {
     try {
         new URL(props.value);
         return true;
-    } catch (_) {
+    } catch {
         return false;
     }
 });
