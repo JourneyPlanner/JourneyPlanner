@@ -132,7 +132,7 @@ async function registerUser(userData: object) {
                         >
                             <T key-name="form.header.register" />
                         </legend>
-                        <form class="w-4/5" @submit="onSubmit">
+                        <form class="-mt-2 w-4/5" @submit="onSubmit">
                             <FormInput
                                 id="email"
                                 name="email"
@@ -167,13 +167,13 @@ async function registerUser(userData: object) {
                             </div>
 
                             <button
-                                class="text-md mb-2 rounded-2xl border-2 border-dandelion-300 bg-natural-50 px-6 py-2.5 font-nunito font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                class="mb-2 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-14 py-1 font-nunito text-lg font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
                             >
                                 <T key-name="form.button.register" />
                             </button>
                         </form>
                         <div
-                            class="mb-4 flex flex-col justify-center gap-x-5 gap-y-2"
+                            class="mb-5 mt-1 flex w-full flex-col justify-center gap-x-5 gap-y-2"
                         >
                             <FormOAuth />
                         </div>

@@ -149,7 +149,7 @@ async function loginUser(userData: User) {
                         >
                             <T key-name="form.header.login" />
                         </legend>
-                        <form class="w-5/6" @submit="onSubmit">
+                        <form class="-mt-2 w-5/6" @submit="onSubmit">
                             <FormInput
                                 id="email"
                                 name="email"
@@ -164,13 +164,13 @@ async function loginUser(userData: User) {
                             />
 
                             <button
-                                class="text-md mb-2 mt-4 rounded-2xl border-2 border-dandelion-300 bg-natural-50 px-6 py-2.5 font-nunito font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                class="text-md mb-2 mt-4 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-12 py-1 font-nunito text-lg font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
                             >
                                 <T key-name="form.button.login" />
                             </button>
                         </form>
                         <div
-                            class="mb-2 flex w-5/6 flex-col justify-center gap-x-5 gap-y-2"
+                            class="mb-4 flex w-5/6 flex-col justify-center gap-x-5 gap-y-2"
                         >
                             <FormOAuth />
                         </div>
