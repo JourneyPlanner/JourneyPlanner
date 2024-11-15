@@ -180,8 +180,8 @@ async function changePassword() {
                     />
                 </div>
                 <div
-                    class="flex flex-col items-center justify-center pt-5"
                     v-if="requiresPassword"
+                    class="flex flex-col items-center justify-center pt-5"
                 >
                     <div
                         class="flex w-4/6 justify-start text-text dark:text-natural-50"

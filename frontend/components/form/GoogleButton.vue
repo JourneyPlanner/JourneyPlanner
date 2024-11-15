@@ -56,7 +56,7 @@ window.handleGoogleCredentialResponse = async (
         });
         await login({});
         navigateTo("/dashboard");
-    } catch (error) {
+    } catch {
         toast.add({
             severity: "error",
             summary: t.value("common.toast.error.heading"),
@@ -94,7 +94,7 @@ const initializeGoogleSignIn = () => {
         }
 
         window.google.accounts.id.initialize({
-            client_id: config.public.NUXT_GOOGLE_CLIENT_ID,
+            client_id: config.public.NUXT_GOOGLE_CLIENT_ID as unknown as string,
             callback: window.handleGoogleCredentialResponse,
         });
 
@@ -114,6 +114,6 @@ const initializeGoogleSignIn = () => {
 
 <template>
     <div class="flex w-full justify-center">
-        <div id="g_id_signin" ref="google"></div>
+        <div id="g_id_signin" ref="google" />
     </div>
 </template>

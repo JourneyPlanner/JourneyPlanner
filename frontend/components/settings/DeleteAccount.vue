@@ -133,7 +133,7 @@ async function deleteAccount() {
                     <T
                         key-name="dashboard.user.settings.delete.account.description.part3"
                     />
-                    <div class="mt-2" v-if="requiresPassword">
+                    <div v-if="requiresPassword" class="mt-2">
                         <T
                             key-name="dashboard.user.settings.delete.account.description.part4"
                         />
@@ -141,8 +141,8 @@ async function deleteAccount() {
                 </div>
                 <div class="flex items-center pl-6 pt-4">
                     <div
-                        class="flex w-full flex-col items-center"
                         v-if="requiresPassword"
+                        class="flex w-full flex-col items-center"
                     >
                         <div
                             class="flex w-2/3 items-start text-text dark:text-natural-50"
@@ -309,15 +309,15 @@ async function deleteAccount() {
                     <T
                         key-name="dashboard.user.settings.delete.account.description.part3"
                     />
-                    <div class="mt-2" v-if="requiresPassword">
+                    <div v-if="requiresPassword" class="mt-2">
                         <T
                             key-name="dashboard.user.settings.delete.account.description.part4"
                         />
                     </div>
                 </div>
                 <div
-                    class="flex items-center pl-6 pt-4"
                     v-if="requiresPassword"
+                    class="flex items-center pl-6 pt-4"
                 >
                     <div class="flex w-full flex-col items-center">
                         <div

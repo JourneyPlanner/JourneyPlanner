@@ -32,7 +32,7 @@ onMounted(async () => {
         } else {
             navigateTo("/login");
         }
-    } catch (e) {
+    } catch {
         toast.add({
             severity: "error",
             summary: t.value("common.toast.error.heading"),
