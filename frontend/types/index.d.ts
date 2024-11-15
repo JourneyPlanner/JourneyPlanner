@@ -132,5 +132,7 @@ declare global {
         length: number;
         mapbox_full_address: string;
         users: User[];
+        from: string;
+        to: string;
     }
 }

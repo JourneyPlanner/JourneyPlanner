@@ -37,7 +37,7 @@ const user = ref();
 const isUserSettingsVisible = ref(false);
 
 //templates
-const openedTemplate = ref();
+const openedTemplate = ref<Template>();
 const isTemplatePopupVisible = ref(false);
 const isFilterVisible = ref(route.query.filter === "true");
 const usernames = ref<string[]>([]);
@@ -257,8 +257,6 @@ const {
     ),
 );
 
-console.log(templateData);
-
 /**
  * debounce search input to prevent too many requests
  */
@@ -277,15 +275,20 @@ function clearFilters() {
     refreshTemplates();
 }
 
+/*
+ * debounce getUser() to prevent too many request on input
+ */
+const searchUser = debounce(() => {
+    getUser();
+});
+
 /**
  * get username(s) for AutoComplete for created by template filter
  */
-function searchUser() {
+function getUser() {
     client(`/api/user?search=${templateCreator.value}&per_page=25`).then(
         (res) => {
-            usernames.value = res.data.map(
-                (user: User) => user.display_name + " (@" + user.username + ")",
-            );
+            usernames.value = res.data.map((user: User) => user.username);
         },
     );
 }
@@ -305,14 +308,6 @@ const { data: currUser } = await useAsyncData("currUser", () =>
 );
 
 user.value = currUser.value;
-
-function searchJourney() {
-    if (tabIndex.value === 0) {
-        searchJourneys();
-    } else {
-        route.query.name = searchValue.value;
-    }
-}
 
 /**
  * Searches for journeys based on the searchValue
@@ -377,6 +372,7 @@ function editJourney(journey: Journey, id: string) {
 //TODO address input form und style
 //TODO name createor input style
 //TODO template type scuffed
+//TODO template loading in profile dialog
 </script>
 
 <template>
@@ -406,7 +402,7 @@ function editJourney(journey: Journey, id: string) {
                             :placeholder="t('dashboard.search')"
                             @input="
                                 tabIndex === 0
-                                    ? searchJourney()
+                                    ? searchJourneys()
                                     : searchTemplate()
                             "
                         />
@@ -428,7 +424,7 @@ function editJourney(journey: Journey, id: string) {
                         <SvgDashboardFilter
                             class="h-9 w-9 hover:cursor-pointer"
                             :is-active="!!isFilterVisible"
-                            @click="isFilterVisible = !isFilterVisible"
+                            @click.stop="isFilterVisible = !isFilterVisible"
                         />
                     </div>
                 </div>
@@ -682,7 +678,6 @@ function editJourney(journey: Journey, id: string) {
                             <FormAddressInput
                                 id="template-destination"
                                 name="destination"
-                                value=""
                                 :custom-class="addressCss"
                             />
                         </div>
@@ -714,6 +709,7 @@ function editJourney(journey: Journey, id: string) {
                                 :empty-search-message="
                                     t('dashboard.template.filter.creator.empty')
                                 "
+                                @before-show="getUser()"
                                 @complete="searchUser()"
                                 @item-select="refreshTemplates()"
                                 @clear="refreshTemplates(), searchUser()"
@@ -740,7 +736,8 @@ function editJourney(journey: Journey, id: string) {
                 @close="isUserSettingsVisible = false"
             />
             <TemplatePopup
-                :template="openedTemplate"
+                v-if="openedTemplate"
+                :template="openedTemplate!"
                 :is-template-dialog-visible="isTemplatePopupVisible"
                 @close="isTemplatePopupVisible = false"
             />

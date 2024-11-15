@@ -17,7 +17,7 @@ const { t } = useTranslate();
 const isVisible = ref(props.visible);
 const created_at = ref({ day: NaN, month: NaN, year: NaN });
 const templates = ref<Template[]>();
-const openedTemplate = ref();
+const openedTemplate = ref<Template>();
 const isTemplatePopupVisible = ref(false);
 
 watch(
@@ -178,7 +178,8 @@ const close = (): void => {
         </Dialog>
         <div id="dialogs">
             <TemplatePopup
-                :template="openedTemplate"
+                v-if="openedTemplate"
+                :template="openedTemplate!"
                 :is-template-dialog-visible="isTemplatePopupVisible"
                 @close="isTemplatePopupVisible = false"
             />
