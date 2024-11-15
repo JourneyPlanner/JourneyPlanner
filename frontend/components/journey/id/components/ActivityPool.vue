@@ -18,6 +18,8 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    journeyStart: { type: Date, required: true },
+    journeyEnd: { type: Date, required: true },
 });
 
 const activityId = ref("");
@@ -137,15 +139,15 @@ async function deleteActivity() {
                     ),
                     life: 6000,
                 });
-                activities.value.forEach((activity: Activity) => {
-                    if (activity.id === activityId.value) {
+                activities.value
+                    .filter((activity) => activity.id === activityId.value)
+                    .forEach((activity: Activity) => {
                         activities.value.splice(
                             activities.value.indexOf(activity),
                             1,
-                        ),
-                            store.setActivities(activities.value);
-                    }
-                });
+                        );
+                        store.setActivities(activities.value);
+                    });
             }
         },
         async onRequestError() {
@@ -343,6 +345,8 @@ const itemsJourneyGuide = ref([
             :phone="phone"
             :updated-at="updated_at"
             :update="update"
+            :journey-start="props.journeyStart"
+            :journey-end="props.journeyEnd"
             @close="isActivityInfoVisible = false"
             @delete-activity="deleteActivity"
         />

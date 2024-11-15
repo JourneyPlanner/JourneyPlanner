@@ -95,6 +95,7 @@ export default defineNuxtConfig({
                 "InputGroup",
                 "InputGroupAddon",
                 "InputIcon",
+                "InputNumber",
                 "IconField",
                 "ProgressSpinner",
                 "DataTable",
