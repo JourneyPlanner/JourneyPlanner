@@ -39,13 +39,20 @@ const isUserSettingsVisible = ref(false);
 //templates
 const openedTemplate = ref<Template>();
 const isTemplatePopupVisible = ref(false);
-const isFilterVisible = ref(route.query.filter === "true");
+const isFilterVisible = ref<boolean>(route.query.filter_open === "true");
+const filterDialog = ref<HTMLElement>();
 const usernames = ref<string[]>([]);
-const templateJourneyLengthMinMax = ref([1, 31]);
+const templates = ref<Template[]>([]);
+const moreTemplatesAvailable = ref<boolean>(true);
+const templateJourneyLengthMinMax = ref<Array<number>>([1, 31]);
 const sortby = ref("");
 const sortorder = ref("");
 const templateDestination = ref("");
 const templateCreator = ref("");
+const cursor = ref<string | null>(null);
+const nextCursor = ref<string | null>(null);
+const observer = ref<IntersectionObserver>();
+const loader = ref();
 const borderColor = "#BDBDBD"; //TODO darkmode
 const addressCss = `.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor}; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none}`;
 
@@ -73,6 +80,21 @@ onMounted(() => {
                         tab: "templates",
                     },
                 });
+
+                observer.value = new IntersectionObserver((entries) => {
+                    const target = entries[0];
+                    if (target.isIntersecting) {
+                        if (moreTemplatesAvailable.value) {
+                            cursor.value = nextCursor.value;
+                            refresh();
+                        }
+                    }
+                });
+
+                if (loader.value) {
+                    observer.value.observe(loader.value);
+                }
+
                 items.value = [
                     {
                         label: t.value("dashboard.sort.length"),
@@ -86,6 +108,7 @@ onMounted(() => {
                                 command: () => {
                                     sortby.value = "length";
                                     sortorder.value = "asc";
+                                    refreshTemplates();
                                 },
                             },
                             {
@@ -96,6 +119,7 @@ onMounted(() => {
                                 command: () => {
                                     sortby.value = "length";
                                     sortorder.value = "desc";
+                                    refreshTemplates();
                                 },
                             },
                         ],
@@ -110,6 +134,7 @@ onMounted(() => {
                                 command: () => {
                                     sortby.value = "name";
                                     sortorder.value = "asc";
+                                    refreshTemplates();
                                 },
                             },
                             {
@@ -118,6 +143,7 @@ onMounted(() => {
                                 command: () => {
                                     sortby.value = "name";
                                     sortorder.value = "desc";
+                                    refreshTemplates();
                                 },
                             },
                         ],
@@ -132,6 +158,7 @@ onMounted(() => {
                                 command: () => {
                                     sortby.value = "destination";
                                     sortorder.value = "asc";
+                                    refreshTemplates();
                                 },
                             },
                             {
@@ -140,6 +167,7 @@ onMounted(() => {
                                 command: () => {
                                     sortby.value = "destination";
                                     sortorder.value = "desc";
+                                    refreshTemplates();
                                 },
                             },
                         ],
@@ -217,30 +245,28 @@ onMounted(() => {
     watch(
         isFilterVisible,
         () => {
-            if (isFilterVisible.value === true) {
-                router.replace({
-                    path: "/dashboard",
-                    query: {
-                        tab: "templates",
-                        filter: "true",
-                        min: templateJourneyLengthMinMax.value[0],
-                        max: templateJourneyLengthMinMax.value[1],
-                        destination: templateDestination.value,
-                        creator: templateCreator.value,
-                    },
-                });
-            } else {
-                router.replace({
-                    path: "/dashboard",
-                    query: {
-                        tab: "templates",
-                        filter: "false",
-                    },
-                });
-            }
+            router.replace({
+                path: "/dashboard",
+                query: {
+                    tab: "templates",
+                    filter_open: String(isFilterVisible.value),
+                    min: templateJourneyLengthMinMax.value[0],
+                    max: templateJourneyLengthMinMax.value[1],
+                    destination: templateDestination.value,
+                    creator: templateCreator.value,
+                    sort_by: sortby.value,
+                    order: sortorder.value,
+                },
+            });
         },
         { immediate: true },
     );
+});
+
+onUnmounted(() => {
+    if (observer.value && loader.value) {
+        observer.value.unobserve(loader.value);
+    }
 });
 
 /**
@@ -249,13 +275,50 @@ onMounted(() => {
  */
 const {
     data: templateData,
-    refresh: refreshTemplates,
+    refresh,
     status,
 } = await useAsyncData("templates", () =>
     client(
-        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=100&template_name=${searchValue.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_destination=${templateDestination.value}&template_creator=${templateCreator.value}`,
+        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=20&template_name=${searchValue.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_destination=${templateDestination.value}&template_creator=${templateCreator.value}&cursor=${cursor.value}`,
     ),
 );
+
+watch(
+    templateData,
+    () => {
+        if (templateData.value) {
+            templates.value.push(...templateData.value.data);
+            console.log(templates.value.length);
+
+            if (templateData.value.next_cursor === null) {
+                moreTemplatesAvailable.value = false;
+            } else {
+                nextCursor.value = templateData.value.next_cursor;
+                moreTemplatesAvailable.value = true;
+            }
+        }
+    },
+    { immediate: true },
+);
+
+const refreshTemplates = () => {
+    templates.value = [];
+    cursor.value = null;
+    nextCursor.value = null;
+    moreTemplatesAvailable.value = true;
+    refresh();
+};
+
+/**
+ * close the template filter dialog when there is a click outside of it
+ * @param event MouseEvent
+ */
+const closeFilterWhenOutsideClick = (event: MouseEvent) => {
+    const filterElement = filterDialog.value as HTMLElement;
+    if (filterElement && !filterElement.contains(event.target as Node)) {
+        isFilterVisible.value = false;
+    }
+};
 
 /**
  * debounce search input to prevent too many requests
@@ -368,15 +431,13 @@ function editJourney(journey: Journey, id: string) {
 }
 
 //TODO z index alles scuffed
-//TODO endlos scrollen
 //TODO address input form und style
 //TODO name createor input style
-//TODO template type scuffed
 //TODO template loading in profile dialog
 </script>
 
 <template>
-    <div>
+    <div @click="closeFilterWhenOutsideClick">
         <div class="absolute right-0 z-10 mt-5 pr-2 md:pr-8 lg:pr-20">
             <div id="right-header" class="flex flex-row items-center">
                 <div
@@ -561,9 +622,13 @@ function editJourney(journey: Journey, id: string) {
                 </template>
                 <div id="templates" class="grid grid-cols-4 gap-5">
                     <TemplateCard
-                        v-for="template in templateData.data"
+                        v-for="template in templates"
                         :key="template.id"
-                        :class="status === 'pending' ? 'hidden' : ''"
+                        :class="
+                            status === 'pending' && isFilterVisible
+                                ? 'hidden'
+                                : ''
+                        "
                         :template="template"
                         @open-template="
                             openedTemplate = template;
@@ -586,19 +651,16 @@ function editJourney(journey: Journey, id: string) {
                         </button>
                     </h4>
                     <div
-                        v-if="status === 'pending'"
+                        v-if="status === 'pending' && isFilterVisible"
                         class="col-span-full flex h-full items-center justify-center"
                     >
                         <ProgressSpinner />
                     </div>
+
                     <div
                         v-if="isFilterVisible"
-                        id="filter-placeholder"
-                        class="col-start-4 row-span-full"
-                    />
-                    <div
-                        v-if="isFilterVisible"
-                        id="filter"
+                        id="filter-dialog"
+                        ref="filterDialog"
                         class="absolute right-0 mr-20 flex w-64 flex-col rounded-lg bg-natural-50 px-3 pt-2 shadow-lg"
                     >
                         <div id="length">
@@ -724,6 +786,13 @@ function editJourney(journey: Journey, id: string) {
                             </button>
                         </div>
                     </div>
+                </div>
+                <div
+                    v-if="moreTemplatesAvailable"
+                    ref="loader"
+                    class="mt-5 flex justify-center"
+                >
+                    <T key-name="dashboard.templates.loading" />
                 </div>
             </TabPanel>
         </TabView>

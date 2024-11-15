@@ -30,7 +30,6 @@ watch(
                     if (response.ok) {
                         activities.value = response._data.activities;
                         activityCount.value = response._data.count;
-                        console.log(activities.value);
                     }
                 },
             });
