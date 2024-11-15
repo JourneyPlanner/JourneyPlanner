@@ -13,8 +13,9 @@ definePageMeta({
 });
 
 const { t } = useTranslate();
-
 const store = useDashboardStore();
+const toast = useToast();
+
 const journeys = ref<Journey[]>([]);
 const searchInput = ref();
 const searchInputMobile = ref();
@@ -92,6 +93,18 @@ const items = ref([
 const toggle = (event: Event) => {
     menu.value.toggle(event);
 };
+
+onMounted(async () => {
+    if (localStorage.getItem("JP_invite_journey_id")) {
+        toast.add({
+            severity: "info",
+            summary: t.value("common.toast.info.heading"),
+            detail: t.value("invite.joining"),
+            life: 6000,
+        });
+        await navigateTo(localStorage.getItem("JP_invite_journey_id"));
+    }
+});
 
 /*
 Fetches all journeys from the backend

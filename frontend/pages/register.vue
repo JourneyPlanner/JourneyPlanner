@@ -5,12 +5,21 @@ import * as yup from "yup";
 
 const { t } = useTranslate();
 const toast = useToast();
+const client = useSanctumClient();
+const route = useRoute();
 
 const title = t.value("form.header.register");
 
 useHead({
     title: `${title} | JourneyPlanner`,
 });
+
+if (route.query.redirect?.toString().startsWith("/invite")) {
+    localStorage.setItem(
+        "JP_invite_journey_id",
+        route.query.redirect as string,
+    );
+}
 
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
@@ -54,7 +63,6 @@ async function registerUser(userData: object) {
         life: 3000,
     });
 
-    const client = useSanctumClient();
     await client("/register", {
         method: "POST",
         body: userData,
@@ -67,6 +75,15 @@ async function registerUser(userData: object) {
                     life: 3000,
                 });
                 await navigateTo("/dashboard");
+                /*
+                if (localStorage.getItem("JP_invite_journey_id")) {
+                    await navigateTo(
+                        localStorage.getItem("JP_invite_journey_id"),
+                    );
+                } else {
+                    await navigateTo("/dashboard");
+                }
+                */
             } else if (response.status === 422) {
                 toast.add({
                     severity: "error",
@@ -97,6 +114,11 @@ async function registerUser(userData: object) {
 
 <template>
     <div>
+        <div class="absolute left-4 top-4">
+            <NuxtLink to="/">
+                <SvgLogoHorizontalBlue class="w-44 lg:w-52" />
+            </NuxtLink>
+        </div>
         <div
             class="flex w-full items-center justify-center bg-background font-nunito dark:bg-background-dark"
         >
@@ -159,12 +181,21 @@ async function registerUser(userData: object) {
                                 <T key-name="form.button.register" />
                             </button>
                         </form>
-                        <NuxtLink
-                            to="/login"
-                            class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"
-                        >
-                            <T key-name="form.text.already_account" />
-                        </NuxtLink>
+                        <div class="flex flex-row gap-x-2">
+                            <NuxtLink
+                                to="/login"
+                                class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"
+                            >
+                                <T key-name="form.text.already_account" />
+                            </NuxtLink>
+                            <span class="my-1 border-l-2 border-natural-300" />
+                            <NuxtLink
+                                to="/journey/new"
+                                class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"
+                            >
+                                <T key-name="form.text.tryforfree" />
+                            </NuxtLink>
+                        </div>
                     </fieldset>
                 </div>
             </div>

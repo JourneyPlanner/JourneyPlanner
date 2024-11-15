@@ -50,7 +50,7 @@ const changeColorMode = () => {
                     <h3
                         class="text-lg font-bold text-calypso-400 dark:text-gothic-400"
                     >
-                        JourneyPlanner
+                        <SvgLogoHorizontalBlue class="w-44 lg:w-52" />
                     </h3>
                 </NuxtLink>
                 <nav class="flex flex-row gap-4">
@@ -136,8 +136,8 @@ const changeColorMode = () => {
                 </p>
                 <div class="mt-2 hidden md:mt-10 lg:ml-2 lg:flex">
                     <NuxtLink
-                        to="/register"
-                        class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-64 lg:text-base lg:font-semibold"
+                        to="/journey/new"
+                        class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-dandelion-300 dark:hover:text-text md:px-4 md:py-2 md:text-base lg:mr-64 lg:text-base lg:font-semibold"
                     >
                         <T key-name="startpage.button.create.journey" />
                     </NuxtLink>
@@ -160,8 +160,8 @@ const changeColorMode = () => {
                         class="mb-16 mt-14 flex justify-center gap-5 xs:mt-8 sm:hidden"
                     >
                         <NuxtLink
-                            to="/register"
-                            class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-4 py-2 text-base font-bold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400"
+                            to="/journey/new"
+                            class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-4 py-2 text-base font-bold text-text hover:bg-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-dandelion-300 dark:hover:text-text"
                         >
                             <T key-name="startpage.button.create.journey" />
                         </NuxtLink>
@@ -219,8 +219,8 @@ const changeColorMode = () => {
                     </div>
                     <div class="mt-5 justify-center max-lg:hidden lg:flex">
                         <NuxtLink
-                            to="/register"
-                            class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:text-base lg:font-semibold"
+                            to="/journey/new"
+                            class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-dandelion-300 dark:hover:text-text md:px-4 md:py-2 md:text-base lg:text-base lg:font-semibold"
                         >
                             <T key-name="startpage.button.create.journey" />
                         </NuxtLink>
@@ -229,8 +229,8 @@ const changeColorMode = () => {
             </div>
             <div class="mt-10 justify-center max-sm:hidden sm:flex lg:hidden">
                 <NuxtLink
-                    to="/register"
-                    class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-ronchi-300 dark:hover:bg-ronchi-400 md:px-4 md:py-2 md:text-base lg:mr-[20vw] lg:text-base lg:font-semibold"
+                    to="/journey/new"
+                    class="rounded-lg border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 text-sm font-semibold text-text hover:bg-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-dandelion-300 dark:hover:text-text md:px-4 md:py-2 md:text-base lg:mr-[20vw] lg:text-base lg:font-semibold"
                 >
                     <T key-name="startpage.button.create.journey" />
                 </NuxtLink>

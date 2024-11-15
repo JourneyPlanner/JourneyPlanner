@@ -58,23 +58,6 @@ class Journey extends Model
     }
 
     /**
-     * Validation rules for creating a new journey.
-     * TODO: Add validation rules for the invite field
-     * This is because the invite is only required when creating a new journey.
-     */
-    public function rules(): array
-    {
-        return [
-            "name" => "required|string",
-            "destination" => "required|string",
-            "from" => "required|date",
-            "to" => "required|date",
-            "mapbox_id" => "nullable|string",
-            "mapbox_full_address" => "nullable|string",
-        ];
-    }
-
-    /**
      * The activities that are a part of the journey.
      */
     public function activities(): HasMany

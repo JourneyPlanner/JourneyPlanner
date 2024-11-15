@@ -47,7 +47,7 @@ function monthInDays(days: number) {
             </div>
             <div class="max-md:flex">
                 <div class="flex h-12 items-center justify-center pt-1">
-                    <WeatherIcon
+                    <JourneyIdComponentsWeatherIcon
                         v-tooltip.right="{
                             value: weatherType,
                             pt: { root: 'font-nunito' },

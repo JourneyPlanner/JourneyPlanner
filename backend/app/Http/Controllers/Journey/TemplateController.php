@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Journey;
 
+use App\Http\Controllers\Controller;
 use App\Models\Journey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -27,7 +28,7 @@ class TemplateController extends Controller
             "description" => "string",
         ]);
         $journey = Journey::findOrFail($validated["journey_id"]);
-        Gate::authorize("journeyGuide", $journey);
+        Gate::authorize("update", [$journey, false]);
 
         if ($request->user()->can("journeyTemplateCreator", $journey)) {
             return response()->json(
