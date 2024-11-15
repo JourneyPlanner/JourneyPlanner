@@ -787,12 +787,28 @@ function editJourney(journey: Journey, id: string) {
                         </div>
                     </div>
                 </div>
+
                 <div
-                    v-if="moreTemplatesAvailable"
+                    v-if="moreTemplatesAvailable && status !== 'pending'"
                     ref="loader"
-                    class="mt-5 flex justify-center"
                 >
-                    <T key-name="dashboard.templates.loading" />
+                    <div class="flex justify-center">
+                        <ProgressSpinner class="w-10" />
+                    </div>
+                    <div class="flex justify-center italic">
+                        <T key-name="dashboard.templates.loading" />
+                    </div>
+                </div>
+                <div
+                    v-if="!moreTemplatesAvailable"
+                    class="mt-5 flex justify-center gap-x-2"
+                >
+                    <T key-name="dashboard.templates.nomoretemplates" />
+                    <NuxtLink
+                        to="/journey/new"
+                        class="hover:text-calypso-400 hover:underline"
+                        ><T key-name="dashboard.templates.nomoretemplates.link"
+                    /></NuxtLink>
                 </div>
             </TabPanel>
         </TabView>

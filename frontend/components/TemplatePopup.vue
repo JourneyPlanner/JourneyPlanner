@@ -134,14 +134,18 @@ function close() {
                         class="flex flex-row items-center gap-x-1"
                     >
                         <i class="pi pi-ticket mr-2 text-xl text-calypso-600" />
-                        <Skeleton
-                            v-if="activityCount === null"
-                            width="10rem"
-                            height="1.25rem"
-                        />
-                        <h5 v-else class="truncate text-xl">
-                            {{ activityCount }}
 
+                        <span
+                            class="flex flex-row items-center gap-x-1 truncate text-xl"
+                        >
+                            <Skeleton
+                                v-if="activityCount === null"
+                                width="1rem"
+                                height="1.25rem"
+                            />
+                            <span v-else>
+                                {{ activityCount }}
+                            </span>
                             <T
                                 :key-name="
                                     activityCount === 1
@@ -149,7 +153,7 @@ function close() {
                                         : 'template.activities'
                                 "
                             />
-                        </h5>
+                        </span>
                     </div>
                 </div>
                 <div
