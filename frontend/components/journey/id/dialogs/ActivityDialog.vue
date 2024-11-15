@@ -661,7 +661,7 @@ function setSelectedDate(date: Date) {
                     type="button"
                     :label="t('common.button.cancel')"
                     icon="pi pi-times"
-                    class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                    class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
                         label: {

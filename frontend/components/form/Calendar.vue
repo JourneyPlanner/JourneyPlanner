@@ -36,8 +36,10 @@ defineEmits(["input"]);
             :name="name"
             selection-mode="range"
             :manual-input="true"
-            :show-button-bar="true"
             :number-of-months="1"
+            show-other-months
+            select-other-months
+            hide-on-range-selection
             date-format="dd/mm/yy"
             panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
             input-class="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 dark:bg-natural-900 border-2 border-calypso-300 dark:border-calypso-400 focus:outline-none focus:ring-1"
@@ -58,7 +60,7 @@ defineEmits(["input"]);
             @date-select="$emit('input', $event), handleFocus"
         />
         <br />
-        <div class="ml-2.5 mt-1 h-3 leading-3">
+        <div class="ml-0.5 mt-1 h-3 leading-3">
             <span
                 class="text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
                 >{{ errorMessage }}</span
