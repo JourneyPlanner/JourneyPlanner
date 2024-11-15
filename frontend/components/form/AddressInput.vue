@@ -80,7 +80,6 @@ let text = "";
 let placeholderColor = "";
 let hoverCancel = "";
 let disabledBg = "";
-const bg = "";
 let border = "";
 let hover = "";
 
@@ -88,7 +87,6 @@ if (
     colorMode.preference === "dark" ||
     (darkTheme.matches && colorMode.preference === "system")
 ) {
-    input = "#3D3D3D";
     input = "#3D3D3D";
     text = "#FCFCFC";
     placeholderColor = "#989898";
@@ -106,7 +104,7 @@ if (
     hover = "#EFEFEF";
 }
 
-const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Input::placeholder {font-family: Nunito; font-size: 0.75rem; line-height: 1rem; color: ${placeholderColor}} .Results {background-color: ${input}; color: ${text};} .Suggestion:hover {background-color: ${hover};} .SearchBox {background-color: ${bg}; border-radius: 0.5rem;} .ClearBtn:hover {color: ${hoverCancel}}`;
+const css = `.Input {background-color: ${input}; color: ${text};} .Input:focus {background-color: ${input}; color: ${text}; box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);} .Input::placeholder {font-family: Nunito; font-size: 0.75rem; line-height: 1rem; color: ${placeholderColor}} .Results {background-color: ${input}; color: ${text};} .Suggestion:hover {background-color: ${hover};} .SearchBox {border-radius: 0.5rem;} .ClearBtn:hover {color: ${hoverCancel}}`;
 
 function changeInput(event: InputEvent) {
     inputValue.value = (event.target as HTMLInputElement).value;
