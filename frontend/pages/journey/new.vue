@@ -136,7 +136,7 @@ function copyToClipboard() {
                 >
                     <legend
                         for="create-journey"
-                        class="ml-4 px-2 text-center text-2xl font-bold text-text dark:text-natural-50 lg:text-left lg:text-3xl"
+                        class="mb-5 ml-4 px-2 text-center text-2xl font-bold text-text dark:text-natural-50 lg:text-left lg:text-3xl"
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>

@@ -22,7 +22,7 @@ defineEmits(["input"]);
 </script>
 
 <template>
-    <div class="relative my-5">
+    <div class="relative mb-4">
         <input
             :id="id"
             v-model="value"
@@ -41,14 +41,12 @@ defineEmits(["input"]);
         >
             <T :key-name="translationKey" />
         </label>
-        <br v-if="errorMessage" />
-        <div class="mt-1 h-1.5 w-full text-left leading-3">
+        <div
+            class="w-full text-left leading-3"
+            :class="errorMessage ? '-mb-1.5 mt-0.5 block' : 'hidden'"
+        >
             <span
-                class="ml-3 text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
-                :class="{
-                    invisible: !errorMessage,
-                    visible: errorMessage,
-                }"
+                class="ml-0.5 text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
                 >{{ errorMessage }}</span
             >
         </div>

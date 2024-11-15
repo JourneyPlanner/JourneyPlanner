@@ -128,7 +128,7 @@ async function loginUser(userData: User) {
                 >
                     <legend
                         for="outerBlock"
-                        class="px-2 text-center text-3xl font-bold text-text dark:text-natural-50 lg:ml-7 lg:text-left"
+                        class="mb-5 px-2 text-center text-3xl font-bold text-text dark:text-natural-50 lg:ml-7 lg:text-left"
                     >
                         <T key-name="form.header.login" />
                     </legend>

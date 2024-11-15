@@ -32,7 +32,7 @@ const { value, errorMessage } = useField<string>(() => props.name);
 </script>
 
 <template>
-    <div class="relative">
+    <div class="relative mb-4">
         <Password
             :id="id"
             v-model="value"
@@ -88,9 +88,12 @@ const { value, errorMessage } = useField<string>(() => props.name);
                 </ul>
             </template>
         </Password>
-        <div class="h-3 text-left">
+        <div
+            class="text-left"
+            :class="errorMessage ? '-mb-1.5 mt-0.5 block' : 'hidden'"
+        >
             <span
-                class="ml-3 text-left text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
+                class="ml-0.5 text-left text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
                 >{{ errorMessage }}</span
             >
         </div>

@@ -315,7 +315,7 @@ function editJourney(journey: Journey, id: string) {
                     />
                     <SvgCreateNewJourneyCardDark class="hidden dark:lg:block" />
                     <div
-                        class="flex h-32 min-w-36 flex-grow items-center justify-center rounded-md border border-dandelion-300 bg-dandelion-100 dark:bg-pesto-600 lg:hidden"
+                        class="flex h-[7.5rem] min-w-36 flex-grow items-center justify-center rounded-md border border-dandelion-300 bg-dandelion-100 dark:bg-pesto-600 lg:hidden"
                     >
                         <SvgCreateNewJourneyIcon
                             class="h-14 w-14 fill-text dark:fill-natural-50"
