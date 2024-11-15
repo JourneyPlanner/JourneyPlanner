@@ -154,7 +154,7 @@ async function deleteAccount() {
                             v-model="password"
                             name="password"
                             type="password"
-                            class="focus-ring-1 w-2/3 rounded-md border-2 border-natural-400 bg-natural-50 py-0.5 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                            class="focus-ring-1 mb-1 w-2/3 rounded-md border-2 border-natural-400 bg-natural-50 py-0.5 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         />
                         <span
                             class="flex w-2/3 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
@@ -162,7 +162,7 @@ async function deleteAccount() {
                         >
                     </div>
                 </div>
-                <div class="flex w-full justify-center pb-2 pt-6">
+                <div class="flex w-full justify-center pb-2 pt-4">
                     <button
                         class="mr-5 w-40 rounded-md bg-natural-50 px-2 pr-7 text-lg font-medium text-text hover:underline dark:bg-background-dark dark:text-natural-50"
                         @click="close"
