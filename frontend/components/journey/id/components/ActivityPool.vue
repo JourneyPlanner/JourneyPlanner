@@ -5,11 +5,10 @@ import { format, parse } from "date-fns";
 import type { MenuItemCommandEvent } from "primevue/menuitem";
 import { useActivityStore } from "~/stores/activities";
 
-import ActivityDialog from "./ActivityDialog.vue";
-
 const store = useActivityStore();
 const { t } = useTranslate();
 const menu = ref();
+
 const toggle = (event: Event) => {
     menu.value[0].toggle(event);
 };
@@ -138,15 +137,15 @@ async function deleteActivity() {
                     ),
                     life: 6000,
                 });
-                activities.value.forEach((activity: Activity) => {
-                    if (activity.id === activityId.value) {
+                activities.value
+                    .filter((activity) => activity.id === activityId.value)
+                    .forEach((activity: Activity) => {
                         activities.value.splice(
                             activities.value.indexOf(activity),
                             1,
-                        ),
-                            store.setActivities(activities.value);
-                    }
-                });
+                        );
+                        store.setActivities(activities.value);
+                    });
             }
         },
         async onRequestError() {
@@ -323,7 +322,7 @@ const itemsJourneyGuide = ref([
                 </div>
             </ScrollPanel>
         </div>
-        <ActivityDialog
+        <JourneyIdDialogsActivityDialog
             :id="id.toString()"
             :activity-id="activityId"
             :visible="isActivityInfoVisible"

@@ -1,77 +1,69 @@
 <script setup lang="ts">
-import { T, useTranslate } from "@tolgee/vue";
-import { differenceInDays, differenceInHours, format } from "date-fns";
-import JSConfetti from "js-confetti";
+import { useTranslate } from "@tolgee/vue";
+import { differenceInDays, differenceInHours } from "date-fns";
 import QRCode from "qrcode";
 import resolveConfig from "tailwindcss/resolveConfig";
-import TemplateDialog from "~/components/TemplateDialog.vue";
 import tailwindConfig from "~/tailwind.config.js";
 
-import scroll from "../../utils/scroll";
-
-const fullConfig = resolveConfig(tailwindConfig);
-const confirm = useConfirm();
 const route = useRoute();
-const store = useJourneyStore();
+const router = useRouter();
+const confirm = useConfirm();
+const toast = useToast();
+const journeyStore = useJourneyStore();
 const activityStore = useActivityStore();
+const client = useSanctumClient();
+const { isAuthenticated } = useSanctumAuth();
+const { t } = useTranslate();
+const fullConfig = resolveConfig(tailwindConfig);
+
 const journeyId = route.params.id;
 const activityDataLoaded = ref(false);
-const qrcode = ref("");
+
 const duringJourney = ref(false);
 const journeyEnded = ref(false);
 const day = ref(0);
 const tensDays = ref(0);
 const hundredsDays = ref(0);
-const jsConfetti = new JSConfetti();
+
+const users = ref<User[]>();
+const currUser = ref<User>();
+
 const isMemberSidebarVisible = ref(false);
 const isMenuSidebarVisible = ref(false);
-const toast = useToast();
-const { t } = useTranslate();
-const celsius = ref(true);
-const fahrenheit = ref(false);
-const currTemperature = ref();
-const weatherType = ref("");
-const highestTemp = ref(24);
-const lowestTemp = ref(9);
-const editEnabled = ref(false);
 const isActivityDialogVisible = ref(false);
+
+const isUnlockDialogVisible = ref(false);
+const qrcode = ref("");
+const qrcodeTolgeeKey = ref("");
+const isQRCodeVisible = ref(false);
+
 const uploadResult = ref();
 const upload = ref();
 const calendar = ref();
 
-const isCreateTemplateVisible = ref(false);
-const isJourneyEditMenuVisible = ref(false);
-
-definePageMeta({
-    middleware: ["sanctum:auth"],
-});
-
-interface Journey {
-    name: string;
-    invite: string;
-    destination: string;
-    from: string;
-    to: string;
-}
-
-interface User {
-    id: string;
-    display_name: string;
-    username: string;
-    role: number;
-}
-
-const client = useSanctumClient();
 const { data, error } = await useAsyncData("journey", () =>
     client(`/api/journey/${journeyId}`),
 );
 
-if (error.value) {
+if (error.value?.statusCode === 404) {
+    if (
+        (!isAuthenticated.value &&
+            localStorage.getItem("JP_guest_journey_id")) ||
+        localStorage.getItem("JP_invite_journey_id")
+    ) {
+        localStorage.removeItem("JP_guest_journey_id");
+        localStorage.removeItem("JP_invite_journey_id");
+    }
     throw createError({
         statusCode: 404,
         statusMessage: "Journey not found",
         fatal: true,
     });
+}
+
+if (isAuthenticated.value) {
+    localStorage.removeItem("JP_guest_journey_id");
+    localStorage.removeItem("JP_invite_journey_id");
 }
 
 await client(`/api/journey/${journeyId}/activity`, {
@@ -83,40 +75,8 @@ await client(`/api/journey/${journeyId}/activity`, {
     },
 });
 
-const { data: weather } = await useAsyncData("weather", () =>
-    client(`/api/journey/${journeyId}/weather`),
-);
-
-currTemperature.value = Math.round(weather.value.current.temperature);
-highestTemp.value = Math.round(weather.value.forecast[0].temperature_max);
-lowestTemp.value = Math.round(weather.value.forecast[0].temperature_min);
-weatherType.value = t.value(
-    `weather.code.${weather.value.current.weather_code}`,
-);
-const weatherTypeTomorrow = t.value(
-    `weather.code.${weather.value.forecast[1].weather_code}`,
-);
-const weatherTypeInTwoDays = t.value(
-    `weather.code.${weather.value.forecast[2].weather_code}`,
-);
-const weatherTypeInThreeDays = t.value(
-    `weather.code.${weather.value.forecast[3].weather_code}`,
-);
-const weatherCodeToday = weather.value.current.weather_code;
-const weatherCodeTomorrow = weather.value.forecast[1].weather_code;
-const weatherCodeInTwoDays = weather.value.forecast[2].weather_code;
-const weatherCodeInThreeDays = weather.value.forecast[3].weather_code;
-
-const { data: users } = await useAsyncData("users", () =>
-    client(`/api/journey/${journeyId}/user`),
-);
-
-const { data: currUser } = await useAsyncData("userRole", () =>
-    client(`/api/journey/${journeyId}/user/me`),
-);
-
 const journeyData = data as Ref<Journey>;
-store.setJourney(journeyData);
+journeyStore.setJourney(journeyData);
 
 const title = journeyData.value.name;
 journeyData.value.invite =
@@ -124,6 +84,26 @@ journeyData.value.invite =
 useHead({
     title: `${title} | JourneyPlanner`,
 });
+
+if (isAuthenticated.value) {
+    const { data } = await useAsyncData<User[]>("users", () =>
+        client(`/api/journey/${journeyId}/user`),
+    );
+
+    if (data.value !== null) {
+        users.value = data.value;
+    }
+
+    const { data: curr } = await useAsyncData<User>("userRole", async () => {
+        const response = await client(`/api/journey/${journeyId}/user/me`);
+        const { user_id, ...rest } = response;
+        return { id: user_id, ...rest };
+    });
+
+    if (curr.value !== null) {
+        currUser.value = curr.value;
+    }
+}
 
 const colorMode = useColorMode();
 const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -138,8 +118,6 @@ if (
     lightColor = fullConfig.theme.accentColor["text"] as string;
 }
 
-const isQRCodeVisible = ref(false);
-
 const opts = {
     margin: 0,
     color: {
@@ -147,7 +125,7 @@ const opts = {
         light: lightColor,
     },
 };
-QRCode.toDataURL(journeyData.value.invite, opts, function (error, url) {
+QRCode.toDataURL(journeyStore.getInvite(), opts, function (error, url) {
     qrcode.value = url;
 });
 
@@ -165,11 +143,6 @@ const daystoEnd = ref(
 onMounted(() => {
     calculateDays(journeyData.value.from, journeyData.value.to);
 });
-
-const isFlipped = ref(false);
-const flip = () => {
-    isFlipped.value = !isFlipped.value;
-};
 
 const confirmLeave = (event: Event) => {
     isMemberSidebarVisible.value = false;
@@ -240,12 +213,16 @@ function calculateDays(from: string, to: string) {
 }
 
 function journeyEdited(journey: Journey) {
-    store.setJourney(journey);
+    journeyStore.setJourney(journey);
     useHead({
         title: `${journey.name} | JourneyPlanner`,
     });
     calculateDays(journey.from, journey.to);
 }
+
+const handleUpload = (result: string) => {
+    uploadResult.value = result;
+};
 
 /**
  * API call to leave the journey
@@ -253,7 +230,7 @@ function journeyEdited(journey: Journey) {
  * error: toast message
  */
 async function leaveJourney() {
-    await client(`/api/journey/${journeyId}/leave`, {
+    await client(`/api/journey/${journeyStore.getID()}/leave`, {
         method: "DELETE",
         async onResponse({ response }) {
             if (response.ok) {
@@ -263,7 +240,13 @@ async function leaveJourney() {
                     detail: t.value("leave.journey.toast.success.detail"),
                     life: 3000,
                 });
-                await navigateTo("/dashboard");
+
+                if (!isAuthenticated.value) {
+                    localStorage.removeItem("JP_guest_journey_id");
+                    await navigateTo("/journey/new");
+                } else {
+                    await navigateTo("/dashboard");
+                }
             }
         },
         async onResponseError({ response }) {
@@ -286,343 +269,60 @@ async function leaveJourney() {
     });
 }
 
-/**
- * copy the invite link to the clipboard
- */
-function copyToClipboard() {
-    navigator.clipboard.writeText(journeyData.value.invite);
-    toast.add({
-        severity: "info",
-        summary: t.value("common.toast.info.heading"),
-        detail: t.value("common.invite.toast.info"),
-        life: 2000,
-    });
+function openQRCode(tolgeeKey: string) {
+    isQRCodeVisible.value = true;
+    qrcodeTolgeeKey.value = tolgeeKey;
 }
 
-/*
- * Change the role of a user
- * @param userid - the id of the user
- * @param selectedRole - the selected role
- */
-async function changeRole(userid: string, selectedRole: number) {
-    await client(`/api/journey/${journeyId}/user/${userid}`, {
-        method: "PATCH",
-        body: {
-            role: selectedRole,
-        },
-        async onResponse() {
-            users.value = users.value.map((user: User) => {
-                if (user.id === userid) {
-                    user.role = selectedRole;
-                }
-                return user;
-            });
-        },
-        async onResponseError() {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value("common.error.unknown"),
-                life: 6000,
-            });
-        },
-    });
-}
-
-const handleUpload = (result: string) => {
-    uploadResult.value = result;
-};
-
-function changeToCelsius() {
-    if (fahrenheit.value == true) {
-        currTemperature.value = Math.round(weather.value.current.temperature);
-        highestTemp.value = Math.round(
-            weather.value.forecast[0].temperature_max,
-        );
-        lowestTemp.value = Math.round(
-            weather.value.forecast[0].temperature_min,
-        );
+function scrollToTarget(target: string) {
+    if (target === "uploadRef") {
+        scroll(upload.value);
+    } else if (target === "calendarRef") {
+        scroll(calendar.value);
     }
-
-    celsius.value = true;
-    fahrenheit.value = false;
-}
-
-function changeToFahrenheit() {
-    if (celsius.value == true) {
-        currTemperature.value = Math.round(
-            (weather.value.current.temperature * 9) / 5 + 32,
-        );
-        highestTemp.value = Math.round(
-            (weather.value.forecast[0].temperature_max * 9) / 5 + 32,
-        );
-        lowestTemp.value = Math.round(
-            (weather.value.forecast[0].temperature_min * 9) / 5 + 32,
-        );
-    }
-    celsius.value = false;
-    fahrenheit.value = true;
 }
 </script>
 
 <template>
     <div class="flex flex-col font-nunito text-text dark:text-natural-50">
-        <Sidebar
-            id="member-sidebar"
-            v-model:visible="isMemberSidebarVisible"
-            position="right"
-            :block-scroll="true"
-            :pt="{
-                closeButton: {
-                    class: 'w-9 h-9 col-span-2 flex w-full justify-end pr-1',
-                },
-                closeIcon: {
-                    class: 'w-7 h-7 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50',
-                },
-                header: { class: 'p-2 pl-3 grid grid-rows-1 grid-cols-12' },
-                content: { class: 'pl-3 pr-2 py-2 flex flex-col h-full' },
-                root: {
-                    class: 'dark:bg-background-dark font-nunito relative',
-                },
-            }"
-        >
-            <template #header>
-                <span class="h-0.5 w-full bg-calypso-300 dark:bg-calypso-600" />
-                <div
-                    class="col-span-5 flex w-full flex-row justify-center text-2xl font-medium text-text dark:text-natural-50"
-                >
-                    <h3>
-                        <T key-name="journey.sidebar.members" />
-                    </h3>
-                </div>
-                <span
-                    class="col-span-4 col-start-7 h-0.5 w-full bg-calypso-300 dark:bg-calypso-600"
-                />
-            </template>
-            <div class="text-xl font-medium text-text dark:text-natural-50">
-                <T key-name="sidebar.invite.link" />
-            </div>
-            <div
-                class="flex items-center border-b-2 border-natural-200 pb-4 dark:border-natural-900"
-            >
-                <input
-                    class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
-                    disabled
-                    :value="journeyData.invite"
-                />
-                <div class="flex w-1/5 justify-end">
-                    <button
-                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                        @click="copyToClipboard"
-                    >
-                        <SvgCopy class="w-4" />
-                    </button>
-                </div>
-                <div class="flex w-1/5 justify-end">
-                    <button
-                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                        @click="isQRCodeVisible = true"
-                    >
-                        <span
-                            class="pi pi-qrcode text-text dark:text-natural-50"
-                        />
-                    </button>
-                </div>
-            </div>
-            <div
-                class="flex flex-row items-center justify-center border-b-2 border-natural-200 pb-1 pt-1 dark:border-natural-900"
-            >
-                <h1
-                    class="w-4/5 text-xl text-natural-600 dark:text-natural-200"
-                >
-                    <T key-name="journey.sidebar.list.header" />
-                </h1>
-                <div class="mb-1 mt-1 flex w-1/5 items-center justify-end">
-                    <button
-                        v-if="currUser.role === 1"
-                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                        @click="editEnabled = !editEnabled"
-                    >
-                        <SvgEdit v-if="!editEnabled" class="w-4" />
-                        <SvgEditOff v-if="editEnabled" class="w-4" />
-                    </button>
-                </div>
-            </div>
-            <div
-                id="list"
-                class="mt-3 flex flex-grow flex-col gap-3 overflow-y-auto pr-0.5"
-            >
-                <MemberItem
-                    v-for="user in users"
-                    :id="user.id"
-                    :key="user.id"
-                    :username="user.username"
-                    :display_name="user.display_name"
-                    :role="user.role"
-                    :edit="editEnabled"
-                    :current-i-d="currUser.user_id"
-                    @change-role="changeRole"
-                />
-            </div>
-            <div
-                class="sticky bottom-0 border-t-2 border-natural-200 dark:border-natural-900"
-            >
-                <button
-                    class="my-4 w-full rounded-lg border-2 border-mahagony-500 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
-                    @click="confirmLeave($event)"
-                >
-                    <T key-name="journey.leave.short" />
-                </button>
-            </div>
-        </Sidebar>
-        <Sidebar
-            id="menu-sidebar"
-            v-model:visible="isMenuSidebarVisible"
-            position="right"
-            :block-scroll="true"
-            :pt="{
-                closeButton: {
-                    class: 'w-9 h-9 col-span-2 flex w-full justify-end pr-1',
-                },
-                closeIcon: {
-                    class: 'w-7 h-7 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50',
-                },
-                header: { class: 'p-2 pl-3 grid grid-cols-12' },
-                content: {
-                    class: 'pl-3 pr-2 text-text dark:text-natural-50',
-                },
-                root: {
-                    class: 'bg-background dark:bg-background-dark font-nunito',
-                },
-            }"
-        >
-            <template #header>
-                <span class="h-0.5 w-full bg-calypso-300 dark:bg-calypso-600" />
-                <div
-                    class="col-span-3 flex w-full flex-row justify-center text-2xl font-medium text-text dark:text-natural-50"
-                >
-                    <h3>
-                        <T key-name="journey.sidebar.menu" />
-                    </h3>
-                </div>
-                <span
-                    class="col-span-6 col-start-5 h-0.5 w-full bg-calypso-300 dark:bg-calypso-600"
-                />
-            </template>
-            <div>
-                <Accordion class="font-nunito text-xl text-text">
-                    <AccordionTab
-                        v-if="currUser.role === 1"
-                        :header="t('dashboard.edit.header')"
-                        :pt="{
-                            root: {
-                                class: 'border-b-2 border-natural-300 dark:border-natural-700',
-                            },
-                            headerAction: {
-                                class: 'pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
-                            },
-                            content: {
-                                class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
-                            },
-                        }"
-                    >
-                        <div>
-                            <p
-                                class="text-base font-medium text-natural-600 dark:text-natural-300"
-                            >
-                                <T key-name="dashboard.edit.detail" />
-                            </p>
-                            <button
-                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
-                                @click="
-                                    isJourneyEditMenuVisible =
-                                        !isJourneyEditMenuVisible
-                                "
-                            >
-                                <T key-name="dashboard.edit.short" />
-                            </button>
-                        </div>
-                    </AccordionTab>
-                    <AccordionTab
-                        v-if="currUser.role === 1"
-                        :header="t('journey.template.create')"
-                        :pt="{
-                            root: {
-                                class: 'border-b-2 border-natural-300 dark:border-natural-700',
-                            },
-                            headerAction: {
-                                class: 'pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
-                            },
-                            content: {
-                                class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
-                            },
-                        }"
-                    >
-                        <div>
-                            <p
-                                class="text-base font-medium text-natural-600 dark:text-natural-300"
-                            >
-                                <T key-name="journey.template.create.detail" />
-                            </p>
-                            <button
-                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
-                                @click="
-                                    isCreateTemplateVisible =
-                                        !isCreateTemplateVisible
-                                "
-                            >
-                                <T key-name="journey.template.create" />
-                            </button>
-                        </div>
-                    </AccordionTab>
-                    <AccordionTab
-                        v-if="currUser.role === 1"
-                        :header="t('dashboard.options.leave')"
-                        :pt="{
-                            root: {
-                                class: 'border-b-2 border-natural-300 dark:border-natural-700',
-                            },
-                            headerAction: {
-                                class: 'pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
-                            },
-                            content: {
-                                class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
-                            },
-                        }"
-                    >
-                        <div>
-                            <p
-                                class="text-base font-medium text-natural-600 dark:text-natural-300"
-                            >
-                                <T key-name="journey.leave.detail" />
-                                <T
-                                    v-if="currUser.role === 1"
-                                    key-name="journey.leave.detail.journeyguide"
-                                />
-                            </p>
-                            <button
-                                class="mt-4 w-full rounded-lg border-2 border-mahagony-500 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
-                                @click="confirmLeave($event)"
-                            >
-                                <T key-name="journey.leave.short" />
-                            </button>
-                        </div>
-                    </AccordionTab>
-                </Accordion>
-            </div>
-        </Sidebar>
+        <JourneyIdMemberSidebar
+            :journey-i-d="String(journeyId)"
+            :is-member-sidebar-visible="isMemberSidebarVisible"
+            :invite="String(journeyStore.getInvite())"
+            :users="users! || []"
+            :curr-user="currUser! || {}"
+            @leave-journey="confirmLeave"
+            @close="isMemberSidebarVisible = false"
+            @open-qrcode="openQRCode"
+            @open-unlock-dialog="isUnlockDialogVisible = true"
+        />
+        <JourneyIdMenuSidebar
+            :is-menu-sidebar-visible="isMenuSidebarVisible"
+            :curr-user="currUser! || {}"
+            @leave-journey="confirmLeave"
+            @journey-edited="journeyEdited"
+            @close="isMenuSidebarVisible = false"
+            @open-unlock-dialog="isUnlockDialogVisible = true"
+        />
         <div
+            id="header"
             class="mt-5 flex w-full items-center justify-between px-4 font-semibold"
         >
-            <NuxtLink
+            <button
                 to="/dashboard"
-                class="group flex items-center sm:ml-1 md:ml-2"
+                class="flex items-center sm:ml-1 md:ml-2"
+                :class="!isAuthenticated ? 'blur-[2px]' : 'group'"
+                @click="
+                    !isAuthenticated
+                        ? (isUnlockDialogVisible = true)
+                        : router.push('/dashboard')
+                "
             >
                 <SvgDashboardIcon class="h-7 w-7 md:h-6 md:w-6" />
                 <p class="hidden text-2xl group-hover:underline sm:block">
                     Dashboard
                 </p>
-            </NuxtLink>
+            </button>
             <div class="flex flex-row items-center">
                 <span
                     class="pi pi-users ml-10 mr-5 text-3xl hover:cursor-pointer"
@@ -634,656 +334,18 @@ function changeToFahrenheit() {
                 />
             </div>
         </div>
-        <div class="mt-8 flex h-fit flex-wrap">
-            <div class="flex w-full items-center justify-center md:hidden">
-                <div
-                    class="group w-[90%] [perspective:1000px] sm:w-5/6"
-                    @click="flip"
-                >
-                    <div
-                        :class="isFlipped ? '[transform:rotateX(180deg)]' : ''"
-                        class="relative h-full w-full rounded-2xl transition-all duration-500 [transform-style:preserve-3d]"
-                    >
-                        <div class="bg-none md:w-2/5 lg:w-1/3">
-                            <div
-                                class="relative flex h-10 items-center rounded-t-2xl border-x-2 border-t-2 border-calypso-400 bg-calypso-300 dark:border-gothic-500 dark:bg-gothic-400"
-                            >
-                                <div
-                                    class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-natural-200"
-                                />
-                                <p
-                                    class="ml-16 text-xl font-bold text-natural-50"
-                                >
-                                    JourneyPlanner
-                                </p>
-                                <div
-                                    class="flex h-full w-full items-center justify-end"
-                                >
-                                    <SvgAirplaneIcon class="mr-5 w-7" />
-                                </div>
-                            </div>
-                            <div class="flex h-5/6">
-                                <div
-                                    class="-mr-1 h-fit w-full rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
-                                >
-                                    <div
-                                        class="mb-2 mt-1 grid w-full grid-cols-4"
-                                    >
-                                        <div
-                                            class="col-span-3 flex h-full w-full flex-col justify-center pl-5 font-semibold"
-                                        >
-                                            <T
-                                                key-name="form.input.journey.name"
-                                            />
-                                            <input
-                                                class="text-md mb-2 w-full rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
-                                                disabled
-                                                :value="journeyData.name"
-                                            />
-                                            <T
-                                                key-name="form.input.journey.destination"
-                                            />
-                                            <input
-                                                class="text-md mb-2 w-full rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
-                                                disabled
-                                                :value="journeyData.destination"
-                                            />
-                                            <T
-                                                key-name="form.input.journey.date"
-                                            />
-                                            <input
-                                                class="text-md mb-2 w-5/6 rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50 md:w-4/5"
-                                                disabled
-                                                :value="
-                                                    format(
-                                                        fromDate,
-                                                        'dd/MM/yyyy',
-                                                    ) +
-                                                    ' - ' +
-                                                    format(toDate, 'dd/MM/yyyy')
-                                                "
-                                            />
-                                        </div>
-                                        <div class="relative -mt-1 w-full">
-                                            <SvgStripes
-                                                class="absolute right-0 z-0 w-[7.4rem]"
-                                            />
-                                            <div
-                                                class="absolute bottom-2 right-1 ml-10 flex h-[3.8rem] w-[3.8rem] cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-center text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
-                                            >
-                                                <T key-name="journey.turn" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div
-                                    class="rounded-b-r-3xl h-[90%] w-0 cursor-pointer border-r-2 border-dashed border-natural-200"
-                                />
-                            </div>
-                        </div>
-                        <div
-                            class="absolute inset-0 h-full w-full rounded-xl bg-natural-50 text-center text-text [backface-visibility:hidden] [transform:rotateX(180deg)] dark:bg-background-dark"
-                        >
-                            <div
-                                class="relative flex h-10 items-center rounded-t-2xl border-x-2 border-t-2 border-calypso-400 bg-calypso-300 dark:border-gothic-500 dark:bg-gothic-400"
-                            >
-                                <div
-                                    class="absolute ml-5 inline-block h-7 w-7 self-center rounded-full bg-natural-200"
-                                />
-                                <p
-                                    class="ml-16 text-xl font-bold text-natural-50"
-                                >
-                                    JourneyPlanner
-                                </p>
-                                <div
-                                    class="flex h-full w-full items-center justify-end"
-                                >
-                                    <SvgAirplaneIcon class="mr-5 w-7" />
-                                </div>
-                            </div>
-                            <div class="flex h-5/6">
-                                <div
-                                    class="flex h-full w-full justify-center rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
-                                >
-                                    <div
-                                        class="relative flex h-full w-full flex-col overflow-hidden"
-                                    >
-                                        <div
-                                            class="absolute bottom-4 right-1 z-40 ml-10 mt-1 flex h-[3.8rem] w-[3.8rem] cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
-                                        >
-                                            <T key-name="journey.turn" />
-                                        </div>
-                                        <div class="flex h-full">
-                                            <div class="z-0 ml-6 h-full w-1/2">
-                                                <div
-                                                    class="-ml-14 mt-3 flex h-1/2 items-center justify-center"
-                                                >
-                                                    <WeatherIcon
-                                                        class="-mt-2 ml-8 w-24"
-                                                        :weather-code="
-                                                            weatherCodeToday
-                                                        "
-                                                    />
-                                                </div>
-                                                <div class="mt-3 flex">
-                                                    <div>
-                                                        <div
-                                                            class="flex h-full w-full items-center justify-start text-5xl text-text dark:text-natural-50"
-                                                        >
-                                                            {{
-                                                                currTemperature
-                                                            }}°
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div
-                                                            class="ml-4 flex h-full flex-col items-start justify-center pt-1 text-sm text-natural-800 dark:text-natural-200"
-                                                        >
-                                                            <div>
-                                                                H:
-                                                                {{
-                                                                    highestTemp
-                                                                }}°
-                                                            </div>
-                                                            <div class="pt-2">
-                                                                T:
-                                                                {{
-                                                                    lowestTemp
-                                                                }}°
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="z-0 h-full w-1/3 pt-2">
-                                                <SmallWeather
-                                                    :celsius="celsius"
-                                                    :max-temp="
-                                                        weather.forecast[1]
-                                                            .temperature_max
-                                                    "
-                                                    :min-temp="
-                                                        weather.forecast[1]
-                                                            .temperature_min
-                                                    "
-                                                    :qr-code="qrcode"
-                                                    :day="1"
-                                                    :weather-code="
-                                                        weatherCodeTomorrow
-                                                    "
-                                                    :weather-type="
-                                                        weatherTypeTomorrow
-                                                    "
-                                                />
-                                                <SmallWeather
-                                                    :celsius="celsius"
-                                                    :max-temp="
-                                                        weather.forecast[2]
-                                                            .temperature_max
-                                                    "
-                                                    :min-temp="
-                                                        weather.forecast[2]
-                                                            .temperature_min
-                                                    "
-                                                    :qr-code="qrcode"
-                                                    :day="2"
-                                                    :weather-code="
-                                                        weatherCodeInTwoDays
-                                                    "
-                                                    :weather-type="
-                                                        weatherTypeInTwoDays
-                                                    "
-                                                    :right-line="false"
-                                                />
-                                            </div>
-                                            <div class="z-0 h-full w-1/5">
-                                                <div
-                                                    class="mr-2 mt-2 flex w-1/3"
-                                                >
-                                                    <button
-                                                        class="h-1/5 pr-2 text-xl"
-                                                        :class="
-                                                            celsius === true
-                                                                ? 'font-bold text-calypso-600 dark:text-natural-50'
-                                                                : 'font-normal text-text dark:text-natural-300'
-                                                        "
-                                                        @click.stop="
-                                                            changeToCelsius
-                                                        "
-                                                    >
-                                                        °C
-                                                    </button>
-                                                    <div
-                                                        class="border-l border-natural-300 dark:border-natural-400"
-                                                    />
-                                                    <button
-                                                        class="font ml-1 h-1/5 text-xl"
-                                                        :class="
-                                                            fahrenheit === true
-                                                                ? 'font-bold text-calypso-600 dark:text-natural-50'
-                                                                : 'font-normal text-text dark:text-natural-300'
-                                                        "
-                                                        @click.stop="
-                                                            changeToFahrenheit
-                                                        "
-                                                    >
-                                                        °F
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div
-                class="invisible ml-[10%] w-0 max-md:h-0 md:visible md:w-[50%] lg:ml-10 lg:w-1/3 xl:ml-[10%]"
-            >
-                <div
-                    class="relative flex h-10 items-center rounded-t-3xl border-x-2 border-t-2 border-calypso-400 bg-calypso-300 dark:border-gothic-500 dark:bg-gothic-400"
-                >
-                    <div
-                        class="bg-calypso-300-gray absolute ml-5 inline-block h-7 w-7 self-center rounded-full"
-                    />
-                    <p class="ml-14 text-xl font-bold text-natural-50">
-                        JourneyPlanner
-                    </p>
-                    <div class="flex h-full w-full items-center justify-end">
-                        <SvgAirplaneIcon class="mr-5 w-7" />
-                    </div>
-                </div>
-                <div class="flex h-[13.5rem] lg:h-[15.5rem]">
-                    <div
-                        class="dark:bg-calypso-300-dark w-full rounded-b-3xl border-b-2 border-l-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
-                    >
-                        <div class="relative grid w-full grid-cols-4">
-                            <div
-                                class="col-span-3 flex h-[120%] w-full flex-col justify-center pl-10 text-base font-semibold"
-                            >
-                                <T key-name="form.input.journey.name" />
-                                <input
-                                    class="text-md mb-2 w-full rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
-                                    disabled
-                                    :value="journeyData.name"
-                                />
-                                <T key-name="form.input.journey.destination" />
-                                <input
-                                    class="text-md mb-2 w-full rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
-                                    disabled
-                                    :value="journeyData.destination"
-                                />
-                                <T key-name="form.input.journey.date" />
-                                <input
-                                    class="text-md mb-2 rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50 md:w-5/6 lg:w-2/3"
-                                    disabled
-                                    :value="
-                                        format(fromDate, 'dd/MM/yyyy') +
-                                        ' - ' +
-                                        format(toDate, 'dd/MM/yyyy')
-                                    "
-                                />
-                            </div>
-                            <div
-                                class="absolute w-full md:col-span-2 lg:col-span-2 xl:col-span-1 2xl:col-span-1"
-                            >
-                                <SvgStripes
-                                    class="absolute right-0 md:w-[8.8rem] lg:w-[10.15rem]"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div
-                        class="rounded-b-r-3xl h-[90%] w-0 border-r-2 border-dashed border-natural-200"
-                    />
-                </div>
-            </div>
-            <div
-                class="invisible w-0 rounded-3xl border-solid bg-background dark:bg-dark max-md:h-0 md:visible md:h-64 md:w-64 lg:h-72 lg:w-72"
-            >
-                <div
-                    class="h-10 rounded-t-3xl border-x-2 border-t-2 border-calypso-400 bg-calypso-300 dark:border-gothic-500 dark:bg-gothic-400"
-                >
-                    <div class="flex h-full w-full items-center justify-end">
-                        <SvgAirplaneIcon class="mr-5 w-7" />
-                    </div>
-                </div>
-                <div class="flex h-[13.5rem] lg:h-[15.5rem]">
-                    <div
-                        class="rounded-b-l-3xl h-[90%] w-0 border-l-2 border-dashed border-natural-200"
-                    />
-                    <div
-                        class="flex h-full w-full cursor-default justify-center rounded-b-3xl border-b-2 border-r-2 border-natural-200 dark:border-gothic-600 dark:bg-dark"
-                    >
-                        <div
-                            class="relative flex h-full w-full flex-col items-end"
-                        >
-                            <div
-                                class="flex w-full pt-2 font-nunito max-lg:h-1/2"
-                            >
-                                <div
-                                    class="flex w-1/2 items-center justify-center"
-                                >
-                                    <WeatherIcon
-                                        class="w-28"
-                                        :weather-code="weatherCodeToday"
-                                    />
-                                </div>
-                                <div class="w-1/2">
-                                    <div class="flex">
-                                        <div
-                                            class="flex w-2/3 flex-col justify-center"
-                                        >
-                                            <div
-                                                class="flex justify-center text-5xl lg:text-6xl"
-                                            >
-                                                {{ currTemperature }}
-                                            </div>
-                                        </div>
-                                        <div class="mr-2 flex w-1/3">
-                                            <button
-                                                class="-ml-1 h-1/5 pr-2 text-xl"
-                                                :class="
-                                                    celsius === true
-                                                        ? 'font-bold text-calypso-600 dark:text-natural-50'
-                                                        : 'font-normal text-text dark:text-natural-300'
-                                                "
-                                                @click="changeToCelsius"
-                                            >
-                                                °C
-                                            </button>
-                                            <div
-                                                class="h-2/5 border-l-2 border-natural-300 dark:border-natural-400"
-                                            />
-                                            <button
-                                                class="font mr-1 h-1/5 pl-1 text-xl"
-                                                :class="
-                                                    fahrenheit === true
-                                                        ? 'font-bold text-calypso-600 dark:text-natural-50'
-                                                        : 'font-normal text-text dark:text-natural-300'
-                                                "
-                                                @click="changeToFahrenheit"
-                                            >
-                                                °F
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div
-                                            class="flex h-6 w-28 justify-center overflow-hidden overflow-ellipsis text-natural-800 dark:text-natural-200"
-                                        >
-                                            <span
-                                                v-tooltip.right="{
-                                                    value: weatherType,
-                                                    pt: { root: 'font-nunito' },
-                                                }"
-                                                class="-ml-1 flex h-6 w-32 justify-center overflow-hidden overflow-ellipsis text-nowrap"
-                                                >{{ weatherType }}</span
-                                            >
-                                        </div>
-                                        <div
-                                            class="flex items-end justify-start pt-1 lg:text-xl"
-                                        >
-                                            <div>H: {{ highestTemp }}°</div>
-                                            <div class="pl-2">
-                                                T: {{ lowestTemp }}°
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div
-                                class="grid h-1/2 w-full grid-cols-3 gap-2 pt-4"
-                            >
-                                <SmallWeather
-                                    :celsius="celsius"
-                                    :max-temp="
-                                        weather.forecast[1].temperature_max
-                                    "
-                                    :min-temp="
-                                        weather.forecast[1].temperature_min
-                                    "
-                                    :qr-code="qrcode"
-                                    :day="1"
-                                    :weather-code="weatherCodeTomorrow"
-                                    :weather-type="weatherTypeTomorrow"
-                                />
-                                <SmallWeather
-                                    :celsius="celsius"
-                                    :max-temp="
-                                        weather.forecast[2].temperature_max
-                                    "
-                                    :min-temp="
-                                        weather.forecast[2].temperature_min
-                                    "
-                                    :qr-code="qrcode"
-                                    :day="2"
-                                    :weather-code="weatherCodeInTwoDays"
-                                    :weather-type="weatherTypeInTwoDays"
-                                />
-                                <SmallWeather
-                                    :celsius="celsius"
-                                    :max-temp="
-                                        weather.forecast[3].temperature_max
-                                    "
-                                    :min-temp="
-                                        weather.forecast[3].temperature_min
-                                    "
-                                    :qr-code="qrcode"
-                                    :day="3"
-                                    :right-line="false"
-                                    :weather-code="weatherCodeInThreeDays"
-                                    :weather-type="weatherTypeInThreeDays"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="basis-0 md:basis-full lg:basis-0" />
-            <div
-                class="flex w-full justify-center md:justify-start lg:ml-10 lg:w-72 xl:ml-32"
-            >
-                <div
-                    class="w-[90%] rounded-2xl border-2 border-solid border-calypso-300 bg-calypso-50 bg-opacity-20 dark:border-calypso-600 dark:bg-gothic-300 dark:bg-opacity-20 max-lg:mt-5 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
-                >
-                    <div
-                        class="from-indigo-500 to-indigo-800 flex h-full flex-wrap items-center justify-center bg-gradient-to-br xs:justify-start lg:flex-col lg:justify-center"
-                    >
-                        <!-- flip clock container -->
-                        <div
-                            v-if="hundredsDays <= 0"
-                            class="relative mx-3 my-2 grid grid-cols-2 gap-x-1 text-4xl font-bold text-text dark:text-natural-50 lg:text-6xl"
-                        >
-                            <div class="bg-black relative rounded-xl p-1 py-2">
-                                <!-- background grid of black squares -->
-                                <div class="absolute inset-0 grid grid-rows-2">
-                                    <div
-                                        class="rounded-t-md bg-gradient-to-br from-gradient-start to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    />
-                                    <div
-                                        class="rounded-b-md bg-gradient-to-br from-gradient-start-light to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    />
-                                </div>
-
-                                <!-- time numbers -->
-                                <span class="top-50 absolute">{{
-                                    tensDays
-                                }}</span>
-
-                                <!-- line across the middle -->
-                                <div class="absolute inset-0 flex items-center">
-                                    <div
-                                        class="dark:bg-countdown-stroke-dark h-px w-full bg-calypso-300"
-                                    />
-                                </div>
-                            </div>
-                            <div class="bg-black relative rounded-xl p-1 py-2">
-                                <!-- background grid of black squares -->
-                                <div class="absolute inset-0 grid grid-rows-2">
-                                    <div
-                                        class="rounded-t-md bg-gradient-to-br from-gradient-start to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    />
-                                    <div
-                                        class="rounded-b-md bg-gradient-to-br from-gradient-start-light to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    />
-                                </div>
-
-                                <!-- time numbers -->
-                                <span class="relative">{{ day }}</span>
-
-                                <!-- line across the middle -->
-                                <div class="absolute inset-0 flex items-center">
-                                    <div
-                                        class="dark:bg-countdown-stroke-dark h-px w-full bg-calypso-300"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
-                            v-else
-                            class="relative mx-3 my-2 grid grid-cols-3 gap-x-1 text-4xl font-bold text-text dark:text-natural-50 lg:gap-x-2 lg:text-6xl"
-                        >
-                            <!-- left side -->
-                            <div
-                                class="bg-black relative rounded-xl p-1 py-2 lg:p-2 lg:py-3"
-                            >
-                                <!-- background grid of black squares -->
-                                <div class="absolute inset-0 grid grid-rows-2">
-                                    <div
-                                        class="rounded-t-md bg-gradient-to-br from-gradient-start to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    />
-                                    <div
-                                        class="rounded-b-md bg-gradient-to-br from-gradient-start-light to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    />
-                                </div>
-
-                                <!-- time numbers -->
-                                <span class="top-50 absolute">{{
-                                    hundredsDays
-                                }}</span>
-
-                                <!-- line across the middle -->
-                                <div class="absolute inset-0 flex items-center">
-                                    <div
-                                        class="dark:bg-countdown-stroke-dark h-px w-full bg-calypso-300"
-                                    />
-                                </div>
-                            </div>
-
-                            <div
-                                class="bg-black relative rounded-xl p-1 py-2 lg:p-2 lg:py-3"
-                            >
-                                <!-- background grid of black squares -->
-                                <div class="absolute inset-0 grid grid-rows-2">
-                                    <div
-                                        class="rounded-t-md bg-gradient-to-br from-gradient-start to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    />
-                                    <div
-                                        class="rounded-b-md bg-gradient-to-br from-gradient-start-light to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    />
-                                </div>
-
-                                <!-- time numbers -->
-                                <span class="top-50 absolute">{{
-                                    tensDays
-                                }}</span>
-
-                                <!-- line across the middle -->
-                                <div class="absolute inset-0 flex items-center">
-                                    <div
-                                        class="dark:bg-countdown-stroke-dark h-px w-full bg-calypso-300"
-                                    />
-                                </div>
-                            </div>
-                            <div
-                                class="bg-black relative rounded-xl p-1 py-2 lg:p-2 lg:py-3"
-                            >
-                                <!-- background grid of black squares -->
-                                <div class="absolute inset-0 grid grid-rows-2">
-                                    <div
-                                        class="rounded-t-md bg-gradient-to-br from-gradient-start to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    />
-                                    <div
-                                        class="rounded-b-md bg-gradient-to-br from-gradient-start-light to-gradient-end dark:from-gradient-start-dark dark:to-gradient-end-dark"
-                                    />
-                                </div>
-
-                                <!-- time numbers -->
-                                <span class="relative">{{ day }}</span>
-
-                                <!-- line across the middle -->
-                                <div class="absolute inset-0 flex items-center">
-                                    <div
-                                        class="dark:bg-countdown-stroke-dark h-px w-full bg-calypso-300"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div
-                            class="flex items-center justify-start text-center lg:flex-col"
-                        >
-                            <p class="text-base font-bold">
-                                <T key-name="journey.countdown.days" />
-                            </p>
-                            <p
-                                v-if="duringJourney"
-                                class="w-full pl-1 text-base font-bold lg:text-lg"
-                            >
-                                <T key-name="journey.countdown.ends" />
-                            </p>
-                            <p
-                                v-else-if="journeyEnded"
-                                class="w-full pl-1 text-base font-bold lg:text-lg"
-                            >
-                                <T key-name="journey.countdown.finished" />
-                            </p>
-                            <p
-                                v-else
-                                class="w-full pl-1 text-base font-bold lg:text-lg"
-                            >
-                                <T key-name="journey.countdown.until" />
-                            </p>
-                            <button
-                                v-if="duringJourney || currUser.role !== 1"
-                                class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
-                                @click="scroll(calendar)"
-                            >
-                                <T
-                                    key-name="journey.button.countdown.calendar"
-                                />
-                            </button>
-                            <button
-                                v-else-if="journeyEnded"
-                                class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
-                                @click="
-                                    scroll(upload);
-                                    jsConfetti.addConfetti();
-                                "
-                            >
-                                <T
-                                    key-name="journey.button.countdown.celebrate"
-                                />
-                            </button>
-                            <button
-                                v-else
-                                class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
-                                @click="
-                                    isActivityDialogVisible =
-                                        !isActivityDialogVisible
-                                "
-                            >
-                                <T key-name="journey.button.create.activity" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="flex justify-center md:justify-start">
+        <JourneyIdTicketSection
+            :daysto-end="daystoEnd"
+            :day="day"
+            :tens-days="tensDays"
+            :hundreds-days="hundredsDays"
+            :during-journey="duringJourney"
+            :journey-ended="journeyEnded"
+            :curr-user="currUser! || {}"
+            @scroll-to-target="scrollToTarget"
+            @open-activity-dialog="isActivityDialogVisible = true"
+        />
+        <div id="divider" class="flex justify-center md:justify-start">
             <div
                 class="flex w-[90%] items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
             >
@@ -1293,119 +355,98 @@ function changeToFahrenheit() {
                 />
             </div>
         </div>
-        <div
-            v-if="currUser.role === 1"
-            class="flex justify-center md:justify-start"
-        >
-            <div
-                class="-mt-4 flex h-10 w-[90%] items-end sm:w-5/6 md:ml-[10%] md:h-20 md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:h-24 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
-            >
-                <div class="-mb-2.5 text-2xl font-semibold lg:mb-3">
-                    <T key-name="journey.activities" />
-                </div>
-                <button
-                    class="-mb-3 ml-auto flex items-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-sm font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:text-base lg:mb-4"
-                    @click="isActivityDialogVisible = !isActivityDialogVisible"
-                >
-                    <SvgAddLocation class="h-6 w-6" />
-                    <T key-name="journey.button.create.activity" />
-                </button>
-            </div>
-        </div>
-        <ActivityDialog
-            v-if="currUser.role === 1"
-            :id="journeyId.toString()"
-            :visible="isActivityDialogVisible"
-            :only-show="false"
-            :create="true"
-            :create-address="true"
+        <JourneyIdActivitySection
+            :curr-user="currUser! || {}"
+            :is-activity-dialog-visible="isActivityDialogVisible"
             @close="isActivityDialogVisible = false"
         />
-        <ActivityPool v-if="currUser.role === 1" :id="journeyId.toString()" />
         <div ref="calendar">
-            <CalendarFull
+            <JourneyIdJourneyCalendar
                 :id="journeyId.toString()"
-                :current-user-role="currUser.role"
+                :current-user-role="currUser?.role ?? 0"
                 :journey-ended="journeyEnded"
                 :during-journey="duringJourney"
                 :journey-startdate="journeyData.from"
                 :journey-enddate="journeyData.to"
             />
         </div>
-        <ActivityMap v-if="activityDataLoaded" />
+        <JourneyIdActivityMap v-if="activityDataLoaded" />
         <div
             ref="upload"
-            class="flex items-center justify-center md:justify-start"
+            class="relative flex items-center justify-center md:justify-start"
+            :class="!isAuthenticated ? 'cursor-not-allowed' : ''"
+            @click="!isAuthenticated ? (isUnlockDialogVisible = true) : null"
         >
+            <JourneyIdUpload
+                :class="!isAuthenticated ? 'blur-[1.75px]' : ''"
+                @uploaded="handleUpload"
+            />
             <div
-                class="relative mt-4 flex w-[90%] items-center sm:mt-7 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+                v-if="!isAuthenticated"
+                class="absolute bottom-0 flex h-40 w-[90%] items-center sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
             >
-                <FormUpload @uploaded="handleUpload" />
+                <div class="flex w-full items-center justify-center">
+                    <button
+                        class="w-32 rounded-md border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 text-center font-medium hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="isUnlockDialogVisible = true"
+                    >
+                        <T key-name="journey.unlock.button" />
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="flex items-center justify-center md:justify-start">
+        <div
+            class="relative flex items-center justify-center md:justify-start"
+            :class="!isAuthenticated ? 'cursor-not-allowed' : ''"
+            @click="!isAuthenticated ? (isUnlockDialogVisible = true) : null"
+        >
+            <JourneyIdMediaGallery
+                :upload-data="uploadResult"
+                :class="!isAuthenticated ? 'blur-[1.75px]' : ''"
+            />
             <div
-                class="relative mt-4 flex w-[90%] items-center sm:mt-7 sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
+                v-if="!isAuthenticated"
+                class="absolute bottom-0 flex h-40 w-[90%] items-center sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
             >
-                <MediaGallery :upload-data="uploadResult" />
+                <div class="flex w-full items-center justify-center">
+                    <button
+                        class="w-32 rounded-md border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 text-center font-medium hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        @click="isUnlockDialogVisible = true"
+                    >
+                        <T key-name="journey.unlock.button" />
+                    </button>
+                </div>
             </div>
         </div>
-        <EditJourneyDialog
-            :id="store.getID()"
-            :is-journey-dialog-visible="isJourneyEditMenuVisible"
-            :name="store.getName()"
-            :destination="store.getDestination()"
-            :from="new Date(store.getFromDate())"
-            :to="new Date(store.getToDate())"
-            @close-edit-journey-dialog="isJourneyEditMenuVisible = false"
-            @journey-edited="journeyEdited"
-        />
-        <TemplateDialog
-            v-if="currUser.role === 1"
-            :is-create-template-visible="isCreateTemplateVisible"
-            @close-template-dialog="isCreateTemplateVisible = false"
-        />
-        <Dialog
-            v-model:visible="isQRCodeVisible"
-            modal
-            dismissable-mask
-            close-on-esc
-            :header="t('journey.qrcode')"
-            :pt="{
-                root: { class: 'bg-background dark:bg-background-dark' },
-                content: { class: 'bg-background dark:bg-background-dark' },
-                header: {
-                    class: 'bg-background dark:bg-background-dark text-text dark:text-natural-50 flex gap-x-5 font-nunito items-center',
-                },
-                closeButtonIcon: {
-                    class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10',
-                },
-            }"
-        >
-            <div class="bg-background dark:bg-background-dark">
-                <img class="w-full" :src="qrcode" alt="QR Code" />
-            </div>
-        </Dialog>
-        <ConfirmDialog
-            :draggable="false"
-            group="journey"
-            :pt="{
-                header: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                content: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                },
-                footer: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
-                },
-                closeButton: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
-                },
-                closeButtonIcon: {
-                    class: 'h-5 w-5',
-                },
-            }"
-        />
+
+        <div id="extra-dialogs">
+            <JourneyIdDialogsUnlockDialog
+                :is-unlock-dialog-visible="isUnlockDialogVisible"
+                @close-unlock-dialog="isUnlockDialogVisible = false"
+                @open-qrcode="openQRCode"
+            />
+
+            <JourneyIdDialogsQRCodeDialog
+                :qrcode="qrcode"
+                :visible="isQRCodeVisible"
+                :tolgee-key="qrcodeTolgeeKey"
+                @close="isQRCodeVisible = false"
+            />
+            <ConfirmDialog
+                :draggable="false"
+                group="journey"
+                :pt="{
+                    header: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    content: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    footer: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                }"
+            />
+        </div>
     </div>
 </template>

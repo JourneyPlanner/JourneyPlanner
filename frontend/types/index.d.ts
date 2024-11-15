@@ -5,9 +5,10 @@ declare global {
         id: string;
         name: string;
         destination: string;
+        invite: string;
         mapbox_full_address: string;
-        from: Date;
-        to: Date;
+        from: string;
+        to: string;
         role: number;
     }
 
@@ -24,6 +25,7 @@ declare global {
             address: string;
             full_address: string;
             place_formatted: string;
+            name_preferred: string;
             context: {
                 country: {
                     id: string;
@@ -83,6 +85,13 @@ declare global {
             features: Feature[];
             attribution: string;
         };
+    }
+
+    interface User {
+        id: string;
+        display_name: string;
+        username: string;
+        role: number;
     }
 
     interface Activity {

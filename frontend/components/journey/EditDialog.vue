@@ -14,11 +14,7 @@ const props = defineProps({
     to: { type: Date, required: true },
 });
 
-const emit = defineEmits([
-    "deleteJourney",
-    "journeyEdited",
-    "closeEditJourneyDialog",
-]);
+const emit = defineEmits(["journeyEdited", "closeEditJourneyDialog"]);
 
 watch(
     () => props.isJourneyDialogVisible,
@@ -32,6 +28,7 @@ const isDialogVisible = ref(false);
 const { t } = useTranslate();
 const toast = useToast();
 const client = useSanctumClient();
+const { isAuthenticated } = useSanctumAuth();
 const confirm = useConfirm();
 
 const loadingEdit = ref(false);
@@ -41,9 +38,10 @@ const close = () => {
 };
 
 const confirmDelete = (event: Event) => {
+    close();
     confirm.require({
         target: event.currentTarget as HTMLElement,
-        group: "dashboard",
+        group: "journey",
         header: t.value("dashboard.delete.header"),
         message: t.value("dashboard.delete.confirm"),
         icon: "pi pi-exclamation-triangle",
@@ -59,8 +57,7 @@ const confirmDelete = (event: Event) => {
                 detail: t.value("delete.journey.toast.message"),
                 life: 3000,
             });
-            close();
-            emit("deleteJourney", props.id);
+            deleteJourney(props.id);
         },
     });
 };
@@ -150,6 +147,39 @@ const onSave = handleSubmit(async (values) => {
         },
     });
 });
+
+/**
+ * delete the journey
+ */
+async function deleteJourney(id: string) {
+    await client(`/api/journey/${id}`, {
+        method: "DELETE",
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("delete.journey.toast.success.heading"),
+                    detail: t.value("delete.journey.toast.success"),
+                    life: 6000,
+                });
+                if (!isAuthenticated.value) {
+                    localStorage.removeItem("JP_guest_journey_id");
+                    await navigateTo("/journey/new");
+                } else {
+                    await navigateTo("/dashboard");
+                }
+            }
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
 </script>
 
 <template>

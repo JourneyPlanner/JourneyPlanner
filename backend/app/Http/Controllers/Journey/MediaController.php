@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Journey;
 
+use App\Http\Controllers\Controller;
 use App\Models\Media;
 use Illuminate\Http\Request;
 use App\Models\Journey;
@@ -11,12 +12,12 @@ use Illuminate\Support\Facades\Gate;
 class MediaController extends Controller
 {
     /**
-     * Get the users of the journey.
+     * Get all media of the specified journey.
      */
-    public function index(Request $request, $journey): JsonResponse
+    public function index(Journey $journey): JsonResponse
     {
-        $journey = Journey::findOrFail($journey);
-        Gate::authorize("journeyMember", $journey);
+        Gate::authorize("view", [$journey, false]);
+
         $media = $journey->media->map(function ($media) {
             return [
                 "id" => $media->id,
@@ -39,12 +40,12 @@ class MediaController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified media.
      */
-    public function show(Request $request, $journey, $media)
+    public function show(Request $request, Journey $journey, Media $media)
     {
-        $journey = Journey::findOrFail($journey);
-        //Gate::authorize("journeyMember", $journey);
+        Gate::authorize("show", [$journey, false]);
+
         if ($request->has("thumbnail")) {
             $media = Media::findOrFail($media);
             $thumbnailPath = $media->getThumbnailPath();

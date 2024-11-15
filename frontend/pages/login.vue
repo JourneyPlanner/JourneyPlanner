@@ -6,6 +6,7 @@ import * as yup from "yup";
 const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
+const route = useRoute();
 
 const title = t.value("form.header.login");
 
@@ -16,6 +17,13 @@ useHead({
 definePageMeta({
     middleware: ["sanctum:guest"],
 });
+
+if (route.query.redirect?.toString().startsWith("/invite")) {
+    localStorage.setItem(
+        "JP_invite_journey_id",
+        route.query.redirect as string,
+    );
+}
 
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
@@ -63,6 +71,7 @@ async function loginUser(userData: User) {
             detail: t.value("form.login.toast.success"),
             life: 3000,
         });
+
         await navigateTo("/dashboard");
     } catch (error: unknown) {
         if (
@@ -94,83 +103,92 @@ async function loginUser(userData: User) {
 </script>
 
 <template>
-    <div
-        class="flex w-full items-center justify-center font-nunito dark:bg-background-dark"
-    >
-        <div class="dark:background-dark h-[90vh] w-0 sm:w-0 md:w-1/4 xl:w-1/3">
-            <SvgCloud
-                class="z-50 -ml-24 mt-[20vh] w-0 overflow-hidden object-none dark:fill-clouds-bg md:w-[80%] xl:w-[50%]"
-            />
-            <SvgCloud
-                class="absolute left-[35vh] top-[49vh] z-30 w-0 overflow-hidden object-none md:left-[18vh] md:w-[25%] xl:w-[20%]"
-            />
-            <div class="overflow-hidden">
-                <SvgCloudReversed
-                    class="z-50 mt-[55vh] w-0 overflow-hidden object-none dark:fill-clouds-bg md:w-[70%] xl:w-[45%]"
-                />
-                <SvgBalloon
-                    class="absolute left-[45vh] top-[45vh] z-0 w-0 md:left-[28vh] md:w-[5%] xl:w-[4%]"
-                />
-                <SvgBalloon
-                    class="absolute left-[68vh] top-12 w-0 md:w-[8%] xl:w-[7%]"
-                />
-            </div>
+    <div>
+        <div class="absolute left-4 top-4 z-50">
+            <NuxtLink to="/" class="z-50">
+                <SvgLogoHorizontalBlue class="w-44 lg:w-52" />
+            </NuxtLink>
         </div>
         <div
-            class="relative z-40 flex h-[90vh] w-full items-center justify-center overflow-hidden sm:w-full md:w-2/4 xl:w-1/3"
+            class="flex w-full items-center justify-center font-nunito dark:bg-background-dark"
         >
             <div
-                class="z-20 mt-6 h-[75vh] w-full text-center sm:w-3/4 md:flex md:items-center md:justify-center xl:flex xl:items-center xl:justify-center"
+                class="dark:background-dark h-[90vh] w-0 sm:w-0 md:w-1/4 xl:w-1/3"
             >
-                <fieldset
-                    id="outerBlock"
-                    class="focus:ring-indigo-500 focus:border-indigo-500 flex h-auto w-full flex-col items-center rounded-3xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-3 py-2 pl-2 shadow-sm focus:outline-none dark:border-calypso-400 dark:bg-gothic-300 dark:bg-opacity-20"
-                >
-                    <legend
-                        for="outerBlock"
-                        class="mb-5 px-2 text-center text-3xl font-bold text-text dark:text-natural-50 lg:ml-7 lg:text-left"
-                    >
-                        <T key-name="form.header.login" />
-                    </legend>
-                    <form class="w-5/6" @submit="onSubmit">
-                        <FormInput
-                            id="email"
-                            name="email"
-                            translation-key="form.input.email"
-                        />
-
-                        <FormPassword
-                            id="password"
-                            name="password"
-                            :feedback-style="true"
-                            translation-key="form.input.password"
-                        />
-
-                        <button
-                            class="text-md my-5 mt-4 rounded-2xl border-2 border-dandelion-300 bg-natural-50 px-6 py-2.5 font-nunito font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
-                        >
-                            <T key-name="form.button.login" />
-                        </button>
-                    </form>
-                    <NuxtLink
-                        to="/register"
-                        class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"
-                    >
-                        <T key-name="form.text.no_account" />
-                    </NuxtLink>
-                </fieldset>
+                <SvgCloud
+                    class="z-50 -ml-24 mt-[20vh] w-0 overflow-hidden object-none dark:fill-clouds-bg md:w-[80%] xl:w-[50%]"
+                />
+                <SvgCloud
+                    class="absolute left-[35vh] top-[49vh] z-30 w-0 overflow-hidden object-none md:left-[18vh] md:w-[25%] xl:w-[20%]"
+                />
+                <div class="overflow-hidden">
+                    <SvgCloudReversed
+                        class="z-50 mt-[55vh] w-0 overflow-hidden object-none dark:fill-clouds-bg md:w-[70%] xl:w-[45%]"
+                    />
+                    <SvgBalloon
+                        class="absolute left-[45vh] top-[45vh] z-0 w-0 md:left-[28vh] md:w-[5%] xl:w-[4%]"
+                    />
+                    <SvgBalloon
+                        class="absolute left-[68vh] top-12 w-0 md:w-[8%] xl:w-[7%]"
+                    />
+                </div>
             </div>
-            <SvgCloudReversed
-                class="absolute -left-4 top-[50vh] z-0 w-[30vh] overflow-hidden sm:w-[30vh] md:w-0 xl:w-0"
-            />
-            <SvgBalloonWithPeople
-                class="absolute -right-24 top-[30vh] z-0 w-[30vh] overflow-hidden sm:-right-12 sm:w-[30vh] md:w-0 xl:w-0"
-            />
-        </div>
-        <div
-            class="flex h-[90vh] w-0 items-center justify-center sm:w-0 md:w-1/4 xl:w-1/3"
-        >
-            <SvgBalloonWithPeople class="w-[60%]" />
+            <div
+                class="relative z-40 flex h-[90vh] w-full items-center justify-center overflow-hidden sm:w-full md:w-2/4 xl:w-1/3"
+            >
+                <div
+                    class="z-20 mt-6 h-[75vh] w-full text-center sm:w-3/4 md:flex md:items-center md:justify-center xl:flex xl:items-center xl:justify-center"
+                >
+                    <fieldset
+                        id="outerBlock"
+                        class="focus:ring-indigo-500 focus:border-indigo-500 flex h-auto w-full flex-col items-center rounded-3xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-3 py-2 pl-2 shadow-sm focus:outline-none dark:border-calypso-400 dark:bg-gothic-300 dark:bg-opacity-20"
+                    >
+                        <legend
+                            for="outerBlock"
+                            class="mb-5 px-2 text-center text-3xl font-bold text-text dark:text-natural-50 lg:ml-7 lg:text-left"
+                        >
+                            <T key-name="form.header.login" />
+                        </legend>
+                        <form class="w-5/6" @submit="onSubmit">
+                            <FormInput
+                                id="email"
+                                name="email"
+                                translation-key="form.input.email"
+                            />
+
+                            <FormPassword
+                                id="password"
+                                name="password"
+                                :feedback-style="true"
+                                translation-key="form.input.password"
+                            />
+
+                            <button
+                                class="text-md my-5 mt-4 rounded-2xl border-2 border-dandelion-300 bg-natural-50 px-6 py-2.5 font-nunito font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                            >
+                                <T key-name="form.button.login" />
+                            </button>
+                        </form>
+                        <NuxtLink
+                            to="/register"
+                            class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"
+                        >
+                            <T key-name="form.text.no_account" />
+                        </NuxtLink>
+                    </fieldset>
+                </div>
+                <SvgCloudReversed
+                    class="absolute -left-4 top-[50vh] z-0 w-[30vh] overflow-hidden sm:w-[30vh] md:w-0 xl:w-0"
+                />
+                <SvgBalloonWithPeople
+                    class="absolute -right-24 top-[30vh] z-0 w-[30vh] overflow-hidden sm:-right-12 sm:w-[30vh] md:w-0 xl:w-0"
+                />
+            </div>
+            <div
+                class="flex h-[90vh] w-0 items-center justify-center sm:w-0 md:w-1/4 xl:w-1/3"
+            >
+                <SvgBalloonWithPeople class="w-[60%]" />
+            </div>
         </div>
     </div>
 </template>
