@@ -359,6 +359,8 @@ function scrollToTarget(target: string) {
         <JourneyIdActivitySection
             :curr-user="currUser! || {}"
             :is-activity-dialog-visible="isActivityDialogVisible"
+            :journey-start="fromDate"
+            :journey-end="toDate"
             @close="isActivityDialogVisible = false"
         />
         <div ref="calendar">

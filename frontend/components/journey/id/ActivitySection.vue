@@ -8,6 +8,8 @@ const props = defineProps({
         type: Object as PropType<User>,
         required: true,
     },
+    journeyStart: { type: Date, required: true },
+    journeyEnd: { type: Date, required: true },
 });
 
 const emit = defineEmits(["close"]);
@@ -54,12 +56,16 @@ function close() {
         <JourneyIdComponentsActivityPool
             v-if="currUser?.role === 1 || !isAuthenticated"
             :id="journeyStore.getID()"
+            :journey-start="props.journeyStart"
+            :journey-end="props.journeyEnd"
         />
         <JourneyIdDialogsActivityDialog
             v-if="currUser?.role === 1 || !isAuthenticated"
             :id="journeyStore.getID()"
             :visible="isDialogVisible"
             :only-show="false"
+            :journey-start="props.journeyStart"
+            :journey-end="props.journeyEnd"
             :create="true"
             :create-address="true"
             @close="close"

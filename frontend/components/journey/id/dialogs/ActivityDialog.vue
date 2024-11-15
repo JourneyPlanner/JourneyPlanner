@@ -665,7 +665,7 @@ function changeRepeat() {
                                 class="w-full sm:pb-2 sm:pr-16"
                             />
                             <div
-                                class="mb-0 flex w-full cursor-pointer flex-col sm:mb-2 sm:pr-16"
+                                class="mb-0 flex cursor-pointer flex-col max-sm:hidden sm:mb-2 sm:pr-16"
                             >
                                 <label
                                     for="repeat"
@@ -734,15 +734,89 @@ function changeRepeat() {
                                         />
                                     </template>
                                 </Dropdown>
-                                <CustomRepeat
-                                    :visible="showCustomizeRepeat"
-                                    :start-date="props.journeyStart"
-                                    :end-date="props.journeyEnd"
-                                    @close="
-                                        showCustomizeRepeat = false;
-                                        selectedRepeat = '';
-                                    "
-                                />
+                            </div>
+                            <CustomRepeat
+                                :visible="showCustomizeRepeat"
+                                :start-date="props.journeyStart"
+                                :end-date="props.journeyEnd"
+                                @close="
+                                    showCustomizeRepeat = false;
+                                    selectedRepeat = '';
+                                "
+                            />
+                        </div>
+                        <div class="flex sm:hidden">
+                            <div class="w-1/2" />
+                            <div
+                                class="mb-0 flex w-1/2 cursor-pointer flex-col sm:mb-2 sm:pr-16"
+                            >
+                                <label
+                                    for="repeat"
+                                    class="text-sm font-medium md:text-base"
+                                >
+                                    <T key-name="activity.repeat" />
+                                </label>
+                                <Dropdown
+                                    id="repeat"
+                                    v-model="selectedRepeat"
+                                    :options="repeatModes"
+                                    option-label="name"
+                                    :placeholder="t('activity.repeat.not')"
+                                    :highlight-on-select="false"
+                                    :focus-on-hover="false"
+                                    :unstyled="true"
+                                    class="w-full"
+                                    :pt="{
+                                        root: {
+                                            class: 'flex font-nunito block rounded-lg px-2.5 pb-1 pt-1 text-text dark:text-natural-50 font-normal border-2 border-calypso-600 focus:outline-none focus:ring-1 bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 disabled:bg-natural-100 disabled:dark:bg-natural-800',
+                                        },
+                                        input: {
+                                            class: 'text-text w-fit dark:text-natural-50 rounded-md ',
+                                        },
+                                        item: {
+                                            class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600',
+                                        },
+                                        wrapper: {
+                                            class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
+                                        },
+                                        trigger: {
+                                            class: 'w-fit ml-auto',
+                                        },
+                                    }"
+                                    @change="changeRepeat"
+                                >
+                                    <template #value="slotProps">
+                                        <div
+                                            v-if="slotProps.value"
+                                            class="align-items-center flex"
+                                        >
+                                            <div>
+                                                {{ slotProps.value.name }}
+                                            </div>
+                                        </div>
+                                        <span v-else>
+                                            {{ slotProps.placeholder }}
+                                        </span>
+                                    </template>
+                                    <template #option="slotProps">
+                                        <div
+                                            class="align-items-center flex items-center"
+                                        >
+                                            <span
+                                                :class="slotProps.option.code"
+                                                class="pr-2"
+                                            />
+                                            <div>
+                                                {{ slotProps.option.name }}
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template #dropdownicon>
+                                        <InputIcon
+                                            class="pi pi-calendar text-calypso-400"
+                                        />
+                                    </template>
+                                </Dropdown>
                             </div>
                         </div>
                     </div>
