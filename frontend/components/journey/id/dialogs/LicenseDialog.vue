@@ -53,7 +53,7 @@ const isVisible = ref(props.visible);
         >
             <template #header>
                 <span
-                    class="h-1 w-5 rounded-l-sm bg-calypso-400 dark:bg-calypso-600"
+                    class="h-0.5 w-5 rounded-l-sm bg-calypso-400 dark:bg-calypso-600"
                 />
                 <h3
                     class="text-nowrap text-3xl font-medium text-text dark:text-natural-50"
@@ -61,13 +61,13 @@ const isVisible = ref(props.visible);
                     <T key-name="journey.weather.license.info" />
                 </h3>
                 <span
-                    class="h-1 w-full rounded-r-sm bg-calypso-400 dark:bg-calypso-600 md:mr-2"
+                    class="h-0.5 w-full rounded-r-sm bg-calypso-400 dark:bg-calypso-600 md:mr-2"
                 />
             </template>
             <div
-                class="flex flex-col gap-y-5 font-semibold text-natural-950 dark:text-natural-50"
+                class="flex flex-col gap-y-4 font-normal text-natural-950 dark:text-natural-50"
             >
-                <div class="">
+                <div>
                     <T key-name="journey.weather.license.part1" />
                     <NuxtLink
                         to="https://open-meteo.com/"
