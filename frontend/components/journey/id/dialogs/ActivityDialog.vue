@@ -41,6 +41,12 @@ const updateRef = ref(props.update);
 const calendarClickedRef = ref(props.calendarClicked);
 const selectedRepeat = ref();
 const showCustomizeRepeat = ref(false);
+const repeatType = ref();
+const repeatInterval = ref();
+const repeatIntervalUnit = ref();
+const repeatOn = ref();
+const repeatEndDate = ref();
+const repeatEndOccurences = ref();
 
 const repeatModes = ref([
     { name: t.value("activity.repeat.not") },
@@ -187,8 +193,18 @@ const validationSchema = yup.object({
     open: yup.string().nullable(),
     date: yup.string().nullable(),
     time: yup.string().nullable(),
+    repeatType: yup.object().nullable(),
     dateAndTime: yup.bool().when(["time", "date"], {
         is: (time: Date, date: Date) => (!date && !time) || (!!date && !!time),
+        then: () => yup.bool().nullable(),
+        otherwise: () =>
+            yup.bool().required(t.value("form.input.activity.custom.error")),
+    }),
+    RepeatAndDate: yup.bool().when(["repeatType", "time", "date"], {
+        is: (repeatType: object | undefined, time: Date, date: Date) =>
+            repeatType == undefined ||
+            repeatType.name == t.value("activity.repeat.not") ||
+            (!!repeatType && !!date && !!time),
         then: () => yup.bool().nullable(),
         otherwise: () =>
             yup.bool().required(t.value("form.input.activity.custom.error")),
@@ -247,6 +263,12 @@ async function onSuccess(values: ActivityForm) {
             email: values.email,
             phone: values.phone,
             opening_hours: values.open,
+            repeat_type: repeatType.value,
+            repeat_interval: repeatInterval.value,
+            repeat_interval_unit: repeatIntervalUnit.value,
+            repeat_on: repeatOn.value,
+            repeat_end_date: repeatEndDate.value,
+            repeat_end_occurences: repeatEndOccurences.value,
         };
     } else {
         activity = {
@@ -263,6 +285,12 @@ async function onSuccess(values: ActivityForm) {
             opening_hours: values.open,
             date: date,
             time: time,
+            repeat_type: repeatType.value,
+            repeat_interval: repeatInterval.value,
+            repeat_interval_unit: repeatIntervalUnit.value,
+            repeat_on: repeatOn.value,
+            repeat_end_date: repeatEndDate.value,
+            repeat_end_occurences: repeatEndOccurences.value,
         };
     }
 
@@ -426,10 +454,16 @@ function setSelectedDate(date: Date) {
     }
 }
 
-function changeRepeat() {
-    console.log(selectedRepeat.value.name);
-    if (selectedRepeat.value.name == t.value("activity.repeat.custom")) {
-        showCustomizeRepeat.value = true;
+function changeRepeat(selectedRepeat: string) {
+    console.log(selectedRepeat);
+    if (selectedRepeat == t.value("activity.repeat.custom")) {
+        repeatType.value = "custom";
+    } else if (selectedRepeat == t.value("activity.repeat.daily")) {
+        repeatType.value = "daily";
+    } else if (selectedRepeat == t.value("activity.repeat.weekly")) {
+        repeatType.value = "weekly";
+    } else {
+        repeatType.value = null;
     }
 }
 </script>
@@ -667,73 +701,14 @@ function changeRepeat() {
                             <div
                                 class="mb-0 flex cursor-pointer flex-col max-sm:hidden sm:mb-2 sm:pr-16"
                             >
-                                <label
-                                    for="repeat"
-                                    class="text-sm font-medium md:text-base"
-                                >
-                                    <T key-name="activity.repeat" />
-                                </label>
-                                <Dropdown
-                                    id="repeat"
-                                    v-model="selectedRepeat"
-                                    :options="repeatModes"
-                                    option-label="name"
-                                    :placeholder="t('activity.repeat.not')"
-                                    :highlight-on-select="false"
-                                    :focus-on-hover="false"
-                                    :unstyled="true"
+                                <FormActivityRepeat
+                                    id="repeatType"
+                                    name="repeatType"
                                     class="w-full"
-                                    :pt="{
-                                        root: {
-                                            class: 'flex font-nunito block rounded-lg px-2.5 pb-1 pt-1 text-text dark:text-natural-50 font-normal border-2 border-calypso-600 focus:outline-none focus:ring-1 bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 disabled:bg-natural-100 disabled:dark:bg-natural-800',
-                                        },
-                                        input: {
-                                            class: 'text-text w-fit dark:text-natural-50 rounded-md ',
-                                        },
-                                        item: {
-                                            class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600',
-                                        },
-                                        wrapper: {
-                                            class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
-                                        },
-                                        trigger: {
-                                            class: 'w-fit ml-auto',
-                                        },
-                                    }"
-                                    @change="changeRepeat"
-                                >
-                                    <template #value="slotProps">
-                                        <div
-                                            v-if="slotProps.value"
-                                            class="align-items-center flex"
-                                        >
-                                            <div>
-                                                {{ slotProps.value.name }}
-                                            </div>
-                                        </div>
-                                        <span v-else>
-                                            {{ slotProps.placeholder }}
-                                        </span>
-                                    </template>
-                                    <template #option="slotProps">
-                                        <div
-                                            class="align-items-center flex items-center"
-                                        >
-                                            <span
-                                                :class="slotProps.option.code"
-                                                class="pr-2"
-                                            />
-                                            <div>
-                                                {{ slotProps.option.name }}
-                                            </div>
-                                        </div>
-                                    </template>
-                                    <template #dropdownicon>
-                                        <InputIcon
-                                            class="pi pi-calendar text-calypso-400"
-                                        />
-                                    </template>
-                                </Dropdown>
+                                    :journey-start="props.journeyStart"
+                                    :journey-end="props.journeyEnd"
+                                    @input="changeRepeat"
+                                />
                             </div>
                             <CustomRepeat
                                 :visible="showCustomizeRepeat"
@@ -783,7 +758,6 @@ function changeRepeat() {
                                             class: 'w-fit ml-auto',
                                         },
                                     }"
-                                    @change="changeRepeat"
                                 >
                                     <template #value="slotProps">
                                         <div
