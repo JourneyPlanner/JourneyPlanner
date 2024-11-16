@@ -81,10 +81,17 @@ onMounted(() => {
                     },
                 });
 
+                if (observer.value) {
+                    observer.value.disconnect();
+                }
+
                 observer.value = new IntersectionObserver((entries) => {
                     const target = entries[0];
                     if (target.isIntersecting) {
-                        if (moreTemplatesAvailable.value) {
+                        if (
+                            moreTemplatesAvailable.value &&
+                            !isFilterVisible.value
+                        ) {
                             cursor.value = nextCursor.value;
                             refresh();
                         }
@@ -650,13 +657,12 @@ function editJourney(journey: Journey, id: string) {
                             <T key-name="dashboard.template.filter.clear" />
                         </button>
                     </h4>
-                    <div
+                    <!-- <div
                         v-if="status === 'pending' && isFilterVisible"
                         class="col-span-full flex h-full items-center justify-center"
                     >
                         <ProgressSpinner />
-                    </div>
-
+                    </div> -->
                     <div
                         v-if="isFilterVisible"
                         id="filter-dialog"
@@ -788,15 +794,14 @@ function editJourney(journey: Journey, id: string) {
                     </div>
                 </div>
 
-                <div
-                    v-if="moreTemplatesAvailable && status !== 'pending'"
-                    ref="loader"
-                >
-                    <div class="flex justify-center">
-                        <ProgressSpinner class="w-10" />
-                    </div>
-                    <div class="flex justify-center italic">
-                        <T key-name="dashboard.templates.loading" />
+                <div ref="loader">
+                    <div v-if="moreTemplatesAvailable">
+                        <div class="flex justify-center">
+                            <ProgressSpinner class="w-10" />
+                        </div>
+                        <div class="flex justify-center italic">
+                            <T key-name="dashboard.templates.loading" />
+                        </div>
                     </div>
                 </div>
                 <div

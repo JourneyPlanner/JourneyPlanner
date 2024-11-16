@@ -132,11 +132,12 @@ const close = (): void => {
                 />
             </template>
             <div class="mt-1">
-                <h2
-                    class="ml-4 max-w-36 truncate text-xl text-natural-500 dark:text-natural-300 xs:ml-6 xs:max-w-48 sm:ml-[2.875rem] sm:max-w-72 md:ml-8 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
+                <NuxtLink
+                    :to="'/user/' + username"
+                    class="ml-4 max-w-36 truncate text-xl text-natural-500 hover:underline dark:text-natural-300 xs:ml-6 xs:max-w-48 sm:ml-[2.875rem] sm:max-w-72 md:ml-8 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
                 >
                     @{{ username }}
-                </h2>
+                </NuxtLink>
             </div>
             <div class="mt-6 flex flex-col">
                 <h1
