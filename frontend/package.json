@@ -14,7 +14,8 @@
         "start:host": "concurrently \"infisical run --env=dev -- nuxt dev --host 0 --port 3000 -o\" \"cd ../docker/dev && infisical run --env=dev -- docker compose up\" \"cd ../backend && wait-on tcp:3306 -d 5000 --log && infisical run --env=dev -- php artisan migrate\" \"cd ../backend && infisical run --env=dev -- php artisan serve\"",
         "start:staging": "concurrently \"infisical run --env=dev -- nuxt dev -o\" \"cd ../backend && infisical run --env=staging -- php artisan serve\"",
         "start:staging:host": "concurrently \"infisical run --env=dev -- nuxt dev --host 0 --port 3000 -o\" \"cd ../backend && infisical run --env=staging -- php artisan serve\"",
-        "clone-staging-db": "cd ../docker/dev && @powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./clone_db.ps1"
+        "clone-staging-db": "cd ../docker/dev && @powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./clone_db.ps1",
+        "install-all": "npm install && cd ../backend && npm install && composer install && cd ../docker/dev && docker compose pull"
     },
     "dependencies": {
         "@fullcalendar/core": "^6.1.11",
@@ -63,6 +64,9 @@
         "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
         "@types/mapbox-gl": "^3.4.1",
         "@types/qrcode": "^1.5.5",
+        "@typescript-eslint/eslint-plugin": "^8.14.0",
+        "@typescript-eslint/parser": "^8.14.0",
+        "eslint": "^9.15.0",
         "husky": "^9.1.5",
         "lint-staged": "^15.2.10",
         "mapbox-gl": "^3.7.0",

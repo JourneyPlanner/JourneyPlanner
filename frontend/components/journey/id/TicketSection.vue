@@ -45,34 +45,91 @@ const currTemperature = ref();
 const weatherType = ref("");
 const highestTemp = ref(24);
 const lowestTemp = ref(9);
+const isLicenseVisible = ref(false);
+
+const weatherTypeTomorrow = ref();
+const weatherTypeInTwoDays = ref();
+const weatherTypeInThreeDays = ref();
+const weatherCodeToday = ref();
+const weatherCodeTomorrow = ref();
+const weatherCodeInTwoDays = ref();
+const weatherCodeInThreeDays = ref();
+const locationFound = ref(true);
 
 const flip = () => {
     isFlipped.value = !isFlipped.value;
 };
 
-const { data: weather } = await useAsyncData("weather", () =>
+const { data: weather, refresh } = await useAsyncData("weather", () =>
     client(`/api/journey/${journeyStore.getID()}/weather`),
 );
 
-currTemperature.value = Math.round(weather.value.current.temperature);
-highestTemp.value = Math.round(weather.value.forecast[0].temperature_max);
-lowestTemp.value = Math.round(weather.value.forecast[0].temperature_min);
-weatherType.value = t.value(
-    `weather.code.${weather.value.current.weather_code}`,
+if (weather.value && weather.value.error != "Weather data not available") {
+    currTemperature.value = Math.round(weather.value.current.temperature);
+    highestTemp.value = Math.round(weather.value.forecast[0].temperature_max);
+    lowestTemp.value = Math.round(weather.value.forecast[0].temperature_min);
+
+    weatherType.value = t.value(
+        `weather.code.${weather.value.current.weather_code}`,
+    );
+    weatherTypeTomorrow.value = t.value(
+        `weather.code.${weather.value.forecast[1].weather_code}`,
+    );
+    weatherTypeInTwoDays.value = t.value(
+        `weather.code.${weather.value.forecast[2].weather_code}`,
+    );
+    weatherTypeInThreeDays.value = t.value(
+        `weather.code.${weather.value.forecast[3].weather_code}`,
+    );
+
+    weatherCodeToday.value = weather.value.current.weather_code;
+    weatherCodeTomorrow.value = weather.value.forecast[1].weather_code;
+    weatherCodeInTwoDays.value = weather.value.forecast[2].weather_code;
+    weatherCodeInThreeDays.value = weather.value.forecast[3].weather_code;
+} else {
+    locationFound.value = false;
+}
+
+watch(
+    journeyStore,
+    async () => {
+        await refresh();
+        if (
+            weather.value &&
+            weather.value.error != "Weather data not available"
+        ) {
+            updateWeatherData();
+        } else {
+            locationFound.value = false;
+        }
+    },
+    { immediate: true },
 );
-const weatherTypeTomorrow = t.value(
-    `weather.code.${weather.value.forecast[1].weather_code}`,
-);
-const weatherTypeInTwoDays = t.value(
-    `weather.code.${weather.value.forecast[2].weather_code}`,
-);
-const weatherTypeInThreeDays = t.value(
-    `weather.code.${weather.value.forecast[3].weather_code}`,
-);
-const weatherCodeToday = weather.value.current.weather_code;
-const weatherCodeTomorrow = weather.value.forecast[1].weather_code;
-const weatherCodeInTwoDays = weather.value.forecast[2].weather_code;
-const weatherCodeInThreeDays = weather.value.forecast[3].weather_code;
+
+function updateWeatherData() {
+    locationFound.value = true;
+    currTemperature.value = Math.round(weather.value.current.temperature);
+    highestTemp.value = Math.round(weather.value.forecast[0].temperature_max);
+    lowestTemp.value = Math.round(weather.value.forecast[0].temperature_min);
+
+    weatherType.value = t.value(
+        `weather.code.${weather.value.current.weather_code}`,
+    );
+    weatherTypeTomorrow.value = t.value(
+        `weather.code.${weather.value.forecast[1].weather_code}`,
+    );
+    weatherTypeInTwoDays.value = t.value(
+        `weather.code.${weather.value.forecast[2].weather_code}`,
+    );
+    weatherTypeInThreeDays.value = t.value(
+        `weather.code.${weather.value.forecast[3].weather_code}`,
+    );
+
+    weatherCodeToday.value = weather.value.current.weather_code;
+    weatherCodeTomorrow.value = weather.value.forecast[1].weather_code;
+    weatherCodeInTwoDays.value = weather.value.forecast[2].weather_code;
+    weatherCodeInThreeDays.value = weather.value.forecast[3].weather_code;
+}
 
 function changeToCelsius() {
     if (fahrenheit.value == true) {
@@ -212,8 +269,21 @@ function emitScroll(target: string) {
                                 class="flex h-full w-full justify-center rounded-b-2xl border-x-2 border-b-2 border-natural-200 bg-natural-50 text-sm dark:border-gothic-600 dark:bg-dark"
                             >
                                 <div
+                                    v-if="locationFound"
                                     class="relative flex h-full w-full flex-col overflow-hidden"
                                 >
+                                    <div
+                                        class="absolute left-2 top-2 z-50 flex h-[1.25rem] w-[1.25rem] cursor-pointer items-center justify-center rounded-full text-center text-sm text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                        @click.stop="
+                                            isLicenseVisible = !isLicenseVisible
+                                        "
+                                    >
+                                        <span class="pi pi-info-circle" />
+                                    </div>
+                                    <JourneyIdDialogsLicenseDialog
+                                        :visible="isLicenseVisible"
+                                        @close="isLicenseVisible = false"
+                                    />
                                     <div
                                         class="absolute bottom-4 right-1 z-40 ml-10 mt-1 flex h-[3.8rem] w-[3.8rem] cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
                                     >
@@ -331,6 +401,43 @@ function emitScroll(target: string) {
                                         </div>
                                     </div>
                                 </div>
+                                <div v-if="!locationFound">
+                                    <div
+                                        class="absolute bottom-4 right-1 z-40 ml-10 mt-1 flex h-[3.8rem] w-[3.8rem] cursor-pointer select-none items-center justify-center self-center rounded-full border-2 border-dashed border-natural-400 pl-1.5 pr-1.5 text-xs text-natural-400 dark:border-natural-50 dark:text-natural-50"
+                                    >
+                                        <T key-name="journey.turn" />
+                                    </div>
+                                    <div class="flex">
+                                        <div
+                                            class="flex w-full items-center justify-center"
+                                        >
+                                            <SvgWeatherNotFound
+                                                class="-ml-2 mt-6 block w-28 dark:hidden"
+                                            />
+                                            <SvgWeatherNotFoundDark
+                                                class="-ml-2 mt-6 hidden w-28 dark:block"
+                                            />
+                                        </div>
+                                        <div
+                                            class="mt-6 text-natural-800 dark:text-natural-200"
+                                        >
+                                            <h1
+                                                class="-ml-2 mt-2 pr-10 text-left text-xl font-semibold"
+                                            >
+                                                <T
+                                                    key-name="journey.weather.not.found"
+                                                />
+                                            </h1>
+                                            <div
+                                                class="-ml-2 text-left text-sm"
+                                            >
+                                                <T
+                                                    key-name="journey.weather.not.found.solution"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -422,7 +529,20 @@ function emitScroll(target: string) {
                 <div
                     class="flex h-full w-full cursor-default justify-center rounded-b-3xl border-b-2 border-r-2 border-natural-200 dark:border-gothic-600 dark:bg-dark"
                 >
-                    <div class="relative flex h-full w-full flex-col items-end">
+                    <JourneyIdDialogsLicenseDialog
+                        :visible="isLicenseVisible"
+                        @close="isLicenseVisible = false"
+                    />
+                    <div
+                        v-if="locationFound"
+                        class="relative flex h-full w-full flex-col items-end"
+                    >
+                        <div
+                            class="absolute left-2 top-2 flex h-[1.25rem] w-[1.25rem] cursor-pointer items-center justify-center rounded-full text-center text-sm text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                            @click="isLicenseVisible = !isLicenseVisible"
+                        >
+                            <span class="pi pi-info-circle" />
+                        </div>
                         <div class="flex w-full pt-2 font-nunito max-lg:h-1/2">
                             <div class="flex w-1/2 items-center justify-center">
                                 <JourneyIdComponentsWeatherIcon
@@ -478,9 +598,9 @@ function emitScroll(target: string) {
                                                 value: weatherType,
                                                 pt: { root: 'font-nunito' },
                                             }"
-                                            class="-ml-1 flex h-6 w-32 justify-center overflow-hidden overflow-ellipsis text-nowrap"
-                                            >{{ weatherType }}</span
-                                        >
+                                            class="z-50 h-6 w-32 overflow-hidden overflow-ellipsis text-nowrap text-center"
+                                            >{{ weatherType }}
+                                        </span>
                                     </div>
                                     <div
                                         class="flex items-end justify-start pt-1 lg:text-xl"
@@ -519,6 +639,25 @@ function emitScroll(target: string) {
                                 :weather-code="weatherCodeInThreeDays"
                                 :weather-type="weatherTypeInThreeDays"
                             />
+                        </div>
+                    </div>
+                    <div
+                        v-if="!locationFound"
+                        class="text-natural-800 dark:text-natural-200"
+                    >
+                        <div class="flex w-full items-center justify-center">
+                            <SvgWeatherNotFound
+                                class="mt-6 block w-32 dark:hidden"
+                            />
+                            <SvgWeatherNotFoundDark
+                                class="mt-6 hidden w-32 dark:block"
+                            />
+                        </div>
+                        <h1 class="mt-2 text-center text-xl font-semibold">
+                            <T key-name="journey.weather.not.found" />
+                        </h1>
+                        <div class="px-5 text-center text-sm">
+                            <T key-name="journey.weather.not.found.solution" />
                         </div>
                     </div>
                 </div>

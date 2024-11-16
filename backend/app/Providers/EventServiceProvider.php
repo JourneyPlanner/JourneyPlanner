@@ -16,6 +16,10 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         Registered::class => [SendEmailVerificationNotification::class],
+        \SocialiteProviders\Manager\SocialiteWasCalled::class => [
+            \SocialiteProviders\Microsoft\MicrosoftExtendSocialite::class .
+            "@handle",
+        ],
     ];
 
     /**

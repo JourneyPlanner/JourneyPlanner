@@ -10,7 +10,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\Support\Str;
 
 class RegisteredUserController extends Controller
 {
@@ -22,7 +21,7 @@ class RegisteredUserController extends Controller
     public function store(Request $request): Response
     {
         $request->validate([
-            "display_name" => ["required", "string", "max:255"],
+            "display_name" => ["required", "string", "max:127"],
             "email" => [
                 "required",
                 "string",
@@ -34,13 +33,7 @@ class RegisteredUserController extends Controller
             "password" => ["required", "confirmed", Rules\Password::defaults()],
         ]);
 
-        $username = Str::lower(
-            preg_replace("/[ ]/", "_", $request->display_name)
-        );
-        $username = preg_replace("/[^a-z0-9_-]/", "", $username);
-        while (User::where("username", $username)->exists()) {
-            $username .= Str::lower(Str::random(4));
-        }
+        $username = User::generateUsername($request->display_name);
 
         $user = User::create([
             "display_name" => $request->display_name,

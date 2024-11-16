@@ -20,6 +20,10 @@ class WeatherService
 
         $weatherData = $response->json();
 
+        if (!isset($weatherData["current"]) || !isset($weatherData["daily"])) {
+            return ["error" => "Weather data not available"];
+        }
+
         return [
             "current" => [
                 "temperature" => $weatherData["current"]["temperature_2m"],

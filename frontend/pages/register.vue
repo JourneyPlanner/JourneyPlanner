@@ -75,15 +75,6 @@ async function registerUser(userData: object) {
                     life: 3000,
                 });
                 await navigateTo("/dashboard");
-                /*
-                if (localStorage.getItem("JP_invite_journey_id")) {
-                    await navigateTo(
-                        localStorage.getItem("JP_invite_journey_id"),
-                    );
-                } else {
-                    await navigateTo("/dashboard");
-                }
-                */
             } else if (response.status === 422) {
                 toast.add({
                     severity: "error",
@@ -176,11 +167,16 @@ async function registerUser(userData: object) {
                             </div>
 
                             <button
-                                class="text-md my-4 mt-4 rounded-2xl border-2 border-dandelion-300 bg-natural-50 px-6 py-2.5 font-nunito font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                class="mb-2 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-14 py-1 font-nunito text-lg font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
                             >
                                 <T key-name="form.button.register" />
                             </button>
                         </form>
+                        <div
+                            class="mb-5 mt-1 flex w-full flex-col justify-center gap-x-5 gap-y-2"
+                        >
+                            <FormOAuth />
+                        </div>
                         <div class="flex flex-row gap-x-2">
                             <NuxtLink
                                 to="/login"

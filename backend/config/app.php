@@ -171,6 +171,7 @@ return [
             App\Providers\EventServiceProvider::class,
             App\Providers\RouteServiceProvider::class,
             ProtoneMedia\LaravelFFMpeg\Support\ServiceProvider::class,
+            \SocialiteProviders\Manager\ServiceProvider::class,
         ])
         ->toArray(),
 
