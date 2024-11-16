@@ -69,6 +69,7 @@ class ActivityController extends Controller
 
         // Create the calendar activity if the date is provided
         if (!$this->createCalendarActivityIfNeeded($validated, $activity)) {
+            $activity["calendar_activities"] = [];
             return response()->json($activity, 201);
         }
 
@@ -203,11 +204,13 @@ class ActivityController extends Controller
 
         $calendarActivityStart = new DateTime($calendarActivity->start);
         $calendarActivityEnd = new DateTime($calendarActivity->end);
+        $maxDate = new DateTime($journey->to);
+        $maxDate->setTime(23, 59, 59);
         $repeatEndDate = new DateTime(
             $validated["repeat_end_date"] ?? $journey->to
         );
-        if ($repeatEndDate > new DateTime($journey->to)) {
-            $repeatEndDate = new DateTime($journey->to);
+        if ($repeatEndDate > $maxDate) {
+            $repeatEndDate = $maxDate;
         }
 
         if (
@@ -217,13 +220,13 @@ class ActivityController extends Controller
             $repeatOn = $validated["repeat_on"] ?? [];
             $occurences =
                 $validated["repeat_end_occurrences"] ??
-                (($calendarActivityStart->diff($repeatEndDate)->days + 1) / 7) *
-                count($repeatOn);
+                (($calendarActivityStart->diff($maxDate)->days + 1) / 7) *
+                    count($repeatOn);
             $shiftInterval = new DateInterval("P1D");
             while ($occurences > 1) {
                 $calendarActivityStart->add($shiftInterval);
                 $calendarActivityEnd->add($shiftInterval);
-                if ($calendarActivityStart > new DateTime($journey->to)) {
+                if ($calendarActivityStart > $maxDate) {
                     break;
                 }
                 if (in_array($calendarActivityStart->format("D"), $repeatOn)) {
@@ -252,14 +255,14 @@ class ActivityController extends Controller
                 ($validated["repeat_type"] == "weekly" ? 7 : 1);
             $occurences =
                 $validated["repeat_end_occurrences"] ??
-                ($calendarActivityStart->diff($repeatEndDate)->days + 1) /
-                $repeatEveryDays;
+                ($calendarActivityStart->diff($maxDate)->days + 1) /
+                    $repeatEveryDays;
             $shiftInterval = new DateInterval("P" . $repeatEveryDays . "D");
 
             for ($i = 1; $i < $occurences; $i++) {
                 $calendarActivityStart->add($shiftInterval);
                 $calendarActivityEnd->add($shiftInterval);
-                if ($calendarActivityStart > new DateTime($journey->to)) {
+                if ($calendarActivityStart > $maxDate) {
                     break;
                 }
                 $repeatedActivity = $calendarActivity
