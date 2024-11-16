@@ -17,16 +17,16 @@ const isProfileDialogVisible = ref(false);
 
 <template>
     <div
-        class="rounded-xl border-2 border-natural-200 hover:cursor-pointer"
+        class="rounded-xl border-2 border-natural-200 hover:cursor-pointer hover:border-calypso-400"
         @click="$emit('openTemplate', template.id)"
     >
         <div
-            class="flex h-5 w-full items-center rounded-t-lg bg-calypso-300 px-2"
+            class="flex h-6 w-full items-center rounded-t-[0.7rem] bg-calypso-300 px-2"
         >
             <div class="w-full border border-dashed border-natural-50" />
-            <SvgAirplaneIcon class="h-4 pl-1 text-natural-50" />
+            <SvgAirplaneIcon class="h-5 pl-1 text-natural-50" />
         </div>
-        <div class="px-2.5 pb-3 pt-2">
+        <div class="px-2.5 pb-2 pt-2">
             <h3
                 v-tooltip.top="{
                     value: template.name,
@@ -41,12 +41,12 @@ const isProfileDialogVisible = ref(false);
                     value: template.users[0].username,
                     pt: { root: 'font-nunito' },
                 }"
-                class="truncate text-xl text-natural-600"
+                class="-mt-1 truncate text-xl text-natural-600"
             >
                 <T key-name="template.by" /><span
                     :class="
                         !displayedInProfile
-                            ? 'cursor-pointer hover:underline'
+                            ? 'cursor-pointer hover:text-calypso-600 hover:underline'
                             : ''
                     "
                     @click.stop="
@@ -71,8 +71,8 @@ const isProfileDialogVisible = ref(false);
                 <div class="flex flex-row items-center gap-x-1">
                     <i class="pi pi-calendar text-lg text-calypso-600" />
                     <h5 class="truncate text-lg">
-                        {{ template.length
-                        }}<T
+                        {{ template.length }}
+                        <T
                             :key-name="
                                 template.length === 1
                                     ? 'template.day'

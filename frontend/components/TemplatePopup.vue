@@ -119,8 +119,8 @@ function close() {
                             class="pi pi-calendar mr-2 text-xl text-calypso-600"
                         />
                         <h5 class="truncate text-xl">
-                            {{ template.length
-                            }}<T
+                            {{ template.length }}
+                            <T
                                 :key-name="
                                     template.length === 1
                                         ? 'template.day'
@@ -163,9 +163,9 @@ function close() {
                     <p v-if="template.description">
                         {{ template.description }}
                     </p>
-                    <span v-else class="italic"
-                        ><T key-name="template.description.none"
-                    /></span>
+                    <span v-else class="italic">
+                        <T key-name="template.description.none" />
+                    </span>
                 </div>
             </div>
             <div id="activities" class="mt-2.5">
@@ -173,7 +173,7 @@ function close() {
                     <T :key-name="'template.activity.pool'" />
                 </h3>
                 <div
-                    class="h-40 w-full rounded-2xl border-2 border-dashed border-calypso-400 dark:border-calypso-600 dark:bg-background-dark max-lg:mt-5 md:h-[17rem] lg:rounded-3xl"
+                    class="h-40 w-full rounded-2xl border-2 border-dashed border-calypso-400 dark:border-calypso-600 dark:bg-background-dark max-lg:mt-5 md:h-[12rem] lg:rounded-3xl"
                 >
                     <Skeleton
                         v-if="activityCount === null"
@@ -182,14 +182,14 @@ function close() {
                     />
                     <ScrollPanel
                         v-else
-                        class="h-[9.7rem] w-full sm:h-[12.7rem] md:h-[16.7rem]"
+                        class="h-[9.7rem] w-full sm:h-[12.7rem] md:h-[11.7rem]"
                         :pt="{
                             bary: 'invisible hover:hidden',
                             wrapper: 'z-0',
                         }"
                     >
                         <div
-                            class="mx-2 my-2 grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-5"
+                            class="mx-2 my-2 grid grid-cols-2 gap-1 md:grid-cols-3 lg:grid-cols-4"
                         >
                             <div
                                 v-for="activity in activities"
@@ -234,8 +234,9 @@ function close() {
                 <NuxtLink
                     :to="'/template/' + template.id"
                     class="mt-auto flex h-9 w-40 flex-row items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:cursor-pointer hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
-                    ><T key-name="template.preview"
-                /></NuxtLink>
+                >
+                    <T key-name="template.preview" />
+                </NuxtLink>
             </div>
         </div>
     </Dialog>
