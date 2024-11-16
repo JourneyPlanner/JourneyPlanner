@@ -64,7 +64,7 @@ const { data: weather, refresh } = await useAsyncData("weather", () =>
     client(`/api/journey/${journeyStore.getID()}/weather`),
 );
 
-if (weather.value.error != "Weather data not available" && weather.value) {
+if (weather.value && weather.value.error != "Weather data not available") {
     currTemperature.value = Math.round(weather.value.current.temperature);
     highestTemp.value = Math.round(weather.value.forecast[0].temperature_max);
     lowestTemp.value = Math.round(weather.value.forecast[0].temperature_min);
@@ -95,8 +95,8 @@ watch(
     async () => {
         await refresh();
         if (
-            weather.value.error != "Weather data not available" &&
-            weather.value
+            weather.value &&
+            weather.value.error != "Weather data not available"
         ) {
             updateWeatherData();
         } else {
