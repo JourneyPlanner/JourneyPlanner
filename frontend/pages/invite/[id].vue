@@ -20,6 +20,8 @@ const { data, error } = await useAsyncData("invite", () =>
 );
 
 if (error.value) {
+    localStorage.removeItem("JP_invite_journey_id");
+    localStorage.removeItem("JP_guest_journey_id");
     throw createError({
         message: "No journey found for this invite",
         status: 404,

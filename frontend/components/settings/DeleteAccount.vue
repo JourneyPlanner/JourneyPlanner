@@ -5,6 +5,7 @@ import * as yup from "yup";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
+    requiresPassword: { type: Boolean, required: true },
 });
 
 const isVisible = ref(props.visible);
@@ -22,13 +23,17 @@ watch(
     },
 );
 
+const validationSchema = props.requiresPassword
+    ? yup.object({
+          password: yup
+              .string()
+              .min(8, () => t.value("form.input.password.error"))
+              .required(() => t.value("form.input.required")),
+      })
+    : "";
+
 const { errors, handleSubmit, defineField, handleReset } = useForm({
-    validationSchema: yup.object({
-        password: yup
-            .string()
-            .min(8, () => t.value("form.input.password.error"))
-            .required(() => t.value("form.input.required")),
-    }),
+    validationSchema,
 });
 
 const [password] = defineField("password");
@@ -128,14 +133,17 @@ async function deleteAccount() {
                     <T
                         key-name="dashboard.user.settings.delete.account.description.part3"
                     />
-                    <div class="mt-2">
+                    <div v-if="requiresPassword" class="mt-2">
                         <T
                             key-name="dashboard.user.settings.delete.account.description.part4"
                         />
                     </div>
                 </div>
                 <div class="flex items-center pl-6 pt-4">
-                    <div class="flex w-full flex-col items-center">
+                    <div
+                        v-if="requiresPassword"
+                        class="flex w-full flex-col items-center"
+                    >
                         <div
                             class="flex w-2/3 items-start text-text dark:text-natural-50"
                         >
@@ -146,7 +154,7 @@ async function deleteAccount() {
                             v-model="password"
                             name="password"
                             type="password"
-                            class="focus-ring-1 w-2/3 rounded-md border-2 border-natural-400 bg-natural-50 py-0.5 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                            class="focus-ring-1 mb-1 w-2/3 rounded-md border-2 border-natural-400 bg-natural-50 py-0.5 pl-3 text-text placeholder:text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         />
                         <span
                             class="flex w-2/3 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
@@ -154,7 +162,7 @@ async function deleteAccount() {
                         >
                     </div>
                 </div>
-                <div class="flex w-full justify-center pb-2 pt-6">
+                <div class="flex w-full justify-center pb-2 pt-4">
                     <button
                         class="mr-5 w-40 rounded-md bg-natural-50 px-2 pr-7 text-lg font-medium text-text hover:underline dark:bg-background-dark dark:text-natural-50"
                         @click="close"
@@ -301,13 +309,16 @@ async function deleteAccount() {
                     <T
                         key-name="dashboard.user.settings.delete.account.description.part3"
                     />
-                    <div class="mt-2">
+                    <div v-if="requiresPassword" class="mt-2">
                         <T
                             key-name="dashboard.user.settings.delete.account.description.part4"
                         />
                     </div>
                 </div>
-                <div class="flex items-center pl-6 pt-4">
+                <div
+                    v-if="requiresPassword"
+                    class="flex items-center pl-6 pt-4"
+                >
                     <div class="flex w-full flex-col items-center">
                         <div
                             class="</div> mb-2 mr-12 mt-2 flex w-full items-start dark:text-natural-50"

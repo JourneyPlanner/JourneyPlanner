@@ -74,6 +74,9 @@ onMounted(() => {
     }
 });
 
+const { data: requiresPassword, refresh: refreshRequiresPassword } =
+    await useAsyncData("reqpw", () => client(`/api/me/requiresPassword`));
+
 const close = () => {
     emit("close");
 };
@@ -773,6 +776,9 @@ function blur(e: Event) {
                         <SettingsEmailChange
                             :visible="isEmailChangeDialogVisible"
                             :curr-email="currEmail"
+                            :requires-password="
+                                requiresPassword.requiresPassword
+                            "
                             @close="isEmailChangeDialogVisible = false"
                             @change-email="changeEmail"
                         />
@@ -802,7 +808,11 @@ function blur(e: Event) {
                         </button>
                         <SettingsPasswordChange
                             :visible="isPasswordChangeDialogVisible"
+                            :requires-password="
+                                requiresPassword.requiresPassword
+                            "
                             @close="isPasswordChangeDialogVisible = false"
+                            @changed-password="refreshRequiresPassword"
                         />
                     </div>
                 </div>
@@ -986,6 +996,9 @@ function blur(e: Event) {
                         </button>
                         <SettingsDeleteAccount
                             :visible="isDeleteAccountDialogVisible"
+                            :requires-password="
+                                requiresPassword.requiresPassword
+                            "
                             @close="isDeleteAccountDialogVisible = false"
                         />
                     </div>

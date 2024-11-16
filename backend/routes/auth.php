@@ -38,3 +38,16 @@ Route::post("/email/verification-notification", [
 Route::post("/logout", [AuthenticatedSessionController::class, "destroy"])
     ->middleware("auth")
     ->name("logout");
+
+Route::get("/auth/redirect/microsoft", [
+    AuthenticatedSessionController::class,
+    "redirectToProviderMicrosoft",
+]);
+Route::get("/auth/callback/microsoft", [
+    AuthenticatedSessionController::class,
+    "handleProviderCallbackMicrosoft",
+]);
+Route::post("/auth/callback/google", [
+    AuthenticatedSessionController::class,
+    "handleProviderCallbackGoogle",
+]);
