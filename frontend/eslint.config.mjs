@@ -7,7 +7,7 @@ export default withNuxt({
         "vue/html-self-closing": "off",
         "@typescript-eslint/no-unused-expressions": [
             "error",
-            { allowShortCircuit: false },
+            { allowShortCircuit: true },
         ],
     },
 });
