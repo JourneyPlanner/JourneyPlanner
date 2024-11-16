@@ -73,92 +73,7 @@ class ActivityController extends Controller
         }
 
         // Handle repeating activities
-        if (
-            !array_key_exists("repeat_type", $validated) ||
-            !$validated["repeat_type"]
-        ) {
-            return response()->json($activity->load("calendarActivities"), 201);
-        }
-
-        $calendarActivity = $activity->calendarActivities()->first();
-        if (!$calendarActivity) {
-            return response()->json($activity, 201);
-        }
-        $calendarActivity->is_repeat_series_starter = true;
-        $calendarActivity->save();
-
-        $calendarActivityStart = new DateTime($calendarActivity->start);
-        $calendarActivityEnd = new DateTime($calendarActivity->end);
-        $repeatEndDate = new DateTime(
-            $validated["repeat_end_date"] ?? $journey->to
-        );
-        if ($repeatEndDate > new DateTime($journey->to)) {
-            $repeatEndDate = new DateTime($journey->to);
-        }
-
-        if (
-            $validated["repeat_type"] == "custom" &&
-            $validated["repeat_interval_unit"] == "weeks"
-        ) {
-            $repeatOn = $validated["repeat_on"] ?? [];
-            $occurences =
-                $validated["repeat_end_occurrences"] ??
-                (($calendarActivityStart->diff($repeatEndDate)->days + 1) / 7) *
-                    count($repeatOn);
-            $shiftInterval = new DateInterval("P1D");
-            while ($occurences > 1) {
-                $calendarActivityStart->add($shiftInterval);
-                $calendarActivityEnd->add($shiftInterval);
-                if ($calendarActivityStart > new DateTime($journey->to)) {
-                    break;
-                }
-                if (in_array($calendarActivityStart->format("D"), $repeatOn)) {
-                    $repeatedActivity = $calendarActivity
-                        ->replicate(["start", "end"])
-                        ->fill([
-                            "start" => $calendarActivityStart,
-                            "end" => $calendarActivityEnd,
-                        ]);
-                    $repeatedActivity->save();
-                    $occurences--;
-                }
-                if ($calendarActivityStart->format("D") == "Sun") {
-                    $shift = $validated["repeat_interval"] - 1;
-                    $calendarActivityStart->add(
-                        new DateInterval("P" . $shift . "W")
-                    );
-                    $calendarActivityEnd->add(
-                        new DateInterval("P" . $shift . "W")
-                    );
-                }
-            }
-        } else {
-            $repeatEveryDays =
-                $validated["repeat_interval"] ??
-                ($validated["repeat_type"] == "weekly" ? 7 : 1);
-            $occurences =
-                $validated["repeat_end_occurrences"] ??
-                ($calendarActivityStart->diff($repeatEndDate)->days + 1) /
-                    $repeatEveryDays;
-            $shiftInterval = new DateInterval("P" . $repeatEveryDays . "D");
-
-            for ($i = 1; $i < $occurences; $i++) {
-                $calendarActivityStart->add($shiftInterval);
-                $calendarActivityEnd->add($shiftInterval);
-                if ($calendarActivityStart > new DateTime($journey->to)) {
-                    break;
-                }
-                $repeatedActivity = $calendarActivity
-                    ->replicate(["start", "end"])
-                    ->fill([
-                        "start" => $calendarActivityStart,
-                        "end" => $calendarActivityEnd,
-                    ]);
-                $repeatedActivity->save();
-            }
-        }
-
-        return response()->json($activity->load("calendarActivities"), 201);
+        return $this->handleRepeatingActivity($journey, $activity, $validated);
     }
 
     /**
@@ -262,5 +177,100 @@ class ActivityController extends Controller
         $calendarActivity->save();
 
         return true;
+    }
+
+    /**
+     * Repeat the activity if needed.
+     */
+    private function handleRepeatingActivity(
+        Journey $journey,
+        Activity $activity,
+        array $validated
+    ): JsonResponse {
+        if (
+            !array_key_exists("repeat_type", $validated) ||
+            !$validated["repeat_type"]
+        ) {
+            return response()->json($activity->load("calendarActivities"), 201);
+        }
+
+        $calendarActivity = $activity->calendarActivities()->first();
+        if (!$calendarActivity) {
+            return response()->json($activity, 201);
+        }
+        $calendarActivity->is_repeat_series_starter = true;
+        $calendarActivity->save();
+
+        $calendarActivityStart = new DateTime($calendarActivity->start);
+        $calendarActivityEnd = new DateTime($calendarActivity->end);
+        $repeatEndDate = new DateTime(
+            $validated["repeat_end_date"] ?? $journey->to
+        );
+        if ($repeatEndDate > new DateTime($journey->to)) {
+            $repeatEndDate = new DateTime($journey->to);
+        }
+
+        if (
+            $validated["repeat_type"] == "custom" &&
+            $validated["repeat_interval_unit"] == "weeks"
+        ) {
+            $repeatOn = $validated["repeat_on"] ?? [];
+            $occurences =
+                $validated["repeat_end_occurrences"] ??
+                (($calendarActivityStart->diff($repeatEndDate)->days + 1) / 7) *
+                count($repeatOn);
+            $shiftInterval = new DateInterval("P1D");
+            while ($occurences > 1) {
+                $calendarActivityStart->add($shiftInterval);
+                $calendarActivityEnd->add($shiftInterval);
+                if ($calendarActivityStart > new DateTime($journey->to)) {
+                    break;
+                }
+                if (in_array($calendarActivityStart->format("D"), $repeatOn)) {
+                    $repeatedActivity = $calendarActivity
+                        ->replicate(["start", "end"])
+                        ->fill([
+                            "start" => $calendarActivityStart,
+                            "end" => $calendarActivityEnd,
+                        ]);
+                    $repeatedActivity->save();
+                    $occurences--;
+                }
+                if ($calendarActivityStart->format("D") == "Sun") {
+                    $shift = $validated["repeat_interval"] - 1;
+                    $calendarActivityStart->add(
+                        new DateInterval("P" . $shift . "W")
+                    );
+                    $calendarActivityEnd->add(
+                        new DateInterval("P" . $shift . "W")
+                    );
+                }
+            }
+        } else {
+            $repeatEveryDays =
+                $validated["repeat_interval"] ??
+                ($validated["repeat_type"] == "weekly" ? 7 : 1);
+            $occurences =
+                $validated["repeat_end_occurrences"] ??
+                ($calendarActivityStart->diff($repeatEndDate)->days + 1) /
+                $repeatEveryDays;
+            $shiftInterval = new DateInterval("P" . $repeatEveryDays . "D");
+
+            for ($i = 1; $i < $occurences; $i++) {
+                $calendarActivityStart->add($shiftInterval);
+                $calendarActivityEnd->add($shiftInterval);
+                if ($calendarActivityStart > new DateTime($journey->to)) {
+                    break;
+                }
+                $repeatedActivity = $calendarActivity
+                    ->replicate(["start", "end"])
+                    ->fill([
+                        "start" => $calendarActivityStart,
+                        "end" => $calendarActivityEnd,
+                    ]);
+                $repeatedActivity->save();
+            }
+        }
+        return response()->json($activity->load("calendarActivities"), 201);
     }
 }
