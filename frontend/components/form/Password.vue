@@ -93,7 +93,7 @@ const { value, errorMessage } = useField<string>(() => props.name);
             :class="errorMessage ? '-mb-1.5 mt-0.5 block' : 'hidden'"
         >
             <span
-                class="ml-0.5 text-left text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
+                class="ml-0.5 text-left text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300"
                 >{{ errorMessage }}</span
             >
         </div>
@@ -101,7 +101,8 @@ const { value, errorMessage } = useField<string>(() => props.name);
             :for="id"
             class="pointer-events-none absolute left-0 top-0 py-4 pl-3 text-sm transition-all duration-300"
             :class="{
-                'text-natural-400': !isFocused,
+                'text-natural-600': !isFocused,
+                'dark:text-natural-200': !isFocused,
                 'text-calypso-600': isFocused,
                 '-translate-y-4 scale-75': isFocused || value,
                 'translate-y-0 scale-100': !isFocused && !value,

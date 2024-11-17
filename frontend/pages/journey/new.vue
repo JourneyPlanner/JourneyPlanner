@@ -202,7 +202,7 @@ function copyToClipboard() {
                                 type="text"
                                 name="journey-invite"
                                 disabled
-                                class="text-md peer w-[90%] rounded-lg border-2 border-calypso-300 bg-natural-100 px-2.5 pb-1 pt-4 font-bold text-natural-500 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-300"
+                                class="peer w-[90%] rounded-lg border-2 border-calypso-300 bg-natural-100 px-2.5 pb-1 pt-4 text-base font-medium text-natural-500 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-700 dark:text-natural-300"
                                 placeholder=" "
                             />
                             <label

@@ -115,7 +115,7 @@ async function registerUser(userData: object) {
         >
             <div class="h-[90vh] sm:w-0 md:w-1/4 xl:w-1/3">
                 <SvgAircraft
-                    class="z-0 -ml-[20vw] mt-6 w-0 overflow-hidden object-none md:w-[350%] lg:mt-20 xl:mt-32 xl:w-[230%]"
+                    class="z-0 -ml-[20vw] mt-6 w-0 overflow-hidden object-none md:w-[350%] lg:mt-20 xl:mt-20 xl:w-[230%]"
                 />
             </div>
             <div
@@ -128,7 +128,7 @@ async function registerUser(userData: object) {
                     >
                         <legend
                             for="outerBlock"
-                            class="mb-5 px-2 text-center text-3xl font-bold text-text dark:text-natural-50 lg:ml-7 lg:text-left"
+                            class="mb-3 px-2 text-center text-3xl font-bold text-text dark:text-natural-50 lg:ml-7 lg:text-left"
                         >
                             <T key-name="form.header.register" />
                         </legend>
