@@ -68,6 +68,7 @@ const props = defineProps({
 });
 const activityId = ref("");
 const calendarId = ref("");
+const isRecurringActivityEditVisible = ref(false);
 const calendarActivity = ref();
 const onlyShow = ref(true);
 const update = ref(false);
@@ -450,15 +451,11 @@ async function initializeDrop(info: EventObject) {
  * @param info -- the event object with data about the activity
  */
 async function editDrop(info: EventObject) {
+    isRecurringActivityEditVisible.value = true;
     const activityId = info.event._def.extendedProps.activity_id;
-    const id = ref(info.event._def.publicId);
+    const calenderActivityId = info.event._def.publicId;
     const startTime = info.event._instance.range.start.toISOString();
     const endTime = info.event._instance.range.end.toISOString();
-
-    const activity = {
-        start: startTime.substring(0, startTime.length - 2),
-        end: endTime.substring(0, endTime.length - 2),
-    };
 
     const duration = differenceInMinutes(
         new Date(endTime).getTime(),
@@ -473,63 +470,32 @@ async function editDrop(info: EventObject) {
         minutes.toString().padStart(2, "0") +
         ":00";
 
-    await client(
-        `/api/journey/${props.id}/activity/${activityId}/calendarActivity/${id.value}`,
-        {
-            method: "PATCH",
-            body: activity,
-            async onResponse({ response }) {
-                if (response.ok) {
-                    toast.add({
-                        severity: "success",
-                        summary: t.value(
-                            "form.input.activity.edit.toast.success.heading",
-                        ),
-                        detail: t.value(
-                            "form.input.activity.edit.toast.success.detail",
-                        ),
-                        life: 6000,
-                    });
-                }
-            },
-            async onRequestError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-            },
-            async onResponseError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-            },
-        },
-    );
+    const activity = {
+        estimated_duration: newDuration,
+        calendar_activity_id: calenderActivityId,
+    };
 
-    const activities = store.activityData as Activity[];
-    let newActivity;
-    activities
-        .filter(
-            (activity) =>
-                activity.id === activityId &&
-                activity.estimated_duration !== newDuration,
-        )
-        .forEach((activity: Activity) => {
-            activities[activities.indexOf(activity)].estimated_duration =
-                newDuration;
-            newActivity = activities[activities.indexOf(activity)];
-        });
-    if (newActivity !== undefined) {
-        await client(`/api/journey/${props.id}/activity/${activityId}`, {
-            method: "PATCH",
-            body: newActivity,
-        });
-    }
+    await client(`/api/journey/${props.id}/activity/${activityId}`, {
+        method: "PATCH",
+        body: activity,
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value(
+                        "form.input.activity.edit.toast.success.heading",
+                    ),
+                    detail: t.value(
+                        "form.input.activity.edit.toast.success.detail",
+                    ),
+                    life: 6000,
+                });
+                close();
+                store.updateActivity(response._data, activityId);
+                store.setNewActivity(response._data);
+            }
+        },
+    });
 }
 
 /**
@@ -550,6 +516,7 @@ function showData(info: EventObject) {
                 update.value = false;
                 onlyShow.value = true;
             }
+            console.log(activity);
             address.value = activity.address;
             cost.value = activity.cost;
             created_at.value = activity.created_at;
@@ -625,6 +592,10 @@ function moveActivity(start: Date, end: Date) {
 </script>
 <template>
     <div class="flex justify-center md:justify-start">
+        <FormActivityRepeatEditType
+            :visible="isRecurringActivityEditVisible"
+            @close="isRecurringActivityEditVisible = false"
+        />
         <div
             class="flex w-[90%] flex-col items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >

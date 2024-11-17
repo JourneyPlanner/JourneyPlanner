@@ -156,12 +156,12 @@ function toggleDay(index: number) {
 }
 const getItemClass = (option: repeatType) => {
     return option.value * repeatNumber.value > props.daysInJourney
-        ? "text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 !cursor-not-allowed "
+        ? "text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 !cursor-not-allowed"
         : "hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600";
 };
 
 function changeRepeat() {
-    if (props.daysInJourney < 7) {
+    if (props.daysInJourney <= 1) {
         timeModeselected.value = timeModeselected.value = {
             name: t.value("activity.repeat.day"),
             value: 1,
@@ -197,11 +197,25 @@ function changeOccurences() {
             repeatNumber.value *
             occurrenceCount.value,
     );
-    if (
+    const activeDays = ref<string[]>([]);
+    days.value.forEach((day) => {
+        if (day.active) {
+            activeDays.value.push(day.day);
+        }
+    });
+    const totalLength =
         timeModeselected.value.value *
-            repeatNumber.value *
-            occurrenceCount.value >=
-        props.daysInJourney
+        repeatNumber.value *
+        occurrenceCount.value;
+    if (
+        (totalLength >= props.daysInJourney &&
+            (timeModeselected.value.name === t.value("activity.repeat.days") ||
+                timeModeselected.value.name ===
+                    t.value("activity.repeat.day"))) ||
+        (totalLength >= props.daysInJourney * activeDays.value.length &&
+            (timeModeselected.value.name === t.value("activity.repeat.weeks") ||
+                timeModeselected.value.name ===
+                    t.value("activity.repeat.week")))
     ) {
         occurrenceCount.value = occurrenceCount.value - 1;
         toast.add({
@@ -210,24 +224,21 @@ function changeOccurences() {
             detail: t.value("journey.too.short.detail"),
             life: 3000,
         });
-        while (
-            timeModeselected.value.value *
-                repeatNumber.value *
-                occurrenceCount.value >=
-            props.daysInJourney
+        console.log(timeModeselected.value.name);
+        if (
+            timeModeselected.value.name === t.value("activity.repeat.weeks") ||
+            timeModeselected.value.name === t.value("activity.repeat.week")
         ) {
-            if (
-                Math.ceil(
-                    (timeModeselected.value.value *
-                        repeatNumber.value *
-                        occurrenceCount.value) /
-                        100,
-                ) >= props.daysInJourney
-            ) {
-                occurrenceCount.value = Math.ceil(occurrenceCount.value / 100);
-                console.log(occurrenceCount.value);
-            }
-            occurrenceCount.value = occurrenceCount.value - 1;
+            console.log(activeDays.value.length);
+            occurrenceCount.value = Math.ceil(
+                (props.daysInJourney * activeDays.value.length) /
+                    (timeModeselected.value.value * repeatNumber.value),
+            );
+        } else {
+            occurrenceCount.value = Math.ceil(
+                props.daysInJourney /
+                    (timeModeselected.value.value * repeatNumber.value),
+            );
         }
     }
 }
@@ -453,7 +464,7 @@ function changeOccurences() {
                                 'text-gray-600': true,
                                 'text-natural-400': endOption !== 'occurrences',
                             }"
-                            >occurrences</span
+                            >{{ t("activity.repeat.occurrences") }}</span
                         >
                     </div>
                 </div>
@@ -681,7 +692,7 @@ function changeOccurences() {
                                 'text-gray-600': true,
                                 'text-natural-400': endOption !== 'occurrences',
                             }"
-                            >occurrences</span
+                            >{{ t("activity.repeat.occurrences") }}</span
                         >
                     </div>
                 </div>

@@ -261,6 +261,7 @@ async function onSuccess(values: ActivityForm) {
 
     let activity = undefined;
     if (props.calendarClicked) {
+        console.log(date);
         activity = {
             name: values.name,
             estimated_duration: duration,
@@ -273,12 +274,15 @@ async function onSuccess(values: ActivityForm) {
             email: values.email,
             phone: values.phone,
             opening_hours: values.open,
+            date: date,
+            time: time,
             repeat_type: repeatType.value,
             repeat_interval: repeatInterval.value,
             repeat_interval_unit: repeatIntervalUnit.value,
             repeat_on: repeatOn.value,
             repeat_end_date: repeatEndDate.value,
             repeat_end_occurences: repeatEndOccurences.value,
+            calendar_activity_id: props.calendarActivity.id,
         };
     } else {
         activity = {
@@ -329,6 +333,7 @@ async function onSuccess(values: ActivityForm) {
                     activityStore.setNewActivity(response._data);
                     if (props.calendarActivity) {
                         emit("editCalendarActivity", activity.name);
+                        emit("calendarMoved", start, end);
                     }
                 }
             },
@@ -352,26 +357,6 @@ async function onSuccess(values: ActivityForm) {
                 loadingSave.value = false;
             },
         });
-
-        if (props.calendarClicked && start && end) {
-            const calendarActivity = props.calendarActivity;
-            calendarActivity.start = start;
-            calendarActivity.end = end;
-            await client(
-                `/api/journey/${props.id}/activity/${props.activityId}/calendarActivity/${props.calendarActivity.id}`,
-                {
-                    method: "PATCH",
-                    body: calendarActivity,
-                    async onResponse({ response }) {
-                        if (response.ok) {
-                            close();
-                            loadingSave.value = false;
-                            emit("calendarMoved", start, end);
-                        }
-                    },
-                },
-            );
-        }
     } else {
         await client(`/api/journey/${props.id}/activity`, {
             method: "POST",
