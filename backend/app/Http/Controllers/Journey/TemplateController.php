@@ -186,4 +186,31 @@ class TemplateController extends Controller
     {
         //
     }
+
+    /**
+     * Get all template destinations.
+     */
+    public function getDestinations()
+    {
+        $validated = request()->validate([
+            "per_page" => "nullable|integer|min:1|max:100",
+            "search" => "nullable|string",
+        ]);
+
+        $perPage = $validated["per_page"] ?? 10;
+        $search = $validated["search"] ?? "";
+
+        $destinations = Journey::where("is_template", true)
+            ->where(function ($query) use ($search) {
+                $query
+                    ->where("destination", "like", "%$search%")
+                    ->orWhere("mapbox_full_address", "like", "%$search%");
+            })
+            ->orderBy("destination", "asc")
+            ->distinct()
+            ->simplePaginate($perPage, ["destination"])
+            ->withQueryString();
+
+        return response()->json($destinations);
+    }
 }
