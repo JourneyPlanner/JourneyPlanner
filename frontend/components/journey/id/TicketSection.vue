@@ -3,7 +3,7 @@ import { useTranslate } from "@tolgee/vue";
 import { format } from "date-fns";
 import JSConfetti from "js-confetti";
 
-defineProps({
+const props = defineProps({
     hundredsDays: {
         type: Number,
         required: true,
@@ -28,6 +28,14 @@ defineProps({
         type: Object as PropType<User>,
         required: true,
     },
+    isTemplate: {
+        type: Boolean,
+        default: false,
+    },
+    templateId: {
+        type: String,
+        default: "",
+    },
 });
 
 const emits = defineEmits(["open-activity-dialog", "scrollToTarget"]);
@@ -51,7 +59,9 @@ const flip = () => {
 };
 
 const { data: weather } = await useAsyncData("weather", () =>
-    client(`/api/journey/${journeyStore.getID()}/weather`),
+    client(
+        `/api/journey/${props.isTemplate ? props.templateId : journeyStore.getID()}/weather`,
+    ),
 );
 
 currTemperature.value = Math.round(weather.value.current.temperature);
@@ -165,15 +175,17 @@ function emitScroll(target: string) {
                                             class="text-md mb-2 w-5/6 rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50 md:w-4/5"
                                             disabled
                                             :value="
-                                                format(
-                                                    journeyStore.getFromDate(),
-                                                    'dd/MM/yyyy',
-                                                ) +
-                                                ' - ' +
-                                                format(
-                                                    journeyStore.getToDate(),
-                                                    'dd/MM/yyyy',
-                                                )
+                                                !isTemplate
+                                                    ? format(
+                                                          journeyStore.getFromDate(),
+                                                          'dd/MM/yyyy',
+                                                      ) +
+                                                      ' - ' +
+                                                      format(
+                                                          journeyStore.getToDate(),
+                                                          'dd/MM/yyyy',
+                                                      )
+                                                    : '----'
                                             "
                                         />
                                     </div>
@@ -378,15 +390,17 @@ function emitScroll(target: string) {
                                 class="text-md mb-2 rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50 md:w-5/6 lg:w-2/3"
                                 disabled
                                 :value="
-                                    format(
-                                        journeyStore.getFromDate(),
-                                        'dd/MM/yyyy',
-                                    ) +
-                                    ' - ' +
-                                    format(
-                                        journeyStore.getToDate(),
-                                        'dd/MM/yyyy',
-                                    )
+                                    !isTemplate
+                                        ? format(
+                                              journeyStore.getFromDate(),
+                                              'dd/MM/yyyy',
+                                          ) +
+                                          ' - ' +
+                                          format(
+                                              journeyStore.getToDate(),
+                                              'dd/MM/yyyy',
+                                          )
+                                        : '----'
                                 "
                             />
                         </div>
@@ -537,7 +551,7 @@ function emitScroll(target: string) {
                 >
                     <!-- flip clock container -->
                     <div
-                        v-if="hundredsDays <= 0"
+                        v-if="hundredsDays <= 0 && !isTemplate"
                         class="relative mx-3 my-2 grid grid-cols-2 gap-x-1 text-4xl font-bold text-text dark:text-natural-50 lg:text-6xl"
                     >
                         <div class="bg-black relative rounded-xl p-1 py-2">
@@ -585,7 +599,7 @@ function emitScroll(target: string) {
                     </div>
 
                     <div
-                        v-else
+                        v-else-if="!isTemplate"
                         class="relative mx-3 my-2 grid grid-cols-3 gap-x-1 text-4xl font-bold text-text dark:text-natural-50 lg:gap-x-2 lg:text-6xl"
                     >
                         <!-- left side -->
@@ -662,10 +676,15 @@ function emitScroll(target: string) {
                             </div>
                         </div>
                     </div>
+                    <div v-else>
+                        <i
+                            class="pi pi-objects-column text-7xl text-calypso-600"
+                        />
+                    </div>
                     <div
                         class="flex items-center justify-start text-center lg:flex-col"
                     >
-                        <p class="text-base font-bold">
+                        <p v-if="!isTemplate" class="text-base font-bold">
                             <T key-name="journey.countdown.days" />
                         </p>
                         <p
@@ -681,15 +700,25 @@ function emitScroll(target: string) {
                             <T key-name="journey.countdown.finished" />
                         </p>
                         <p
-                            v-else
+                            v-else-if="!isTemplate"
                             class="w-full pl-1 text-base font-bold lg:text-lg"
                         >
                             <T key-name="journey.countdown.until" />
                         </p>
+                        <div v-else>
+                            <h5
+                                class="mt-4 text-xl font-semibold text-text dark:text-natural-50"
+                            >
+                                <T key-name="template.use" />
+                            </h5>
+                            <p>
+                                <T key-name="template.use.description" />
+                            </p>
+                        </div>
                         <button
                             v-if="
                                 duringJourney ||
-                                currUser?.role !== 1 ||
+                                (currUser?.role !== 1 && !isTemplate) ||
                                 !isAuthenticated
                             "
                             class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
@@ -708,11 +737,17 @@ function emitScroll(target: string) {
                             <T key-name="journey.button.countdown.celebrate" />
                         </button>
                         <button
-                            v-else
+                            v-else-if="!isTemplate"
                             class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
                             @click="toggleActivityDialog"
                         >
                             <T key-name="journey.button.create.activity" />
+                        </button>
+                        <button
+                            v-else
+                            class="mt-6 rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                        >
+                            <T key-name="template.use" />
                         </button>
                     </div>
                 </div>

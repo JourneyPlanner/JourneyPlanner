@@ -4,11 +4,6 @@ import { useTranslate } from "@tolgee/vue";
 import { compareAsc, compareDesc } from "date-fns";
 import debounce from "~/utils/debounce";
 
-const title = "Dashboard";
-useHead({
-    title: `${title} | JourneyPlanner`,
-});
-
 definePageMeta({
     middleware: ["sanctum:auth"],
 });
@@ -78,6 +73,10 @@ onMounted(() => {
                     query: {
                         tab: "templates",
                     },
+                });
+
+                useHead({
+                    title: "Templates | JourneyPlanner",
                 });
 
                 if (observer.value) {
@@ -181,6 +180,9 @@ onMounted(() => {
                 ];
             } else {
                 router.replace({ path: "/dashboard" });
+                useHead({
+                    title: "Dashboard | JourneyPlanner",
+                });
                 items.value = [
                     {
                         label: t.value("dashboard.sort.name"),
@@ -247,26 +249,6 @@ onMounted(() => {
         },
         { immediate: true },
     );
-
-    watch(
-        isFilterVisible,
-        () => {
-            router.replace({
-                path: "/dashboard",
-                query: {
-                    tab: "templates",
-                    filter_open: String(isFilterVisible.value),
-                    min: templateJourneyLengthMinMax.value[0],
-                    max: templateJourneyLengthMinMax.value[1],
-                    destination: templateDestination.value,
-                    creator: templateCreator.value,
-                    sort_by: sortby.value,
-                    order: sortorder.value,
-                },
-            });
-        },
-        { immediate: true },
-    );
 });
 
 onUnmounted(() => {
@@ -285,7 +267,7 @@ const {
     status,
 } = await useAsyncData("templates", () =>
     client(
-        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=20&template_name=${searchValue.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_destination=${templateDestination.value}&template_creator=${templateCreator.value}&cursor=${cursor.value}`,
+        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=40&template_name=${searchValue.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_destination=${templateDestination.value}&template_creator=${templateCreator.value}&cursor=${cursor.value}`,
     ),
 );
 
@@ -457,9 +439,7 @@ function editJourney(journey: Journey, id: string) {
 }
 
 //TODO z index alles scuffed
-//TODO address input form und style
 //TODO name createor input style
-//TODO template loading in profile dialog
 </script>
 
 <template>

@@ -12,10 +12,7 @@ const props = defineProps({
     withLabel: { type: Boolean, default: false },
     id: { type: String, default: "" },
     translationKey: { type: String, default: "" },
-    //modelValue: { type: String, default: "" },
 });
-
-//const emit = defineEmits(['update:modelValue']);
 
 const { value: mapbox } = useField<Feature>(() => "mapbox");
 const { value: inputValue, errorMessage } = useField<string>(() => props.name);
@@ -38,6 +35,8 @@ onMounted(async () => {
     }
     Mapbox = await import("@mapbox/search-js-web");
     search.value = new Mapbox.MapboxSearchBox();
+    console.log(search);
+
     isLoaded.value = true;
     await nextTick();
     if (props.value) {
@@ -123,7 +122,6 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
     } else {
         inputValue.value = "";
     }
-    //emit('update:modelValue', inputValue.value);
 }
 </script>
 <template>

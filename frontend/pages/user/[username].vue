@@ -8,9 +8,6 @@ const client = useSanctumClient();
 
 const username = ref(route.params.username);
 const displayname = ref("");
-const templates = ref();
-const openedTemplate = ref();
-const isTemplatePopupVisible = ref(false);
 
 const { data, error } = await useAsyncData("user", () =>
     client(`/api/user/${username.value}`),
@@ -34,7 +31,7 @@ if (error.value) {
     displayname.value = data.value.display_name;
     username.value = data.value.username;
     useHead({
-        title: `${displayname.value} (${username.value}) | JourneyPlanner`,
+        title: `${displayname.value} (@${username.value}) | JourneyPlanner`,
     });
 }
 
@@ -45,12 +42,19 @@ definePageMeta({
 const showMore = ref(false);
 const toggleText = ref(t.value("profile.showMore") + username.value);
 const toggleTextShort = ref(t.value("profile.showMore.short"));
-const allowedRoutes = ["/journey"];
+const allowedRoutes = ["/journey", "/dashboard?tab=templates"];
 const isCloseIcon = ref(false);
+const templates = ref<Template[]>([]);
+const openedTemplate = ref();
+const isTemplatePopupVisible = ref(false);
+const moreTemplatesAvailable = ref<boolean>(true);
+const cursor = ref<string | null>(null);
+const nextCursor = ref<string | null>(null);
+const observer = ref<IntersectionObserver>();
+const loader = ref();
 
 onMounted(async () => {
     const lastRoute = router.options.history.state.back as string;
-
     if (
         lastRoute &&
         allowedRoutes.some((route) => lastRoute.startsWith(route))
@@ -62,17 +66,52 @@ onMounted(async () => {
         isCloseIcon.value = false;
     }
 
-    await client(`/api/user/${username.value}/template`, {
-        async onResponse({ response }) {
-            if (response.ok) {
-                templates.value = response._data.data;
+    if (observer.value) {
+        observer.value.disconnect();
+    }
+
+    observer.value = new IntersectionObserver((entries) => {
+        const target = entries[0];
+        if (target.isIntersecting) {
+            if (moreTemplatesAvailable.value && showMore.value) {
+                cursor.value = nextCursor.value;
+                refresh();
             }
-        },
+        }
     });
+
+    if (loader.value) {
+        observer.value.observe(loader.value);
+    }
 });
 
-const firstEightTemplates = computed(() => (templates.value || []).slice(0, 8));
-const remainingTemplates = computed(() => (templates.value || []).slice(8));
+onUnmounted(() => {
+    if (observer.value && loader.value) {
+        observer.value.unobserve(loader.value);
+    }
+});
+
+const { data: templateData, refresh } = await useAsyncData("templates", () =>
+    client(`/api/user/${username.value}/template?cursor=${cursor.value}`),
+);
+
+watch(
+    templateData,
+    () => {
+        if (templateData.value) {
+            templates.value.push(...templateData.value.data);
+            if (templateData.value.next_cursor === null) {
+                moreTemplatesAvailable.value = false;
+            } else {
+                nextCursor.value = templateData.value.next_cursor;
+                moreTemplatesAvailable.value = true;
+            }
+        }
+    },
+    { immediate: true },
+);
+
+const firstTemplates = computed(() => (templates.value || []).splice(0, 10));
 
 const toggle = () => {
     showMore.value = !showMore.value;
@@ -86,7 +125,6 @@ const toggle = () => {
 
 const navigateBack = () => {
     const lastRoute = router.options.history.state.back as string;
-
     if (
         lastRoute &&
         allowedRoutes.some((route) => lastRoute.startsWith(route))
@@ -157,18 +195,22 @@ const navigateBack = () => {
                 </h1>
                 <div
                     id="templates"
-                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-4"
+                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-5"
                 >
-                    <TemplateCard
-                        v-for="template in firstEightTemplates"
+                    <TemplateCardSmall
+                        v-for="template in firstTemplates"
                         :key="template.id"
                         :template="template"
+                        :displayed-in-profile="true"
                         @open-template="
                             openedTemplate = template;
                             isTemplatePopupVisible = true;
                         "
                     />
-                    <div v-if="templates.length === 0" class="col-span-full">
+                    <div
+                        v-if="firstTemplates.length === 0"
+                        class="col-span-full"
+                    >
                         <T key-name="template.none" />
                     </div>
                 </div>
@@ -176,10 +218,10 @@ const navigateBack = () => {
                 <div
                     v-if="showMore"
                     id="more-templates"
-                    class="mt-2 grid grid-cols-2 grid-rows-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-6"
+                    class="mt-2 grid grid-cols-2 grid-rows-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-5"
                 >
-                    <TemplateCard
-                        v-for="template in remainingTemplates"
+                    <TemplateCardSmall
+                        v-for="template in templates"
                         :key="template.id"
                         :template="template"
                         @open-template="
@@ -188,9 +230,18 @@ const navigateBack = () => {
                         "
                     />
                 </div>
-
+                <div ref="loader" class="col-span-full">
+                    <div v-if="moreTemplatesAvailable && showMore">
+                        <div class="flex justify-center">
+                            <ProgressSpinner class="w-10" />
+                        </div>
+                        <div class="flex justify-center italic">
+                            <T key-name="dashboard.templates.loading" />
+                        </div>
+                    </div>
+                </div>
                 <div
-                    v-if="remainingTemplates.length > 0"
+                    v-if="templates.length > 0"
                     class="mt-4 flex justify-center"
                 >
                     <button
@@ -213,6 +264,7 @@ const navigateBack = () => {
         </div>
         <div id="dialogs">
             <TemplatePopup
+                v-if="openedTemplate"
                 :template="openedTemplate"
                 :is-template-dialog-visible="isTemplatePopupVisible"
                 @close="isTemplatePopupVisible = false"

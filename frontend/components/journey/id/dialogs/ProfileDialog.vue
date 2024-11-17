@@ -65,7 +65,7 @@ watch(
                 },
             });
 
-            await client(`/api/user/${props.username}/template?per_page=6`, {
+            await client(`/api/user/${props.username}/template?per_page=8`, {
                 async onResponse({ response }) {
                     if (response.ok) {
                         templates.value = response._data.data;
@@ -148,6 +148,19 @@ const close = (): void => {
                     {{ username }}
                 </h1>
                 <div
+                    v-if="!templates"
+                    id="templates-loading"
+                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-4"
+                >
+                    <Skeleton
+                        v-for="index in 8"
+                        :key="index"
+                        height="6.75rem"
+                        class="rounded-md"
+                    />
+                </div>
+                <div
+                    v-else
                     id="templates"
                     class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-4"
                 >

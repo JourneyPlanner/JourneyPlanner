@@ -275,7 +275,7 @@ const calendarOptions = reactive({
                     )[0].innerHTML = "";
                     document.getElementsByClassName(
                         "fc-showAllHours-button",
-                    )[0].innerHTML = "0:00 - 0:00";
+                    )[0].innerHTML = "0:00 - 24:00";
                 }
             },
         },
@@ -357,7 +357,7 @@ onMounted(() => {
                                     calApi.setOption("slotMinTime", "00:00:00");
                                     document.getElementsByClassName(
                                         "fc-showAllHours-button",
-                                    )[0].innerHTML = "0:00 - 0:00";
+                                    )[0].innerHTML = "0:00 - 24:00";
                                 }
                                 calApi.addEvent(calendar_activity);
                             },
