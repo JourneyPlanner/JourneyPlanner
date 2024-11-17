@@ -94,6 +94,11 @@ declare global {
         role: number;
     }
 
+    interface repeatType {
+        name: string;
+        value: number;
+    }
+
     interface Activity {
         address: string;
         mapbox_full_address: string;

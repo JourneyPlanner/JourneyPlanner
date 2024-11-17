@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
+import { differenceInHours } from "date-fns";
 import { useField } from "vee-validate";
 
+const toast = useToast();
 const { t } = useTranslate();
 const props = defineProps({
     name: { type: String, required: true },
@@ -10,22 +12,88 @@ const props = defineProps({
     journeyEnd: { type: Date, required: true },
 });
 
+const emit = defineEmits(["input", "customInput"]);
+
 const repeatModes = ref([
-    { name: t.value("activity.repeat.not") },
-    { name: t.value("activity.repeat.daily") },
-    { name: t.value("activity.repeat.weekly") },
-    { name: t.value("activity.repeat.custom") },
+    { name: t.value("activity.repeat.not"), value: 0 },
+    { name: t.value("activity.repeat.daily"), value: 1 },
+    { name: t.value("activity.repeat.weekly"), value: 7 },
+    { name: t.value("activity.repeat.custom"), value: 2 },
 ]);
 
 const showCustomizeRepeat = ref(false);
+const repeatInterval = ref();
+const repeatIntervalUnit = ref();
+const repeatOn = ref();
+const repeatEndDate = ref();
+const repeatEndOccurences = ref();
+const daysInJourney = ref(
+    Math.ceil(differenceInHours(props.journeyEnd, props.journeyStart) / 24) + 1,
+);
 
-const { value, errorMessage } = useField<object>(() => props.name);
+console.log(daysInJourney.value);
+
+const { value, errorMessage } = useField<repeatType>(() => props.name);
 
 const input = () => {
     emit("input", value.value.name);
 };
 
-const emit = defineEmits(["input"]);
+const customInput = () => {
+    emit(
+        "customInput",
+        value.value.name,
+        repeatInterval.value,
+        repeatIntervalUnit.value,
+        repeatOn.value,
+        repeatEndDate.value,
+        repeatEndOccurences.value,
+    );
+};
+
+function changeRepeat() {
+    console.log(value);
+    if (value.value.value > daysInJourney.value) {
+        value.value.name = t.value("activity.repeat.not");
+        toast.add({
+            severity: "error",
+            summary: t.value("journey.too.short"),
+            detail: t.value("journey.too.short.detail"),
+            life: 3000,
+        });
+    } else {
+        input();
+        if (value.value.name == t.value("activity.repeat.custom")) {
+            showCustomizeRepeat.value = true;
+        }
+    }
+}
+
+function createCustomRepeat(
+    repeatNumber: number,
+    timeModeselected: string,
+    activeDays: string[],
+    endOption: string,
+    endingDate: Date,
+    occurrenceCount: number,
+) {
+    repeatInterval.value = repeatNumber;
+    repeatIntervalUnit.value = timeModeselected;
+    repeatOn.value = activeDays;
+    if (endOption == "date") {
+        repeatEndDate.value = endingDate;
+    } else {
+        repeatEndOccurences.value = occurrenceCount;
+    }
+    customInput();
+    showCustomizeRepeat.value = false;
+}
+
+const getItemClass = (option: repeatType) => {
+    return option.value > daysInJourney.value
+        ? "text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 !cursor-not-allowed "
+        : "hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600";
+};
 </script>
 
 <template>
@@ -47,10 +115,10 @@ const emit = defineEmits(["input"]);
                 class="w-full"
                 :pt="{
                     root: {
-                        class: 'flex font-nunito block rounded-lg px-2.5 pb-1 pt-1 text-text dark:text-natural-50 font-normal border-2 border-calypso-600 focus:outline-none focus:ring-1 bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 disabled:bg-natural-100 disabled:dark:bg-natural-800',
+                        class: 'flex overflow-ellipsis overflow-hidden text-nowrap font-nunito block rounded-lg px-2.5 pb-1 pt-1 text-text dark:text-natural-50 font-normal border-2 border-calypso-600 focus:outline-none focus:ring-1 bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 disabled:bg-natural-100 disabled:dark:bg-natural-800',
                     },
                     input: {
-                        class: 'text-text w-fit dark:text-natural-50 rounded-md ',
+                        class: 'text-text dark:text-natural-50 rounded-md w-[90%]',
                     },
                     item: {
                         class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600',
@@ -62,28 +130,39 @@ const emit = defineEmits(["input"]);
                         class: 'w-fit ml-auto',
                     },
                 }"
-                @change="input"
+                @change="changeRepeat"
             >
                 <template #value="slotProps">
-                    <div v-if="slotProps.value" class="align-items-center flex">
-                        <div>
+                    <div
+                        v-if="slotProps.value"
+                        class="align-items-center flex w-full"
+                    >
+                        <div
+                            v-tooltip.top="slotProps.value.name"
+                            class="w-full overflow-hidden overflow-ellipsis"
+                        >
                             {{ slotProps.value.name }}
                         </div>
                     </div>
-                    <span v-else>
-                        {{ slotProps.placeholder }}
-                    </span>
+                    <div v-else class="flex w-full">
+                        <span
+                            v-tooltip.top="slotProps.placeholder"
+                            class="w-[90%] overflow-hidden overflow-ellipsis"
+                        >
+                            {{ slotProps.placeholder }}
+                        </span>
+                    </div>
                 </template>
                 <template #option="slotProps">
-                    <div class="align-items-center flex items-center">
-                        <span :class="slotProps.option.code" class="pr-2" />
-                        <div>
-                            {{ slotProps.option.name }}
-                        </div>
+                    <div
+                        :class="getItemClass(slotProps.option)"
+                        class="cursor-pointer px-4 py-2"
+                    >
+                        {{ slotProps.option.name }}
                     </div>
                 </template>
                 <template #dropdownicon>
-                    <InputIcon class="pi pi-calendar text-calypso-400" />
+                    <InputIcon class="pi pi-sync text-calypso-400" />
                 </template>
             </Dropdown>
         </div>
@@ -91,10 +170,13 @@ const emit = defineEmits(["input"]);
             :visible="showCustomizeRepeat"
             :start-date="props.journeyStart"
             :end-date="props.journeyEnd"
-            @close="
+            :days-in-journey="daysInJourney"
+            @close="showCustomizeRepeat = false"
+            @cancel="
                 showCustomizeRepeat = false;
-                value = '';
+                value = { name: t('activity.repeat.not'), value: 0 };
             "
+            @create-custom-repeat="createCustomRepeat"
         />
         <span
             class="text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300 sm:text-sm"
