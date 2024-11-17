@@ -132,11 +132,12 @@ const close = (): void => {
                 />
             </template>
             <div class="mt-1">
+                <!-- TODO add darkmode hover -->
                 <NuxtLink
                     :to="'/user/' + username"
-                    class="ml-4 max-w-36 truncate text-xl text-natural-500 hover:underline dark:text-natural-300 xs:ml-6 xs:max-w-48 sm:ml-[2.875rem] sm:max-w-72 md:ml-8 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
+                    class="group ml-4 max-w-36 truncate text-xl text-natural-500 hover:text-calypso-600 dark:text-natural-300 xs:ml-6 xs:max-w-48 sm:ml-[2.875rem] sm:max-w-72 md:ml-8 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
                 >
-                    @{{ username }}
+                    @<span class="group-hover:underline">{{ username }}</span>
                 </NuxtLink>
             </div>
             <div class="mt-6 flex flex-col">
@@ -148,9 +149,9 @@ const close = (): void => {
                 </h1>
                 <div
                     id="templates"
-                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-3"
+                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-4"
                 >
-                    <TemplateCard
+                    <TemplateCardSmall
                         v-for="template in templates"
                         :key="template.id"
                         :template="template"

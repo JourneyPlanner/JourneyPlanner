@@ -113,12 +113,6 @@ export default defineNuxtConfig({
     },
     veeValidate: {
         autoImports: true,
-        componentNames: {
-            Form: "VeeForm",
-            Field: "VeeField",
-            FieldArray: "VeeFieldArray",
-            ErrorMessage: "VeeErrorMessage",
-        },
     },
     sanctum: {
         baseUrl: process.env.NUXT_BACKEND_URL, // Laravel API

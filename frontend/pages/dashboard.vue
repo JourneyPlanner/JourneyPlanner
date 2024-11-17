@@ -42,6 +42,7 @@ const isTemplatePopupVisible = ref(false);
 const isFilterVisible = ref<boolean>(route.query.filter_open === "true");
 const filterDialog = ref<HTMLElement>();
 const usernames = ref<string[]>([]);
+const destinations = ref<string[]>([]);
 const templates = ref<Template[]>([]);
 const moreTemplatesAvailable = ref<boolean>(true);
 const templateJourneyLengthMinMax = ref<Array<number>>([1, 31]);
@@ -53,8 +54,6 @@ const cursor = ref<string | null>(null);
 const nextCursor = ref<string | null>(null);
 const observer = ref<IntersectionObserver>();
 const loader = ref();
-const borderColor = "#BDBDBD"; //TODO darkmode
-const addressCss = `.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor}; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none}`;
 
 const toggle = (event: Event) => {
     menu.value.toggle(event);
@@ -346,21 +345,41 @@ function clearFilters() {
 }
 
 /*
- * debounce getUser() to prevent too many request on input
+ * debounce getUsers() to prevent too many request on input
  */
 const searchUser = debounce(() => {
-    getUser();
+    getUsers();
 });
 
 /**
  * get username(s) for AutoComplete for created by template filter
  */
-function getUser() {
+function getUsers() {
     client(`/api/user?search=${templateCreator.value}&per_page=25`).then(
         (res) => {
             usernames.value = res.data.map((user: User) => user.username);
         },
     );
+}
+
+/*
+ * debounce getDestinations() to prevent too many request on input
+ */
+const searchDestination = debounce(() => {
+    getDestinations();
+});
+
+/**
+ * get destination(s) for AutoComplete for destination template filter
+ */
+function getDestinations() {
+    client(
+        `/api/template/destination?search=${templateDestination.value}&per_page=25`,
+    ).then((res) => {
+        destinations.value = res.data.map(
+            (destination: { destination: string }) => destination.destination,
+        );
+    });
 }
 
 /*
@@ -657,12 +676,6 @@ function editJourney(journey: Journey, id: string) {
                             <T key-name="dashboard.template.filter.clear" />
                         </button>
                     </h4>
-                    <!-- <div
-                        v-if="status === 'pending' && isFilterVisible"
-                        class="col-span-full flex h-full items-center justify-center"
-                    >
-                        <ProgressSpinner />
-                    </div> -->
                     <div
                         v-if="isFilterVisible"
                         id="filter-dialog"
@@ -704,7 +717,7 @@ function editJourney(journey: Journey, id: string) {
                                     />
                                     <InputNumber
                                         v-model="templateJourneyLengthMinMax[0]"
-                                        input-class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1 font-nunito focus:border-calypso-300"
+                                        input-class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
                                         input-id="min"
                                         :min="1"
                                         :max="31"
@@ -716,7 +729,7 @@ function editJourney(journey: Journey, id: string) {
                                     />
                                     <InputNumber
                                         v-model="templateJourneyLengthMinMax[1]"
-                                        input-class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1 font-nunito focus:border-calypso-300"
+                                        input-class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
                                         input-id="max"
                                         :min="1"
                                         :max="31"
@@ -743,10 +756,24 @@ function editJourney(journey: Journey, id: string) {
                                     key-name="dashboard.template.filter.destination.description"
                                 />
                             </p>
-                            <FormAddressInput
-                                id="template-destination"
-                                name="destination"
-                                :custom-class="addressCss"
+                            <AutoComplete
+                                v-model="templateDestination"
+                                input-class="bg-natural-50 border-2 border-natural-300 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
+                                :pt="{
+                                    panel: 'w-20',
+                                }"
+                                :suggestions="destinations"
+                                :force-selection="true"
+                                :complete-on-focus="true"
+                                :empty-search-message="
+                                    t(
+                                        'dashboard.template.filter.destination.empty',
+                                    )
+                                "
+                                @before-show="getDestinations()"
+                                @complete="searchDestination()"
+                                @item-select="refreshTemplates()"
+                                @clear="refreshTemplates(), searchDestination()"
                             />
                         </div>
                         <div id="creator" class="mt-5">
@@ -767,7 +794,7 @@ function editJourney(journey: Journey, id: string) {
                             </p>
                             <AutoComplete
                                 v-model="templateCreator"
-                                input-class="bg-natural-50 border-2 border-natural-300 rounded-lg pl-1.5 text-base focus:border-calypso-300 py-[0.275rem]"
+                                input-class="bg-natural-50 border-2 border-natural-300 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
                                 :pt="{
                                     panel: 'w-20',
                                 }"
@@ -777,7 +804,7 @@ function editJourney(journey: Journey, id: string) {
                                 :empty-search-message="
                                     t('dashboard.template.filter.creator.empty')
                                 "
-                                @before-show="getUser()"
+                                @before-show="getUsers()"
                                 @complete="searchUser()"
                                 @item-select="refreshTemplates()"
                                 @clear="refreshTemplates(), searchUser()"
@@ -811,9 +838,15 @@ function editJourney(journey: Journey, id: string) {
                     <T key-name="dashboard.templates.nomoretemplates" />
                     <NuxtLink
                         to="/journey/new"
-                        class="hover:text-calypso-400 hover:underline"
-                        ><T key-name="dashboard.templates.nomoretemplates.link"
-                    /></NuxtLink>
+                        class="group flex items-center hover:text-calypso-400"
+                    >
+                        <span class="group-hover:underline">
+                            <T
+                                key-name="dashboard.templates.nomoretemplates.link"
+                            />
+                        </span>
+                        <i class="pi pi-angle-right" />
+                    </NuxtLink>
                 </div>
             </TabPanel>
         </TabView>

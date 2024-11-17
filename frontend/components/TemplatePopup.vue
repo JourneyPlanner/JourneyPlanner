@@ -177,7 +177,7 @@ function close() {
                 >
                     <Skeleton
                         v-if="activityCount === null"
-                        height="16.7rem"
+                        height="11.7rem"
                         class="rounded-2xl lg:rounded-3xl"
                     />
                     <ScrollPanel
