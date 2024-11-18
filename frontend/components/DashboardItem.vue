@@ -243,7 +243,7 @@ const itemsJourneyMember = ref([
                         <span class="text-calypso-400">
                             <i class="pi pi-calendar" />
                         </span>
-                        <span class="-mb-1 text-text dark:text-natural-50"
+                        <span class="text-text dark:text-natural-50"
                             >{{ format(from, "dd/MM/yyyy") }}-{{
                                 format(to, "dd/MM/yyyy")
                             }}</span

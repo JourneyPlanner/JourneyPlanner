@@ -70,7 +70,8 @@ defineEmits(["input"]);
             for="journey-range-calendar"
             class="pointer-events-none absolute left-0 top-0 overflow-hidden whitespace-nowrap py-4 pl-2.5 text-sm transition-all duration-300"
             :class="{
-                'text-natural-400': !isFocused,
+                'text-natural-600': !isFocused,
+                'dark:text-natural-200': !isFocused,
                 'text-calypso-600': isFocused,
                 '-translate-x-6 -translate-y-4 scale-75': isFocused || value,
                 'translate-y-0 scale-100': !isFocused && !value,

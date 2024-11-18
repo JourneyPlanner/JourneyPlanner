@@ -89,7 +89,7 @@ if (
 ) {
     input = "#3D3D3D";
     text = "#FCFCFC";
-    placeholderColor = "#989898";
+    placeholderColor = "#DCDCDC";
     hoverCancel = "#E58484";
     disabledBg = "#464646";
     border = "#50A1C0";
@@ -97,7 +97,7 @@ if (
 } else {
     input = "#FCFCFC";
     text = fullConfig.theme.accentColor["text"] as string;
-    placeholderColor = "#989898";
+    placeholderColor = "#656565";
     hoverCancel = "#E58484";
     disabledBg = "#EFEFEF";
     border = "#88C4D8";

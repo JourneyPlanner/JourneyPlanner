@@ -37,7 +37,7 @@ defineEmits(["input"]);
         />
         <label
             :for="id"
-            class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-natural-400 transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-natural-400 peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-calypso-600"
+            class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-natural-400 transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-natural-600 peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-calypso-600 dark:peer-placeholder-shown:text-natural-200"
         >
             <T :key-name="translationKey" />
         </label>
