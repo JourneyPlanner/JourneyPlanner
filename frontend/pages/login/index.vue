@@ -145,11 +145,11 @@ async function loginUser(userData: User) {
                     >
                         <legend
                             for="outerBlock"
-                            class="px-2 text-center text-3xl font-bold text-text dark:text-natural-50 lg:ml-7 lg:text-left"
+                            class="mb-5 px-2 text-center text-3xl font-bold text-text dark:text-natural-50 lg:ml-7 lg:text-left"
                         >
                             <T key-name="form.header.login" />
                         </legend>
-                        <form class="w-5/6" @submit="onSubmit">
+                        <form class="-mt-2 w-5/6" @submit="onSubmit">
                             <FormInput
                                 id="email"
                                 name="email"
@@ -164,11 +164,16 @@ async function loginUser(userData: User) {
                             />
 
                             <button
-                                class="text-md my-5 mt-4 rounded-2xl border-2 border-dandelion-300 bg-natural-50 px-6 py-2.5 font-nunito font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                class="text-md mb-3 mt-2 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-12 py-1 font-nunito text-lg font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
                             >
                                 <T key-name="form.button.login" />
                             </button>
                         </form>
+                        <div
+                            class="mb-4 flex w-full flex-col justify-center gap-x-5 gap-y-2"
+                        >
+                            <FormOAuth />
+                        </div>
                         <NuxtLink
                             to="/register"
                             class="my-1 mt-auto font-nunito font-semibold hover:underline dark:text-natural-50"

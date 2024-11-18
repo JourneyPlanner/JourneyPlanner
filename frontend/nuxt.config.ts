@@ -62,6 +62,7 @@ export default defineNuxtConfig({
             NUXT_MAPBOX_API_KEY: process.env.NUXT_MAPBOX_API_KEY,
             NUXT_UPLOAD_URL: process.env.NUXT_UPLOAD_URL,
             NUXT_LIGHTGALLERY_KEY: process.env.NUXT_LIGHTGALLERY_KEY,
+            NUXT_GOOGLE_CLIENT_ID: process.env.NUXT_GOOGLE_CLIENT_ID,
         },
     },
     primevue: {
@@ -70,7 +71,6 @@ export default defineNuxtConfig({
             unstyled: false,
             zIndex: {
                 modal: 500,
-                tooltip: 2000,
             },
         },
         components: {

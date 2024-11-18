@@ -9,7 +9,11 @@
             width="19"
             height="19"
         >
-            <rect width="19" height="19" fill="#D9D9D9" />
+            <rect
+                width="19"
+                height="19"
+                class="fill-text dark:fill-natural-50"
+            />
         </mask>
         <g mask="url(#mask0_1329_2740)">
             <path

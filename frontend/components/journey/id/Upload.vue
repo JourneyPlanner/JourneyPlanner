@@ -98,7 +98,7 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard .uppy-Dashboard-inner {
-    @apply h-40 w-full rounded-2xl border-[3px] border-dashed border-calypso-400 text-text dark:border-calypso-600 dark:bg-none dark:text-natural-50 sm:h-[13rem] md:h-[17rem] lg:rounded-3xl !important;
+    @apply h-40 w-full rounded-2xl border-[3px] border-dashed border-calypso-300 text-text dark:border-calypso-600 dark:bg-none dark:text-natural-50 sm:h-[13rem] md:h-[17rem] lg:rounded-3xl !important;
 }
 
 .uppy-Dashboard-AddFiles {
@@ -118,7 +118,7 @@ const uppy = new Uppy({
 }
 
 .uppy-Dashboard-browse {
-    @apply text-calypso-500 hover:font-semibold hover:underline hover:decoration-calypso-500 dark:text-calypso-600 dark:hover:decoration-calypso-600 !important;
+    @apply text-calypso-600 hover:font-semibold hover:underline hover:decoration-calypso-600 dark:text-calypso-400 dark:hover:decoration-calypso-400 !important;
 }
 
 .uppy-c-btn-primary {
@@ -150,7 +150,7 @@ const uppy = new Uppy({
 }
 
 .uppy-StatusBar-actionBtn {
-    @apply rounded-xl border-2 border-solid border-dandelion-300 bg-natural-50 font-semibold text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600 !important;
+    @apply rounded-xl border-2 border-solid border-dandelion-300 bg-natural-50 font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 !important;
 }
 
 .uppy-StatusBar-actionBtn--done {
@@ -178,6 +178,6 @@ const uppy = new Uppy({
 
 .uppy-StatusBar-actions,
 .uppy-StatusBar {
-    @apply z-50 !important;
+    @apply z-10 !important;
 }
 </style>

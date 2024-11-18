@@ -49,11 +49,16 @@ function close() {
                 </div>
                 <button
                     v-if="currUser?.id !== 'TEMPLATE'"
-                    class="-mb-3 ml-auto flex items-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-sm font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:text-base lg:mb-4"
+                    class="-mb-3 ml-auto flex items-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-1.5 py-1.5 pr-2.5 text-sm font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:px-2 sm:py-1 sm:text-base lg:mb-4"
                     @click="isDialogVisible = !isDialogVisible"
                 >
                     <SvgAddLocation class="h-6 w-6" />
-                    <T key-name="journey.button.create.activity" />
+                    <span class="text-base sm:hidden">
+                        <T key-name="journey.button.create.activity.short" />
+                    </span>
+                    <span class="hidden sm:block">
+                        <T key-name="journey.button.create.activity" />
+                    </span>
                 </button>
                 <span v-else class="mb-2 ml-auto text-lg">
                     {{ activityStore.activityData.length }}
@@ -69,6 +74,7 @@ function close() {
             "
             :id="journeyStore.getID()"
             :in-template="currUser?.id === 'TEMPLATE'"
+            @open-new-activity-dialog="isDialogVisible = true"
         />
         <JourneyIdDialogsActivityDialog
             v-if="currUser?.role === 1 || !isAuthenticated"

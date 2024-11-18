@@ -29,13 +29,15 @@ useHead({
 
 if (!isAuthenticated.value) {
     if (localStorage.getItem("JP_guest_journey_id") !== null) {
-        navigateTo("/journey/" + localStorage.getItem("JP_guest_journey_id"));
         toast.add({
             severity: "info",
             summary: t.value("journey.unlock.create.heading"),
             detail: t.value("journey.unlock.create.detail"),
             life: 2000,
         });
+        await navigateTo(
+            "/journey/" + localStorage.getItem("JP_guest_journey_id"),
+        );
     }
     cancel.value = "/";
 } else {
@@ -188,7 +190,7 @@ function copyToClipboard() {
                 >
                     <legend
                         for="create-journey"
-                        class="text-center text-2xl font-bold text-text dark:text-natural-50 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
+                        class="mb-5 text-center text-2xl font-bold text-text dark:text-natural-50 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>
@@ -203,9 +205,6 @@ function copyToClipboard() {
                             name="journeyDestination"
                             :placeholder="t('form.input.journey.destination')"
                             class="relative mb-5"
-                            :translation-key="
-                                t('form.input.journey.destination')
-                            "
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
                         />
                         <FormCalendar
@@ -216,17 +215,18 @@ function copyToClipboard() {
                         <Divider
                             v-if="isAuthenticated"
                             type="solid"
-                            class="border-10 border text-calypso-300"
+                            class="border-10 mt-2 border pt-0 text-calypso-300 dark:text-calypso-400"
                         />
 
                         <div v-if="isAuthenticated" class="relative my-2 flex">
+                            <!-- TODO lightmode bg color anpassen? -->
                             <input
                                 id="journey-invite"
                                 v-model="journeyInviteLink"
                                 type="text"
                                 name="journey-invite"
                                 disabled
-                                class="text-md peer w-[90%] rounded-lg border-2 border-calypso-300 bg-natural-100 px-2.5 pb-1 pt-4 font-bold text-natural-500 focus:outline-none focus:ring-1 dark:bg-natural-900 dark:text-natural-300"
+                                class="peer w-[90%] rounded-lg border-2 border-calypso-300 bg-natural-100 px-2.5 pb-1 pt-4 text-base font-medium text-natural-500 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-700 dark:text-natural-300"
                                 placeholder=" "
                             />
                             <label

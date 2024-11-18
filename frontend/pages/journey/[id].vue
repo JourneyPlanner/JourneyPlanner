@@ -144,6 +144,31 @@ onMounted(() => {
     calculateDays(journeyData.value.from, journeyData.value.to);
 });
 
+const confirmLeave = (event: Event) => {
+    isMemberSidebarVisible.value = false;
+    confirm.require({
+        target: event.currentTarget as HTMLElement,
+        group: "journey",
+        header: t.value("journey.leave.header"),
+        message: t.value("journey.leave.message"),
+        icon: "pi pi-exclamation-triangle",
+        rejectClass: "hover:underline",
+        acceptClass:
+            "text-mahagony-500 dark:text-mahagony-400 hover:underline font-bold",
+        rejectLabel: t.value("common.button.cancel"),
+        acceptLabel: t.value("journey.leave"),
+        accept: () => {
+            toast.add({
+                severity: "info",
+                summary: t.value("common.toast.info.heading"),
+                detail: t.value("leave.journey.toast.message"),
+                life: 3000,
+            });
+            leaveJourney();
+        },
+    });
+};
+
 function calculateDays(from: string, to: string) {
     fromDate.value = new Date(from.split("T")[0]);
     toDate.value = new Date(to.split("T")[0]);
@@ -197,32 +222,6 @@ function journeyEdited(journey: Journey) {
 
 const handleUpload = (result: string) => {
     uploadResult.value = result;
-};
-
-const confirmLeave = (event: Event) => {
-    isMemberSidebarVisible.value = false;
-    isMenuSidebarVisible.value = false;
-    confirm.require({
-        target: event.currentTarget as HTMLElement,
-        group: "journey",
-        header: t.value("journey.leave.header"),
-        message: t.value("journey.leave.message"),
-        icon: "pi pi-exclamation-triangle",
-        rejectClass: "hover:underline",
-        acceptClass:
-            "text-error dark:text-error-dark hover:underline font-bold",
-        rejectLabel: t.value("common.button.cancel"),
-        acceptLabel: t.value("journey.leave"),
-        accept: () => {
-            toast.add({
-                severity: "info",
-                summary: t.value("common.toast.info.heading"),
-                detail: t.value("leave.journey.toast.message"),
-                life: 3000,
-            });
-            leaveJourney();
-        },
-    });
 };
 
 /**
@@ -446,7 +445,13 @@ function scrollToTarget(target: string) {
                         class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                     },
                     footer: {
-                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
+                    },
+                    closeButton: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
+                    },
+                    closeButtonIcon: {
+                        class: 'h-5 w-5',
                     },
                 }"
             />

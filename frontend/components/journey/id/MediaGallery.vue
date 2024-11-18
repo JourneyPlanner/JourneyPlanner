@@ -258,7 +258,7 @@ const setImage = (media) => {
                                 class: 'display-block flex-none font-bold font-nunito',
                             },
                         }"
-                        class="ml-auto flex items-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1 text-sm font-bold dark:bg-background-dark dark:text-natural-50 sm:text-base lg:mb-1"
+                        class="ml-auto flex items-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1.5 text-base font-bold dark:bg-natural-800 dark:text-natural-50 sm:text-base lg:mb-1"
                         :class="
                             isAuthenticated
                                 ? 'hover:bg-dandelion-200 dark:hover:bg-pesto-600'
@@ -269,7 +269,7 @@ const setImage = (media) => {
                 </div>
             </div>
             <div
-                class="h-[9.7rem] w-full rounded-2xl border-[3px] border-calypso-400 dark:border-calypso-600 sm:h-[12.7rem] md:h-[16.7rem] lg:rounded-3xl lg:p-1"
+                class="h-[9.7rem] w-full rounded-2xl border-[3px] border-calypso-300 dark:border-calypso-600 sm:h-[12.7rem] md:h-[16.7rem] lg:rounded-3xl lg:p-1"
             >
                 <ScrollPanel
                     class="h-full w-full overflow-x-hidden"
@@ -326,17 +326,17 @@ const setImage = (media) => {
                 class="bg-natural-50 dark:bg-background-dark"
                 :pt="{
                     root: {
-                        class: 'font-nunito text-text bg-natural-50 dark:bg-background-dark',
+                        class: 'font-nunito text-text dark:text-natural-50 bg-natural-50 dark:bg-background-dark',
                     },
                     header: {
-                        class: 'pb-2 h-15 bg-natural-50 dark:bg-background-dark text-text dark:text-input',
+                        class: 'pb-2 h-15 bg-natural-50 dark:bg-background-dark text-text dark:text-natural-50',
                     },
                     title: { class: 'text-xl mt-0.5' },
                     content: {
-                        class: 'bg-natural-50 dark:bg-background-dark text-text dark:text-input',
+                        class: 'bg-natural-50 dark:bg-background-dark text-text dark:text-natural-50',
                     },
                     closeButtonIcon: {
-                        class: 'text-natural-500 hover:text-text dark:text-input-placeholder dark:hover:text-input h-5 w-5',
+                        class: 'text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-8 w-8',
                     },
                 }"
             >
