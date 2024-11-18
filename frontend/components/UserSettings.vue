@@ -259,6 +259,7 @@ function blur(e: Event) {
             v-model:visible="isVisible"
             modal
             block-scroll
+            dismissable-mask
             :auto-z-index="true"
             :draggable="false"
             :header="t('dashboard.user.settings')"

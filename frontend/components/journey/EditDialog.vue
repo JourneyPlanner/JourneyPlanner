@@ -223,7 +223,7 @@ async function deleteJourney(id: string) {
             />
         </template>
         <form @submit.prevent="onSave()">
-            <div class="flex flex-col">
+            <div class="mt-5 flex flex-col">
                 <div
                     class="flex flex-row items-center justify-between lg:-mt-1"
                 >

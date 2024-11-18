@@ -203,7 +203,7 @@ const itemsJourneyGuide = ref([
         class="flex w-full justify-center overflow-x-hidden md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
     >
         <div
-            class="h-40 w-[90%] rounded-2xl border-[3px] border-dashed border-calypso-400 dark:border-calypso-600 dark:bg-background-dark max-lg:mt-5 sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
+            class="h-40 w-[90%] rounded-2xl border-[3px] border-dashed border-calypso-300 dark:border-calypso-600 dark:bg-background-dark max-lg:mt-5 sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
         >
             <div
                 v-if="activityCount <= 0"
