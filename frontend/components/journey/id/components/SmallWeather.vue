@@ -41,7 +41,7 @@ function monthInDays(days: number) {
 <template>
     <div class="flex text-natural-700 dark:text-natural-200 max-md:flex-col">
         <div class="w-[99%]">
-            <div class="flex justify-center text-base underline">
+            <div class="flex justify-center text-base">
                 {{ daysInTheFuture(props.day) }} /
                 {{ monthInDays(props.day) }}
             </div>

@@ -115,24 +115,24 @@ async function registerUser(userData: object) {
         >
             <div class="h-[90vh] sm:w-0 md:w-1/4 xl:w-1/3">
                 <SvgAircraft
-                    class="z-0 -ml-[20vw] mt-6 w-0 overflow-hidden object-none md:w-[350%] lg:mt-20 xl:mt-32 xl:w-[230%]"
+                    class="z-0 -ml-[20vw] mt-6 w-0 overflow-hidden object-none md:w-[350%] lg:mt-20 xl:mt-20 xl:w-[230%]"
                 />
             </div>
             <div
                 class="mt-32 flex w-full items-center justify-center sm:w-full md:w-2/4 xl:w-2/5"
             >
-                <div class="z-20 -mt-24 h-3/4 w-full text-center sm:w-3/4">
+                <div class="z-20 -mt-20 h-3/4 w-full text-center sm:w-4/5">
                     <fieldset
                         id="outerBlock"
                         class="focus:ring-indigo-500 focus:border-indigo-500 flex h-auto flex-col items-center rounded-3xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-3 py-2 shadow-sm focus:outline-none dark:border-calypso-400 dark:bg-gothic-300 dark:bg-opacity-20"
                     >
                         <legend
                             for="outerBlock"
-                            class="px-2 text-center text-3xl font-bold text-text dark:text-natural-50 lg:ml-7 lg:text-left"
+                            class="mb-3 px-2 text-center text-3xl font-bold text-text dark:text-natural-50 lg:ml-7 lg:text-left"
                         >
                             <T key-name="form.header.register" />
                         </legend>
-                        <form class="-mt-2 w-4/5" @submit="onSubmit">
+                        <form class="w-3/4" @submit="onSubmit">
                             <FormInput
                                 id="email"
                                 name="email"
@@ -154,7 +154,7 @@ async function registerUser(userData: object) {
                                 :feedback-style="true"
                                 translation-key="form.input.password"
                             />
-                            <div class="mt-4">
+                            <div class="mt-0.5">
                                 <FormPassword
                                     id="password_confirmation"
                                     name="password_confirmation"

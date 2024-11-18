@@ -218,10 +218,12 @@ async function deleteJourney(id: string) {
             >
                 <T key-name="dashboard.edit.header" />
             </h3>
-            <span class="h-0.5 w-full bg-calypso-400 md:mr-2" />
+            <span
+                class="h-0.5 w-full bg-calypso-300 dark:bg-calypso-600 md:mr-2"
+            />
         </template>
         <form @submit.prevent="onSave()">
-            <div class="flex flex-col">
+            <div class="mt-5 flex flex-col">
                 <div
                     class="flex flex-row items-center justify-between lg:-mt-1"
                 >

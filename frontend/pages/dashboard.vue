@@ -234,16 +234,12 @@ function editJourney(journey: Journey, id: string) {
                 </div>
                 <NuxtLink
                     to="/journey/new"
-                    class="mr-2.5 hidden flex-row items-center lg:flex"
+                    class="group mr-2.5 hidden flex-row items-center rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-ronchi-300 dark:hover:text-text lg:flex"
                 >
-                    <button
-                        class="flex flex-row rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text dark:border-ronchi-300 dark:bg-ronchi-300"
-                    >
-                        <SvgCreateNewJourneyIcon
-                            class="mr-1 h-5 w-5 fill-text"
-                        />
-                        <T key-name="dashboard.new" />
-                    </button>
+                    <SvgCreateNewJourneyIcon
+                        class="mr-1 h-5 w-5 fill-text dark:fill-natural-50 dark:group-hover:fill-text"
+                    />
+                    <T key-name="dashboard.new" />
                 </NuxtLink>
                 <NuxtLink :to="'/user/' + user.username" class="mr-2.5">
                     <SvgUserIcon class="mt-1 h-9 w-9" />
@@ -328,7 +324,7 @@ function editJourney(journey: Journey, id: string) {
                     />
                     <SvgCreateNewJourneyCardDark class="hidden dark:lg:block" />
                     <div
-                        class="flex h-32 min-w-36 flex-grow items-center justify-center rounded-md border border-dandelion-300 bg-dandelion-100 dark:bg-pesto-600 lg:hidden"
+                        class="flex h-[7.5rem] min-w-36 flex-grow items-center justify-center rounded-md border border-dandelion-300 bg-dandelion-100 dark:bg-pesto-600 lg:hidden"
                     >
                         <SvgCreateNewJourneyIcon
                             class="h-14 w-14 fill-text dark:fill-natural-50"
@@ -383,7 +379,13 @@ function editJourney(journey: Journey, id: string) {
                     class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                 },
                 footer: {
-                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
+                },
+                closeButton: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
+                },
+                closeButtonIcon: {
+                    class: 'h-5 w-5',
                 },
             }"
         />
