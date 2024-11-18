@@ -56,7 +56,7 @@ const computedClass = computed(() => {
             </template>
         </Calendar>
         <span
-            class="text-sm text-mahagony-600 dark:font-bold dark:text-mahagony-300"
+            class="text-sm text-mahagony-600 dark:font-medium dark:text-mahagony-300"
             >{{ errorMessage }}</span
         >
     </div>

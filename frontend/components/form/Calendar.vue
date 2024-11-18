@@ -62,7 +62,7 @@ defineEmits(["input"]);
         <br />
         <div class="ml-0.5 mt-1 h-3 leading-3">
             <span
-                class="text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
+                class="text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300"
                 >{{ errorMessage }}</span
             >
         </div>

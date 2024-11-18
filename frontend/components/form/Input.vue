@@ -46,7 +46,7 @@ defineEmits(["input"]);
             :class="errorMessage ? '-mb-1.5 mt-0.5 block' : 'hidden'"
         >
             <span
-                class="ml-0.5 text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
+                class="ml-0.5 text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300"
                 >{{ errorMessage }}</span
             >
         </div>

@@ -64,7 +64,7 @@ const { value, errorMessage } = useField(() => props.name);
     </div>
     <div class="mb-2 h-3 text-left">
         <p
-            class="ml-9 text-left text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
+            class="ml-9 text-left text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300"
         >
             {{ errorMessage }}
         </p>

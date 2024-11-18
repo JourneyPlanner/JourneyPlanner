@@ -53,7 +53,7 @@ watch(
             </template>
         </Calendar>
         <span
-            class="text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300 sm:text-sm"
+            class="text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300 sm:text-sm"
             >{{ errorMessage }}</span
         >
     </div>

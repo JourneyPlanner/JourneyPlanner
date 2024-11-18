@@ -156,7 +156,7 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                 class="mt-1 h-1.5 w-full text-left leading-3"
             >
                 <span
-                    class="ml-0.5 text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
+                    class="ml-0.5 text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300"
                     :class="{
                         invisible: !errorMessage,
                         visible: errorMessage,

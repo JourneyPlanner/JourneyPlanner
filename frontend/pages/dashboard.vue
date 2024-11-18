@@ -234,16 +234,10 @@ function editJourney(journey: Journey, id: string) {
                 </div>
                 <NuxtLink
                     to="/journey/new"
-                    class="mr-2.5 hidden flex-row items-center lg:flex"
+                    class="group mr-2.5 hidden flex-row items-center rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text dark:border-ronchi-300 dark:bg-ronchi-300 lg:flex"
                 >
-                    <button
-                        class="flex flex-row rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text dark:border-ronchi-300 dark:bg-ronchi-300"
-                    >
-                        <SvgCreateNewJourneyIcon
-                            class="mr-1 h-5 w-5 fill-text"
-                        />
-                        <T key-name="dashboard.new" />
-                    </button>
+                    <SvgCreateNewJourneyIcon class="mr-1 h-5 w-5 fill-text" />
+                    <T key-name="dashboard.new" />
                 </NuxtLink>
                 <NuxtLink :to="'/user/' + user.username" class="mr-2.5">
                     <SvgUserIcon class="mt-1 h-9 w-9" />
