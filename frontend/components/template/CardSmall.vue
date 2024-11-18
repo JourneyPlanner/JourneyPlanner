@@ -17,10 +17,12 @@ const isProfileDialogVisible = ref(false);
 
 <template>
     <div
-        class="rounded-md border-2 border-natural-200 hover:cursor-pointer hover:border-calypso-400"
+        class="rounded-md border-2 border-natural-200 bg-natural-50 text-text hover:cursor-pointer hover:border-calypso-400 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400"
         @click="$emit('openTemplate', template.id)"
     >
-        <div class="my-1 ml-1 border-l-2 border-calypso-600 pl-1">
+        <div
+            class="my-1 ml-1 border-l-2 border-calypso-600 pl-1 dark:border-calypso-400"
+        >
             <h3
                 v-tooltip.top="{
                     value: template.name,
@@ -35,8 +37,9 @@ const isProfileDialogVisible = ref(false);
                     value: template.users[0].username,
                     pt: { root: 'font-nunito' },
                 }"
-                class="-mt-1 truncate text-base text-natural-600"
+                class="-mt-1 truncate text-base text-natural-600 dark:text-natural-300"
             >
+                <!-- TODO hover dark color -->
                 <T key-name="template.by" /><span
                     :class="
                         !displayedInProfile
@@ -59,11 +62,15 @@ const isProfileDialogVisible = ref(false);
                     }"
                     class="flex flex-row items-center gap-x-1"
                 >
-                    <i class="pi pi-map-marker text-sm text-calypso-600" />
+                    <i
+                        class="pi pi-map-marker text-sm text-calypso-600 dark:text-calypso-400"
+                    />
                     <h5 class="truncate text-sm">{{ template.destination }}</h5>
                 </div>
                 <div class="flex flex-row items-center gap-x-1">
-                    <i class="pi pi-calendar text-sm text-calypso-600" />
+                    <i
+                        class="pi pi-calendar text-sm text-calypso-600 dark:text-calypso-400"
+                    />
                     <h5 class="truncate text-sm">
                         {{ template.length }}
                         <T

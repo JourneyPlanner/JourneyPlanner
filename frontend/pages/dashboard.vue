@@ -258,7 +258,7 @@ onUnmounted(() => {
 });
 
 /**
- * Fetches all templates from the backend
+ * Fetches templates from the backend
  * stores response in templates ref
  */
 const {
@@ -438,8 +438,8 @@ function editJourney(journey: Journey, id: string) {
     journeys.value[index].name = journey.name;
 }
 
-//TODO z index alles scuffed
-//TODO name createor input style
+//TODO templlate suggestions journey create
+//TODO load more templates user page
 </script>
 
 <template>
@@ -531,9 +531,9 @@ function editJourney(journey: Journey, id: string) {
                     class: 'font-nunito bg-background dark:bg-background-dark text-lg',
                 },
                 navContainer: {
-                    class: 'border-b-2 border-calypso-300 rounded', //TODO dark mode border
+                    class: 'border-b-2 border-calypso-300 dark:border-calypso-700 rounded',
                 },
-                inkbar: { class: 'pt-0.5 bg-calypso-600' }, //TODO dark mode border
+                inkbar: { class: 'pt-0.5 bg-calypso-600 dark:bg-calypso-400' },
             }"
         >
             <TabPanel
@@ -542,8 +542,10 @@ function editJourney(journey: Journey, id: string) {
                         class: [
                             'font-nunito bg-background dark:bg-background-dark',
                             {
-                                'text-text': tabIndex === 0,
-                                'text-natural-500': tabIndex !== 0,
+                                'text-text dark:text-natural-50':
+                                    tabIndex === 0,
+                                'text-natural-500 dark:text-natural-300':
+                                    tabIndex !== 0,
                             },
                         ],
                     }),
@@ -555,7 +557,7 @@ function editJourney(journey: Journey, id: string) {
                             class="mr-1 mt-0.5 md:h-7 md:w-7"
                             :class="
                                 tabIndex !== 0
-                                    ? 'fill-natural-500'
+                                    ? 'fill-natural-500 dark:fill-natural-300'
                                     : 'fill-text dark:fill-natural-50'
                             "
                         />
@@ -611,8 +613,10 @@ function editJourney(journey: Journey, id: string) {
                         class: [
                             'font-nunito bg-background dark:bg-background-dark',
                             {
-                                'text-text': tabIndex === 1,
-                                'text-natural-500': tabIndex !== 1,
+                                'text-text dark:text-natural-50':
+                                    tabIndex === 1,
+                                'text-natural-500 dark:text-natural-300':
+                                    tabIndex !== 1,
                             },
                         ],
                     }),
@@ -660,7 +664,7 @@ function editJourney(journey: Journey, id: string) {
                         v-if="isFilterVisible"
                         id="filter-dialog"
                         ref="filterDialog"
-                        class="absolute right-0 mr-20 flex w-64 flex-col rounded-lg bg-natural-50 px-3 pt-2 shadow-lg"
+                        class="absolute right-0 mr-20 flex w-64 flex-col rounded-lg bg-natural-50 px-3 pt-2 shadow-lg dark:bg-background-dark"
                     >
                         <div id="length">
                             <div class="flex items-center">
@@ -679,14 +683,15 @@ function editJourney(journey: Journey, id: string) {
                                     :max="31"
                                     class="w-full"
                                     :pt="{
-                                        range: {
-                                            class: 'bg-calypso-400',
-                                        },
+                                        root: 'bg-natural-200 dark:bg-natural-300',
+                                        range: 'bg-calypso-400 dark:bg-calypso-400',
+                                        startHandler: 'bg-calypso-600',
+                                        endHandler: 'bg-calypso-600',
                                     }"
                                     @slideend="refreshTemplates()"
                                 />
                                 <div
-                                    class="-px-1 mt-2.5 flex justify-between text-natural-500"
+                                    class="-px-1 mt-2.5 flex justify-between text-natural-500 dark:text-natural-300"
                                 >
                                     <span>1</span>
                                     <span>31+</span>
@@ -697,7 +702,7 @@ function editJourney(journey: Journey, id: string) {
                                     />
                                     <InputNumber
                                         v-model="templateJourneyLengthMinMax[0]"
-                                        input-class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
+                                        input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
                                         input-id="min"
                                         :min="1"
                                         :max="31"
@@ -709,7 +714,7 @@ function editJourney(journey: Journey, id: string) {
                                     />
                                     <InputNumber
                                         v-model="templateJourneyLengthMinMax[1]"
-                                        input-class="w-11 rounded border-2 border-natural-300 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
+                                        input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
                                         input-id="max"
                                         :min="1"
                                         :max="31"
@@ -731,16 +736,19 @@ function editJourney(journey: Journey, id: string) {
                                     class="ml-1 h-0.5 w-full bg-calypso-400"
                                 />
                             </div>
-                            <p class="mb-1 text-natural-700">
+                            <p
+                                class="mb-1 text-natural-700 dark:text-natural-200"
+                            >
                                 <T
                                     key-name="dashboard.template.filter.destination.description"
                                 />
                             </p>
                             <AutoComplete
                                 v-model="templateDestination"
-                                input-class="bg-natural-50 border-2 border-natural-300 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
+                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
                                 :pt="{
-                                    panel: 'w-20',
+                                    panel: 'w-20 bg-natural-50 dark:bg-natural-900',
+                                    item: 'text-text dark:text-natural-50 hover:text-natural-100 hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
                                 }"
                                 :suggestions="destinations"
                                 :force-selection="true"
@@ -767,16 +775,19 @@ function editJourney(journey: Journey, id: string) {
                                     class="ml-1 h-0.5 w-full bg-calypso-400"
                                 />
                             </div>
-                            <p class="mb-1 text-natural-700">
+                            <p
+                                class="mb-1 text-natural-700 dark:text-natural-200"
+                            >
                                 <T
                                     key-name="dashboard.template.filter.creator.description"
                                 />
                             </p>
                             <AutoComplete
                                 v-model="templateCreator"
-                                input-class="bg-natural-50 border-2 border-natural-300 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
+                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
                                 :pt="{
-                                    panel: 'w-20',
+                                    panel: 'w-20 bg-natural-50 dark:bg-natural-900',
+                                    item: 'text-text dark:text-natural-50 hover:text-natural-100 hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
                                 }"
                                 :suggestions="usernames"
                                 :force-selection="true"
@@ -792,7 +803,7 @@ function editJourney(journey: Journey, id: string) {
                         </div>
                         <div class="flex justify-end pb-1 pt-20">
                             <button
-                                class="text-mahagony-400 underline"
+                                class="dark:text-mahagony-200 text-mahagony-400 underline"
                                 @click="clearFilters"
                             >
                                 <T key-name="dashboard.template.filter.clear" />

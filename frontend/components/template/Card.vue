@@ -17,14 +17,18 @@ const isProfileDialogVisible = ref(false);
 
 <template>
     <div
-        class="rounded-xl border-2 border-natural-200 hover:cursor-pointer hover:border-calypso-400"
+        class="rounded-xl border-2 border-natural-200 bg-natural-50 hover:cursor-pointer hover:border-calypso-400 dark:border-natural-800 dark:bg-natural-900 dark:hover:border-calypso-400"
         @click="$emit('openTemplate', template.id)"
     >
         <div
-            class="flex h-6 w-full items-center rounded-t-[0.7rem] bg-calypso-300 px-2"
+            class="flex h-6 w-full items-center rounded-t-[0.7rem] bg-calypso-300 px-2 dark:bg-calypso-700"
         >
-            <div class="w-full border border-dashed border-natural-50" />
-            <SvgAirplaneIcon class="h-5 pl-1 text-natural-50" />
+            <div
+                class="w-full border border-dashed border-natural-50 dark:border-calypso-300"
+            />
+            <SvgAirplaneIcon
+                class="h-5 pl-1 text-natural-50 dark:border-calypso-300"
+            />
         </div>
         <div class="px-2.5 pb-2 pt-2">
             <h3
@@ -41,7 +45,7 @@ const isProfileDialogVisible = ref(false);
                     value: template.users[0].username,
                     pt: { root: 'font-nunito' },
                 }"
-                class="-mt-1 truncate text-xl text-natural-600"
+                class="-mt-1 truncate text-xl text-natural-600 dark:text-natural-300"
             >
                 <T key-name="template.by" /><span
                     :class="

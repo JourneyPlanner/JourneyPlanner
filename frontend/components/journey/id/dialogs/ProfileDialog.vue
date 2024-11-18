@@ -132,7 +132,6 @@ const close = (): void => {
                 />
             </template>
             <div class="mt-1">
-                <!-- TODO add darkmode hover -->
                 <NuxtLink
                     :to="'/user/' + username"
                     class="group ml-4 max-w-36 truncate text-xl text-natural-500 hover:text-calypso-600 dark:text-natural-300 xs:ml-6 xs:max-w-48 sm:ml-[2.875rem] sm:max-w-72 md:ml-8 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
@@ -156,7 +155,7 @@ const close = (): void => {
                         v-for="index in 8"
                         :key="index"
                         height="6.75rem"
-                        class="rounded-md"
+                        class="rounded-md dark:bg-natural-600"
                     />
                 </div>
                 <div
@@ -183,7 +182,7 @@ const close = (): void => {
                 </div>
                 <div class="flex flex-row justify-center">
                     <NuxtLink
-                        class="mt-6 flex rounded-xl border-2 border-dandelion-300 bg-natural-50 px-4 py-1 text-center text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
+                        class="mt-6 flex rounded-xl border-2 border-dandelion-300 bg-natural-50 px-4 py-1 text-center text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                         :to="'/user/' + username"
                     >
                         <T key-name="profile.see.full" />

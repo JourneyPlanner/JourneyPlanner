@@ -18,6 +18,11 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    inTemplate: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
 });
 
 const activityId = ref("");
@@ -142,8 +147,8 @@ async function deleteActivity() {
                         activities.value.splice(
                             activities.value.indexOf(activity),
                             1,
-                        ),
-                            store.setActivities(activities.value);
+                        );
+                        store.setActivities(activities.value);
                     }
                 });
             }
@@ -243,6 +248,7 @@ const itemsJourneyGuide = ref([
                                     {{ activity.name }}
                                 </p>
                                 <button
+                                    v-if="!inTemplate"
                                     class="pi pi-ellipsis-v"
                                     aria-haspopup="true"
                                     aria-controls="overlay_menu"

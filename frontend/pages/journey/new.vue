@@ -17,6 +17,10 @@ const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
 const loading = ref(false);
+const openedTemplate = ref<Template>();
+const isTemplatePopupVisible = ref(false);
+const templateDestination = ref("");
+const templates = ref<Template[]>([]);
 
 const title = t.value("title.journey.create");
 useHead({
@@ -38,6 +42,26 @@ if (!isAuthenticated.value) {
     journeyInviteLink.value =
         window.location.origin + "/invite/" + journeyInvite.value;
 }
+
+/**
+ * Fetches all templates from the backend
+ * stores response in templates ref
+ */
+const { data: templateData } = await useAsyncData("templates", () =>
+    client(
+        `/api/template?per_page=3&template_destination=${templateDestination.value}`,
+    ),
+);
+
+watch(
+    templateData,
+    () => {
+        if (templateData.value) {
+            templates.value = templateData.value.data;
+        }
+    },
+    { immediate: true },
+);
 
 /**
  * form validation
@@ -250,6 +274,37 @@ function copyToClipboard() {
                     </form>
                 </fieldset>
             </div>
+            <div class="mt-1 flex w-full justify-center px-4">
+                <div
+                    class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-1/4 md:w-1/3"
+                >
+                    <h3
+                        class="ml-4 mt-0.5 text-lg font-semibold text-natural-800 dark:text-natural-200"
+                    >
+                        <T key-name="template.suggestions" />
+                    </h3>
+                    <div id="template-suggestions" class="mt-1 flex flex-col">
+                        <TemplateSuggestion
+                            v-for="(template, index) in templates"
+                            :key="template.id"
+                            :index="index"
+                            :template="template"
+                            @open-template="
+                                openedTemplate = template;
+                                isTemplatePopupVisible = true;
+                            "
+                        />
+                    </div>
+                    <div class="my-2 mr-3 flex justify-end">
+                        <NuxtLink
+                            to="/dashboard?tab=templates"
+                            class="text-end text-natural-800 hover:text-calypso-600 hover:underline dark:text-natural-200 dark:hover:text-calypso-300"
+                        >
+                            <T key-name="template.all" />
+                        </NuxtLink>
+                    </div>
+                </div>
+            </div>
             <div class="z-10">
                 <div
                     class="relative flex flex-row items-end justify-between border-b border-natural-200"
@@ -270,6 +325,14 @@ function copyToClipboard() {
             />
             <SvgCloud
                 class="invisible absolute right-[20%] top-36 z-0 h-16 overflow-hidden object-none md:visible"
+            />
+        </div>
+        <div id="dialogs">
+            <TemplatePopup
+                v-if="openedTemplate"
+                :template="openedTemplate!"
+                :is-template-dialog-visible="isTemplatePopupVisible"
+                @close="isTemplatePopupVisible = false"
             />
         </div>
     </div>

@@ -67,7 +67,7 @@ function close() {
             },
             footer: { class: 'h-0' },
             closeButtonIcon: {
-                class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-text h-10 w-10',
+                class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10',
             },
         }"
         @hide="close"
@@ -98,7 +98,10 @@ function close() {
             class="mx-4 mt-2 h-full xs:mx-8 sm:mx-12 md:mx-8"
         >
             <div id="details" class="flex h-32 gap-x-4">
-                <div id="facts" class="flex w-1/2 flex-col gap-y-3">
+                <div
+                    id="facts"
+                    class="flex w-1/2 flex-col gap-y-3 text-text dark:text-natural-50"
+                >
                     <div
                         id="destination"
                         v-tooltip.top="{
@@ -108,7 +111,7 @@ function close() {
                         class="flex flex-row items-center gap-x-1"
                     >
                         <i
-                            class="pi pi-map-marker mr-2 text-xl text-calypso-600"
+                            class="pi pi-map-marker mr-2 text-xl text-calypso-600 dark:text-calypso-400"
                         />
                         <h5 class="truncate text-xl">
                             {{ template.destination }}
@@ -116,7 +119,7 @@ function close() {
                     </div>
                     <div id="length" class="flex flex-row items-center gap-x-1">
                         <i
-                            class="pi pi-calendar mr-2 text-xl text-calypso-600"
+                            class="pi pi-calendar mr-2 text-xl text-calypso-600 dark:text-calypso-400"
                         />
                         <h5 class="truncate text-xl">
                             {{ template.length }}
@@ -133,7 +136,9 @@ function close() {
                         id="activity-count"
                         class="flex flex-row items-center gap-x-1"
                     >
-                        <i class="pi pi-ticket mr-2 text-xl text-calypso-600" />
+                        <i
+                            class="pi pi-ticket mr-2 text-xl text-calypso-600 dark:text-calypso-400"
+                        />
 
                         <span
                             class="flex flex-row items-center gap-x-1 truncate text-xl"
@@ -142,6 +147,7 @@ function close() {
                                 v-if="activityCount === null"
                                 width="1rem"
                                 height="1.25rem"
+                                class="dark:bg-natural-600"
                             />
                             <span v-else>
                                 {{ activityCount }}
@@ -158,7 +164,7 @@ function close() {
                 </div>
                 <div
                     id="description"
-                    class="w-1/2 overflow-y-scroll rounded-lg border border-natural-100 p-1 text-lg font-normal text-text dark:text-natural-50"
+                    class="w-1/2 overflow-y-scroll rounded-lg border border-natural-100 p-1 text-lg font-normal text-text dark:border-natural-800 dark:bg-natural-900 dark:text-natural-50"
                 >
                     <p v-if="template.description">
                         {{ template.description }}
@@ -169,7 +175,7 @@ function close() {
                 </div>
             </div>
             <div id="activities" class="mt-2.5">
-                <h3 class="text-lg text-text">
+                <h3 class="text-lg text-text dark:text-natural-50">
                     <T :key-name="'template.activity.pool'" />
                 </h3>
                 <div
@@ -178,7 +184,7 @@ function close() {
                     <Skeleton
                         v-if="activityCount === null"
                         height="11.7rem"
-                        class="rounded-2xl lg:rounded-3xl"
+                        class="rounded-2xl dark:bg-natural-600 lg:rounded-3xl"
                     />
                     <ScrollPanel
                         v-else

@@ -35,8 +35,6 @@ onMounted(async () => {
     }
     Mapbox = await import("@mapbox/search-js-web");
     search.value = new Mapbox.MapboxSearchBox();
-    console.log(search);
-
     isLoaded.value = true;
     await nextTick();
     if (props.value) {
