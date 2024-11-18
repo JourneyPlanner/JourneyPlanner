@@ -45,7 +45,7 @@
         "file-saver": "^2.0.5",
         "js-confetti": "^0.12.0",
         "jszip": "^3.10.1",
-        "lightgallery": "2.7.2",
+        "lightgallery": "2.8.1",
         "nuxt": "^3.14.159",
         "pinia": "^2.2.6",
         "primeicons": "^7.0.0",
