@@ -23,9 +23,16 @@ export const useActivityStore = defineStore("activities", () => {
         this.activityData[index] = activity;
     }
 
+    function getActivity(id) {
+        return this.activityData[
+            this.activityData.findIndex((obj) => obj.id === id)
+        ];
+    }
+
     return {
         activityData,
         setActivities,
+        getActivity,
         addActivity,
         addedActivity,
         setNewActivity,

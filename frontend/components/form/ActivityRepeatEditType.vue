@@ -6,7 +6,7 @@ const props = defineProps({
 });
 
 const isVisible = ref(props.visible);
-const emit = defineEmits(["close", "changeEmail"]);
+const emit = defineEmits(["close", "post"]);
 const editOption = ref();
 
 watch(
@@ -18,6 +18,12 @@ watch(
 
 const close = () => {
     emit("close");
+    editOption.value = null;
+};
+
+const post = () => {
+    emit("post", editOption.value);
+    editOption.value = null;
 };
 </script>
 <template>
@@ -65,7 +71,7 @@ const close = () => {
                 <div class="h-0.5 flex-grow bg-calypso-400" />
             </div>
         </template>
-        <div class="">
+        <div class="text-text dark:text-natural-50">
             <T key-name="activity.recurring.event" />
             <br />
             <T key-name="activity.repeat.edit.choose" />
@@ -82,8 +88,9 @@ const close = () => {
                     for="endDate"
                     class="pl-2"
                     :class="{
-                        'text-gray-600': true,
-                        'text-natural-400': editOption !== 'single',
+                        'text-gray-400 dark:text-natural-300': true,
+                        'text-natural-600 dark:text-natural-50':
+                            editOption == 'single',
                     }"
                 >
                     <T key-name="activity.recurring.event.single"
@@ -93,15 +100,16 @@ const close = () => {
                     id="followingEvents"
                     v-model="editOption"
                     type="radio"
-                    value="following"
+                    value="after"
                     class="form-radio text-blue-600"
                 />
                 <label
                     for="endDate"
                     class="pl-2"
                     :class="{
-                        'text-gray-600': true,
-                        'text-natural-400': editOption !== 'following',
+                        'text-gray-400 dark:text-natural-300': true,
+                        'text-natural-600 dark:text-natural-50':
+                            editOption == 'after',
                     }"
                 >
                     <T key-name="activity.recurring.event.following"
@@ -118,8 +126,9 @@ const close = () => {
                     for="endDate"
                     class="pl-2"
                     :class="{
-                        'text-gray-600': true,
-                        'text-natural-400': editOption !== 'all',
+                        'text-gray-400 dark:text-natural-300': true,
+                        'text-natural-600 dark:text-natural-50':
+                            editOption == 'all',
                     }"
                 >
                     <T key-name="activity.recurring.event.all"
@@ -136,6 +145,7 @@ const close = () => {
                 </div>
                 <button
                     class="mt-auto flex items-center justify-center rounded-md border-[3px] border-dandelion-300 bg-natural-50 px-8 py-0.5 text-center text-base font-semibold hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
+                    @click="post"
                 >
                     <T key-name="common.edit" />
                 </button>

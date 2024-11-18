@@ -66,6 +66,7 @@ const props = defineProps({
         required: true,
     },
 });
+const activity = ref();
 const activityId = ref("");
 const calendarId = ref("");
 const isRecurringActivityEditVisible = ref(false);
@@ -450,10 +451,14 @@ async function initializeDrop(info: EventObject) {
  * when event is resized this function will update the activity in the database
  * @param info -- the event object with data about the activity
  */
-async function editDrop(info: EventObject) {
-    isRecurringActivityEditVisible.value = true;
-    const activityId = info.event._def.extendedProps.activity_id;
+function editDrop(info: EventObject) {
+    activityId.value = info.event._def.extendedProps.activity_id;
     const calenderActivityId = info.event._def.publicId;
+    if (store.getActivity(activityId.value).repeat_type != null) {
+        isRecurringActivityEditVisible.value = true;
+    } else {
+        editDropCall("all");
+    }
     const startTime = info.event._instance.range.start.toISOString();
     const endTime = info.event._instance.range.end.toISOString();
 
@@ -470,14 +475,18 @@ async function editDrop(info: EventObject) {
         minutes.toString().padStart(2, "0") +
         ":00";
 
-    const activity = {
+    activity.value = {
         estimated_duration: newDuration,
         calendar_activity_id: calenderActivityId,
     };
+}
 
-    await client(`/api/journey/${props.id}/activity/${activityId}`, {
+async function editDropCall(editType: string) {
+    isRecurringActivityEditVisible.value = false;
+    Object.assign(activity.value, { edit_type: editType });
+    await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
         method: "PATCH",
-        body: activity,
+        body: activity.value,
         async onResponse({ response }) {
             if (response.ok) {
                 toast.add({
@@ -491,13 +500,12 @@ async function editDrop(info: EventObject) {
                     life: 6000,
                 });
                 close();
-                store.updateActivity(response._data, activityId);
+                store.updateActivity(response._data, activityId.value);
                 store.setNewActivity(response._data);
             }
         },
     });
 }
-
 /**
  * set the data of the activity in the dialog
  * @param info -- the event object with data about the activity
@@ -595,6 +603,7 @@ function moveActivity(start: Date, end: Date) {
         <FormActivityRepeatEditType
             :visible="isRecurringActivityEditVisible"
             @close="isRecurringActivityEditVisible = false"
+            @post="editDropCall"
         />
         <div
             class="flex w-[90%] flex-col items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"

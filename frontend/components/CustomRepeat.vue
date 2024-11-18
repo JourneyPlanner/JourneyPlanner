@@ -251,7 +251,7 @@ function changeOccurences() {
             block-scroll
             :auto-z-index="true"
             :draggable="false"
-            class="z-50 flex w-2/3 flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-1/4 2xl:w-1/5"
+            class="z-50 flex w-1/3 flex-col text-nowrap rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-1/4"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -281,7 +281,7 @@ function changeOccurences() {
                 <div class="flex w-full items-center">
                     <div class="h-0.5 w-5 bg-calypso-600" />
                     <div
-                        class="flex-grow-5 mx-3 text-2xl text-text dark:text-natural-50"
+                        class="flex-grow-5 mx-3 pl-1 text-2xl text-text dark:text-natural-50"
                     >
                         <T key-name="activity.repeat.custom.dialog" />
                     </div>
@@ -300,15 +300,15 @@ function changeOccurences() {
                     <InputNumber
                         v-model="repeatNumber"
                         input-id="stacked-buttons"
-                        input-class="w-6 focus:outline-none focus:ring-1 bg-background"
+                        input-class="w-6 focus:outline-none focus:ring-1 bg-background dark:bg-natural-900"
                         increment-button-class="flex flex-col items-end w-6"
                         decrement-button-class="flex flex-col items-end w-6"
                         show-buttons
                         :min="1"
-                        class="ml-4 h-8 w-10 rounded-md border border-natural-300 bg-background pl-2 focus:outline-none focus:ring-1"
+                        class="ml-4 h-8 w-10 rounded-md border border-natural-300 bg-background pl-2 focus:outline-none focus:ring-1 dark:border-natural-700 dark:bg-natural-800"
                         :pt="{
                             root: {
-                                class: 'w-12',
+                                class: 'w-12 dark:bg-natural-900',
                             },
                             buttonGroup: {
                                 class: 'flex flex-col items-end w-6',
@@ -327,7 +327,7 @@ function changeOccurences() {
                         class="w-[30%] rounded-sm"
                         :pt="{
                             root: {
-                                class: 'ml-4 font-nunito text-text text-base bg-natural-50 border border-natural-300 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-8 flex items-center',
+                                class: 'ml-4 font-nunito text-text text-base bg-natural-50 border border-natural-300 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-8 flex items-center',
                             },
                             input: {
                                 class: 'text-text dark:text-natural-50 ml-2 font-medium',
@@ -368,8 +368,9 @@ function changeOccurences() {
                             type="button"
                             :class="{
                                 'h-10 w-10 rounded-full': true,
-                                'bg-natural-100': !day.active,
-                                'text-white border-transparent bg-dandelion-200':
+                                'bg-natural-100 dark:bg-natural-800':
+                                    !day.active,
+                                'text-white border-transparent bg-dandelion-200 dark:bg-pesto-600':
                                     day.active,
                             }"
                             class="focus:outline-none"
@@ -388,7 +389,6 @@ function changeOccurences() {
                             id="endDate"
                             v-model="endOption"
                             type="radio"
-                            checked
                             value="date"
                             class="form-radio text-blue-600"
                         />
@@ -406,23 +406,22 @@ function changeOccurences() {
                             :max-date="props.endDate"
                             :disabled="endOption !== 'date'"
                             :placeholder="format(props.endDate, 'dd/MM/yyyy')"
+                            panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
+                            input-class="dark:border-natural-700 border-natural-300 block rounded-sm w-28 text-center text-md text-text dark:text-natural-50 disabled:text-natural-400 dark:disabled:text-natural-400 font-medium bg-natural-50 dark:bg-natural-900 border-2 focus:outline-none focus:ring-0"
                             class="rounded-lg border placeholder-text"
                             date-format="dd/mm/yy"
                             :pt="{
-                                root: {
-                                    class: 'font-nunito text-text bg-natural-50 border-0 placeholder-text disabled:bg-natural-100',
+                                root: 'border-none',
+                                panel: { class: 'text-text font-nunito z-50' },
+                                header: {
+                                    class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-900 dark:text-natural-50',
                                 },
                                 title: {
-                                    class: 'flex gap-1 text-text dark:text-natural-50 ',
+                                    class: 'text-text dark:text-natural-50 flex gap-1 font-nunito',
                                 },
-                                header: {
-                                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50',
-                                },
-                                panel: {
-                                    class: 'font-nunito text-text bg-natural-50 dark:bg-natural-800 dark:text-natural-50',
-                                },
-                                input: {
-                                    class: 'placeholder-text dark:placeholder-natural-50 border border-natural-300 w-28 text-center rounded-md disabled:bg-natural-100 disabled:text-natural-400 disabled:placeholder-natural-400',
+                                dayLabel: { class: 'text-calypso-400' },
+                                datepickerMask: {
+                                    class: 'text-text bg-natural-900',
                                 },
                             }"
                         />
@@ -440,13 +439,13 @@ function changeOccurences() {
                         <InputNumber
                             v-model="occurrenceCount"
                             input-id="stacked-buttons"
-                            input-class="w-6 focus:outline-none focus:ring-1 disabled:bg-natural-100 disabled:text-natural-400 pl-2"
+                            input-class="w-6 focus:outline-none focus:ring-1 disabled:bg-natural-100 disabled:text-natural-400 pl-2 dark:bg-natural-900"
                             increment-button-class="flex flex-col items-end w-6"
                             :disabled="endOption !== 'occurrences'"
                             decrement-button-class="flex flex-col items-end w-6"
                             show-buttons
                             :min="1"
-                            class="ml-4 h-8 w-10 rounded-md border border-natural-300 focus:outline-none focus:ring-1 disabled:bg-natural-100"
+                            class="ml-4 h-8 w-10 rounded-md border border-natural-300 focus:outline-none focus:ring-1 disabled:bg-natural-100 dark:border-natural-700"
                             :pt="{
                                 root: {
                                     class: 'w-12 disabled:bg-natural-100',
@@ -538,15 +537,15 @@ function changeOccurences() {
                     <InputNumber
                         v-model="repeatNumber"
                         input-id="stacked-buttons"
-                        input-class="w-6 focus:outline-none focus:ring-1 bg-background"
+                        input-class="w-6 focus:outline-none focus:ring-1 bg-background dark:bg-natural-900"
                         increment-button-class="flex flex-col items-end w-6"
                         decrement-button-class="flex flex-col items-end w-6"
                         show-buttons
                         :min="1"
-                        class="ml-4 h-8 w-10 rounded-md border border-natural-300 bg-background pl-2 focus:outline-none focus:ring-1"
+                        class="ml-4 h-8 w-10 rounded-md border border-natural-300 bg-background pl-2 focus:outline-none focus:ring-1 dark:border-natural-700 dark:bg-natural-800"
                         :pt="{
                             root: {
-                                class: 'w-12',
+                                class: 'w-12 dark:bg-natural-900',
                             },
                             buttonGroup: {
                                 class: 'flex flex-col items-end w-6',
@@ -561,21 +560,20 @@ function changeOccurences() {
                         :highlight-on-select="false"
                         :placeholder="timeMode"
                         :focus-on-hover="false"
+                        :unstyled="true"
+                        class="w-[30%] rounded-sm"
                         :pt="{
                             root: {
-                                class: 'ml-4 font-nunito text-text bg-natural-50 border border-natural-300 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-8 flex items-center',
+                                class: 'ml-4 font-nunito text-text text-base bg-natural-50 border border-natural-300 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-8 flex items-center',
                             },
                             input: {
-                                class: 'text-text dark:text-natural-50',
-                            },
-                            item: {
-                                class: 'hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600',
+                                class: 'text-text dark:text-natural-50 ml-2 font-medium',
                             },
                             wrapper: {
                                 class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
                             },
                             trigger: {
-                                class: 'text-text dark:text-natural-50',
+                                class: 'text-text dark:text-natural-50 ml-auto mr-2',
                             },
                         }"
                         @change="changeRepeat"
@@ -598,8 +596,9 @@ function changeOccurences() {
                             type="button"
                             :class="{
                                 'h-10 w-10 rounded-full': true,
-                                'bg-natural-100': !day.active,
-                                'text-white border-transparent bg-dandelion-200':
+                                'bg-natural-100 dark:bg-natural-800':
+                                    !day.active,
+                                'text-white border-transparent bg-dandelion-200 dark:bg-pesto-600':
                                     day.active,
                             }"
                             class="focus:outline-none"
@@ -636,23 +635,23 @@ function changeOccurences() {
                             :max-date="props.endDate"
                             :disabled="endOption !== 'date'"
                             :placeholder="format(props.endDate, 'dd/MM/yyyy')"
+                            panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
+                            input-class="dark:border-natural-700 border-natural-300 block rounded-sm w-28 text-center text-md text-text dark:text-natural-50 disabled:text-natural-400 dark:disabled:text-natural-400 font-medium bg-natural-50 dark:bg-natural-900 border-2 focus:outline-none focus:ring-0"
                             class="rounded-lg border placeholder-text"
                             date-format="dd/mm/yy"
                             :pt="{
-                                root: {
-                                    class: 'font-nunito text-text bg-natural-50 border-0 placeholder-text disabled:bg-natural-100',
+                                root: 'border-none',
+                                panel: { class: 'text-text font-nunito z-50' },
+                                header: {
+                                    class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-900 dark:text-natural-50',
                                 },
                                 title: {
-                                    class: 'flex gap-1 text-text dark:text-natural-50 ',
+                                    class: 'text-text dark:text-natural-50 flex gap-1 font-nunito',
                                 },
-                                header: {
-                                    class: 'bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50',
-                                },
-                                panel: {
-                                    class: 'font-nunito text-text bg-natural-50 dark:bg-natural-800 dark:text-natural-50',
-                                },
-                                input: {
-                                    class: 'placeholder-text dark:placeholder-natural-50 border border-natural-300 w-28 text-center rounded-md disabled:bg-natural-100 disabled:text-natural-400 disabled:placeholder-natural-400',
+                                dayLabel: { class: 'text-calypso-400' },
+
+                                datepickerMask: {
+                                    class: 'text-text bg-natural-900',
                                 },
                             }"
                         />
@@ -670,13 +669,13 @@ function changeOccurences() {
                         <InputNumber
                             v-model="occurrenceCount"
                             input-id="stacked-buttons"
-                            input-class="w-6 focus:outline-none focus:ring-1 disabled:bg-natural-100 disabled:text-natural-400 pl-2"
+                            input-class="w-6 focus:outline-none focus:ring-1 disabled:bg-natural-100 disabled:text-natural-400 pl-2 dark:bg-natural-900"
                             increment-button-class="flex flex-col items-end w-6"
                             :disabled="endOption !== 'occurrences'"
                             decrement-button-class="flex flex-col items-end w-6"
                             show-buttons
                             :min="1"
-                            class="ml-4 h-8 w-10 rounded-md border border-natural-300 focus:outline-none focus:ring-1 disabled:bg-natural-100"
+                            class="ml-4 h-8 w-10 rounded-md border border-natural-300 focus:outline-none focus:ring-1 disabled:bg-natural-100 dark:border-natural-700"
                             :pt="{
                                 root: {
                                     class: 'w-12 disabled:bg-natural-100',
@@ -686,6 +685,7 @@ function changeOccurences() {
                                 },
                             }"
                             @input="changeOccurences"
+                            @blur="changeOccurences"
                         />
                         <span
                             :class="{
