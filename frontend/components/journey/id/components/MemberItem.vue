@@ -33,17 +33,11 @@ const roleType = computed(() => {
                 value: displayName,
                 pt: { root: 'font-nunito' },
             }"
-            class="w-2/3 cursor-pointer overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50 max-sm:hidden"
+            class="w-2/3 cursor-pointer overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50"
             @click="isProfileDialogVisible = true"
         >
             {{ displayName }}
         </h2>
-        <NuxtLink
-            class="w-2/3 cursor-pointer overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50 sm:hidden"
-            :to="'/user/' + username"
-        >
-            {{ displayName }}
-        </NuxtLink>
         <div
             class="w-1/4 rounded-md p-0.5 px-1 text-center"
             :class="
@@ -85,10 +79,12 @@ const roleType = computed(() => {
             <T key-name="journey.sidebar.list.member" />
         </h4>
     </form>
-    <JourneyIdDialogsProfileDialog
-        :visible="isProfileDialogVisible"
-        :username="username"
-        :displayname="displayName"
-        @close="isProfileDialogVisible = false"
-    />
+    <div id="dialogs">
+        <JourneyIdDialogsProfileDialog
+            :visible="isProfileDialogVisible"
+            :username="username"
+            :displayname="displayName"
+            @close="isProfileDialogVisible = false"
+        />
+    </div>
 </template>

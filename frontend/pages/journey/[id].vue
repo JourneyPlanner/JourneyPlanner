@@ -284,7 +284,9 @@ function scrollToTarget(target: string) {
 </script>
 
 <template>
-    <div class="flex flex-col font-nunito text-text dark:text-natural-50">
+    <div
+        class="flex flex-col overflow-x-hidden font-nunito text-text dark:text-natural-50"
+    >
         <JourneyIdMemberSidebar
             :journey-i-d="String(journeyId)"
             :is-member-sidebar-visible="isMemberSidebarVisible"

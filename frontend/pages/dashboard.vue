@@ -444,8 +444,7 @@ function changeAddress(newAddress: string) {
 }
 
 //TODO z index scuffed user settings bzw edit/delete popup ist unter den sachen vom header
-//TODO is create journey responsive?
-//TODO adress inpout sidebar
+//TODO is create journy noch so scuffed responsive
 </script>
 
 <template>
@@ -1087,11 +1086,11 @@ function changeAddress(newAddress: string) {
                                 key-name="dashboard.template.filter.creator.description"
                             />
                         </p>
-                        <!-- TODO w-full -->
                         <AutoComplete
                             v-model="templateCreator"
-                            input-class="bg-natural-50  dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
+                            input-class="bg-natural-50 w-full dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
                             :pt="{
+                                root: 'w-full',
                                 panel: 'bg-natural-50 dark:bg-natural-900',
                                 item: 'text-text dark:text-natural-50 hover:text-natural-100 hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
                             }"
@@ -1198,158 +1197,5 @@ function changeAddress(newAddress: string) {
                 }"
             />
         </div>
-        <!--
-    <div
-        class="px-2 font-nunito text-text dark:text-natural-50 md:px-8 lg:px-20"
-    >
-        <div
-            id="header"
-            class="mt-5 flex items-center justify-between border-b-2 border-calypso-300 pb-3 dark:border-calypso-400 md:pb-4"
-        >
-            <div class="flex flex-row items-center">
-                <SvgDashboardIcon class="mr-1 mt-0.5 md:h-9 md:w-9" />
-                <h1 class="mt-1 text-3xl font-medium md:text-5xl">
-                    <T key-name="common.dashboard" />
-                </h1>
-            </div>
-            <div id="right-header" class="flex flex-row items-center">
-                <div
-                    id="search-and-filter"
-                    class="mr-4 hidden flex-row border-r-2 border-natural-200 lg:flex"
-                >
-                    <div
-                        id="search"
-                        v-tooltip.top="{
-                            value: t('dashboard.tooltip.search'),
-                            pt: { root: 'font-nunito' },
-                        }"
-                        class="relative mr-2.5"
-                    >
-                        <input
-                            ref="searchInput"
-                            v-model="searchValue"
-                            type="text"
-                            class="rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200"
-                            :placeholder="t('dashboard.search')"
-                            @input="searchJourneys"
-                        />
-                        <button @click="searchInput.focus()">
-                            <SvgSearchIcon
-                                class="absolute right-1 top-1 h-7 w-7"
-                            />
-                        </button>
-                    </div>
-                    <div id="filter" class="mr-4">
-                        <SvgFilterIcon
-                            aria-haspopup="true"
-                            aria-controls="overlay_tmenu"
-                            class="h-9 w-9 hover:cursor-pointer"
-                            @click="toggle"
-                        />
-                    </div>
-                </div>
-                <NuxtLink
-                    to="/journey/new"
-                    class="group mr-2.5 hidden flex-row items-center rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-ronchi-300 dark:hover:text-text lg:flex"
-                >
-                    <SvgCreateNewJourneyIcon
-                        class="mr-1 h-5 w-5 fill-text dark:fill-natural-50 dark:group-hover:fill-text"
-                    />
-                    <T key-name="dashboard.new" />
-                </NuxtLink>
-                <NuxtLink :to="'/user/' + user.username" class="mr-2.5">
-                    <SvgUserIcon class="mt-1 h-9 w-9" />
-                </NuxtLink>
-                <button @click="isUserSettingsVisible = !isUserSettingsVisible">
-                    <SvgSettingsIcon class="mt-1 h-9 w-9" />
-                </button>
-                <UserSettings
-                    :visible="isUserSettingsVisible"
-                    :prop-username="user.username"
-                    :prop-displayname="user.display_name"
-                    :prop-email="user.email"
-                    @close="isUserSettingsVisible = false"
-                />
-            </div>
-        </div>
-        <div
-            id="header-mobile-second-row"
-            class="mt-3 flex justify-between lg:hidden"
-        >
-            <div id="search-and-filter" class="flex flex-row">
-                <div id="filter" class="mr-2">
-                    <SvgFilterIcon
-                        aria-haspopup="true"
-                        aria-controls="overlay_tmenu"
-                        class="h-9 w-9 hover:cursor-pointer"
-                        @click="toggle"
-                    />
-                </div>
-                <div id="search" class="relative">
-                    <input
-                        ref="searchInputMobile"
-                        v-model="searchValue"
-                        type="text"
-                        class="w-40 rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200 md:w-52"
-                        :placeholder="t('dashboard.search')"
-                        @input="searchJourneys"
-                    />
-                    <button @click="searchInputMobile.focus()">
-                        <SvgSearchIcon class="absolute right-1 top-1 h-7 w-7" />
-                    </button>
-                </div>
-            </div>
-            <NuxtLink
-                to="/journey/new"
-                class="flex flex-row items-center justify-center"
-            >
-                <button
-                    class="flex flex-row items-center justify-center rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 font-semibold text-text dark:border-dandelion-300 dark:bg-ronchi-300 md:px-4"
-                >
-                    <SvgCreateNewJourneyIcon class="mr-1 h-5 w-5 fill-text" />
-                    <T key-name="dashboard.new" />
-                </button>
-            </NuxtLink>
-        </div>
-        <div class="flex justify-center">
-            <div
-                id="journeys"
-                class="mt-5 grid gap-x-5 gap-y-5 md:gap-x-4 md:gap-y-4 lg:gap-x-6 lg:gap-y-6"
-                :class="
-                    currentJourneys.length === 0
-                        ? 'grid-cols-1'
-                        : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'
-                "
-            >
-                <DashboardItem
-                    v-for="journey in currentJourneys"
-                    :id="String(journey.id)"
-                    :key="journey.id"
-                    :name="journey.name"
-                    :destination="journey.destination"
-                    :from="new Date(journey.from)"
-                    :to="new Date(journey.to)"
-                    :role="Number(journey.role)"
-                    @journey-deleted="removeJourney"
-                    @journey-leave="removeJourney"
-                    @journey-edited="editJourney"
-                />
-                <NuxtLink to="/journey/new">
-                    <SvgCreateNewJourneyCard
-                        class="hidden dark:hidden lg:block"
-                    />
-                    <SvgCreateNewJourneyCardDark class="hidden dark:lg:block" />
-                    <div
-                        class="flex h-[7.5rem] min-w-36 flex-grow items-center justify-center rounded-md border border-dandelion-300 bg-dandelion-100 dark:bg-pesto-600 lg:hidden"
-                    >
-                        <SvgCreateNewJourneyIcon
-                            class="h-14 w-14 fill-text dark:fill-natural-50"
-                        />
-                    </div>
-                </NuxtLink>
-            </div>
-        </div>
-
     </div>
-    --></div>
 </template>

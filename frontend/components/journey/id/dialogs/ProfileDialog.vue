@@ -91,7 +91,7 @@ const close = (): void => {
             :draggable="false"
             close-on-escape
             dismissable-mask
-            class="z-50 mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-6/12 xl:w-6/12"
+            class="z-50 mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-6/12 xl:w-6/12"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -190,6 +190,112 @@ const close = (): void => {
                 </div>
             </div>
         </Dialog>
+        <Sidebar
+            v-model:visible="isVisible"
+            modal
+            position="bottom"
+            :show-close-icon="false"
+            :block-scroll="true"
+            :auto-z-index="true"
+            :draggable="false"
+            class="z-50 mt-auto flex h-[80%] flex-col overflow-x-hidden rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden lg:-z-10"
+            :pt="{
+                root: {
+                    class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden ',
+                },
+                header: {
+                    class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50 rounded-3xl',
+                },
+                title: {
+                    class: 'font-nunito text-4xl font-semibold',
+                },
+                content: {
+                    class: 'font-nunito bg-background dark:bg-background-dark px-0 -ml-2 sm:pr-12 h-full',
+                },
+                footer: { class: 'h-0' },
+                closeButton: {
+                    class: 'justify-start w-full h-full items-center collapse',
+                },
+                mask: {
+                    class: 'sm:collapse bg-natural-50',
+                },
+            }"
+            @hide="close"
+        >
+            <template #header>
+                <button class="-ml-6 flex justify-center pr-4" @click="close">
+                    <span class="pi pi-angle-down text-xl" />
+                </button>
+                <div class="flex w-full gap-x-3">
+                    <h1
+                        class="truncate text-nowrap text-xl font-medium text-text dark:text-natural-50"
+                    >
+                        {{ displayname }}
+                    </h1>
+                    <NuxtLink
+                        :to="'/user/' + username"
+                        class="group max-w-36 truncate text-xl text-natural-500 hover:text-calypso-600 dark:text-natural-300 xs:max-w-48 sm:ml-[2.875rem] sm:max-w-72 md:ml-8 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
+                    >
+                        (@<span class="group-hover:underline">{{
+                            username
+                        }}</span
+                        >)
+                    </NuxtLink>
+                </div>
+            </template>
+            <div class="flex h-full flex-col justify-center px-4">
+                <h1
+                    class="text-lg font-medium text-text dark:text-natural-50 xs:text-xl md:text-xl"
+                >
+                    <T key-name="profile.templates" />
+                    {{ username }}
+                </h1>
+                <div
+                    v-if="!templates"
+                    id="templates-loading"
+                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-4"
+                >
+                    <Skeleton
+                        v-for="index in 6"
+                        :key="index"
+                        height="6.75rem"
+                        class="rounded-md dark:bg-natural-600"
+                    />
+                </div>
+                <div
+                    v-else
+                    id="templates"
+                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-4"
+                >
+                    <TemplateCardSmall
+                        v-for="template in templates.slice(0, 6)"
+                        :key="template.id"
+                        :template="template"
+                        :displayed-in-profile="true"
+                        @open-template="
+                            openedTemplate = template;
+                            isTemplatePopupVisible = true;
+                        "
+                    />
+                    <div
+                        v-if="templates && templates.length === 0"
+                        class="col-span-full"
+                    >
+                        <T key-name="template.none" />
+                    </div>
+                </div>
+                <div
+                    class="mt-auto flex w-full justify-center text-text dark:text-natural-50"
+                >
+                    <NuxtLink
+                        class="w-full text-nowrap rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-xl font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
+                        :to="'/user/' + username"
+                    >
+                        <T key-name="profile.see.full" />
+                    </NuxtLink>
+                </div>
+            </div>
+        </Sidebar>
         <div id="dialogs">
             <TemplatePopup
                 v-if="openedTemplate"

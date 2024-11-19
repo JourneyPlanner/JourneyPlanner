@@ -195,7 +195,7 @@ function changeAddress(newAdress: string) {
                 >
                     <legend
                         for="create-journey"
-                        class="mb-5 text-center text-2xl font-bold text-text dark:text-natural-50 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
+                        class="text-center text-2xl font-bold text-text dark:text-natural-50 md:mb-5 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>
@@ -225,7 +225,6 @@ function changeAddress(newAdress: string) {
                         />
 
                         <div v-if="isAuthenticated" class="relative my-2 flex">
-                            <!-- TODO lightmode bg color anpassen? -->
                             <input
                                 id="journey-invite"
                                 v-model="journeyInviteLink"

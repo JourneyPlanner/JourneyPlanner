@@ -18,20 +18,20 @@ const isProfileDialogVisible = ref(false);
 
 <template>
     <div
-        class="cursor-pointer border-b border-natural-100 py-1 hover:border-calypso-400 dark:border-natural-400"
+        class="cursor-pointer border-b border-natural-100 py-1 hover:border-t hover:border-calypso-400 dark:border-natural-400"
         :class="index === 0 ? 'border-t' : ''"
         @click="$emit('openTemplate', template.id)"
     >
         <div
-            class="ml-1.5 flex border-l-2 border-natural-400 pl-1 dark:border-natural-400"
+            class="ml-1.5 flex items-center border-l-2 border-natural-400 pl-1 dark:border-natural-400"
         >
-            <div class="ml-1.5 w-1/4">
+            <div class="ml-1.5 w-2/5 sm:w-1/3">
                 <h3
                     v-tooltip.top="{
                         value: template.name,
                         pt: { root: 'font-nunito' },
                     }"
-                    class="truncate text-lg font-medium text-text dark:text-natural-50"
+                    class="truncate text-base font-medium text-text dark:text-natural-50"
                 >
                     {{ template.name }}
                 </h3>
@@ -40,7 +40,7 @@ const isProfileDialogVisible = ref(false);
                         value: template.users[0].username,
                         pt: { root: 'font-nunito' },
                     }"
-                    class="-mt-1 truncate text-base text-natural-600 dark:text-natural-300"
+                    class="-mt-1 truncate text-sm text-natural-600 dark:text-natural-300"
                 >
                     <T key-name="template.by" /><span
                         class="cursor-pointer hover:text-calypso-600 hover:underline"
@@ -50,27 +50,27 @@ const isProfileDialogVisible = ref(false);
                 </h4>
             </div>
             <div
-                class="ml-1 flex gap-x-2 text-text dark:text-natural-50 sm:ml-4 sm:gap-x-4"
+                class="ml-3 flex flex-col gap-x-0.5 text-text dark:text-natural-50 xs:ml-[4vw] md:flex-row"
             >
                 <div
                     v-tooltip.top="{
                         value: template.destination,
                         pt: { root: 'font-nunito' },
                     }"
-                    class="flex min-w-28 max-w-28 flex-row items-center gap-x-0.5 sm:gap-x-2"
+                    class="flex min-w-28 max-w-28 flex-row items-center gap-x-1 xs:min-w-32 xs:max-w-32 sm:min-w-24 sm:max-w-24 sm:gap-x-2"
                 >
                     <i
-                        class="pi pi-map-marker text-base text-calypso-600 dark:text-calypso-400"
+                        class="pi pi-map-marker text-sm text-calypso-400 dark:text-calypso-400"
                     />
-                    <h5 class="truncate text-base">
+                    <h5 class="truncate text-sm">
                         {{ template.destination }}
                     </h5>
                 </div>
-                <div class="flex flex-row items-center gap-x-0.5 sm:gap-x-2">
+                <div class="flex flex-row items-center gap-x-1 sm:gap-x-2">
                     <i
-                        class="pi pi-calendar text-base text-calypso-600 dark:text-calypso-400"
+                        class="pi pi-calendar text-sm text-calypso-400 dark:text-calypso-400"
                     />
-                    <h5 class="truncate text-base">
+                    <h5 class="truncate text-sm">
                         {{ template.length }}
                         <T
                             :key-name="
@@ -82,9 +82,9 @@ const isProfileDialogVisible = ref(false);
                     </h5>
                 </div>
             </div>
-            <button class="ml-auto mr-2 hidden items-center xs:flex sm:mr-4">
+            <button class="ml-auto mr-2 flex items-center xs:mr-3 sm:mr-4">
                 <i
-                    class="pi pi-arrow-up-right-and-arrow-down-left-from-center text-lg text-natural-500 hover:text-calypso-950 dark:text-natural-400 dark:hover:text-natural-50"
+                    class="pi pi-arrow-up-right-and-arrow-down-left-from-center text-base text-natural-500 hover:text-calypso-950 dark:text-natural-400 dark:hover:text-natural-50"
                 />
             </button>
         </div>

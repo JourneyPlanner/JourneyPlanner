@@ -253,6 +253,8 @@ function close() {
         <Sidebar
             v-model:visible="isVisible"
             modal
+            :show-close-icon="false"
+            :block-scroll="true"
             position="bottom"
             :auto-z-index="true"
             :draggable="false"
