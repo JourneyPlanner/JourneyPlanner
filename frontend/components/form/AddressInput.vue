@@ -19,6 +19,7 @@ const { value: inputValue, errorMessage } = useField<string>(() => props.name);
 
 const journey = useJourneyStore();
 const config = useRuntimeConfig();
+const emit = defineEmits(["changeAddress"]);
 
 let longlat = [0, 0];
 const search = ref();
@@ -108,7 +109,6 @@ function changeInput(event: InputEvent) {
 
 function handleRetrieve(event: MapBoxRetrieveEvent) {
     mapbox.value = event.detail.features[0];
-
     if (event.detail.features[0].properties.full_address) {
         inputValue.value = event.detail.features[0].properties.full_address;
     } else if (event.detail.features[0].properties.name_preferred) {
@@ -120,6 +120,13 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
     } else {
         inputValue.value = "";
     }
+
+    emit("changeAddress", inputValue.value);
+}
+
+function clearInput() {
+    inputValue.value = "";
+    emit("changeAddress", inputValue.value);
 }
 </script>
 <template>
@@ -142,7 +149,7 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                     cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border: solid 2px ${border};} .Input:focus {border-radius: 0.5rem; border: solid 2px ${border};} .SearchBox {box-shadow: none;} .Results {font-family: Nunito;} .ResultsAttribution {color: ${placeholderColor}} .SearchIcon {fill: ${border};} .ActionIcon {color: ${placeholderColor}}  ${css} ${customClass}`,
                 }"
                 @input="changeInput"
-                @clear="inputValue = ''"
+                @clear="clearInput"
                 @retrieve="
                     (event: MapBoxRetrieveEvent) => handleRetrieve(event)
                 "

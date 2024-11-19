@@ -13,6 +13,8 @@ const router = useRouter();
 const route = useRoute();
 const store = useDashboardStore();
 const client = useSanctumClient();
+const borderColor = "#BDBDBD"; //TODO darkmode
+const addressCss = `.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor}; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none}`;
 
 const searchInput = ref();
 //TODO mobile
@@ -37,7 +39,6 @@ const isTemplatePopupVisible = ref(false);
 const isFilterVisible = ref<boolean>(route.query.filter_open === "true");
 const filterDialog = ref<HTMLElement>();
 const usernames = ref<string[]>([]);
-const destinations = ref<string[]>([]);
 const templates = ref<Template[]>([]);
 const moreTemplatesAvailable = ref<boolean>(true);
 const templateJourneyLengthMinMax = ref<Array<number>>([1, 31]);
@@ -345,26 +346,6 @@ function getUsers() {
 }
 
 /*
- * debounce getDestinations() to prevent too many request on input
- */
-const searchDestination = debounce(() => {
-    getDestinations();
-});
-
-/**
- * get destination(s) for AutoComplete for destination template filter
- */
-function getDestinations() {
-    client(
-        `/api/template/destination?search=${templateDestination.value}&per_page=25`,
-    ).then((res) => {
-        destinations.value = res.data.map(
-            (destination: { destination: string }) => destination.destination,
-        );
-    });
-}
-
-/*
 Fetches all journeys from the backend
 stores response in journeys and currentJourneys
 also sets journeys in the store
@@ -436,6 +417,11 @@ function editJourney(journey: Journey, id: string) {
     journeys.value[index].from = journey.from;
     journeys.value[index].to = journey.to;
     journeys.value[index].name = journey.name;
+}
+
+function changeAddress(newAdress: string) {
+    templateDestination.value = newAdress;
+    refreshTemplates();
 }
 
 //TODO templlate suggestions journey create
@@ -743,25 +729,12 @@ function editJourney(journey: Journey, id: string) {
                                     key-name="dashboard.template.filter.destination.description"
                                 />
                             </p>
-                            <AutoComplete
-                                v-model="templateDestination"
-                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
-                                :pt="{
-                                    panel: 'w-20 bg-natural-50 dark:bg-natural-900',
-                                    item: 'text-text dark:text-natural-50 hover:text-natural-100 hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
-                                }"
-                                :suggestions="destinations"
-                                :force-selection="true"
-                                :complete-on-focus="true"
-                                :empty-search-message="
-                                    t(
-                                        'dashboard.template.filter.destination.empty',
-                                    )
-                                "
-                                @before-show="getDestinations()"
-                                @complete="searchDestination()"
-                                @item-select="refreshTemplates()"
-                                @clear="refreshTemplates(), searchDestination()"
+                            <FormAddressInput
+                                id="template-destination"
+                                name="destination"
+                                value=""
+                                :custom-class="addressCss"
+                                @change-address="changeAddress"
                             />
                         </div>
                         <div id="creator" class="mt-5">
