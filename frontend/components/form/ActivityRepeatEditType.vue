@@ -7,7 +7,7 @@ const props = defineProps({
 
 const isVisible = ref(props.visible);
 const emit = defineEmits(["close", "post"]);
-const editOption = ref();
+const editOption = ref("single");
 
 watch(
     () => props.visible,
@@ -18,12 +18,13 @@ watch(
 
 const close = () => {
     emit("close");
-    editOption.value = null;
+    editOption.value = "";
 };
 
 const post = () => {
     emit("post", editOption.value);
-    editOption.value = null;
+    console.log(editOption.value);
+    editOption.value = "";
 };
 </script>
 <template>
@@ -88,8 +89,8 @@ const post = () => {
                     for="endDate"
                     class="pl-2"
                     :class="{
-                        'text-gray-400 dark:text-natural-300': true,
-                        'text-natural-600 dark:text-natural-50':
+                        'text-natural-400 dark:text-natural-300': true,
+                        'text-natural-900 dark:text-natural-50':
                             editOption == 'single',
                     }"
                 >
@@ -107,8 +108,8 @@ const post = () => {
                     for="endDate"
                     class="pl-2"
                     :class="{
-                        'text-gray-400 dark:text-natural-300': true,
-                        'text-natural-600 dark:text-natural-50':
+                        'text-natural-400 dark:text-natural-300': true,
+                        'text-natural-900 dark:text-natural-50':
                             editOption == 'after',
                     }"
                 >
@@ -126,8 +127,8 @@ const post = () => {
                     for="endDate"
                     class="pl-2"
                     :class="{
-                        'text-gray-400 dark:text-natural-300': true,
-                        'text-natural-600 dark:text-natural-50':
+                        'text-natural-400 dark:text-natural-300': true,
+                        'text-natural-900 dark:text-natural-50':
                             editOption == 'all',
                     }"
                 >

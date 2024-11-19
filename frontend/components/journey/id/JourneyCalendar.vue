@@ -32,6 +32,8 @@ if (
 }
 
 const fullCalendar = ref();
+const isEditDrop = ref(false);
+const isInitializeDrop = ref(false);
 const store = useActivityStore();
 const isActivityInfoVisible = ref(false);
 const activities = computed(() => store.activityData as Activity[]);
@@ -68,6 +70,7 @@ const props = defineProps({
 });
 const activity = ref();
 const activityId = ref("");
+const repeatType = ref();
 const calendarId = ref("");
 const isRecurringActivityEditVisible = ref(false);
 const calendarActivity = ref();
@@ -380,71 +383,92 @@ onMounted(() => {
  * @param info -- the event object with data about the activity
  */
 async function initializeDrop(info: EventObject) {
-    const calApi = fullCalendar.value.getApi();
-    if (info.event._def.extendedProps.defId === undefined) {
-        editDrop(info);
-        return;
+    isInitializeDrop.value = true;
+    let calenderActivityId;
+    const startTime = info.event._instance.range.start.toISOString();
+    const date = startTime.split("T")[0];
+    let time = startTime.split("T")[1];
+    time = time.substring(0, time.length - 2);
+    console.log(date);
+    console.log(time);
+    if ((activityId.value = info.event._def.extendedProps.activity_id)) {
+        activityId.value = info.event._def.extendedProps.activity_id;
+        calenderActivityId = info.event._def.publicId;
+        activity.value = {
+            calendar_activity_id: calenderActivityId,
+            date: date,
+            time: time,
+        };
+    } else {
+        activityId.value = info.event._def.extendedProps.defId;
+        activity.value = {
+            date: date,
+            time: time,
+        };
     }
 
-    const activityId = info.event._def.extendedProps.defId;
-    const startTime = info.event._instance.range.start.toISOString();
-    const endTime = info.event._instance.range.end.toISOString();
-    const activity = {
-        start: startTime.substring(0, startTime.length - 2),
-        end: endTime.substring(0, endTime.length - 2),
-    };
+    console.log(info.event);
+    console.log(activityId.value);
+    if (store.getActivity(activityId.value).repeat_type != null) {
+        isRecurringActivityEditVisible.value = true;
+    } else {
+        initializeDropCall("all");
+    }
 
-    await client(
-        `/api/journey/${props.id}/activity/${activityId}/calendarActivity/`,
-        {
-            method: "POST",
-            body: activity,
-            async onResponse({ response }) {
-                if (response.ok) {
-                    toast.add({
-                        severity: "success",
-                        summary: t.value("calendar.add.toast.success.heading"),
-                        detail: t.value("calendar.add.toast.success.detail"),
-                        life: 6000,
-                    });
-                    activities.value
-                        .filter(
-                            (activity) =>
-                                activity.id == response._data.activity_id,
-                        )
-                        .forEach((activity: Activity) => {
-                            response._data.title = activity.name;
-                            calApi.addEvent(response._data);
-                        });
-                    activities.value
-                        .filter((activity) => activity.id === activityId)
-                        .forEach((activity: Activity) => {
-                            activities.value[
-                                activities.value.indexOf(activity)
-                            ].calendar_activities.push(response._data);
-                        });
-                    store.setActivities(activities.value);
-                }
-            },
-            async onRequestError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-            },
-            async onResponseError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-            },
-        },
-    );
     info.event.remove();
+}
+
+async function initializeDropCall(editType: string) {
+    isRecurringActivityEditVisible.value = false;
+    Object.assign(activity.value, { edit_type: editType });
+    isInitializeDrop.value = false;
+    const calApi = fullCalendar.value.getApi();
+    await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
+        method: "PATCH",
+        body: activity.value,
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("calendar.add.toast.success.heading"),
+                    detail: t.value("calendar.add.toast.success.detail"),
+                    life: 6000,
+                });
+                activities.value
+                    .filter(
+                        (activity) => activity.id == response._data.activity_id,
+                    )
+                    .forEach((activity: Activity) => {
+                        response._data.title = activity.name;
+                        calApi.addEvent(response._data);
+                    });
+                activities.value
+                    .filter((activity) => activity.id === activityId.value)
+                    .forEach((activity: Activity) => {
+                        activities.value[
+                            activities.value.indexOf(activity)
+                        ].calendar_activities.push(response._data);
+                    });
+                store.setActivities(activities.value);
+            }
+        },
+        async onRequestError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
 }
 
 /**
@@ -452,6 +476,7 @@ async function initializeDrop(info: EventObject) {
  * @param info -- the event object with data about the activity
  */
 function editDrop(info: EventObject) {
+    isEditDrop.value = true;
     activityId.value = info.event._def.extendedProps.activity_id;
     const calenderActivityId = info.event._def.publicId;
     if (store.getActivity(activityId.value).repeat_type != null) {
@@ -482,6 +507,8 @@ function editDrop(info: EventObject) {
 }
 
 async function editDropCall(editType: string) {
+    console.log(editType);
+    isEditDrop.value = false;
     isRecurringActivityEditVisible.value = false;
     Object.assign(activity.value, { edit_type: editType });
     await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
@@ -526,6 +553,7 @@ function showData(info: EventObject) {
             }
             console.log(activity);
             address.value = activity.address;
+            repeatType.value = activity.repeat_type;
             cost.value = activity.cost;
             created_at.value = activity.created_at;
             description.value = activity.description;
@@ -597,13 +625,22 @@ function moveActivity(start: Date, end: Date) {
     calApi.getEventById(calendarId.value).setStart(start);
     calApi.getEventById(calendarId.value).setEnd(end);
 }
+
+function call(editType: string) {
+    console.log(editType);
+    if (isEditDrop.value) {
+        editDropCall(editType);
+    } else if (isInitializeDrop.value) {
+        initializeDropCall(editType);
+    }
+}
 </script>
 <template>
     <div class="flex justify-center md:justify-start">
         <FormActivityRepeatEditType
             :visible="isRecurringActivityEditVisible"
             @close="isRecurringActivityEditVisible = false"
-            @post="editDropCall"
+            @post="call"
         />
         <div
             class="flex w-[90%] flex-col items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
@@ -642,6 +679,7 @@ function moveActivity(start: Date, end: Date) {
                 :phone="phone"
                 :updated-at="updated_at"
                 :update="update"
+                :prop-repeat-type="repeatType"
                 :calendar-clicked="calendarClicked"
                 :journey-start="journeyStartDate"
                 :journey-end="journeyEndDate"

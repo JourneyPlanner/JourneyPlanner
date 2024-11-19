@@ -34,7 +34,10 @@ const props = defineProps({
     createAddress: { type: Boolean, default: false },
     journeyStart: { type: Date, required: true },
     journeyEnd: { type: Date, required: true },
+    propRepeatType: { type: String, default: " " },
 });
+
+console.log(props.propRepeatType);
 
 const onlyShowRef = ref(props.onlyShow);
 const updateRef = ref(props.update);
@@ -720,6 +723,7 @@ function changeCustomRepeat(
                                     class="w-full"
                                     :journey-start="props.journeyStart"
                                     :journey-end="props.journeyEnd"
+                                    :repeat-type="props.propRepeatType"
                                     @input="changeRepeat"
                                     @custom-input="changeCustomRepeat"
                                 />
@@ -739,6 +743,7 @@ function changeCustomRepeat(
                                 class="w-full sm:collapse"
                                 :journey-start="props.journeyStart"
                                 :journey-end="props.journeyEnd"
+                                :repeat-type="props.propRepeatType"
                                 @input="changeRepeat"
                                 @custom-input="changeCustomRepeat"
                             />

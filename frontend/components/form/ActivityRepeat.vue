@@ -10,6 +10,7 @@ const props = defineProps({
     id: { type: String, required: true },
     journeyStart: { type: Date, required: true },
     journeyEnd: { type: Date, required: true },
+    repeatType: { type: String, required: true },
 });
 
 const emit = defineEmits(["input", "customInput"]);
@@ -34,6 +35,16 @@ const daysInJourney = ref(
 console.log(daysInJourney.value);
 
 const { value, errorMessage } = useField<repeatType>(() => props.name);
+console.log(props.repeatType);
+if (props.repeatType == "custom") {
+    value.value = { name: t.value("activity.repeat.custom"), value: 2 };
+} else if (props.repeatType == "daily") {
+    value.value = { name: t.value("activity.repeat.daily"), value: 1 };
+} else if (props.repeatType == "weekly") {
+    value.value = { name: t.value("activity.repeat.weekly"), value: 7 };
+} else {
+    value.value = { name: t.value("activity.repeat.not"), value: 0 };
+}
 
 const input = () => {
     emit("input", value.value.name);
@@ -108,7 +119,7 @@ const getItemClass = (option: repeatType) => {
                 :name="name"
                 :options="repeatModes"
                 option-label="name"
-                :placeholder="t('activity.repeat.not')"
+                :placeholder="value.name"
                 :highlight-on-select="false"
                 :focus-on-hover="false"
                 :unstyled="true"
@@ -127,7 +138,7 @@ const getItemClass = (option: repeatType) => {
                         class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
                     },
                     trigger: {
-                        class: 'w-fit ml-auto',
+                        class: 'w-fit ml-auto flex items-center justify-center',
                     },
                 }"
                 @change="changeRepeat"
@@ -162,7 +173,9 @@ const getItemClass = (option: repeatType) => {
                     </div>
                 </template>
                 <template #dropdownicon>
-                    <InputIcon class="pi pi-sync text-calypso-400" />
+                    <div class="flex items-center justify-center">
+                        <InputIcon class="pi pi-sync text-calypso-400" />
+                    </div>
                 </template>
             </Dropdown>
         </div>
