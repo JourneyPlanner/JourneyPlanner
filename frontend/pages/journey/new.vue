@@ -49,7 +49,7 @@ if (!isAuthenticated.value) {
  * Fetches all templates from the backend
  * stores response in templates ref
  */
-const { data: templateData } = await useAsyncData("templates", () =>
+const { data: templateData, refresh } = await useAsyncData("templates", () =>
     client(
         `/api/template?per_page=3&template_destination=${templateDestination.value}`,
     ),
@@ -171,6 +171,11 @@ function copyToClipboard() {
         life: 2000,
     });
 }
+
+function changeAddress(newAdress: string) {
+    templateDestination.value = newAdress;
+    refresh();
+}
 </script>
 
 <template>
@@ -206,6 +211,7 @@ function copyToClipboard() {
                             :placeholder="t('form.input.journey.destination')"
                             class="relative mb-4"
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
+                            @change-address="changeAddress"
                         />
                         <FormCalendar
                             id="journey-range-calendar"

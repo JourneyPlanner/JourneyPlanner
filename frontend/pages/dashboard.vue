@@ -14,6 +14,20 @@ const route = useRoute();
 const store = useDashboardStore();
 const client = useSanctumClient();
 
+const colorMode = useColorMode();
+const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+let borderColor = "#BDBDBD";
+let borderColorFocus = "#50A1C0";
+if (
+    colorMode.preference === "dark" ||
+    (darkTheme.matches && colorMode.preference === "system")
+) {
+    borderColor = "#464646";
+    borderColorFocus = "#50A1C0";
+}
+const addressCss = `.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor}; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none; border: solid 2px ${borderColorFocus};}`;
+
 const searchInput = ref();
 const searchInputMobile = ref();
 const searchValue = ref<string>("");
@@ -36,7 +50,6 @@ const isTemplatePopupVisible = ref(false);
 const isFilterVisible = ref<boolean>(route.query.filter_open === "true");
 const filterDialog = ref<HTMLElement>();
 const usernames = ref<string[]>([]);
-const destinations = ref<string[]>([]);
 const templates = ref<Template[]>([]);
 const moreTemplatesAvailable = ref<boolean>(true);
 const templateJourneyLengthMinMax = ref<Array<number>>([1, 31]);
@@ -314,13 +327,6 @@ const searchTemplate = debounce(() => {
 });
 
 const isFiltered = computed(() => {
-    console.log(
-        templateJourneyLengthMinMax.value[0] !== 1 ||
-            templateJourneyLengthMinMax.value[1] !== 31 ||
-            templateDestination.value !== "" ||
-            templateCreator.value !== "",
-    );
-
     return (
         templateJourneyLengthMinMax.value[0] !== 1 ||
         templateJourneyLengthMinMax.value[1] !== 31 ||
@@ -356,26 +362,6 @@ function getUsers() {
             usernames.value = res.data.map((user: User) => user.username);
         },
     );
-}
-
-/*
- * debounce getDestinations() to prevent too many request on input
- */
-const searchDestination = debounce(() => {
-    getDestinations();
-});
-
-/**
- * get destination(s) for AutoComplete for destination template filter
- */
-function getDestinations() {
-    client(
-        `/api/template/destination?search=${templateDestination.value}&per_page=25`,
-    ).then((res) => {
-        destinations.value = res.data.map(
-            (destination: { destination: string }) => destination.destination,
-        );
-    });
 }
 
 /*
@@ -452,10 +438,14 @@ function editJourney(journey: Journey, id: string) {
     journeys.value[index].name = journey.name;
 }
 
-//TODO load more templates user page
+function changeAddress(newAddress: string) {
+    templateDestination.value = newAddress;
+    refreshTemplates();
+}
+
 //TODO z index scuffed user settings bzw edit/delete popup ist unter den sachen vom header
-//TODO mapbox implementen
-//TODO responsive: create journey, user profile?, ...
+//TODO is create journey responsive?
+//TODO adress inpout sidebar
 </script>
 
 <template>
@@ -738,7 +728,7 @@ function editJourney(journey: Journey, id: string) {
                 </div>
                 <div
                     id="templates"
-                    class="mt-3 grid grid-cols-2 gap-5 sm:grid-cols-3 xl:grid-cols-4"
+                    class="mt-3 grid w-full grid-cols-2 gap-5 sm:grid-cols-3 xl:grid-cols-4"
                 >
                     <TemplateCard
                         v-for="template in templates"
@@ -868,25 +858,12 @@ function editJourney(journey: Journey, id: string) {
                                     key-name="dashboard.template.filter.destination.description"
                                 />
                             </p>
-                            <AutoComplete
-                                v-model="templateDestination"
-                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
-                                :pt="{
-                                    panel: 'w-20 bg-natural-50 dark:bg-natural-900',
-                                    item: 'text-text dark:text-natural-50 hover:text-natural-100 hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
-                                }"
-                                :suggestions="destinations"
-                                :force-selection="true"
-                                :complete-on-focus="true"
-                                :empty-search-message="
-                                    t(
-                                        'dashboard.template.filter.destination.empty',
-                                    )
-                                "
-                                @before-show="getDestinations()"
-                                @complete="searchDestination()"
-                                @item-select="refreshTemplates()"
-                                @clear="refreshTemplates(), searchDestination()"
+                            <FormAddressInput
+                                id="template-destination"
+                                name="destination"
+                                :value="templateDestination"
+                                :custom-class="addressCss"
+                                @change-address="changeAddress"
                             />
                         </div>
                         <div id="creator" class="mt-5">
@@ -912,7 +889,7 @@ function editJourney(journey: Journey, id: string) {
                                 input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
                                 :pt="{
                                     panel: 'w-20 bg-natural-50 dark:bg-natural-900',
-                                    item: 'text-text dark:text-natural-50 hover:text-natural-100 hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
+                                    item: 'text-text dark:text-natural-50 hover:text-text hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
                                 }"
                                 :suggestions="usernames"
                                 :force-selection="true"
@@ -928,7 +905,7 @@ function editJourney(journey: Journey, id: string) {
                         </div>
                         <div class="flex justify-end pb-1 pt-20">
                             <button
-                                class="dark:text-mahagony-200 text-mahagony-400 underline"
+                                class="dark:text-mahagony-200 text-mahagony-400 hover:underline"
                                 @click="clearFilters"
                             >
                                 <T key-name="dashboard.template.filter.clear" />
@@ -949,7 +926,7 @@ function editJourney(journey: Journey, id: string) {
                 </div>
                 <div
                     v-if="!moreTemplatesAvailable"
-                    class="mt-5 flex flex-col justify-center gap-x-2 text-center sm:flex sm:text-left"
+                    class="mt-5 flex w-full flex-col justify-center gap-x-2 text-center sm:flex sm:flex-row sm:text-left"
                 >
                     <T key-name="dashboard.templates.nomoretemplates" />
                     <NuxtLink
@@ -1089,23 +1066,12 @@ function editJourney(journey: Journey, id: string) {
                                 key-name="dashboard.template.filter.destination.description"
                             />
                         </p>
-                        <AutoComplete
-                            v-model="templateDestination"
-                            input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
-                            :pt="{
-                                panel: 'w-20 bg-natural-50 dark:bg-natural-900',
-                                item: 'text-text dark:text-natural-50 hover:text-natural-100 hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
-                            }"
-                            :suggestions="destinations"
-                            :force-selection="true"
-                            :complete-on-focus="true"
-                            :empty-search-message="
-                                t('dashboard.template.filter.destination.empty')
-                            "
-                            @before-show="getDestinations()"
-                            @complete="searchDestination()"
-                            @item-select="refreshTemplates()"
-                            @clear="refreshTemplates(), searchDestination()"
+                        <FormAddressInput
+                            id="template-destination"
+                            name="destination"
+                            value=""
+                            :custom-class="addressCss"
+                            @change-address="changeAddress"
                         />
                     </div>
                     <div id="creator" class="mt-5 w-full">
