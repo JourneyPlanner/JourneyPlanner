@@ -630,7 +630,9 @@ function moveActivity(start: Date, end: Date) {
                     <T key-name="journey.calendar" />
                 </div>
             </div>
-            <div class="z-0 mt-1 h-[25rem] overflow-y-scroll pr-2 md:h-[35rem]">
+            <div
+                class="z-0 mt-1 h-[25rem] overflow-x-hidden overflow-y-scroll pr-2 md:h-[35rem]"
+            >
                 <FullCalendar
                     ref="fullCalendar"
                     :options="calendarOptions"

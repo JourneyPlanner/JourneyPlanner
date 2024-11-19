@@ -815,9 +815,9 @@ function emitScroll(target: string) {
                             </div>
                         </div>
                     </div>
-                    <div v-else>
+                    <div v-else class="max-lg:hidden">
                         <i
-                            class="pi pi-objects-column text-7xl text-calypso-600"
+                            class="pi pi-objects-column text-2xl text-calypso-600 md:text-7xl"
                         />
                     </div>
                     <div
@@ -846,11 +846,11 @@ function emitScroll(target: string) {
                         </p>
                         <div v-else>
                             <h5
-                                class="mt-4 text-xl font-semibold text-text dark:text-natural-50"
+                                class="mt-4 font-semibold text-text dark:text-natural-50 max-sm:hidden md:text-xl"
                             >
                                 <T key-name="template.use" />
                             </h5>
-                            <p>
+                            <p class="p-2 text-sm max-xs:hidden sm:text-base">
                                 <T key-name="template.use.description" />
                             </p>
                         </div>
@@ -884,7 +884,7 @@ function emitScroll(target: string) {
                         </button>
                         <button
                             v-else
-                            class="mt-6 rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                            class="my-4 ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:mt-6 md:text-base"
                         >
                             <T key-name="template.use" />
                         </button>

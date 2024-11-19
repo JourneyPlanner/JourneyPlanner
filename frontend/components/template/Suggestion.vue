@@ -18,7 +18,7 @@ const isProfileDialogVisible = ref(false);
 
 <template>
     <div
-        class="cursor-pointer border-b border-natural-100 py-1.5 hover:border-calypso-400 dark:border-natural-400"
+        class="cursor-pointer border-b border-natural-100 py-1 hover:border-calypso-400 dark:border-natural-400"
         :class="index === 0 ? 'border-t' : ''"
         @click="$emit('openTemplate', template.id)"
     >
@@ -49,13 +49,15 @@ const isProfileDialogVisible = ref(false);
                     >
                 </h4>
             </div>
-            <div class="ml-4 flex gap-x-4 text-text dark:text-natural-50">
+            <div
+                class="ml-1 flex gap-x-2 text-text dark:text-natural-50 sm:ml-4 sm:gap-x-4"
+            >
                 <div
                     v-tooltip.top="{
                         value: template.destination,
                         pt: { root: 'font-nunito' },
                     }"
-                    class="flex min-w-28 max-w-28 flex-row items-center gap-x-2"
+                    class="flex min-w-28 max-w-28 flex-row items-center gap-x-0.5 sm:gap-x-2"
                 >
                     <i
                         class="pi pi-map-marker text-base text-calypso-600 dark:text-calypso-400"
@@ -64,7 +66,7 @@ const isProfileDialogVisible = ref(false);
                         {{ template.destination }}
                     </h5>
                 </div>
-                <div class="flex flex-row items-center gap-x-2">
+                <div class="flex flex-row items-center gap-x-0.5 sm:gap-x-2">
                     <i
                         class="pi pi-calendar text-base text-calypso-600 dark:text-calypso-400"
                     />
@@ -80,11 +82,19 @@ const isProfileDialogVisible = ref(false);
                     </h5>
                 </div>
             </div>
-            <button class="ml-auto mr-4 flex items-center">
+            <button class="ml-auto mr-2 hidden items-center xs:flex sm:mr-4">
                 <i
                     class="pi pi-arrow-up-right-and-arrow-down-left-from-center text-lg text-natural-500 hover:text-calypso-950 dark:text-natural-400 dark:hover:text-natural-50"
                 />
             </button>
+        </div>
+        <div class="dialogs">
+            <JourneyIdDialogsProfileDialog
+                :visible="isProfileDialogVisible"
+                :username="template.users[0].username"
+                :displayname="template.users[0].display_name"
+                @close="isProfileDialogVisible = false"
+            />
         </div>
     </div>
 </template>

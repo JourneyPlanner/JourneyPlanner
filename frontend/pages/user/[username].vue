@@ -65,24 +65,6 @@ onMounted(async () => {
     } else {
         isCloseIcon.value = false;
     }
-
-    if (observer.value) {
-        observer.value.disconnect();
-    }
-
-    observer.value = new IntersectionObserver((entries) => {
-        const target = entries[0];
-        if (target.isIntersecting) {
-            if (moreTemplatesAvailable.value && showMore.value) {
-                cursor.value = nextCursor.value;
-                refresh();
-            }
-        }
-    });
-
-    if (loader.value) {
-        observer.value.observe(loader.value);
-    }
 });
 
 onUnmounted(() => {
@@ -110,6 +92,28 @@ watch(
     },
     { immediate: true },
 );
+
+watch(showMore, () => {
+    if (showMore.value) {
+        if (observer.value) {
+            observer.value.disconnect();
+        }
+
+        observer.value = new IntersectionObserver((entries) => {
+            const target = entries[0];
+            if (target.isIntersecting) {
+                if (moreTemplatesAvailable.value && showMore.value) {
+                    cursor.value = nextCursor.value;
+                    refresh();
+                }
+            }
+        });
+
+        if (loader.value) {
+            observer.value.observe(loader.value);
+        }
+    }
+});
 
 const firstTemplates = computed(() => (templates.value || []).splice(0, 10));
 

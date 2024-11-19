@@ -15,8 +15,7 @@ const store = useDashboardStore();
 const client = useSanctumClient();
 
 const searchInput = ref();
-//TODO mobile
-//const searchInputMobile = ref();
+const searchInputMobile = ref();
 const searchValue = ref<string>("");
 const tabIndex = ref(0);
 const menu = ref();
@@ -276,7 +275,6 @@ watch(
     () => {
         if (templateData.value) {
             templates.value.push(...templateData.value.data);
-            console.log(templates.value.length);
 
             if (templateData.value.next_cursor === null) {
                 moreTemplatesAvailable.value = false;
@@ -313,6 +311,22 @@ const closeFilterWhenOutsideClick = (event: MouseEvent) => {
  */
 const searchTemplate = debounce(() => {
     refreshTemplates();
+});
+
+const isFiltered = computed(() => {
+    console.log(
+        templateJourneyLengthMinMax.value[0] !== 1 ||
+            templateJourneyLengthMinMax.value[1] !== 31 ||
+            templateDestination.value !== "" ||
+            templateCreator.value !== "",
+    );
+
+    return (
+        templateJourneyLengthMinMax.value[0] !== 1 ||
+        templateJourneyLengthMinMax.value[1] !== 31 ||
+        templateDestination.value !== "" ||
+        templateCreator.value !== ""
+    );
 });
 
 /**
@@ -438,13 +452,17 @@ function editJourney(journey: Journey, id: string) {
     journeys.value[index].name = journey.name;
 }
 
-//TODO templlate suggestions journey create
 //TODO load more templates user page
+//TODO z index scuffed user settings bzw edit/delete popup ist unter den sachen vom header
+//TODO mapbox implementen
+//TODO responsive: create journey, user profile?, ...
 </script>
 
 <template>
     <div @click="closeFilterWhenOutsideClick">
-        <div class="absolute right-0 z-10 mt-5 pr-2 md:pr-8 lg:pr-20">
+        <div
+            class="absolute right-0 top-3 z-10 pr-2 sm:top-4 md:top-6 md:pr-8 lg:pr-20"
+        >
             <div id="right-header" class="flex flex-row items-center">
                 <div
                     id="search-and-filter"
@@ -490,7 +508,7 @@ function editJourney(journey: Journey, id: string) {
                     <div v-if="tabIndex === 1" id="filter" class="mr-4">
                         <SvgDashboardFilter
                             class="h-9 w-9 hover:cursor-pointer"
-                            :is-active="!!isFilterVisible"
+                            :is-active="!!isFilterVisible || isFiltered"
                             @click.stop="isFilterVisible = !isFilterVisible"
                         />
                     </div>
@@ -498,16 +516,12 @@ function editJourney(journey: Journey, id: string) {
                 <NuxtLink
                     v-if="tabIndex === 0"
                     to="/journey/new"
-                    class="mr-2.5 hidden flex-row items-center lg:flex"
+                    class="group mr-2.5 hidden flex-row items-center rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-ronchi-300 dark:hover:text-text lg:flex"
                 >
-                    <button
-                        class="flex flex-row rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text dark:border-ronchi-300 dark:bg-ronchi-300"
-                    >
-                        <SvgCreateNewJourneyIcon
-                            class="mr-1 h-5 w-5 fill-text"
-                        />
-                        <T key-name="dashboard.new" />
-                    </button>
+                    <SvgCreateNewJourneyIcon
+                        class="mr-1 h-5 w-5 fill-text dark:fill-natural-50 dark:group-hover:fill-text"
+                    />
+                    <T key-name="dashboard.new" />
                 </NuxtLink>
                 <NuxtLink :to="'/user/' + user.username" class="mr-2.5">
                     <SvgUserIcon class="mt-1 h-9 w-9" />
@@ -525,13 +539,13 @@ function editJourney(journey: Journey, id: string) {
                     class: 'font-nunito bg-background dark:bg-background-dark text-text dark:text-natural-50',
                 },
                 panelContainer: {
-                    class: 'text-text dark:text-natural-50 font-nunito bg-background dark:bg-background-dark',
+                    class: 'text-text dark:text-natural-50 font-nunito bg-background dark:bg-background-dark p-0',
                 },
                 nav: {
-                    class: 'font-nunito bg-background dark:bg-background-dark text-lg',
+                    class: 'font-nunito bg-background dark:bg-background-dark sm:flex sm:gap-x-5',
                 },
                 navContainer: {
-                    class: 'border-b-2 border-calypso-300 dark:border-calypso-700 rounded',
+                    class: 'border-b-2 border-calypso-300 dark:border-calypso-700 rounded ',
                 },
                 inkbar: { class: 'pt-0.5 bg-calypso-600 dark:bg-calypso-400' },
             }"
@@ -540,7 +554,7 @@ function editJourney(journey: Journey, id: string) {
                 :pt="{
                     headerAction: () => ({
                         class: [
-                            'font-nunito bg-background dark:bg-background-dark',
+                            'font-nunito bg-background dark:bg-background-dark p-1 mr-2 sm:pb-2',
                             {
                                 'text-text dark:text-natural-50':
                                     tabIndex === 0,
@@ -561,11 +575,62 @@ function editJourney(journey: Journey, id: string) {
                                     : 'fill-text dark:fill-natural-50'
                             "
                         />
-                        <h1 class="mt-1 text-2xl font-medium md:text-3xl">
+                        <h1
+                            class="mt-1 text-xl font-medium sm:text-2xl md:text-3xl"
+                            :class="tabIndex === 0 ? 'max-xs:hidden' : ''"
+                        >
                             <T key-name="common.dashboard" />
                         </h1>
                     </div>
                 </template>
+                <div
+                    id="header-mobile-second-row"
+                    class="mt-3 flex justify-between lg:hidden"
+                >
+                    <div id="search-and-filter" class="flex flex-row">
+                        <div id="filter" class="mr-2">
+                            <SvgDashboardSort
+                                aria-haspopup="true"
+                                aria-controls="overlay_tmenu"
+                                class="h-9 w-9 hover:cursor-pointer"
+                                @click="toggle"
+                            />
+                        </div>
+                        <div id="search" class="relative">
+                            <input
+                                ref="searchInputMobile"
+                                v-model="searchValue"
+                                type="text"
+                                class="w-40 rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200 xs:w-44 sm:w-72 lg:w-72"
+                                :placeholder="t('dashboard.search')"
+                                @input="searchJourneys()"
+                            />
+                            <button @click="searchInputMobile.focus()">
+                                <SvgSearchIcon
+                                    class="absolute right-1 top-1 h-7 w-7"
+                                />
+                            </button>
+                        </div>
+                    </div>
+                    <NuxtLink
+                        to="/journey/new"
+                        class="flex flex-row items-center justify-center lg:hidden"
+                    >
+                        <button
+                            class="flex flex-row items-center justify-center text-nowrap rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 font-semibold text-text dark:border-dandelion-300 dark:bg-ronchi-300 md:px-4"
+                        >
+                            <SvgCreateNewJourneyIcon
+                                class="mr-1 h-5 w-5 fill-text"
+                            />
+                            <span class="xs:hidden">
+                                <T key-name="dashboard.new.short" />
+                            </span>
+                            <span class="max-xs:hidden">
+                                <T key-name="dashboard.new" />
+                            </span>
+                        </button>
+                    </NuxtLink>
+                </div>
                 <div class="flex justify-center">
                     <div
                         id="journeys"
@@ -573,7 +638,7 @@ function editJourney(journey: Journey, id: string) {
                         :class="
                             currentJourneys.length === 0
                                 ? 'grid-cols-1'
-                                : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'
+                                : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'
                         "
                     >
                         <DashboardJourneyCard
@@ -597,7 +662,7 @@ function editJourney(journey: Journey, id: string) {
                                 class="hidden dark:lg:block"
                             />
                             <div
-                                class="flex h-32 min-w-36 flex-grow items-center justify-center rounded-md border border-dandelion-300 bg-dandelion-100 dark:bg-pesto-600 lg:hidden"
+                                class="flex h-[7.5rem] min-w-36 flex-grow items-center justify-center rounded-md border border-dandelion-300 bg-dandelion-100 dark:bg-pesto-600 lg:hidden"
                             >
                                 <SvgCreateNewJourneyIcon
                                     class="h-14 w-14 fill-text dark:fill-natural-50"
@@ -611,7 +676,7 @@ function editJourney(journey: Journey, id: string) {
                 :pt="{
                     headerAction: () => ({
                         class: [
-                            'font-nunito bg-background dark:bg-background-dark',
+                            'font-nunito bg-background dark:bg-background-dark p-1 sm:pb-2',
                             {
                                 'text-text dark:text-natural-50':
                                     tabIndex === 1,
@@ -624,16 +689,76 @@ function editJourney(journey: Journey, id: string) {
             >
                 <template #header>
                     <div class="flex flex-row items-center">
-                        <i class="pi pi-objects-column mr-2 text-2xl" />
-                        <h1 class="mt-1 text-2xl font-medium md:text-3xl">
+                        <i
+                            class="pi pi-objects-column mr-2 text-xl sm:text-2xl"
+                            :class="tabIndex === 1 ? 'max-xs:mt-1' : ''"
+                        />
+                        <h1
+                            class="mt-1 text-xl font-medium sm:text-2xl md:text-3xl"
+                            :class="tabIndex === 1 ? 'max-xs:hidden' : ''"
+                        >
                             <T key-name="common.templates" />
                         </h1>
                     </div>
                 </template>
-                <div id="templates" class="grid grid-cols-4 gap-5">
+                <div
+                    id="header-mobile-second-row"
+                    class="mt-3 flex justify-between lg:hidden"
+                >
+                    <div id="search-and-filter" class="flex flex-row">
+                        <div id="filter" class="mr-2">
+                            <SvgDashboardSort
+                                aria-haspopup="true"
+                                aria-controls="overlay_tmenu"
+                                class="h-9 w-9 hover:cursor-pointer"
+                                @click="toggle"
+                            />
+                        </div>
+                        <div id="search" class="relative">
+                            <input
+                                ref="searchInputMobile"
+                                v-model="searchValue"
+                                type="text"
+                                class="w-40 rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200 xs:w-[50vw] sm:w-72 lg:w-72"
+                                :placeholder="t('dashboard.search')"
+                                @input="searchTemplate()"
+                            />
+                            <button @click="searchInputMobile.focus()">
+                                <SvgSearchIcon
+                                    class="absolute right-1 top-1 h-7 w-7"
+                                />
+                            </button>
+                        </div>
+                    </div>
+                    <SvgDashboardFilter
+                        class="h-9 w-9 hover:cursor-pointer"
+                        :is-active="!!isFilterVisible || isFiltered"
+                        @click.stop="isFilterVisible = !isFilterVisible"
+                    />
+                </div>
+                <div
+                    id="templates"
+                    class="mt-3 grid grid-cols-2 gap-5 sm:grid-cols-3 xl:grid-cols-4"
+                >
                     <TemplateCard
                         v-for="template in templates"
                         :key="template.id"
+                        class="hidden sm:block"
+                        :class="
+                            status === 'pending' && isFilterVisible
+                                ? 'hidden'
+                                : ''
+                        "
+                        :template="template"
+                        @open-template="
+                            openedTemplate = template;
+                            isTemplatePopupVisible = true;
+                        "
+                    />
+                    <TemplateCardSmall
+                        v-for="template in templates"
+                        :key="template.id"
+                        class="sm:hidden"
                         :class="
                             status === 'pending' && isFilterVisible
                                 ? 'hidden'
@@ -664,7 +789,7 @@ function editJourney(journey: Journey, id: string) {
                         v-if="isFilterVisible"
                         id="filter-dialog"
                         ref="filterDialog"
-                        class="absolute right-0 mr-20 flex w-64 flex-col rounded-lg bg-natural-50 px-3 pt-2 shadow-lg dark:bg-background-dark"
+                        class="absolute right-0 mr-20 hidden w-64 flex-col rounded-lg bg-natural-50 px-3 pt-2 shadow-lg dark:bg-background-dark sm:flex"
                     >
                         <div id="length">
                             <div class="flex items-center">
@@ -824,12 +949,12 @@ function editJourney(journey: Journey, id: string) {
                 </div>
                 <div
                     v-if="!moreTemplatesAvailable"
-                    class="mt-5 flex justify-center gap-x-2"
+                    class="mt-5 flex flex-col justify-center gap-x-2 text-center sm:flex sm:text-left"
                 >
                     <T key-name="dashboard.templates.nomoretemplates" />
                     <NuxtLink
                         to="/journey/new"
-                        class="group flex items-center hover:text-calypso-400"
+                        class="group flex items-center justify-center hover:text-calypso-400 sm:justify-start"
                     >
                         <span class="group-hover:underline">
                             <T
@@ -842,13 +967,192 @@ function editJourney(journey: Journey, id: string) {
             </TabPanel>
         </TabView>
         <div class="dialogs z-50">
-            <DashboardUserSettings
-                :visible="isUserSettingsVisible"
-                :prop-username="user.username"
-                :prop-displayname="user.display_name"
-                :prop-email="user.email"
-                @close="isUserSettingsVisible = false"
-            />
+            <Sidebar
+                v-model:visible="isFilterVisible"
+                modal
+                position="bottom"
+                :auto-z-index="true"
+                :draggable="false"
+                :block-scroll="true"
+                :show-close-icon="false"
+                class="z-50 mt-auto flex h-auto flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden lg:-z-10"
+                :pt="{
+                    root: {
+                        class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden ',
+                    },
+                    header: {
+                        class: 'flex w-full justify-between pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50 rounded-3xl',
+                    },
+                    title: {
+                        class: 'font-nunito text-4xl font-semibold',
+                    },
+                    content: {
+                        class: 'font-nunito bg-background dark:bg-background-dark px-0 -ml-2 sm:pr-12 h-full',
+                    },
+                    footer: { class: 'h-0' },
+                    mask: {
+                        class: 'sm:collapse bg-natural-50',
+                    },
+                }"
+                @hide="isFilterVisible = false"
+            >
+                <template #header>
+                    <div class="flex items-center">
+                        <button
+                            class="-ml-6 flex justify-center pr-4"
+                            @click="isFilterVisible = false"
+                        >
+                            <span class="pi pi-angle-down text-2xl" />
+                        </button>
+                        <div
+                            class="text-nowrap font-nunito text-3xl font-semibold"
+                        >
+                            <T key-name="dashboard.template.filter" />
+                        </div>
+                    </div>
+                    <button
+                        class="dark:text-mahagony-200 text-mahagony-400 hover:underline"
+                        @click="clearFilters"
+                    >
+                        <T key-name="dashboard.template.filter.clear" />
+                    </button>
+                </template>
+                <div
+                    class="flex h-full flex-col gap-y-5 pl-6 pr-2 text-text dark:text-natural-50"
+                >
+                    <div id="length">
+                        <div class="flex items-center">
+                            <h3 class="text-2xl">
+                                <T key-name="dashboard.sort.length" />
+                            </h3>
+                        </div>
+                        <div class="mt-3 px-1">
+                            <Slider
+                                v-model="templateJourneyLengthMinMax"
+                                range
+                                :min="1"
+                                :max="31"
+                                class="w-full"
+                                :pt="{
+                                    root: 'bg-natural-200 dark:bg-natural-300',
+                                    range: 'bg-calypso-400 dark:bg-calypso-400',
+                                    startHandler: 'bg-calypso-600',
+                                    endHandler: 'bg-calypso-600',
+                                }"
+                                @slideend="refreshTemplates()"
+                            />
+                            <div
+                                class="-px-1 mt-2.5 flex justify-between text-natural-500 dark:text-natural-300"
+                            >
+                                <span>1</span>
+                                <span>31+</span>
+                            </div>
+                            <div class="mt-1 flex flex-row gap-x-3">
+                                <T
+                                    key-name="dashboard.template.filter.length.from"
+                                />
+                                <InputNumber
+                                    v-model="templateJourneyLengthMinMax[0]"
+                                    input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
+                                    input-id="min"
+                                    :min="1"
+                                    :max="31"
+                                    :allow-empty="false"
+                                    @input="refreshTemplates()"
+                                />
+                                <T
+                                    key-name="dashboard.template.filter.length.to"
+                                />
+                                <InputNumber
+                                    v-model="templateJourneyLengthMinMax[1]"
+                                    input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
+                                    input-id="max"
+                                    :min="1"
+                                    :max="31"
+                                    :allow-empty="false"
+                                    @input="refreshTemplates()"
+                                />
+                                <T key-name="template.days" />
+                            </div>
+                        </div>
+                    </div>
+                    <div id="destination" class="mt-3">
+                        <div class="flex items-center">
+                            <h3 class="whitespace-nowrap text-2xl">
+                                <T
+                                    key-name="dashboard.template.filter.destination"
+                                />
+                            </h3>
+                        </div>
+                        <p class="mb-1 text-natural-700 dark:text-natural-200">
+                            <T
+                                key-name="dashboard.template.filter.destination.description"
+                            />
+                        </p>
+                        <AutoComplete
+                            v-model="templateDestination"
+                            input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
+                            :pt="{
+                                panel: 'w-20 bg-natural-50 dark:bg-natural-900',
+                                item: 'text-text dark:text-natural-50 hover:text-natural-100 hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
+                            }"
+                            :suggestions="destinations"
+                            :force-selection="true"
+                            :complete-on-focus="true"
+                            :empty-search-message="
+                                t('dashboard.template.filter.destination.empty')
+                            "
+                            @before-show="getDestinations()"
+                            @complete="searchDestination()"
+                            @item-select="refreshTemplates()"
+                            @clear="refreshTemplates(), searchDestination()"
+                        />
+                    </div>
+                    <div id="creator" class="mt-5 w-full">
+                        <div class="flex items-center">
+                            <h3 class="whitespace-nowrap text-2xl">
+                                <T
+                                    key-name="dashboard.template.filter.creator"
+                                />
+                            </h3>
+                        </div>
+                        <p class="mb-1 text-natural-700 dark:text-natural-200">
+                            <T
+                                key-name="dashboard.template.filter.creator.description"
+                            />
+                        </p>
+                        <!-- TODO w-full -->
+                        <AutoComplete
+                            v-model="templateCreator"
+                            input-class="bg-natural-50  dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
+                            :pt="{
+                                panel: 'bg-natural-50 dark:bg-natural-900',
+                                item: 'text-text dark:text-natural-50 hover:text-natural-100 hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
+                            }"
+                            :suggestions="usernames"
+                            :force-selection="true"
+                            :complete-on-focus="true"
+                            :empty-search-message="
+                                t('dashboard.template.filter.creator.empty')
+                            "
+                            @before-show="getUsers()"
+                            @complete="searchUser()"
+                            @item-select="refreshTemplates()"
+                            @clear="refreshTemplates(), searchUser()"
+                        />
+                    </div>
+                    <div
+                        class="mt-5 flex w-full justify-center text-text dark:text-natural-50"
+                    >
+                        <button
+                            class="w-full rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-xl font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
+                            @click="isFilterVisible = false"
+                        >
+                            <T key-name="dashboard.template.filter.button" />
+                        </button>
+                    </div>
+                </div>
+            </Sidebar>
             <TemplatePopup
                 v-if="openedTemplate"
                 :template="openedTemplate!"
@@ -899,6 +1203,13 @@ function editJourney(journey: Journey, id: string) {
                     </a>
                 </template>
             </TieredMenu>
+            <DashboardUserSettings
+                :visible="isUserSettingsVisible"
+                :prop-username="user.username"
+                :prop-displayname="user.display_name"
+                :prop-email="user.email"
+                @close="isUserSettingsVisible = false"
+            />
             <ConfirmDialog
                 :draggable="false"
                 group="dashboard"
@@ -910,7 +1221,13 @@ function editJourney(journey: Journey, id: string) {
                         class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
                     },
                     footer: {
-                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
+                    },
+                    closeButton: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
+                    },
+                    closeButtonIcon: {
+                        class: 'h-5 w-5',
                     },
                 }"
             />

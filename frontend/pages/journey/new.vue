@@ -175,14 +175,14 @@ function copyToClipboard() {
 
 <template>
     <div>
-        <div class="absolute left-4 top-4">
+        <div class="absolute left-4 top-4 z-50">
             <NuxtLink :to="cancel">
                 <SvgLogoHorizontalBlue class="w-44 lg:w-56" />
             </NuxtLink>
         </div>
-        <div class="z-10 flex min-h-screen flex-col justify-between">
+        <div class="z-10 flex flex-col">
             <div
-                class="z-50 mt-16 flex items-center justify-center px-4 font-nunito"
+                class="z-40 mt-10 flex items-center justify-center px-4 font-nunito sm:mt-8"
             >
                 <fieldset
                     id="create-journey"
@@ -204,7 +204,7 @@ function copyToClipboard() {
                             id="journey-destination"
                             name="journeyDestination"
                             :placeholder="t('form.input.journey.destination')"
-                            class="relative mb-5"
+                            class="relative mb-4"
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
                         />
                         <FormCalendar
@@ -245,8 +245,7 @@ function copyToClipboard() {
                                 </button>
                             </div>
                         </div>
-
-                        <div class="mb-5 mt-6 flex justify-between gap-5">
+                        <div class="mb-3 mt-6 flex justify-between gap-5">
                             <NuxtLink :to="cancel">
                                 <button
                                     type="button"
@@ -274,9 +273,9 @@ function copyToClipboard() {
                     </form>
                 </fieldset>
             </div>
-            <div class="mt-1 flex w-full justify-center px-4">
+            <div class="mt-2 flex w-full justify-center xs:px-4">
                 <div
-                    class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-1/4 md:w-1/3"
+                    class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-2/4"
                 >
                     <h3
                         class="ml-4 mt-0.5 text-lg font-semibold text-natural-800 dark:text-natural-200"
@@ -295,7 +294,7 @@ function copyToClipboard() {
                             "
                         />
                     </div>
-                    <div class="my-2 mr-3 flex justify-end">
+                    <div class="mb-0.5 mr-3 mt-1.5 flex justify-end">
                         <NuxtLink
                             to="/dashboard?tab=templates"
                             class="text-end text-natural-800 hover:text-calypso-600 hover:underline dark:text-natural-200 dark:hover:text-calypso-300"
@@ -305,20 +304,14 @@ function copyToClipboard() {
                     </div>
                 </div>
             </div>
-            <div class="z-10">
-                <div
-                    class="relative flex flex-row items-end justify-between border-b border-natural-200"
-                >
-                    <SvgPeopleBackpackMap class="hidden h-full lg:flex" />
-                    <div
-                        class="mt-2 flex h-full w-full flex-row items-end justify-between sm:mt-0 lg:absolute lg:inset-0 lg:justify-end"
-                    >
-                        <SvgWomanSuitcaseLeft />
-                        <SvgWomanSuitcaseRight class="ml-10 mr-5" />
-                    </div>
-                </div>
-            </div>
         </div>
+        <SvgPeopleBackpackMap class="bottom-0 hidden h-44 sm:absolute" />
+        <SvgWomanSuitcaseLeft
+            class="bottom-0 right-44 hidden h-44 sm:absolute"
+        />
+        <SvgWomanSuitcaseRight
+            class="bottom-0 right-0 hidden h-44 sm:absolute"
+        />
         <div class="z-10">
             <SvgCloud
                 class="invisible absolute left-[28%] top-72 z-0 h-14 overflow-hidden object-none md:visible"

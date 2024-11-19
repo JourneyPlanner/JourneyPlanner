@@ -60,7 +60,10 @@ function close() {
                         <T key-name="journey.button.create.activity" />
                     </span>
                 </button>
-                <span v-else class="mb-2 ml-auto text-lg">
+                <span
+                    v-else
+                    class="-mb-3.5 ml-auto text-base md:text-lg lg:mb-1"
+                >
                     {{ activityStore.activityData.length }}
                     <T key-name="template.activities" />
                 </span>
