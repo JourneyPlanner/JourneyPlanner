@@ -41,7 +41,10 @@ const validationSchema = yup.object({
         .string()
         .required(t.value("form.template.name.required"))
         .matches(/^(?!\s+$).*/, t.value("form.template.name.required")),
-    description: yup.string().nullable(),
+    description: yup
+        .string()
+        .nullable()
+        .max(255, t.value("form.template.description.max")),
 });
 
 /**
@@ -117,7 +120,6 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
         },
     });
 });
-//TODO länge description error message und vlt auch irgendwo so mitzählen im frontend
 </script>
 
 <template>
@@ -192,7 +194,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                         >
                             <ErrorMessage
                                 name="name"
-                                class="text-nowrap text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300 sm:text-sm"
+                                class="text-nowrap text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300 sm:text-sm"
                             />
                         </div>
                     </div>
@@ -214,6 +216,10 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                                 t('form.input.template.description.placeholder')
                             "
                             class="md:placeholder:text-md col-span-full row-span-5 block h-full w-full resize-none rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-sm placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 sm:row-span-4 md:placeholder:text-base"
+                        />
+                        <ErrorMessage
+                            name="description"
+                            class="text-nowrap text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300 sm:text-sm"
                         />
                     </div>
                 </div>

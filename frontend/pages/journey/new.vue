@@ -20,7 +20,7 @@ const loading = ref(false);
 const openedTemplate = ref<Template>();
 const isTemplatePopupVisible = ref(false);
 const templateDestination = ref("");
-const templates = ref<Template[]>([]);
+const suggestions = ref<Template[]>([]);
 
 const title = t.value("title.journey.create");
 useHead({
@@ -59,7 +59,7 @@ watch(
     templateData,
     () => {
         if (templateData.value) {
-            templates.value = templateData.value.data;
+            suggestions.value = templateData.value.data;
         }
     },
     { immediate: true },
@@ -278,18 +278,25 @@ function changeAddress(newAdress: string) {
                     </form>
                 </fieldset>
             </div>
-            <div class="mt-2 flex w-full justify-center xs:px-4">
+
+            <div
+                class="z-40 mt-2 flex items-center justify-center px-4 font-nunito"
+            >
                 <div
-                    class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-2/4"
+                    id="template-section"
+                    class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-2/4 md:w-2/5"
                 >
                     <h3
-                        class="ml-4 mt-0.5 text-lg font-semibold text-natural-800 dark:text-natural-200"
+                        class="-m-0.5 ml-4 mt-0.5 text-lg font-semibold text-natural-800 dark:text-natural-200"
                     >
                         <T key-name="template.suggestions" />
                     </h3>
-                    <div id="template-suggestions" class="mt-1 flex flex-col">
+                    <div
+                        id="template-suggestions"
+                        class="mt-1 flex w-full flex-col"
+                    >
                         <TemplateSuggestion
-                            v-for="(template, index) in templates"
+                            v-for="(template, index) in suggestions"
                             :key="template.id"
                             :index="index"
                             :template="template"
@@ -309,13 +316,35 @@ function changeAddress(newAdress: string) {
                     </div>
                 </div>
             </div>
+            <!--
+                    <div class="mt-2 flex w-full justify-center xs:px-4">
+                        <div
+                            class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-2/4">
+                            <h3 class="ml-4 mt-0.5 text-lg font-semibold text-natural-800 dark:text-natural-200">
+                                <T key-name="template.suggestions" />
+                            </h3>
+                            <div id="template-suggestions" class="mt-1 flex flex-col">
+                                <TemplateSuggestion v-for="(template, index) in templates" :key="template.id"
+                                    :index="index" :template="template" @open-template="
+                                openedTemplate = template;
+                            isTemplatePopupVisible = true;
+                            " />
+                            </div>
+                            <div class="mb-0.5 mr-3 mt-1.5 flex justify-end">
+                                <NuxtLink to="/dashboard?tab=templates"
+                                    class="text-end text-natural-800 hover:text-calypso-600 hover:underline dark:text-natural-200 dark:hover:text-calypso-300">
+                                    <T key-name="template.all" />
+                                </NuxtLink>
+                            </div>
+                        </div>
+                    </div>-->
         </div>
-        <SvgPeopleBackpackMap class="bottom-0 hidden h-44 sm:absolute" />
+        <SvgPeopleBackpackMap class="absolute bottom-0 hidden h-44 lg:block" />
         <SvgWomanSuitcaseLeft
-            class="bottom-0 right-44 hidden h-44 sm:absolute"
+            class="absolute bottom-0 hidden h-44 sm:block lg:right-44"
         />
         <SvgWomanSuitcaseRight
-            class="bottom-0 right-0 hidden h-44 sm:absolute"
+            class="absolute bottom-0 right-0 hidden h-44 sm:block"
         />
         <div class="z-10">
             <SvgCloud

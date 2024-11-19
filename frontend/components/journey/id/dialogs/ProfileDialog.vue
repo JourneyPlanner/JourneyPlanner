@@ -134,7 +134,7 @@ const close = (): void => {
             <div class="mt-1">
                 <NuxtLink
                     :to="'/user/' + username"
-                    class="group ml-4 max-w-36 truncate text-xl text-natural-500 hover:text-calypso-600 dark:text-natural-300 xs:ml-6 xs:max-w-48 sm:ml-[2.875rem] sm:max-w-72 md:ml-8 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
+                    class="group ml-4 max-w-36 truncate text-xl text-natural-500 hover:text-calypso-600 dark:text-natural-300 dark:hover:text-calypso-600 xs:ml-6 xs:max-w-48 sm:ml-[2.875rem] sm:max-w-72 md:ml-8 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
                 >
                     @<span class="group-hover:underline">{{ username }}</span>
                 </NuxtLink>

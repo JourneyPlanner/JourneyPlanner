@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const props = defineProps({
+import { useTranslate } from "@tolgee/vue";
+
+defineProps({
     template: {
         type: Object as PropType<Template>,
         required: true,
@@ -10,22 +12,22 @@ const props = defineProps({
     },
 });
 
-console.log(props);
 defineEmits(["openTemplate"]);
 
+const { t } = useTranslate();
 const isProfileDialogVisible = ref(false);
 </script>
 
 <template>
     <div
-        class="cursor-pointer border-b border-natural-100 py-1 hover:border-t hover:border-calypso-400 dark:border-natural-400"
+        class="w-full cursor-pointer border-b border-natural-100 py-1 hover:border-t hover:border-calypso-400 dark:border-natural-400"
         :class="index === 0 ? 'border-t' : ''"
         @click="$emit('openTemplate', template.id)"
     >
         <div
-            class="ml-1.5 flex items-center border-l-2 border-natural-400 pl-1 dark:border-natural-400"
+            class="ml-1.5 flex items-center border-l-2 border-natural-400 pl-1 hover:border-calypso-400 dark:border-natural-400"
         >
-            <div class="ml-1.5 w-2/5 sm:w-1/3">
+            <div class="ml-1.5 w-2/5 sm:w-1/3 lg:w-2/6 xl:w-1/3">
                 <h3
                     v-tooltip.top="{
                         value: template.name,
@@ -50,27 +52,40 @@ const isProfileDialogVisible = ref(false);
                 </h4>
             </div>
             <div
-                class="ml-3 flex flex-col gap-x-0.5 text-text dark:text-natural-50 xs:ml-[4vw] md:flex-row"
+                class="ml-3 flex flex-col gap-x-0.5 text-text dark:text-natural-50 xs:ml-[3vw] lg:ml-3 lg:flex-row lg:gap-x-4 xl:ml-5"
             >
                 <div
                     v-tooltip.top="{
                         value: template.destination,
                         pt: { root: 'font-nunito' },
                     }"
-                    class="flex min-w-28 max-w-28 flex-row items-center gap-x-1 xs:min-w-32 xs:max-w-32 sm:min-w-24 sm:max-w-24 sm:gap-x-2"
+                    class="flex min-w-28 max-w-28 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-36 sm:min-w-32 sm:max-w-32 sm:gap-x-2 lg:min-w-24 lg:max-w-24 xl:min-w-32 xl:max-w-32 2xl:min-w-44 2xl:max-w-44"
                 >
                     <i
-                        class="pi pi-map-marker text-sm text-calypso-400 dark:text-calypso-400"
+                        class="pi pi-map-marker text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
                     />
-                    <h5 class="truncate text-sm">
+                    <h5 class="truncate text-sm xl:text-base">
                         {{ template.destination }}
                     </h5>
                 </div>
-                <div class="flex flex-row items-center gap-x-1 sm:gap-x-2">
+                <div
+                    v-tooltip.top="{
+                        value:
+                            template.length +
+                            ' ' +
+                            t(
+                                template.length === 1
+                                    ? 'template.day'
+                                    : 'template.days',
+                            ),
+                        pt: { root: 'font-nunito' },
+                    }"
+                    class="flex min-w-20 max-w-20 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-32 sm:min-w-32 sm:max-w-24 sm:gap-x-2 lg:min-w-24 lg:max-w-24 xl:min-w-32 xl:max-w-32 2xl:min-w-32 2xl:max-w-32"
+                >
                     <i
-                        class="pi pi-calendar text-sm text-calypso-400 dark:text-calypso-400"
+                        class="pi pi-calendar text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
                     />
-                    <h5 class="truncate text-sm">
+                    <h5 class="truncate text-sm xl:text-base">
                         {{ template.length }}
                         <T
                             :key-name="

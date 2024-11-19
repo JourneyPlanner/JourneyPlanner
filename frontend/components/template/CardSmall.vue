@@ -39,7 +39,6 @@ const isProfileDialogVisible = ref(false);
                 }"
                 class="-mt-1 truncate text-base text-natural-600 dark:text-natural-300"
             >
-                <!-- TODO hover dark color -->
                 <T key-name="template.by" /><span
                     :class="
                         !displayedInProfile

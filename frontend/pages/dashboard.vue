@@ -442,9 +442,6 @@ function changeAddress(newAddress: string) {
     templateDestination.value = newAddress;
     refreshTemplates();
 }
-
-//TODO z index scuffed user settings bzw edit/delete popup ist unter den sachen vom header
-//TODO is create journy noch so scuffed responsive
 </script>
 
 <template>
