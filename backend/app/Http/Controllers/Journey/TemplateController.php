@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Journey;
 
 use App\Http\Controllers\Controller;
 use App\Models\Journey;
+use App\Models\JourneyUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -166,7 +167,9 @@ class TemplateController extends Controller
             }
         }
 
-        $journeyTemplate->users()->attach(Auth::id(), ["role" => 2]); // 2 is the role for the creator of the template
+        $journeyTemplate->users()->attach(Auth::id(), [
+            "role" => JourneyUser::TEMPLATE_CREATOR_ROLE_ID,
+        ]);
 
         return response()->json($journeyTemplate);
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Journey;
 
 use App\Http\Controllers\Controller;
 use App\Models\Journey;
+use App\Models\JourneyUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,12 +45,16 @@ class JourneyUserController extends Controller
 
         // Add the user to the journey
         if ($journey->is_guest) {
-            $journey->users()->attach(Auth::id(), ["role" => 1]);
+            $journey->users()->attach(Auth::id(), [
+                "role" => JourneyUser::JOURNEY_GUIDE_ROLE_ID,
+            ]);
 
             $journey->is_guest = false;
             $journey->save();
         } else {
-            $journey->users()->attach(Auth::id(), ["role" => 0]);
+            $journey->users()->attach(Auth::id(), [
+                "role" => JourneyUser::JOURNEY_MEMBER_ROLE_ID,
+            ]);
         }
 
         return response()->json(
@@ -134,7 +139,10 @@ class JourneyUserController extends Controller
                 ->wherePivot("user_id", Auth::id())
                 ->wherePivot("role", 1)
                 ->exists() &&
-            $journey->users()->wherePivot("role", 1)->count() === 1 &&
+            $journey
+                ->users()
+                ->wherePivot("role", JourneyUser::JOURNEY_GUIDE_ROLE_ID)
+                ->count() === 1 &&
             $journey->users()->count() !== 1
         ) {
             return response()->json(
