@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Journey;
 use App\Models\JourneyUser;
 use App\Models\User;
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -58,7 +59,21 @@ class TemplateController extends Controller
             "per_page" => "nullable|integer|min:1|max:100",
             "template_name" => "nullable|string",
             "template_journey_length_min" => "nullable|integer|min:1",
-            "template_journey_length_max" => "nullable|integer|min:1",
+            "template_journey_length_max" => [
+                "nullable",
+                "integer",
+                "min:1",
+                function (string $attribute, mixed $value, Closure $fail) {
+                    $minLength = request()->input(
+                        "template_journey_length_min"
+                    );
+                    if ($minLength && $value < $minLength) {
+                        $fail(
+                            "The maximum length must be greater than or equal to the minimum length."
+                        );
+                    }
+                },
+            ],
             "template_destination" => "nullable|string",
             "template_creator" => "nullable|string",
         ]);
