@@ -71,6 +71,9 @@ class TemplateController extends Controller
         $name = $validated["template_name"] ?? "";
         $lengthMin = $validated["template_journey_length_min"] ?? 1;
         $lengthMax = $validated["template_journey_length_max"] ?? PHP_INT_MAX;
+        if ($lengthMax == 31) {
+            $lengthMax = PHP_INT_MAX;
+        }
         $destination = $validated["template_destination"] ?? "";
         $creator = $validated["template_creator"] ?? "";
 
