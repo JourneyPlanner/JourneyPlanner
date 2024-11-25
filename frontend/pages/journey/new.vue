@@ -357,7 +357,10 @@ function changeAddress(newAddress: string) {
                 v-if="openedTemplate"
                 :template="openedTemplate!"
                 :is-template-dialog-visible="isTemplatePopupVisible"
-                @close="isTemplatePopupVisible = false"
+                @close="
+                    isTemplatePopupVisible = false;
+                    openedTemplate = undefined;
+                "
             />
         </div>
     </div>

@@ -146,7 +146,8 @@ function clearInput() {
         class="order-4 col-span-full mb-0 flex flex-col font-nunito sm:order-3 sm:col-span-3"
         @submit.prevent
     >
-        <ClientOnly v-if="isLoaded" class="relative">
+        <!--<ClientOnly v-if="isLoaded" class="relative">-->
+        <div v-if="isLoaded" class="relative">
             <mapbox-search-box
                 ref="search"
                 class="font-nunito"
@@ -179,6 +180,7 @@ function clearInput() {
                     >{{ errorMessage }}</span
                 >
             </div>
-        </ClientOnly>
+        </div>
+        <!--</ClientOnly>-->
     </form>
 </template>
