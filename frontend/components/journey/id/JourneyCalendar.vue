@@ -326,7 +326,7 @@ onMounted(() => {
             if (!alreadyAdded.value) {
                 document.getElementsByClassName(
                     "fc-showAllHours-button",
-                )[0].innerHTML = "6:00 - 0:00";
+                )[0].innerHTML = "6:00 - 24:00";
                 const activityData = store.activityData as Activity[];
                 activityData.forEach((activity: Activity) => {
                     if (activity.calendar_activities != null) {

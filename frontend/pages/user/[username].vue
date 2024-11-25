@@ -100,6 +100,9 @@ watch(showMore, () => {
         }
 
         observer.value = new IntersectionObserver((entries) => {
+            if (entries.length === 0) {
+                return;
+            }
             const target = entries[0];
             if (target.isIntersecting) {
                 if (moreTemplatesAvailable.value && showMore.value) {

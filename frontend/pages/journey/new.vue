@@ -172,8 +172,8 @@ function copyToClipboard() {
     });
 }
 
-function changeAddress(newAdress: string) {
-    templateDestination.value = newAdress;
+function changeAddress(newAddress: string) {
+    templateDestination.value = newAddress;
     refresh();
 }
 </script>
@@ -278,10 +278,8 @@ function changeAddress(newAdress: string) {
                     </form>
                 </fieldset>
             </div>
-
-            <div
-                class="z-40 mt-2 flex items-center justify-center px-4 font-nunito"
-            >
+            <!-- TODO wenn keine passenden vorschläge gefunden wurden -->
+            <div class="mt-2 flex items-center justify-center px-4 font-nunito">
                 <div
                     id="template-section"
                     class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-2/4 md:w-2/5"

@@ -64,7 +64,8 @@ const confirm = useConfirm();
 onMounted(() => {
     if (
         containerElement.value &&
-        containerElement.value.querySelectorAll(".fc-event").length > 0
+        containerElement.value.querySelectorAll(".fc-event").length > 0 &&
+        props.inTemplate === false
     ) {
         new Draggable(containerElement.value, {
             itemSelector: ".fc-event",

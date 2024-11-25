@@ -22,7 +22,10 @@ const isProfileDialogVisible = ref(false);
     <div
         class="w-full cursor-pointer border-b border-natural-100 py-1 hover:border-t hover:border-calypso-400 dark:border-natural-400"
         :class="index === 0 ? 'border-t' : ''"
+        role="button"
+        tabindex="0"
         @click="$emit('openTemplate', template.id)"
+        @keyup.enter="$emit('openTemplate', template.id)"
     >
         <div
             class="ml-1.5 flex items-center border-l-2 border-natural-400 pl-1 hover:border-calypso-400 dark:border-natural-400"

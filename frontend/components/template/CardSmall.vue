@@ -18,7 +18,10 @@ const isProfileDialogVisible = ref(false);
 <template>
     <div
         class="rounded-md border-2 border-natural-200 bg-natural-50 text-text hover:cursor-pointer hover:border-calypso-400 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400"
+        role="button"
+        tabindex="0"
         @click="$emit('openTemplate', template.id)"
+        @keyup.enter="$emit('openTemplate', template.id)"
     >
         <div
             class="my-1 ml-1 border-l-2 border-calypso-600 pl-1 dark:border-calypso-400"

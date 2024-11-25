@@ -129,12 +129,16 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
         inputValue.value = "";
     }
 
-    emit("changeAddress", inputValue.value);
+    emit(
+        "changeAddress",
+        inputValue.value,
+        event.detail.features[0].properties.name,
+    );
 }
 
 function clearInput() {
     inputValue.value = "";
-    emit("changeAddress", inputValue.value);
+    emit("changeAddress", "", "");
 }
 </script>
 <template>

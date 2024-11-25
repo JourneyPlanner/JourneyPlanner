@@ -15,18 +15,6 @@ const store = useDashboardStore();
 const client = useSanctumClient();
 
 const colorMode = useColorMode();
-const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
-
-let borderColor = "#BDBDBD";
-let borderColorFocus = "#50A1C0";
-if (
-    colorMode.preference === "dark" ||
-    (darkTheme.matches && colorMode.preference === "system")
-) {
-    borderColor = "#464646";
-    borderColorFocus = "#50A1C0";
-}
-const addressCss = `.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor}; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none; border: solid 2px ${borderColorFocus};}`;
 
 const searchInput = ref();
 const searchInputMobile = ref();
@@ -52,23 +40,30 @@ const filterDialog = ref<HTMLElement>();
 const usernames = ref<string[]>([]);
 const templates = ref<Template[]>([]);
 const moreTemplatesAvailable = ref<boolean>(true);
-const templateJourneyLengthMinMax = ref<Array<number>>([1, 31]);
+const templateMaxLength = 31;
+const templateJourneyLengthMinMax = ref<Array<number>>([1, templateMaxLength]);
 const sortby = ref("");
 const sortorder = ref("");
-const templateDestination = ref("");
+const templateDestinationInput = ref("");
+const templateDestinationName = ref("");
 const templateCreator = ref("");
 const cursor = ref<string | null>(null);
 const nextCursor = ref<string | null>(null);
 const observer = ref<IntersectionObserver>();
 const loader = ref();
 
+const borderColor = ref("#BDBDBD");
+const borderColorFocus = ref("#50A1C0");
+const backgroundColor = ref("#FCFCFC");
+
 const toggle = (event: Event) => {
     menu.value.toggle(event);
 };
 
 //redirect to invite if an invite is stored in local storage
+
 if (localStorage.getItem("JP_invite_journey_id")) {
-    await navigateTo(localStorage.getItem("JP_invite_journey_id"));
+    navigateTo(localStorage.getItem("JP_invite_journey_id"));
 }
 
 if (route.query.tab === "templates") {
@@ -261,6 +256,37 @@ onMounted(() => {
         },
         { immediate: true },
     );
+
+    watch(templateJourneyLengthMinMax, () => {
+        let temp;
+        if (
+            templateJourneyLengthMinMax.value[0] >
+            templateJourneyLengthMinMax.value[1]
+        ) {
+            temp = templateJourneyLengthMinMax.value[0];
+            templateJourneyLengthMinMax.value[0] =
+                templateJourneyLengthMinMax.value[1];
+            templateJourneyLengthMinMax.value[1] = temp;
+        }
+    });
+
+    watch(
+        () => colorMode.preference,
+        () => {
+            const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+            if (
+                colorMode.preference === "dark" ||
+                (darkTheme.matches && colorMode.preference === "system")
+            ) {
+                borderColor.value = "#464646";
+                borderColorFocus.value = "#50A1C0";
+                backgroundColor.value = "#525252";
+            }
+
+            console.log("watched");
+        },
+    );
 });
 
 onUnmounted(() => {
@@ -271,7 +297,6 @@ onUnmounted(() => {
 
 /**
  * Fetches templates from the backend
- * stores response in templates ref
  */
 const {
     data: templateData,
@@ -279,7 +304,7 @@ const {
     status,
 } = await useAsyncData("templates", () =>
     client(
-        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=40&template_name=${searchValue.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_destination=${templateDestination.value}&template_creator=${templateCreator.value}&cursor=${cursor.value}`,
+        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=40&template_name=${searchValue.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_journey_length_max_const=${templateMaxLength}&template_destination_input=${templateDestinationInput.value}&template_destination_name=${templateDestinationName.value}&template_creator=${templateCreator.value}&cursor=${cursor.value}`,
     ),
 );
 
@@ -329,8 +354,9 @@ const searchTemplate = debounce(() => {
 const isFiltered = computed(() => {
     return (
         templateJourneyLengthMinMax.value[0] !== 1 ||
-        templateJourneyLengthMinMax.value[1] !== 31 ||
-        templateDestination.value !== "" ||
+        templateJourneyLengthMinMax.value[1] !== templateMaxLength ||
+        templateDestinationInput.value !== "" ||
+        templateDestinationName.value !== "" ||
         templateCreator.value !== ""
     );
 });
@@ -339,8 +365,9 @@ const isFiltered = computed(() => {
  * clear template filters
  */
 function clearFilters() {
-    templateJourneyLengthMinMax.value = [1, 31];
-    templateDestination.value = "";
+    templateJourneyLengthMinMax.value = [1, templateMaxLength];
+    templateDestinationInput.value = "";
+    templateDestinationName.value = "";
     templateCreator.value = "";
     searchValue.value = "";
     refreshTemplates();
@@ -438,8 +465,9 @@ function editJourney(journey: Journey, id: string) {
     journeys.value[index].name = journey.name;
 }
 
-function changeAddress(newAddress: string) {
-    templateDestination.value = newAddress;
+function changeAddress(inputValue: string, name: string) {
+    templateDestinationInput.value = inputValue;
+    templateDestinationName.value = name;
     refreshTemplates();
 }
 </script>
@@ -791,7 +819,7 @@ function changeAddress(newAddress: string) {
                                     v-model="templateJourneyLengthMinMax"
                                     range
                                     :min="1"
-                                    :max="31"
+                                    :max="templateMaxLength"
                                     class="w-full"
                                     :pt="{
                                         root: 'bg-natural-200 dark:bg-natural-300',
@@ -805,7 +833,7 @@ function changeAddress(newAddress: string) {
                                     class="-px-1 mt-2.5 flex justify-between text-natural-500 dark:text-natural-300"
                                 >
                                     <span>1</span>
-                                    <span>31+</span>
+                                    <span>{{ templateMaxLength }}+</span>
                                 </div>
                                 <div class="mt-1 flex flex-row gap-x-3">
                                     <T
@@ -816,7 +844,7 @@ function changeAddress(newAddress: string) {
                                         input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
                                         input-id="min"
                                         :min="1"
-                                        :max="31"
+                                        :max="templateMaxLength"
                                         :allow-empty="false"
                                         @input="refreshTemplates()"
                                     />
@@ -828,7 +856,7 @@ function changeAddress(newAddress: string) {
                                         input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
                                         input-id="max"
                                         :min="1"
-                                        :max="31"
+                                        :max="templateMaxLength"
                                         :allow-empty="false"
                                         @input="refreshTemplates()"
                                     />
@@ -854,11 +882,12 @@ function changeAddress(newAddress: string) {
                                     key-name="dashboard.template.filter.destination.description"
                                 />
                             </p>
+                            <!-- TODO border color scuffed -->
                             <FormAddressInput
                                 id="template-destination"
                                 name="destination"
-                                :value="templateDestination"
-                                :custom-class="addressCss"
+                                :value="templateDestinationInput"
+                                :custom-class="`.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor} !important; background-color: ${backgroundColor} !important; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none; border: solid 2px ${borderColorFocus} !important;}`"
                                 @change-address="changeAddress"
                             />
                         </div>
@@ -880,6 +909,7 @@ function changeAddress(newAddress: string) {
                                     key-name="dashboard.template.filter.creator.description"
                                 />
                             </p>
+                            <!-- TODO diese weirden states wo dann alles weiß ist -->
                             <AutoComplete
                                 v-model="templateCreator"
                                 input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
@@ -1004,7 +1034,7 @@ function changeAddress(newAddress: string) {
                                 v-model="templateJourneyLengthMinMax"
                                 range
                                 :min="1"
-                                :max="31"
+                                :max="templateMaxLength"
                                 class="w-full"
                                 :pt="{
                                     root: 'bg-natural-200 dark:bg-natural-300',
@@ -1018,7 +1048,7 @@ function changeAddress(newAddress: string) {
                                 class="-px-1 mt-2.5 flex justify-between text-natural-500 dark:text-natural-300"
                             >
                                 <span>1</span>
-                                <span>31+</span>
+                                <span>{{ templateMaxLength }}+</span>
                             </div>
                             <div class="mt-1 flex flex-row gap-x-3">
                                 <T
@@ -1029,7 +1059,7 @@ function changeAddress(newAddress: string) {
                                     input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
                                     input-id="min"
                                     :min="1"
-                                    :max="31"
+                                    :max="templateMaxLength"
                                     :allow-empty="false"
                                     @input="refreshTemplates()"
                                 />
@@ -1041,7 +1071,7 @@ function changeAddress(newAddress: string) {
                                     input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
                                     input-id="max"
                                     :min="1"
-                                    :max="31"
+                                    :max="templateMaxLength"
                                     :allow-empty="false"
                                     @input="refreshTemplates()"
                                 />
@@ -1066,7 +1096,7 @@ function changeAddress(newAddress: string) {
                             id="template-destination"
                             name="destination"
                             value=""
-                            :custom-class="addressCss"
+                            :custom-class="`.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor} !important; background-color: ${backgroundColor} !important; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none; border: solid 2px ${borderColorFocus} !important;}`"
                             @change-address="changeAddress"
                         />
                     </div>

@@ -25,6 +25,12 @@ await client(`/api/template/${templateID}/activity`, {
         if (response.ok) {
             activityStore.setActivities(response._data.activities);
             activityDataLoaded.value = true;
+        } else {
+            throw createError({
+                statusCode: response.status,
+                statusMessage: response.statusText,
+                fatal: true,
+            });
         }
     },
 });
@@ -95,8 +101,8 @@ useHead({
                 :current-user-role="0"
                 :journey-ended="false"
                 :during-journey="false"
-                :journey-startdate="data.from"
-                :journey-enddate="data.to"
+                :journey-startdate="journeyStore.getFromDate()"
+                :journey-enddate="journeyStore.getToDate()"
             />
         </div>
         <JourneyIdActivityMap v-if="activityDataLoaded" />
