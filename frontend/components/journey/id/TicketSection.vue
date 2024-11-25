@@ -285,7 +285,7 @@ function emitScroll(target: string) {
                                     class="relative flex h-full w-full flex-col overflow-hidden"
                                 >
                                     <div
-                                        class="absolute left-2 top-2 z-50 flex h-[1.25rem] w-[1.25rem] cursor-pointer items-center justify-center rounded-full text-center text-sm text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                        class="absolute left-2 top-2 z-10 flex h-[1.25rem] w-[1.25rem] cursor-pointer items-center justify-center rounded-full text-center text-sm text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
                                         @click.stop="
                                             isLicenseVisible = !isLicenseVisible
                                         "
@@ -612,7 +612,7 @@ function emitScroll(target: string) {
                                                 value: weatherType,
                                                 pt: { root: 'font-nunito' },
                                             }"
-                                            class="z-50 h-6 w-32 overflow-hidden overflow-ellipsis text-nowrap text-center"
+                                            class="h-6 w-32 overflow-hidden overflow-ellipsis text-nowrap text-center"
                                             >{{ weatherType }}
                                         </span>
                                     </div>
