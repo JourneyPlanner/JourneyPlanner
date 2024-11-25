@@ -94,12 +94,14 @@ class TemplateController extends Controller
 
         // Select all templates that match the search criteria
         $query = Journey::where("is_template", true)
-            ->where(function ($query) use ($destination) {
+            ->when($destination, function ($query) use ($destination) {
                 $query
                     ->where("destination", "like", "%$destination%")
                     ->orWhere("mapbox_full_address", "like", "%$destination%");
             })
-            ->where("name", "like", "%$name%")
+            ->when($name, function ($query) use ($name) {
+                $query->where("name", "like", "%$name%");
+            })
             ->where(DB::raw("DATEDIFF(`to`, `from`) + 1"), ">=", $lengthMin)
             ->where(DB::raw("DATEDIFF(`to`, `from`) + 1"), "<=", $lengthMax)
             ->with([
