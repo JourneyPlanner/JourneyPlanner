@@ -25,8 +25,11 @@ class UserController extends Controller
         $perPage = $validated["per_page"] ?? 10;
         $search = $validated["search"] ?? "";
 
-        $users = User::where("username", "like", "%$search%")
-            ->orWhere("display_name", "like", "%$search%")
+        $users = User::when($search, function ($query) use ($search) {
+            $query
+                ->where("username", "like", "%$search%")
+                ->orWhere("display_name", "like", "%$search%");
+        })
             ->orderBy("username", "asc")
             ->simplePaginate($perPage, ["username", "display_name"])
             ->withQueryString();
