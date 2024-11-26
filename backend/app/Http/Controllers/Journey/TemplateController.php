@@ -74,7 +74,10 @@ class TemplateController extends Controller
                     }
                 },
             ],
-            "template_destination" => "nullable|string",
+            "template_journey_length_max_const" =>
+                "required_with:template_journey_length_max|min:1",
+            "template_destination_input" => "nullable|string",
+            "template_destination_name" => "nullable|string",
             "template_creator" => "nullable|string",
         ]);
 
@@ -83,45 +86,88 @@ class TemplateController extends Controller
         $order = $validated["order"] ?? "asc";
         $perPage = $validated["per_page"] ?? $this->perPage;
 
-        $name = $validated["template_name"] ?? "";
-        $lengthMin = $validated["template_journey_length_min"] ?? 1;
-        $lengthMax = $validated["template_journey_length_max"] ?? PHP_INT_MAX;
-        if ($lengthMax == 31) {
-            $lengthMax = PHP_INT_MAX;
-        }
-        $destination = $validated["template_destination"] ?? "";
-        $creator = $validated["template_creator"] ?? "";
+        $name = $validated["template_name"];
+        $lengthMin = $validated["template_journey_length_min"];
+        $lengthMax = $validated["template_journey_length_max"];
+        $lengthMaxConst = $validated["template_journey_length_max_const"];
+        $destination = $validated["template_destination_input"];
+        $destinationName = $validated["template_destination_name"];
+        $creator = $validated["template_creator"];
 
         // Select all templates that match the search criteria
-        $query = Journey::where("is_template", true)
-            ->when($destination, function ($query) use ($destination) {
-                $query
-                    ->where("destination", "like", "%$destination%")
-                    ->orWhere("mapbox_full_address", "like", "%$destination%");
+        $templates = Journey::where("is_template", true)
+            ->when($destination, function ($query) use (
+                $destination,
+                $destinationName
+            ) {
+                $query->where(function ($query) use (
+                    $destination,
+                    $destinationName
+                ) {
+                    $query
+                        ->where("destination", "like", "%$destination%")
+                        ->orWhere(
+                            "mapbox_full_address",
+                            "like",
+                            "%$destination%"
+                        )
+                        ->when($destinationName, function ($query) use (
+                            $destinationName
+                        ) {
+                            $query->orWhere(
+                                "destination",
+                                "like",
+                                "%$destinationName%"
+                            );
+                        });
+                });
             })
             ->when($name, function ($query) use ($name) {
                 $query->where("name", "like", "%$name%");
             })
-            ->where(DB::raw("DATEDIFF(`to`, `from`) + 1"), ">=", $lengthMin)
-            ->where(DB::raw("DATEDIFF(`to`, `from`) + 1"), "<=", $lengthMax)
+            ->when($lengthMin, function ($query) use ($lengthMin) {
+                $query->where(
+                    DB::raw("DATEDIFF(`to`, `from`) + 1"),
+                    ">=",
+                    $lengthMin
+                );
+            })
+            ->when($lengthMax, function ($query) use (
+                $lengthMax,
+                $lengthMaxConst
+            ) {
+                if ($lengthMax >= $lengthMaxConst) {
+                    $lengthMax = PHP_INT_MAX;
+                }
+                $query->where(
+                    DB::raw("DATEDIFF(`to`, `from`) + 1"),
+                    "<=",
+                    $lengthMax
+                );
+            })
+            ->when(
+                $username,
+                function ($query) use ($username) {
+                    $user = User::where("username", $username)->firstOrFail();
+                    $query->whereHas("users", function ($query) use ($user) {
+                        $query->where("users.id", $user->id);
+                    });
+                },
+                function ($query) use ($creator) {
+                    $query->when($creator, function ($query) use ($creator) {
+                        $query->whereHas("users", function ($query) use (
+                            $creator
+                        ) {
+                            $query->where("username", "like", "%$creator%");
+                        });
+                    });
+                }
+            )
             ->with([
                 "users" => function ($query) {
                     $query->select("id", "username", "display_name");
                 },
-            ]);
-
-        if ($username) {
-            $user = User::where("username", $username)->firstOrFail();
-            $query->whereHas("users", function ($query) use ($user) {
-                $query->where("users.id", $user->id);
-            });
-        } else {
-            $query->whereHas("users", function ($query) use ($creator) {
-                $query->where("username", "like", "%$creator%");
-            });
-        }
-
-        $templates = $query
+            ])
             ->orderBy($sortBy, $order)
             ->cursorPaginate($perPage, $this->columns)
             ->withQueryString();
