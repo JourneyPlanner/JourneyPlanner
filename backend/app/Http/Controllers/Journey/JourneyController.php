@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Journey;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Journey\Activity\ActivityController;
 use App\Models\Journey;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Journey\StoreJourneyRequest;
 use App\Http\Requests\Journey\UpdateJourneyRequest;
 use App\Services\MapboxService;
 use App\Services\WeatherService;
+use DateInterval;
+use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -124,6 +127,28 @@ class JourneyController extends Controller
         // Update journey data
         $oldMapboxFullAddress = $journey->mapbox_full_address;
         $journey->fill($validated);
+
+        if ($journey->isDirty("end_date")) {
+            foreach (
+                $journey
+                    ->activities()
+                    ->where("repeat_end_date", null)
+                    ->andWhere("repeat_end_occurrences", null)
+                    ->get()
+                as $activity
+            ) {
+                $lastCalendarActivity = $activity
+                    ->calendarActivities()
+                    ->orderBy("start", "desc")
+                    ->first();
+
+                ActivityController::handleRepeatingActivity(
+                    $journey,
+                    $activity,
+                    $lastCalendarActivity
+                );
+            }
+        }
 
         // Reset geocode data if the address has changed
         if (

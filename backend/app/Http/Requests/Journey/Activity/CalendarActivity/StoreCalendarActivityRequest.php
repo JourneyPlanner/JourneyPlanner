@@ -31,7 +31,6 @@ class StoreCalendarActivityRequest extends FormRequest
     {
         return [
             "start" => "required|date",
-            "end" => "required|date",
         ];
     }
 }
