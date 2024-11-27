@@ -86,13 +86,14 @@ class TemplateController extends Controller
         $order = $validated["order"] ?? "asc";
         $perPage = $validated["per_page"] ?? $this->perPage;
 
-        $name = $validated["template_name"];
-        $lengthMin = $validated["template_journey_length_min"];
-        $lengthMax = $validated["template_journey_length_max"];
-        $lengthMaxConst = $validated["template_journey_length_max_const"];
-        $destination = $validated["template_destination_input"];
-        $destinationName = $validated["template_destination_name"];
-        $creator = $validated["template_creator"];
+        $name = $validated["template_name"] ?? null;
+        $lengthMin = $validated["template_journey_length_min"] ?? null;
+        $lengthMax = $validated["template_journey_length_max"] ?? null;
+        $lengthMaxConst =
+            $validated["template_journey_length_max_const"] ?? null;
+        $destination = $validated["template_destination_input"] ?? null;
+        $destinationName = $validated["template_destination_name"] ?? null;
+        $creator = $validated["template_creator"] ?? null;
 
         // Select all templates that match the search criteria
         $templates = Journey::where("is_template", true)
@@ -114,11 +115,17 @@ class TemplateController extends Controller
                         ->when($destinationName, function ($query) use (
                             $destinationName
                         ) {
-                            $query->orWhere(
-                                "destination",
-                                "like",
-                                "%$destinationName%"
-                            );
+                            $query
+                                ->orWhere(
+                                    "destination",
+                                    "like",
+                                    "%$destinationName%"
+                                )
+                                ->orWhere(
+                                    "mapbox_full_address",
+                                    "like",
+                                    "%$destinationName%"
+                                );
                         });
                 });
             })
