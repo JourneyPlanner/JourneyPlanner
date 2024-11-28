@@ -258,19 +258,22 @@ class ActivityController extends Controller
             }
 
             $baseActivity->delete();
+            $replacementActivity->parent_id = null;
+            $replacementActivity->save();
+
+            $baseActivity = $replacementActivity;
         }
 
         // Create the calendar activity if the date is provided
         // Check if calendar activity already exists and update it
         //$this->createCalendarActivityIfNeeded($validated, $activity);
 
-        // Also load all parent, children and siblings
-        // Maybe just return all activities of the journey
-        //return response()->json($activity->load("calendarActivities"), 201);
-        return response()->json(
-            $journey->activities()->with("calendarActivities")->get(),
-            201
-        );
+        $activities = $baseActivity
+            ->children()
+            ->with("calendarActivities")
+            ->get();
+        $activities->push($baseActivity->load("calendarActivities"));
+        return response()->json($activities, 201);
     }
 
     private function resetGeocodeDataIfNeeded(
