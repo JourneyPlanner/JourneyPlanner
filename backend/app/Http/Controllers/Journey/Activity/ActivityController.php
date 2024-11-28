@@ -168,13 +168,12 @@ class ActivityController extends Controller
                 // Update the current activitiy, get changes and then apply changes to all activities after this one
                 $changes = $this->updateActivitiesAfter(
                     $activity,
-                    $activity,
+                    $baseActivity,
                     $editedCalendarActivity,
                     $validated,
                     true
                 );
 
-                ddd($changes);
                 $this->updateActivitiesAfter(
                     $activity,
                     $baseActivity,
@@ -293,58 +292,24 @@ class ActivityController extends Controller
         bool $reencode
     ) {
         $calendarActivities = $activity->calendarActivities()->get();
-        $allCalendarActivitiesAfter = true;
-        $anyCalendarActivityAfter = false;
+        $subActivity = $activity->replicate();
+        $subActivity->save();
+        $subActivity->fill($changes);
+        $subActivity->parent_id = $baseActivity->id;
+
+        if ($reencode) {
+            $this->resetGeocodeDataIfNeeded($activity, $changes);
+        }
+        $subActivity->save();
 
         foreach ($calendarActivities as $calendarActivity) {
-            if ($calendarActivity->start < $editedCalendarActivity->start) {
-                $allCalendarActivitiesAfter = false;
-            } else {
-                $anyCalendarActivityAfter = true;
-            }
-
-            if (!$allCalendarActivitiesAfter && $anyCalendarActivityAfter) {
-                break;
+            if ($calendarActivity->start >= $editedCalendarActivity->start) {
+                $calendarActivity->activity_id = $subActivity->id;
+                $calendarActivity->save();
             }
         }
 
-        if ($allCalendarActivitiesAfter) {
-            if ($reencode) {
-                $activity->fill($changes);
-                $this->resetGeocodeDataIfNeeded($activity, $changes);
-                $activity->save();
-            } else {
-                $activity->update($changes);
-            }
-
-            return $activity->getChanges();
-        } elseif ($anyCalendarActivityAfter) {
-            if ($reencode) {
-                $subActivity = $activity->replicate();
-                $subActivity->save();
-
-                $subActivity->fill($changes);
-                $subActivity->parent_id = $baseActivity->id;
-                $this->resetGeocodeDataIfNeeded($activity, $changes);
-                $activity->save();
-            } else {
-                $subActivity = $activity->replicate();
-                $subActivity->fill($changes);
-                $subActivity->parent_id = $baseActivity->id;
-                $subActivity->save();
-            }
-
-            foreach ($calendarActivities as $calendarActivity) {
-                if (
-                    $calendarActivity->start >= $editedCalendarActivity->start
-                ) {
-                    $calendarActivity->activity_id = $subActivity->id;
-                    $calendarActivity->save();
-                }
-            }
-
-            return $subActivity->getChanges();
-        }
+        return $subActivity->getChanges();
     }
 
     /**
