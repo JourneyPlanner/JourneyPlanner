@@ -56,7 +56,7 @@ Route::get("journey/{journey}/user/me", [
 Route::apiResource(
     "journey/{journey}/activity/{activity}/calendarActivity",
     CalendarActivityController::class
-);
+)->only("destroy");
 
 Route::post("invite/{id}", [JourneyUserController::class, "store"])->middleware(
     "auth:sanctum"
