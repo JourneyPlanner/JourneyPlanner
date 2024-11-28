@@ -155,6 +155,13 @@ class ActivityController extends Controller
                 $validated["calendar_activity_id"]
             );
 
+            Gate::authorize("update", [
+                $editedCalendarActivity,
+                $activity,
+                $journey,
+                true,
+            ]);
+
             if ($validated["edit_type"] == "single") {
                 $subActivity = $activity->replicate();
                 $subActivity->fill($validated);
