@@ -54,7 +54,7 @@ const {
     data: templateData,
     status,
     refresh,
-} = useAsyncData("templates", () =>
+} = useAsyncData("suggestions", () =>
     client(
         `/api/template?per_page=3&template_destination_input=${templateDestinationInput.value}&template_destination_name=${templateDestinationName.value}`,
     ),

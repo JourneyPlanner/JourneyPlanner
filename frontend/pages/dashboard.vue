@@ -355,7 +355,7 @@ onUnmounted(() => {
  * Fetches templates from the backend
  */
 const {
-    data: templateData,
+    data: templateDataDashboard,
     refresh,
     status,
 } = await useAsyncData("templates", () =>
@@ -365,15 +365,15 @@ const {
 );
 
 watch(
-    templateData,
+    templateDataDashboard,
     () => {
-        if (templateData.value) {
-            templates.value.push(...templateData.value.data);
+        if (templateDataDashboard.value) {
+            templates.value.push(...templateDataDashboard.value.data);
 
-            if (templateData.value.next_cursor === null) {
+            if (templateDataDashboard.value.next_cursor === null) {
                 moreTemplatesAvailable.value = false;
             } else {
-                nextCursor.value = templateData.value.next_cursor;
+                nextCursor.value = templateDataDashboard.value.next_cursor;
                 moreTemplatesAvailable.value = true;
             }
         }
@@ -446,17 +446,10 @@ function clearFilters() {
     refreshTemplates();
 }
 
-/*
- * debounce getUsers() to prevent too many request on input
- */
-const searchUser = debounce(() => {
-    getUsers();
-});
-
 /**
  * get username(s) for AutoComplete for created by template filter
  */
-function getUsers() {
+function getUser() {
     client(`/api/user?search=${templateCreator.value}&per_page=25`).then(
         (res) => {
             usernames.value = res.data.map((user: User) => user.username);
@@ -545,10 +538,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
 });
 
 //TODO diesen weirden loading lagg
-//TODO user search auch wenn nichts ausgewählt wird
-//TODO wenn man von new zu dashboard geht wird noch random templates geladen und bei den vorschlägen dann angezeigt
 //TODO weirde shiften von der nav bar
-//TODO improve loading for journeys and templates and settings, dont load all when not needed
 //TODO Erstellen und hineinziehen text bei /template/id bei activity pool ausblenden
 </script>
 
@@ -796,7 +786,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                     <h4
                         v-if="
                             status === 'success' &&
-                            templateData.data.length === 0
+                            templateDataDashboard.data.length === 0
                         "
                         class="col-span-full font-bold"
                     >
@@ -927,15 +917,15 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                     item: 'text-text dark:text-natural-50 hover:text-text hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
                                 }"
                                 :suggestions="usernames"
-                                :force-selection="true"
                                 :complete-on-focus="true"
+                                :auto-option-focus="true"
+                                :delay="300"
                                 :empty-search-message="
                                     t('dashboard.template.filter.creator.empty')
                                 "
-                                @before-show="getUsers()"
-                                @complete="searchUser()"
+                                @complete="getUser()"
                                 @item-select="refreshTemplates()"
-                                @clear="refreshTemplates(), searchUser()"
+                                @clear="refreshTemplates(), getUser()"
                             />
                         </div>
                         <div class="flex justify-end pb-1 pt-20">
@@ -1194,6 +1184,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             />
                         </p>
                         <AutoComplete
+                            ref="creator"
                             v-model="templateCreator"
                             input-class="bg-natural-50 w-full dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem]"
                             :pt="{
@@ -1206,13 +1197,13 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             :suggestions="usernames"
                             :force-selection="true"
                             :complete-on-focus="true"
+                            :delay="300"
                             :empty-search-message="
                                 t('dashboard.template.filter.creator.empty')
                             "
-                            @before-show="getUsers()"
-                            @complete="searchUser()"
+                            @complete="getUser()"
                             @item-select="refreshTemplates()"
-                            @clear="refreshTemplates(), searchUser()"
+                            @clear="refreshTemplates(), getUser()"
                         />
                     </div>
                     <div
