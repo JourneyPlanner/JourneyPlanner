@@ -177,11 +177,11 @@ function copyToClipboard() {
     });
 }
 
-function changeAddress(inputValue: string, name: string) {
-    templateDestinationInput.value = inputValue;
-    templateDestinationName.value = name;
+const changeAddress = debounce((inputValue: unknown, name: unknown) => {
+    templateDestinationInput.value = inputValue as string;
+    templateDestinationName.value = name as string;
     refresh();
-}
+});
 </script>
 
 <template>

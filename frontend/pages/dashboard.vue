@@ -53,9 +53,9 @@ const nextCursor = ref<string | null>(null);
 const observer = ref<IntersectionObserver>();
 const loader = ref();
 
-const borderColor = ref("#BDBDBD");
-const borderColorFocus = ref("#50A1C0");
-const backgroundColor = ref("#FCFCFC");
+const borderColor = ref();
+const borderColorFocus = ref();
+const backgroundColor = ref();
 
 const toggle = (event: Event) => {
     menu.value.toggle(event);
@@ -154,6 +154,8 @@ onMounted(() => {
                 if (loader.value) {
                     observer.value.observe(loader.value);
                 }
+
+                setAddressColor();
 
                 items.value = [
                     {
@@ -338,20 +340,7 @@ onMounted(() => {
     watch(
         () => colorMode.preference,
         () => {
-            const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
-
-            if (
-                colorMode.preference === "dark" ||
-                (darkTheme.matches && colorMode.preference === "system")
-            ) {
-                borderColor.value = "#464646";
-                borderColorFocus.value = "#50A1C0";
-                backgroundColor.value = "#525252";
-            } else {
-                borderColor.value = "#BDBDBD";
-                borderColorFocus.value = "#50A1C0";
-                backgroundColor.value = "#FCFCFC";
-            }
+            setAddressColor();
         },
     );
 });
@@ -399,6 +388,23 @@ const refreshTemplates = () => {
     moreTemplatesAvailable.value = true;
     refresh();
 };
+
+function setAddressColor() {
+    const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+    if (
+        colorMode.preference === "dark" ||
+        (darkTheme.matches && colorMode.preference === "system")
+    ) {
+        borderColor.value = "#464646";
+        borderColorFocus.value = "#50A1C0";
+        backgroundColor.value = "#525252";
+    } else {
+        borderColor.value = "#BDBDBD";
+        borderColorFocus.value = "#50A1C0";
+        backgroundColor.value = "#FCFCFC";
+    }
+}
 
 /**
  * close the template filter dialog when there is a click outside of it
@@ -532,105 +538,28 @@ function editJourney(journey: Journey, id: string) {
     journeys.value[index].name = journey.name;
 }
 
-function changeAddress(inputValue: string, name: string) {
-    templateDestinationInput.value = inputValue;
-    templateDestinationName.value = name;
+const changeAddress = debounce((inputValue: unknown, name: unknown) => {
+    templateDestinationInput.value = inputValue as string;
+    templateDestinationName.value = name as string;
     refreshTemplates();
-}
+});
 
 //TODO diesen weirden loading lagg
-//TODO z index wegen absolute die leiste oben (siehe JP dc 25.11.)
-//TODO mapbox search while typing debounce bzw halt auch wenn nichts geklickt wird
-//TODO dark mode search bar input color
-//TODO dark mode activities in popup text color
 //TODO user search auch wenn nichts ausgewählt wird
-//TODO diese weirden states wo dann alles weiß ist bei creator search input darkmode hover
-//TODO border color scuffed bei address input
 //TODO wenn man von new zu dashboard geht wird noch random templates geladen und bei den vorschlägen dann angezeigt
-//TODO hover effekte für neue reise button und "card" wenn kleinerer bildschirm dark + light
 //TODO weirde shiften von der nav bar
 //TODO improve loading for journeys and templates and settings, dont load all when not needed
+//TODO Erstellen und hineinziehen text bei /template/id bei activity pool ausblenden
 </script>
 
 <template>
-    <div @click="closeFilterWhenOutsideClick">
-        <div
-            class="absolute right-0 top-3 z-10 pr-2 sm:top-4 md:top-6 md:pr-8 lg:pr-20"
-        >
-            <div id="right-header" class="flex flex-row items-center">
-                <div
-                    id="search-and-filter"
-                    class="mr-4 hidden flex-row border-r-2 border-natural-200 lg:flex"
-                >
-                    <div
-                        id="search"
-                        v-tooltip.top="{
-                            value:
-                                tabIndex === 0
-                                    ? t('dashboard.search.journey.tooltip')
-                                    : t('dashboard.search.template.tooltip'),
-                            pt: { root: 'font-nunito' },
-                        }"
-                        class="relative mr-2.5"
-                    >
-                        <input
-                            ref="searchInput"
-                            v-model="searchValue"
-                            type="text"
-                            class="rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200"
-                            :placeholder="t('dashboard.search')"
-                            @input="
-                                tabIndex === 0
-                                    ? searchJourneys()
-                                    : searchTemplate()
-                            "
-                        />
-                        <button @click="searchInput.focus()">
-                            <SvgSearchIcon
-                                class="absolute right-1 top-1 h-7 w-7"
-                            />
-                        </button>
-                    </div>
-                    <div id="sort" class="mr-4">
-                        <SvgDashboardSort
-                            aria-haspopup="true"
-                            aria-controls="overlay_tmenu"
-                            class="h-9 w-9 hover:cursor-pointer"
-                            @click="toggle"
-                        />
-                    </div>
-                    <div v-if="tabIndex === 1" id="filter" class="mr-4">
-                        <SvgDashboardFilter
-                            class="h-9 w-9 hover:cursor-pointer"
-                            :is-active="!!isFilterVisible || isFiltered"
-                            @click.stop="isFilterVisible = !isFilterVisible"
-                        />
-                    </div>
-                </div>
-                <NuxtLink
-                    v-if="tabIndex === 0"
-                    to="/journey/new"
-                    class="group mr-2.5 hidden flex-row items-center rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-ronchi-300 dark:hover:text-text lg:flex"
-                >
-                    <SvgCreateNewJourneyIcon
-                        class="mr-1 h-5 w-5 fill-text dark:fill-natural-50 dark:group-hover:fill-text"
-                    />
-                    <T key-name="dashboard.new" />
-                </NuxtLink>
-                <NuxtLink :to="'/user/' + user.username" class="mr-2.5">
-                    <SvgUserIcon class="mt-1 h-9 w-9" />
-                </NuxtLink>
-                <button @click="isUserSettingsVisible = !isUserSettingsVisible">
-                    <SvgDashboardSettings class="mt-1 h-9 w-9" />
-                </button>
-            </div>
-        </div>
+    <div class="h-screen" @click="closeFilterWhenOutsideClick">
         <TabView
             v-model:active-index="tabIndex"
             class="mt-5 bg-background px-2 dark:bg-background-dark md:px-8 lg:px-20"
             :pt="{
                 root: {
-                    class: 'font-nunito bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                    class: 'font-nunito bg-background dark:bg-background-dark text-text dark:text-natural-50 z-0',
                 },
                 panelContainer: {
                     class: 'text-text dark:text-natural-50 font-nunito bg-background dark:bg-background-dark p-0',
@@ -639,7 +568,7 @@ function changeAddress(inputValue: string, name: string) {
                     class: 'font-nunito bg-background dark:bg-background-dark sm:flex sm:gap-x-5',
                 },
                 navContainer: {
-                    class: 'border-b-2 border-calypso-300 dark:border-calypso-700 rounded ',
+                    class: 'border-b-2 border-calypso-300 dark:border-calypso-700 rounded z-0',
                 },
                 inkbar: { class: 'pt-0.5 bg-calypso-600 dark:bg-calypso-400' },
             }"
@@ -711,10 +640,10 @@ function changeAddress(inputValue: string, name: string) {
                         class="flex flex-row items-center justify-center lg:hidden"
                     >
                         <button
-                            class="flex flex-row items-center justify-center text-nowrap rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 font-semibold text-text dark:border-dandelion-300 dark:bg-ronchi-300 md:px-4"
+                            class="group flex flex-row items-center justify-center text-nowrap rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 font-semibold text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-ronchi-300 dark:hover:text-text md:px-4"
                         >
                             <SvgCreateNewJourneyIcon
-                                class="mr-1 h-5 w-5 fill-text"
+                                class="mr-1 h-5 w-5 fill-text dark:fill-natural-50 dark:group-hover:fill-text"
                             />
                             <span class="xs:hidden">
                                 <T key-name="dashboard.new.short" />
@@ -748,7 +677,7 @@ function changeAddress(inputValue: string, name: string) {
                             @journey-leave="removeJourney"
                             @journey-edited="editJourney"
                         />
-                        <NuxtLink to="/journey/new">
+                        <NuxtLink to="/journey/new" class="group">
                             <SvgCreateNewJourneyCard
                                 class="hidden dark:hidden lg:block"
                             />
@@ -756,10 +685,10 @@ function changeAddress(inputValue: string, name: string) {
                                 class="hidden dark:lg:block"
                             />
                             <div
-                                class="flex h-[7.5rem] min-w-36 flex-grow items-center justify-center rounded-md border border-dandelion-300 bg-dandelion-100 dark:bg-pesto-600 lg:hidden"
+                                class="flex h-[7.5rem] min-w-36 flex-grow items-center justify-center rounded-md border border-dandelion-300 bg-dandelion-200 hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-ronchi-300 lg:hidden"
                             >
                                 <SvgCreateNewJourneyIcon
-                                    class="h-14 w-14 fill-text dark:fill-natural-50"
+                                    class="h-14 w-14 fill-text dark:fill-natural-50 dark:group-hover:fill-text"
                                 />
                             </div>
                         </NuxtLink>
@@ -873,7 +802,7 @@ function changeAddress(inputValue: string, name: string) {
                     >
                         <T key-name="dashboard.templates.filter.none" />
                         <button
-                            class="text-mahagony-400 underline"
+                            class="text-mahagony-400 hover:underline"
                             @click="clearFilters"
                         >
                             <T key-name="dashboard.template.filter.clear" />
@@ -921,7 +850,7 @@ function changeAddress(inputValue: string, name: string) {
                                     />
                                     <InputNumber
                                         v-model="templateJourneyLengthMinMax[0]"
-                                        input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
+                                        input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                         input-id="min"
                                         :min="1"
                                         :max="templateMaxLength"
@@ -933,7 +862,7 @@ function changeAddress(inputValue: string, name: string) {
                                     />
                                     <InputNumber
                                         v-model="templateJourneyLengthMinMax[1]"
-                                        input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
+                                        input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                         input-id="max"
                                         :min="1"
                                         :max="templateMaxLength"
@@ -990,7 +919,7 @@ function changeAddress(inputValue: string, name: string) {
                             </p>
                             <AutoComplete
                                 v-model="templateCreator"
-                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
+                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem]"
                                 :pt="{
                                     panel: 'w-20 bg-natural-50 dark:bg-natural-900',
                                     emptyMessage:
@@ -1049,7 +978,78 @@ function changeAddress(inputValue: string, name: string) {
                 </div>
             </TabPanel>
         </TabView>
-        <div class="dialogs z-50">
+        <div
+            class="absolute right-0 top-3 pr-2 sm:top-4 md:top-6 md:pr-8 lg:pr-20"
+        >
+            <div id="right-header" class="flex flex-row items-center">
+                <div
+                    id="search-and-filter"
+                    class="mr-4 hidden flex-row border-r-2 border-natural-200 lg:flex"
+                >
+                    <div
+                        id="search"
+                        v-tooltip.top="{
+                            value:
+                                tabIndex === 0
+                                    ? t('dashboard.search.journey.tooltip')
+                                    : t('dashboard.search.template.tooltip'),
+                            pt: { root: 'font-nunito' },
+                        }"
+                        class="relative mr-2.5"
+                    >
+                        <input
+                            ref="searchInput"
+                            v-model="searchValue"
+                            type="text"
+                            class="rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200"
+                            :placeholder="t('dashboard.search')"
+                            @input="
+                                tabIndex === 0
+                                    ? searchJourneys()
+                                    : searchTemplate()
+                            "
+                        />
+                        <button @click="searchInput.focus()">
+                            <SvgSearchIcon
+                                class="absolute right-1 top-1 h-7 w-7"
+                            />
+                        </button>
+                    </div>
+                    <div id="sort" class="mr-4">
+                        <SvgDashboardSort
+                            aria-haspopup="true"
+                            aria-controls="overlay_tmenu"
+                            class="h-9 w-9 hover:cursor-pointer"
+                            @click="toggle"
+                        />
+                    </div>
+                    <div v-if="tabIndex === 1" id="filter" class="mr-4">
+                        <SvgDashboardFilter
+                            class="h-9 w-9 hover:cursor-pointer"
+                            :is-active="!!isFilterVisible || isFiltered"
+                            @click.stop="isFilterVisible = !isFilterVisible"
+                        />
+                    </div>
+                </div>
+                <NuxtLink
+                    v-if="tabIndex === 0"
+                    to="/journey/new"
+                    class="group mr-2.5 hidden flex-row items-center rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-ronchi-300 dark:hover:text-text lg:flex"
+                >
+                    <SvgCreateNewJourneyIcon
+                        class="mr-1 h-5 w-5 fill-text dark:fill-natural-50 dark:group-hover:fill-text"
+                    />
+                    <T key-name="dashboard.new" />
+                </NuxtLink>
+                <NuxtLink :to="'/user/' + user.username" class="mr-2.5">
+                    <SvgUserIcon class="mt-1 h-9 w-9" />
+                </NuxtLink>
+                <button @click="isUserSettingsVisible = !isUserSettingsVisible">
+                    <SvgDashboardSettings class="mt-1 h-9 w-9" />
+                </button>
+            </div>
+        </div>
+        <div id="dialogs" class="relative z-50">
             <Sidebar
                 v-model:visible="isFilterVisible"
                 modal
@@ -1136,7 +1136,7 @@ function changeAddress(inputValue: string, name: string) {
                                 />
                                 <InputNumber
                                     v-model="templateJourneyLengthMinMax[0]"
-                                    input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
+                                    input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                     input-id="min"
                                     :min="1"
                                     :max="templateMaxLength"
@@ -1148,7 +1148,7 @@ function changeAddress(inputValue: string, name: string) {
                                 />
                                 <InputNumber
                                     v-model="templateJourneyLengthMinMax[1]"
-                                    input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400"
+                                    input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                     input-id="max"
                                     :min="1"
                                     :max="templateMaxLength"
@@ -1195,11 +1195,13 @@ function changeAddress(inputValue: string, name: string) {
                         </p>
                         <AutoComplete
                             v-model="templateCreator"
-                            input-class="bg-natural-50 w-full dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"
+                            input-class="bg-natural-50 w-full dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem]"
                             :pt="{
                                 root: 'w-full',
                                 panel: 'bg-natural-50 dark:bg-natural-900',
-                                item: 'text-text dark:text-natural-50 hover:text-natural-100 hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
+                                emptyMessage:
+                                    'text-text dark:text-natural-50 font-nunito p-1',
+                                item: 'text-text dark:text-natural-50 hover:text-text hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
                             }"
                             :suggestions="usernames"
                             :force-selection="true"
@@ -1309,3 +1311,11 @@ function changeAddress(inputValue: string, name: string) {
         </div>
     </div>
 </template>
+
+<style>
+.p-autocomplete-panel
+    .p-autocomplete-items
+    .p-autocomplete-item:not(.p-highlight):not(.p-disabled).p-focus {
+    @apply bg-natural-100 dark:bg-natural-700;
+}
+</style>

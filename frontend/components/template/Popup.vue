@@ -199,7 +199,7 @@ function close() {
                             }"
                         >
                             <div
-                                class="mx-2 my-2 grid grid-cols-2 gap-1 md:grid-cols-3 lg:grid-cols-4"
+                                class="mx-2 my-2 grid grid-cols-2 gap-1 text-text dark:text-natural-50 md:grid-cols-3 lg:grid-cols-4"
                             >
                                 <div
                                     v-for="activity in activities"
