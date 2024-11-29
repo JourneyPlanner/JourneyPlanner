@@ -536,10 +536,6 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
     templateDestinationName.value = name as string;
     refreshTemplates();
 });
-
-//TODO diesen weirden loading lagg
-//TODO weirde shiften von der nav bar
-//TODO Erstellen und hineinziehen text bei /template/id bei activity pool ausblenden
 </script>
 
 <template>

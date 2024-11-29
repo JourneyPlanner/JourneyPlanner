@@ -193,7 +193,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
         </div>
         <div class="z-10 flex flex-col">
             <div
-                class="z-40 mt-10 flex items-center justify-center px-4 font-nunito sm:mt-8"
+                class="z-20 mt-10 flex items-center justify-center px-4 font-nunito sm:mt-8"
             >
                 <fieldset
                     id="create-journey"
@@ -350,7 +350,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                 class="invisible absolute right-[20%] top-36 z-0 h-16 overflow-hidden object-none md:visible"
             />
         </div>
-        <div id="dialogs">
+        <div id="dialogs" class="z-30">
             <TemplatePopup
                 v-if="openedTemplate"
                 :template="openedTemplate!"
