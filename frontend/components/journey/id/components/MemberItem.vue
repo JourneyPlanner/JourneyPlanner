@@ -10,7 +10,28 @@ const props = defineProps({
 
 const currentRole = ref(props.role);
 const isProfileDialogVisible = ref(false);
+const route = useRoute();
+const router = useRouter();
 const emit = defineEmits(["changeRole"]);
+
+onMounted(() => {
+    if (route.query.username) {
+        if (route.query.username === props.username) {
+            isProfileDialogVisible.value = true;
+        }
+    }
+
+    watch(
+        () => isProfileDialogVisible.value,
+        (value) => {
+            if (value) {
+                router.push({ query: { username: props.username } });
+            } else {
+                router.push({ query: {} });
+            }
+        },
+    );
+});
 
 function changeRole(selectedRole: number) {
     if (props.currentId === props.id) return;

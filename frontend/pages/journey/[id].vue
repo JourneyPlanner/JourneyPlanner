@@ -41,6 +41,12 @@ const uploadResult = ref();
 const upload = ref();
 const calendar = ref();
 
+onMounted(() => {
+    if (route.query.username) {
+        isMemberSidebarVisible.value = true;
+    }
+});
+
 const { data, error } = await useAsyncData("journey", () =>
     client(`/api/journey/${journeyId}`),
 );

@@ -13,6 +13,7 @@ const router = useRouter();
 const route = useRoute();
 const store = useDashboardStore();
 const client = useSanctumClient();
+const toast = useToast();
 
 const colorMode = useColorMode();
 
@@ -61,26 +62,73 @@ const toggle = (event: Event) => {
 };
 
 //redirect to invite if an invite is stored in local storage
-
 if (localStorage.getItem("JP_invite_journey_id")) {
     navigateTo(localStorage.getItem("JP_invite_journey_id"));
 }
 
 if (route.query.tab === "templates") {
     tabIndex.value = 1;
+} else {
+    tabIndex.value = 0;
 }
 
 onMounted(() => {
     watch(
         tabIndex,
-        () => {
+        async () => {
             if (tabIndex.value === 1) {
-                router.replace({
-                    path: "/dashboard",
-                    query: {
-                        tab: "templates",
-                    },
-                });
+                if (
+                    route.query.id &&
+                    route.query.id !== "undefined" &&
+                    route.query.id !== "null" &&
+                    route.query.id !== "" &&
+                    route.query.tab === "templates"
+                ) {
+                    client(`/api/template/${route.query.id}`, {
+                        async onResponse({ response }) {
+                            if (response.ok) {
+                                openedTemplate.value = response._data;
+                                isTemplatePopupVisible.value = true;
+                            }
+                        },
+                        async onResponseError({ response }) {
+                            if (response.status === 404) {
+                                toast.add({
+                                    severity: "error",
+                                    summary: t.value(
+                                        "template.notfound.summary",
+                                    ),
+                                    detail: t.value(
+                                        "template.notfound.summary.detail",
+                                    ),
+                                    life: 6000,
+                                });
+                            } else {
+                                toast.add({
+                                    severity: "error",
+                                    summary: t.value(
+                                        "common.toast.error.heading",
+                                    ),
+                                    detail: t.value("common.error.unknown"),
+                                    life: 6000,
+                                });
+                            }
+                            router.push({
+                                path: "/dashboard",
+                                query: {
+                                    tab: "templates",
+                                },
+                            });
+                        },
+                    });
+                } else {
+                    router.push({
+                        path: "/dashboard",
+                        query: {
+                            tab: "templates",
+                        },
+                    });
+                }
 
                 useHead({
                     title: "Templates | JourneyPlanner",
@@ -186,7 +234,7 @@ onMounted(() => {
                     },
                 ];
             } else {
-                router.replace({ path: "/dashboard" });
+                router.push({ path: "/dashboard" });
                 useHead({
                     title: "Dashboard | JourneyPlanner",
                 });
@@ -257,6 +305,23 @@ onMounted(() => {
         { immediate: true },
     );
 
+    watch(isTemplatePopupVisible, (value) => {
+        if (value) {
+            router.push({
+                query: {
+                    tab: "templates",
+                    id: openedTemplate.value ? openedTemplate.value.id : null,
+                },
+            });
+        } else {
+            router.push({
+                query: {
+                    tab: "templates",
+                },
+            });
+        }
+    });
+
     watch(templateJourneyLengthMinMax, () => {
         let temp;
         if (
@@ -287,7 +352,6 @@ onMounted(() => {
                 borderColorFocus.value = "#50A1C0";
                 backgroundColor.value = "#FCFCFC";
             }
-            console.log(backgroundColor.value);
         },
     );
 });
@@ -475,6 +539,17 @@ function changeAddress(inputValue: string, name: string) {
 }
 
 //TODO diesen weirden loading lagg
+//TODO z index wegen absolute die leiste oben (siehe JP dc 25.11.)
+//TODO mapbox search while typing debounce bzw halt auch wenn nichts geklickt wird
+//TODO dark mode search bar input color
+//TODO dark mode activities in popup text color
+//TODO user search auch wenn nichts ausgewählt wird
+//TODO diese weirden states wo dann alles weiß ist bei creator search input darkmode hover
+//TODO border color scuffed bei address input
+//TODO wenn man von new zu dashboard geht wird noch random templates geladen und bei den vorschlägen dann angezeigt
+//TODO hover effekte für neue reise button und "card" wenn kleinerer bildschirm dark + light
+//TODO weirde shiften von der nav bar
+//TODO improve loading for journeys and templates and settings, dont load all when not needed
 </script>
 
 <template>
@@ -887,7 +962,6 @@ function changeAddress(inputValue: string, name: string) {
                                     key-name="dashboard.template.filter.destination.description"
                                 />
                             </p>
-                            <!-- TODO border color scuffed -->
                             <FormAddressInput
                                 id="template-destination"
                                 name="destination"
@@ -914,7 +988,6 @@ function changeAddress(inputValue: string, name: string) {
                                     key-name="dashboard.template.filter.creator.description"
                                 />
                             </p>
-                            <!-- TODO diese weirden states wo dann alles weiß ist -->
                             <AutoComplete
                                 v-model="templateCreator"
                                 input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 py-[0.275rem]"

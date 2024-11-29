@@ -19,7 +19,8 @@ const journeyInviteLink = ref("");
 const loading = ref(false);
 const openedTemplate = ref<Template>();
 const isTemplatePopupVisible = ref(false);
-const templateDestination = ref("");
+const templateDestinationInput = ref("");
+const templateDestinationName = ref("");
 const suggestions = ref<Template[]>([]);
 
 const title = t.value("title.journey.create");
@@ -49,9 +50,13 @@ if (!isAuthenticated.value) {
  * Fetches all templates from the backend
  * stores response in templates ref
  */
-const { data: templateData, refresh } = await useAsyncData("templates", () =>
+const {
+    data: templateData,
+    status,
+    refresh,
+} = useAsyncData("templates", () =>
     client(
-        `/api/template?per_page=3&template_destination=${templateDestination.value}`,
+        `/api/template?per_page=3&template_destination_input=${templateDestinationInput.value}&template_destination_name=${templateDestinationName.value}`,
     ),
 );
 
@@ -172,8 +177,9 @@ function copyToClipboard() {
     });
 }
 
-function changeAddress(newAddress: string) {
-    templateDestination.value = newAddress;
+function changeAddress(inputValue: string, name: string) {
+    templateDestinationInput.value = inputValue;
+    templateDestinationName.value = name;
     refresh();
 }
 </script>
@@ -278,7 +284,6 @@ function changeAddress(newAddress: string) {
                     </form>
                 </fieldset>
             </div>
-            <!-- TODO wenn keine passenden vorschläge gefunden wurden -->
             <div class="mt-2 flex items-center justify-center px-4 font-nunito">
                 <div
                     id="template-section"
@@ -289,7 +294,17 @@ function changeAddress(newAddress: string) {
                     >
                         <T key-name="template.suggestions" />
                     </h3>
+                    <div v-if="status === 'pending'" class="mt-1 flex w-full">
+                        <ProgressSpinner class="w-10" />
+                    </div>
                     <div
+                        v-else-if="suggestions.length < 1"
+                        class="mt-1 w-full text-center italic"
+                    >
+                        <T key-name="template.suggestions.none" />
+                    </div>
+                    <div
+                        v-else
                         id="template-suggestions"
                         class="mt-1 flex w-full flex-col"
                     >
@@ -307,35 +322,18 @@ function changeAddress(newAddress: string) {
                     <div class="mb-0.5 mr-3 mt-1.5 flex justify-end">
                         <NuxtLink
                             to="/dashboard?tab=templates"
-                            class="text-end text-natural-800 hover:text-calypso-600 hover:underline dark:text-natural-200 dark:hover:text-calypso-300"
+                            class="group flex items-center gap-x-1 text-end text-natural-800 hover:text-calypso-600 dark:text-natural-200 dark:hover:text-calypso-300"
                         >
-                            <T key-name="template.all" />
+                            <span class="group-hover:underline">
+                                <T key-name="template.all" />
+                            </span>
+                            <i
+                                class="pi pi-chevron-right text-xs hover:no-underline"
+                            />
                         </NuxtLink>
                     </div>
                 </div>
             </div>
-            <!--
-                    <div class="mt-2 flex w-full justify-center xs:px-4">
-                        <div
-                            class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-2/4">
-                            <h3 class="ml-4 mt-0.5 text-lg font-semibold text-natural-800 dark:text-natural-200">
-                                <T key-name="template.suggestions" />
-                            </h3>
-                            <div id="template-suggestions" class="mt-1 flex flex-col">
-                                <TemplateSuggestion v-for="(template, index) in templates" :key="template.id"
-                                    :index="index" :template="template" @open-template="
-                                openedTemplate = template;
-                            isTemplatePopupVisible = true;
-                            " />
-                            </div>
-                            <div class="mb-0.5 mr-3 mt-1.5 flex justify-end">
-                                <NuxtLink to="/dashboard?tab=templates"
-                                    class="text-end text-natural-800 hover:text-calypso-600 hover:underline dark:text-natural-200 dark:hover:text-calypso-300">
-                                    <T key-name="template.all" />
-                                </NuxtLink>
-                            </div>
-                        </div>
-                    </div>-->
         </div>
         <SvgPeopleBackpackMap class="absolute bottom-0 hidden h-44 lg:block" />
         <SvgWomanSuitcaseLeft

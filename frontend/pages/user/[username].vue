@@ -5,6 +5,7 @@ const route = useRoute();
 const { t } = useTranslate();
 const router = useRouter();
 const client = useSanctumClient();
+const toast = useToast();
 
 const username = ref(route.params.username);
 const displayname = ref("");
@@ -65,6 +66,56 @@ onMounted(async () => {
     } else {
         isCloseIcon.value = false;
     }
+
+    if (
+        route.query.id &&
+        route.query.id !== "undefined" &&
+        route.query.id !== "null" &&
+        route.query.id !== ""
+    ) {
+        client(`/api/template/${route.query.id}`, {
+            async onResponse({ response }) {
+                if (response.ok) {
+                    openedTemplate.value = response._data;
+                    isTemplatePopupVisible.value = true;
+                }
+            },
+            async onResponseError({ response }) {
+                if (response.status === 404) {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("template.notfound.summary"),
+                        detail: t.value("template.notfound.summary.detail"),
+                        life: 6000,
+                    });
+                } else {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("common.error.unknown"),
+                        life: 6000,
+                    });
+                }
+                router.push({
+                    query: {},
+                });
+            },
+        });
+    }
+
+    watch(isTemplatePopupVisible, (value) => {
+        if (value) {
+            router.push({
+                query: {
+                    id: openedTemplate.value ? openedTemplate.value.id : null,
+                },
+            });
+        } else {
+            router.push({
+                query: {},
+            });
+        }
+    });
 });
 
 onUnmounted(() => {
