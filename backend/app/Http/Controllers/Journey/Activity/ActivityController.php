@@ -272,7 +272,7 @@ class ActivityController extends Controller
             ->children()
             ->with("calendarActivities")
             ->get();
-        $activities->push($baseActivity->load("calendarActivities"));
+        $activities[] = $baseActivity->load("calendarActivities");
         return response()->json($activities, 201);
     }
 
