@@ -10,7 +10,7 @@
         "php": "^8.2",
         "google/apiclient-services": "^0.382.0",
         "guzzlehttp/guzzle": "^7.9",
-        "laravel/framework": "^11.32",
+        "laravel/framework": "^11.33",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.10",
