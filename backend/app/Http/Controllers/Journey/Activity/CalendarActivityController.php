@@ -107,7 +107,7 @@ class CalendarActivityController extends Controller
         Activity $activity,
         array $emptyActivities = []
     ) {
-        if ($activity->calendarActivities()->get()->count() === 0) {
+        if ($activity->calendarActivities()->count() === 0) {
             $activity->fill([
                 "repeat_type" => null,
                 "repeat_interval" => null,

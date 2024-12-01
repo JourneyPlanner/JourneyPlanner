@@ -135,6 +135,40 @@ class ActivityController extends Controller
                     ($validated["repeat_end_occurrences"] ?? 0));
         //ddd($repeatedChanged);
 
+        // Create the calendar activity if the date is provided and the activity is not repeated and has no calendar activities
+        if ($activity->calendarActivities()->count() === 0) {
+            $calendarActivityCreated = $this->createCalendarActivityIfNeeded(
+                $validated,
+                $activity
+            );
+
+            if ($calendarActivityCreated && $activity->repeat_type != null) {
+                $calendarActivity = $activity->calendarActivities()->first();
+
+                if ($calendarActivity) {
+                    $this->handleRepeatingActivity(
+                        $journey,
+                        $activity,
+                        $calendarActivity
+                    );
+                }
+            }
+        } elseif (isset($validated["date"])) {
+            $editedCalendarActivity = CalendarActivity::findOrFail(
+                $validated["calendar_activity_id"]
+            );
+
+            if (!isset($validated["time"])) {
+                $validated["time"] = "00:00:00";
+            }
+
+            $newStart = new DateTime(
+                $validated["date"] . " " . $validated["time"]
+            );
+
+            $timeDifference = $newStart->diff($editedCalendarActivity->start);
+        }
+
         // Edit repeated activities
         $baseActivity = $activity->getBaseActivity();
         if ($validated["edit_type"] == "all") {
@@ -146,9 +180,32 @@ class ActivityController extends Controller
 
             $changes = $activity->getChanges();
 
+            if ($timeDifference) {
+                foreach (
+                    $baseActivity->calendarActivities()->get()
+                    as $calendarActivity
+                ) {
+                    $calendarActivity->start = $calendarActivity->start->subtract(
+                        $timeDifference
+                    );
+                    $calendarActivity->save();
+                }
+            }
+
             foreach ($baseActivity->children()->get() as $child) {
                 $child->fill($changes);
                 $child->save();
+                if ($timeDifference) {
+                    foreach (
+                        $baseActivity->calendarActivities()->get()
+                        as $calendarActivity
+                    ) {
+                        $calendarActivity->start = $calendarActivity->start->subtract(
+                            $timeDifference
+                        );
+                        $calendarActivity->save();
+                    }
+                }
             }
         } else {
             $editedCalendarActivity = CalendarActivity::findOrFail(
@@ -171,28 +228,30 @@ class ActivityController extends Controller
 
                 $editedCalendarActivity->activity_id = $subActivity->id;
                 $editedCalendarActivity->save();
+
+                if ($timeDifference) {
+                    $editedCalendarActivity->start = $editedCalendarActivity->start->subtract(
+                        $timeDifference
+                    );
+                    $editedCalendarActivity->save();
+                }
             } else {
                 // Update the current activitiy, get changes and then apply changes to all activities after this one
                 $changes = $this->updateActivitiesAfter(
                     $activity,
                     $baseActivity,
-                    $editedCalendarActivity,
+                    $editedCalendarActivity->start,
+                    $timeDifference,
                     $validated,
                     true
                 );
 
-                $this->updateActivitiesAfter(
-                    $activity,
-                    $baseActivity,
-                    $editedCalendarActivity,
-                    $changes,
-                    false
-                );
                 foreach ($baseActivity->children() as $childActivity) {
                     $this->updateActivitiesAfter(
                         $childActivity,
                         $baseActivity,
-                        $editedCalendarActivity,
+                        $editedCalendarActivity->start,
+                        $timeDifference,
                         $changes,
                         false
                     );
@@ -264,10 +323,6 @@ class ActivityController extends Controller
             $baseActivity = $replacementActivity;
         }
 
-        // Create the calendar activity if the date is provided
-        // Check if calendar activity already exists and update it
-        //$this->createCalendarActivityIfNeeded($validated, $activity);
-
         $activities = $baseActivity
             ->children()
             ->with("calendarActivities")
@@ -297,7 +352,8 @@ class ActivityController extends Controller
     private function updateActivitiesAfter(
         Activity $activity,
         Activity $baseActivity,
-        CalendarActivity $editedCalendarActivity,
+        DateTime $editedCalendarActivityStart,
+        ?DateInterval $timeDifference,
         array $changes,
         bool $reencode
     ) {
@@ -313,8 +369,13 @@ class ActivityController extends Controller
         $subActivity->save();
 
         foreach ($calendarActivities as $calendarActivity) {
-            if ($calendarActivity->start >= $editedCalendarActivity->start) {
+            if ($calendarActivity->start >= $editedCalendarActivityStart) {
                 $calendarActivity->activity_id = $subActivity->id;
+                if ($timeDifference) {
+                    $calendarActivity->start = $calendarActivity->start->subtract(
+                        $timeDifference
+                    );
+                }
                 $calendarActivity->save();
             }
         }
@@ -339,11 +400,11 @@ class ActivityController extends Controller
         array $validated,
         Activity $activity
     ): bool {
-        if (!array_key_exists("date", $validated) || !$validated["date"]) {
+        if (!isset($validated["date"])) {
             return false;
         }
 
-        if (!array_key_exists("time", $validated) || !$validated["time"]) {
+        if (!isset($validated["time"])) {
             $validated["time"] = "00:00:00";
         }
 
@@ -366,13 +427,10 @@ class ActivityController extends Controller
         Activity $activity,
         CalendarActivity $calendarActivity
     ) {
-        $calendarActivityStart = new DateTime($calendarActivity->start);
-        $calendarActivityEnd = new DateTime($calendarActivity->end);
-        $maxDate = new DateTime($journey->to);
+        $calendarActivityStart = $calendarActivity->start;
+        $maxDate = $journey->to;
         $maxDate->setTime(23, 59, 59);
-        $repeatEndDate = new DateTime(
-            $activity->repeat_end_date ?? $journey->to
-        );
+        $repeatEndDate = $activity->repeat_end_date ?? $journey->to;
         if ($repeatEndDate > $maxDate) {
             $repeatEndDate = $maxDate;
         }
@@ -389,16 +447,14 @@ class ActivityController extends Controller
             $shiftInterval = new DateInterval("P1D");
             while ($occurences > 1) {
                 $calendarActivityStart->add($shiftInterval);
-                $calendarActivityEnd->add($shiftInterval);
                 if ($calendarActivityStart > $maxDate) {
                     break;
                 }
                 if (in_array($calendarActivityStart->format("D"), $repeatOn)) {
                     $repeatedActivity = $calendarActivity
-                        ->replicate(["start", "end"])
+                        ->replicate(["start"])
                         ->fill([
                             "start" => $calendarActivityStart,
-                            "end" => $calendarActivityEnd,
                         ]);
                     $repeatedActivity->save();
                     $occurences--;
@@ -406,9 +462,6 @@ class ActivityController extends Controller
                 if ($calendarActivityStart->format("D") == "Sun") {
                     $shift = $activity->repeat_interval - 1;
                     $calendarActivityStart->add(
-                        new DateInterval("P" . $shift . "W")
-                    );
-                    $calendarActivityEnd->add(
                         new DateInterval("P" . $shift . "W")
                     );
                 }
@@ -425,15 +478,13 @@ class ActivityController extends Controller
 
             for ($i = 1; $i < $occurences; $i++) {
                 $calendarActivityStart->add($shiftInterval);
-                $calendarActivityEnd->add($shiftInterval);
                 if ($calendarActivityStart > $maxDate) {
                     break;
                 }
                 $repeatedActivity = $calendarActivity
-                    ->replicate(["start", "end"])
+                    ->replicate(["start"])
                     ->fill([
                         "start" => $calendarActivityStart,
-                        "end" => $calendarActivityEnd,
                     ]);
                 $repeatedActivity->save();
             }
