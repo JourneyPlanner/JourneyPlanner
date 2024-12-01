@@ -114,5 +114,6 @@ class Activity extends Model
      */
     protected $casts = [
         "estimated_duration" => "datetime:H:i:s",
+        "repeat_end_date" => "datetime",
     ];
 }
