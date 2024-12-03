@@ -457,6 +457,13 @@ function getUser() {
     );
 }
 
+/**
+ * debounce creator search input to prevent too many requests
+ */
+const filterTemplateCreator = debounce(() => {
+    refreshTemplates();
+});
+
 /*
 Fetches all journeys from the backend
 stores response in journeys and currentJourneys
@@ -958,6 +965,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                 :empty-search-message="
                                     t('dashboard.template.filter.creator.empty')
                                 "
+                                @update:model-value="filterTemplateCreator()"
                                 @complete="getUser()"
                                 @item-select="refreshTemplates()"
                                 @clear="refreshTemplates(), getUser()"
