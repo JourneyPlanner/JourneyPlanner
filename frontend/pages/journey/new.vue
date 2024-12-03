@@ -10,8 +10,6 @@ const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 const toast = useToast();
 const store = useDashboardStore();
-const journeyStore = useJourneyStore();
-journeyStore.resetJourney();
 
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
@@ -54,7 +52,7 @@ const {
     data: templateData,
     status,
     refresh,
-} = useAsyncData("suggestions", () =>
+} = await useAsyncData("suggestions", () =>
     client(
         `/api/template?per_page=3&template_destination_input=${encodeURIComponent(templateDestinationInput.value)}&template_destination_name=${encodeURIComponent(templateDestinationName.value)}`,
     ),

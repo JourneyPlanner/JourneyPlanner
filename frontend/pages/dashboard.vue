@@ -536,11 +536,6 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
     templateDestinationName.value = name as string;
     refreshTemplates();
 });
-
-//TODO code rabbit reviews
-//TODO wenn reise erstellen als gast dann activity api call error
-//TODO wenn reise verlassen redirect error zu /new wenn gast
-//TODO footer ist weird oben bei dashboard journey/template
 </script>
 
 <template>
@@ -584,7 +579,10 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                 }"
             >
                 <template #header>
-                    <div class="flex flex-row items-center">
+                    <div
+                        class="flex flex-row items-center"
+                        data-test="tab-dashboard"
+                    >
                         <SvgDashboardIcon
                             class="mr-1 mt-0.5 md:h-7 md:w-7"
                             :class="
@@ -611,6 +609,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                 aria-haspopup="true"
                                 aria-controls="overlay_tmenu"
                                 class="h-9 w-9 hover:cursor-pointer"
+                                data-test="sort-journeys-mobile"
                                 @click="toggle"
                             />
                         </div>
@@ -619,11 +618,15 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                 ref="searchInputMobile"
                                 v-model="searchValue"
                                 type="text"
+                                data-test="search-journeys-input-mobile"
                                 class="w-40 rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200 xs:w-44 sm:w-72 lg:w-72"
                                 :placeholder="t('dashboard.search')"
                                 @input="searchJourneys()"
                             />
-                            <button @click="searchInputMobile.focus()">
+                            <button
+                                data-test="search-journeys-button-mobile"
+                                @click="searchInputMobile.focus()"
+                            >
                                 <SvgSearchIcon
                                     class="absolute right-1 top-1 h-7 w-7"
                                 />
@@ -633,6 +636,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                     <NuxtLink
                         to="/journey/new"
                         class="flex flex-row items-center justify-center lg:hidden"
+                        data-test="new-journey-button-mobile"
                     >
                         <button
                             class="group flex flex-row items-center justify-center text-nowrap rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-2 py-1 font-semibold text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-ronchi-300 dark:hover:text-text md:px-4"
@@ -663,6 +667,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             v-for="journey in currentJourneys"
                             :id="String(journey.id)"
                             :key="journey.id"
+                            :data-test="'journey-card-' + journey.id"
                             :name="journey.name"
                             :destination="journey.destination"
                             :from="new Date(journey.from)"
@@ -674,7 +679,11 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             @journey-leave="removeJourney"
                             @journey-edited="editJourney"
                         />
-                        <NuxtLink to="/journey/new" class="group">
+                        <NuxtLink
+                            to="/journey/new"
+                            class="group"
+                            data-test="new-journey-card"
+                        >
                             <SvgCreateNewJourneyCard
                                 class="hidden dark:hidden lg:block"
                             />
@@ -708,7 +717,10 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                 }"
             >
                 <template #header>
-                    <div class="flex flex-row items-center">
+                    <div
+                        class="flex flex-row items-center"
+                        data-test="tab-templates"
+                    >
                         <i
                             class="pi pi-objects-column mr-2 text-xl sm:text-2xl"
                             :class="tabIndex === 1 ? 'max-xs:mt-1' : ''"
@@ -730,6 +742,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             <SvgDashboardSort
                                 aria-haspopup="true"
                                 aria-controls="overlay_tmenu"
+                                data-test="sort-templates-mobile"
                                 class="h-9 w-9 hover:cursor-pointer"
                                 @click="toggle"
                             />
@@ -739,11 +752,15 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                 ref="searchInputMobile"
                                 v-model="searchValue"
                                 type="text"
+                                data-test="search-templates-input-mobile"
                                 class="w-40 rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200 xs:w-[50vw] sm:w-72 lg:w-72"
                                 :placeholder="t('dashboard.search')"
                                 @input="searchTemplate()"
                             />
-                            <button @click="searchInputMobile.focus()">
+                            <button
+                                data-test="search-templates-button-mobile"
+                                @click="searchInputMobile.focus()"
+                            >
                                 <SvgSearchIcon
                                     class="absolute right-1 top-1 h-7 w-7"
                                 />
@@ -752,6 +769,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                     </div>
                     <SvgDashboardFilter
                         class="h-9 w-9 hover:cursor-pointer"
+                        data-test="filter-templates-mobile"
                         :is-active="!!isFilterVisible || isFiltered"
                         @click.stop="isFilterVisible = !isFilterVisible"
                     />
@@ -770,6 +788,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                 : ''
                         "
                         :template="template"
+                        :data-test="'template-' + template.id"
                         @open-template="
                             openedTemplate = template;
                             isTemplatePopupVisible = true;
@@ -785,6 +804,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                 : ''
                         "
                         :template="template"
+                        :data-test="'small-template-' + template.id"
                         @open-template="
                             openedTemplate = template;
                             isTemplatePopupVisible = true;
@@ -796,10 +816,12 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             templateDataDashboard.data.length === 0
                         "
                         class="col-span-full font-bold"
+                        data-test="templates-none"
                     >
                         <T key-name="dashboard.templates.filter.none" />
                         <button
                             class="text-mahagony-400 hover:underline"
+                            data-test="templates-filter-clear-button"
                             @click="clearFilters"
                         >
                             <T key-name="dashboard.template.filter.clear" />
@@ -809,6 +831,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                         v-if="isFilterVisible"
                         id="filter-dialog"
                         ref="filterDialog"
+                        data-test="templates-filter-dialog"
                         class="absolute right-0 mr-20 hidden w-64 flex-col rounded-lg bg-natural-50 px-3 pt-2 shadow-lg dark:bg-background-dark sm:flex"
                     >
                         <div id="length">
@@ -833,6 +856,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                         startHandler: 'bg-calypso-600',
                                         endHandler: 'bg-calypso-600',
                                     }"
+                                    data-test="templates-filter-length"
                                     @slideend="refreshTemplates()"
                                 />
                                 <div
@@ -847,6 +871,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                     />
                                     <InputNumber
                                         v-model="templateJourneyLengthMinMax[0]"
+                                        data-test="templates-filter-length-min"
                                         input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                         input-id="min"
                                         :min="1"
@@ -859,6 +884,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                     />
                                     <InputNumber
                                         v-model="templateJourneyLengthMinMax[1]"
+                                        data-test="templates-filter-length-max"
                                         input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                         input-id="max"
                                         :min="1"
@@ -891,6 +917,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             <FormAddressInput
                                 id="template-destination"
                                 name="destination"
+                                data-test="templates-filter-destination"
                                 :value="templateDestinationInput"
                                 :custom-class="`.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor} !important; background-color: ${backgroundColor} !important; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none; border: solid 2px ${borderColorFocus} !important;}`"
                                 @change-address="changeAddress"
@@ -916,6 +943,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             </p>
                             <AutoComplete
                                 v-model="templateCreator"
+                                data-test="templates-filter-creator"
                                 input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem]"
                                 :pt="{
                                     panel: 'w-20 bg-natural-50 dark:bg-natural-900',
@@ -938,6 +966,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                         <div class="flex justify-end pb-1 pt-20">
                             <button
                                 class="dark:text-mahagony-200 text-mahagony-400 hover:underline"
+                                data-test="templates-filter-clear"
                                 @click="clearFilters"
                             >
                                 <T key-name="dashboard.template.filter.clear" />
@@ -946,7 +975,10 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                     </div>
                 </div>
                 <div ref="loader">
-                    <div v-if="moreTemplatesAvailable">
+                    <div
+                        v-if="moreTemplatesAvailable"
+                        data-test="templates-loading"
+                    >
                         <div class="flex justify-center">
                             <ProgressSpinner class="w-10" />
                         </div>
@@ -962,6 +994,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                     <T key-name="dashboard.templates.nomoretemplates" />
                     <NuxtLink
                         to="/journey/new"
+                        data-test="new-template-link-no-templates-found"
                         class="group flex items-center justify-center hover:text-calypso-400 sm:justify-start"
                     >
                         <span class="group-hover:underline">
@@ -997,6 +1030,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             ref="searchInput"
                             v-model="searchValue"
                             type="text"
+                            data-test="search-input"
                             class="rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200"
                             :placeholder="t('dashboard.search')"
                             @input="
@@ -1015,6 +1049,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                         <SvgDashboardSort
                             aria-haspopup="true"
                             aria-controls="overlay_tmenu"
+                            data-test="sort-button"
                             class="h-9 w-9 hover:cursor-pointer"
                             @click="toggle"
                         />
@@ -1022,6 +1057,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                     <div v-if="tabIndex === 1" id="filter" class="mr-4">
                         <SvgDashboardFilter
                             class="h-9 w-9 hover:cursor-pointer"
+                            data-test="filter-button"
                             :is-active="!!isFilterVisible || isFiltered"
                             @click.stop="isFilterVisible = !isFilterVisible"
                         />
@@ -1030,6 +1066,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                 <NuxtLink
                     v-if="tabIndex === 0"
                     to="/journey/new"
+                    data-test="new-journey-button"
                     class="group mr-2.5 hidden flex-row items-center rounded-xl border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 font-semibold text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-pesto-600 dark:text-natural-50 dark:hover:bg-ronchi-300 dark:hover:text-text lg:flex"
                 >
                     <SvgCreateNewJourneyIcon
@@ -1037,10 +1074,17 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                     />
                     <T key-name="dashboard.new" />
                 </NuxtLink>
-                <NuxtLink :to="'/user/' + user.username" class="mr-2.5">
+                <NuxtLink
+                    :to="'/user/' + user.username"
+                    class="mr-2.5"
+                    data-test="user-profile-button"
+                >
                     <SvgUserIcon class="mt-1 h-9 w-9" />
                 </NuxtLink>
-                <button @click="isUserSettingsVisible = !isUserSettingsVisible">
+                <button
+                    data-test="user-settings-button"
+                    @click="isUserSettingsVisible = !isUserSettingsVisible"
+                >
                     <SvgDashboardSettings class="mt-1 h-9 w-9" />
                 </button>
             </div>
@@ -1079,6 +1123,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                     <div class="flex items-center">
                         <button
                             class="-ml-6 flex justify-center pr-4"
+                            data-test="close-template-filter-drawer"
                             @click="isFilterVisible = false"
                         >
                             <span class="pi pi-angle-down text-2xl" />
@@ -1091,6 +1136,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                     </div>
                     <button
                         class="dark:text-mahagony-200 text-mahagony-400 hover:underline"
+                        data-test="clear-template-filter-drawer"
                         @click="clearFilters"
                     >
                         <T key-name="dashboard.template.filter.clear" />
@@ -1118,6 +1164,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                     startHandler: 'bg-calypso-600',
                                     endHandler: 'bg-calypso-600',
                                 }"
+                                data-test="templates-filter-length-drawer"
                                 @slideend="refreshTemplates()"
                             />
                             <div
@@ -1132,6 +1179,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                 />
                                 <InputNumber
                                     v-model="templateJourneyLengthMinMax[0]"
+                                    data-test="templates-filter-length-min-drawer"
                                     input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                     input-id="min"
                                     :min="1"
@@ -1144,6 +1192,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                 />
                                 <InputNumber
                                     v-model="templateJourneyLengthMinMax[1]"
+                                    data-test="templates-filter-length-max-drawer"
                                     input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                     input-id="max"
                                     :min="1"
@@ -1172,6 +1221,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             id="template-destination"
                             name="destination"
                             value=""
+                            data-test="templates-filter-destination-drawer"
                             :custom-class="`.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor} !important; background-color: ${backgroundColor} !important; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none; border: solid 2px ${borderColorFocus} !important;}`"
                             @change-address="changeAddress"
                         />
@@ -1192,6 +1242,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                         <AutoComplete
                             ref="creator"
                             v-model="templateCreator"
+                            data-test="templates-filter-creator-drawer"
                             input-class="bg-natural-50 w-full dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem]"
                             :pt="{
                                 root: 'w-full',
@@ -1216,6 +1267,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                         class="mt-5 flex w-full justify-center text-text dark:text-natural-50"
                     >
                         <button
+                            data-test="close-button-template-filter-drawer"
                             class="w-full rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-xl font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
                             @click="isFilterVisible = false"
                         >
