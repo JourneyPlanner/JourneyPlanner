@@ -166,7 +166,7 @@ class ActivityController extends Controller
                 $validated["date"] . " " . $validated["time"]
             );
 
-            $timeDifference = $newStart->diff($editedCalendarActivity->start);
+            $timeDifference = $editedCalendarActivity->start->diff($newStart);
         }
 
         // Edit repeated activities
@@ -185,7 +185,7 @@ class ActivityController extends Controller
                     $baseActivity->calendarActivities()->get()
                     as $calendarActivity
                 ) {
-                    $calendarActivity->start = $calendarActivity->start->subtract(
+                    $calendarActivity->start = $calendarActivity->start->add(
                         $timeDifference
                     );
                     $calendarActivity->save();
@@ -197,10 +197,10 @@ class ActivityController extends Controller
                 $child->save();
                 if ($timeDifference) {
                     foreach (
-                        $baseActivity->calendarActivities()->get()
+                        $child->calendarActivities()->get()
                         as $calendarActivity
                     ) {
-                        $calendarActivity->start = $calendarActivity->start->subtract(
+                        $calendarActivity->start = $calendarActivity->start->add(
                             $timeDifference
                         );
                         $calendarActivity->save();
@@ -230,7 +230,7 @@ class ActivityController extends Controller
                 $editedCalendarActivity->save();
 
                 if ($timeDifference) {
-                    $editedCalendarActivity->start = $editedCalendarActivity->start->subtract(
+                    $editedCalendarActivity->start = $editedCalendarActivity->start->add(
                         $timeDifference
                     );
                     $editedCalendarActivity->save();
@@ -372,7 +372,7 @@ class ActivityController extends Controller
             if ($calendarActivity->start >= $editedCalendarActivityStart) {
                 $calendarActivity->activity_id = $subActivity->id;
                 if ($timeDifference) {
-                    $calendarActivity->start = $calendarActivity->start->subtract(
+                    $calendarActivity->start = $calendarActivity->start->add(
                         $timeDifference
                     );
                 }

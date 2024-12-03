@@ -116,7 +116,7 @@ const confirmDelete = (event: Event) => {
                 detail: t.value("journey.delete.detail"),
                 life: 3000,
             });
-            deleteActivity();
+            deleteActivity(activityId.value);
         },
     });
 };
@@ -124,8 +124,8 @@ const confirmDelete = (event: Event) => {
 /*
  * delete activity
  */
-async function deleteActivity() {
-    await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
+async function deleteActivity(activity_id: string) {
+    await client(`/api/journey/${props.id}/activity/${activity_id}`, {
         method: "delete",
         async onResponse({ response }) {
             if (response.ok) {
@@ -140,7 +140,7 @@ async function deleteActivity() {
                     life: 6000,
                 });
                 activities.value
-                    .filter((activity) => activity.id === activityId.value)
+                    .filter((activity) => activity.id === activity_id)
                     .forEach((activity: Activity) => {
                         activities.value.splice(
                             activities.value.indexOf(activity),

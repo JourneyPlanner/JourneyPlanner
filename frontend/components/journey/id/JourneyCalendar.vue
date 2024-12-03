@@ -385,10 +385,11 @@ onMounted(() => {
 async function initializeDrop(info: EventObject) {
     isInitializeDrop.value = true;
     let calenderActivityId;
+    const isFromPool = ref(false);
     const startTime = info.event._instance.range.start.toISOString();
     const date = startTime.split("T")[0];
     let time = startTime.split("T")[1];
-    time = time.substring(0, time.length - 2);
+    time = time.substring(0, time.length - 8);
     console.log(date);
     console.log(time);
     if ((activityId.value = info.event._def.extendedProps.activity_id)) {
@@ -400,6 +401,7 @@ async function initializeDrop(info: EventObject) {
             time: time,
         };
     } else {
+        isFromPool.value = true;
         activityId.value = info.event._def.extendedProps.defId;
         activity.value = {
             date: date,
@@ -409,16 +411,26 @@ async function initializeDrop(info: EventObject) {
 
     console.log(info.event);
     console.log(activityId.value);
-    if (store.getActivity(activityId.value).repeat_type != null) {
+    if (
+        store.getActivity(activityId.value).repeat_type != null &&
+        !isFromPool.value
+    ) {
         isRecurringActivityEditVisible.value = true;
+    } else if (
+        store.getActivity(activityId.value).repeat_type != null &&
+        isFromPool.value
+    ) {
+        initializeDropCall(
+            store.getActivity(activityId.value).repeat_type,
+            isFromPool.value,
+        );
     } else {
-        initializeDropCall("all");
+        initializeDropCall("all", isFromPool.value);
     }
-
-    info.event.remove();
 }
 
-async function initializeDropCall(editType: string) {
+async function initializeDropCall(editType: string, isFromPool: boolean) {
+    console.log(isFromPool);
     isRecurringActivityEditVisible.value = false;
     Object.assign(activity.value, { edit_type: editType });
     isInitializeDrop.value = false;
@@ -427,6 +439,11 @@ async function initializeDropCall(editType: string) {
         method: "PATCH",
         body: activity.value,
         async onResponse({ response }) {
+            console.log(response._data);
+            console.log(response._data.activity_id);
+            response._data.forEach((activity: Activity) => {
+                console.log(activity.id);
+            });
             if (response.ok) {
                 toast.add({
                     severity: "success",
@@ -434,22 +451,45 @@ async function initializeDropCall(editType: string) {
                     detail: t.value("calendar.add.toast.success.detail"),
                     life: 6000,
                 });
-                activities.value
-                    .filter(
-                        (activity) => activity.id == response._data.activity_id,
-                    )
-                    .forEach((activity: Activity) => {
-                        response._data.title = activity.name;
-                        calApi.addEvent(response._data);
-                    });
-                activities.value
-                    .filter((activity) => activity.id === activityId.value)
-                    .forEach((activity: Activity) => {
-                        activities.value[
-                            activities.value.indexOf(activity)
-                        ].calendar_activities.push(response._data);
-                    });
-                store.setActivities(activities.value);
+                response._data.forEach((newActivity: Activity) => {
+                    console.log(activity);
+                    if (newActivity.calendar_activities != null) {
+                        newActivity.calendar_activities.forEach(
+                            (calendar_activity: CalendarActivity) => {
+                                console.log(calendar_activity.start);
+                                const newEnd = add(
+                                    new Date(calendar_activity.start),
+                                    {
+                                        hours: parseInt(
+                                            newActivity.estimated_duration.split(
+                                                ":",
+                                            )[0],
+                                        ),
+                                        minutes: parseInt(
+                                            newActivity.estimated_duration.split(
+                                                ":",
+                                            )[1],
+                                        ),
+                                    },
+                                ).toISOString();
+                                calApi
+                                    .getEventById(calendar_activity.id)
+                                    .remove();
+                                calendar_activity.end = newEnd;
+                                calendar_activity.title = newActivity.name;
+                                calApi.addEvent(calendar_activity);
+                            },
+                        );
+                    }
+                    activities.value
+                        .filter((activity) => activity.id === activityId.value)
+                        .forEach((activity: Activity) => {
+                            activities.value[
+                                activities.value.indexOf(activity)
+                            ].calendar_activities.push(response._data);
+                        });
+                    store.setActivities(activities.value);
+                });
             }
         },
         async onRequestError() {
@@ -589,6 +629,7 @@ async function editCalendarActivity(name: string) {
         .forEach((activity: Activity) => {
             activity.calendar_activities.forEach(
                 (calendar_activity: CalendarActivity) => {
+                    console.log(calendar_activity.start);
                     if (calApi.getEventById(calendar_activity.id) !== null) {
                         calApi
                             .getEventById(calendar_activity.id)
@@ -631,7 +672,7 @@ function call(editType: string) {
     if (isEditDrop.value) {
         editDropCall(editType);
     } else if (isInitializeDrop.value) {
-        initializeDropCall(editType);
+        initializeDropCall(editType, false);
     }
 }
 </script>

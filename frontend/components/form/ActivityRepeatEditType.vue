@@ -18,13 +18,14 @@ watch(
 
 const close = () => {
     emit("close");
-    editOption.value = "";
+    editOption.value = "single";
 };
 
 const post = () => {
+    console.log(editOption.value);
     emit("post", editOption.value);
     console.log(editOption.value);
-    editOption.value = "";
+    editOption.value = "single";
 };
 </script>
 <template>
@@ -101,7 +102,7 @@ const post = () => {
                     id="followingEvents"
                     v-model="editOption"
                     type="radio"
-                    value="after"
+                    value="following"
                     class="form-radio text-blue-600"
                 />
                 <label
@@ -110,7 +111,7 @@ const post = () => {
                     :class="{
                         'text-natural-400 dark:text-natural-300': true,
                         'text-natural-900 dark:text-natural-50':
-                            editOption == 'after',
+                            editOption == 'following',
                     }"
                 >
                     <T key-name="activity.recurring.event.following"
