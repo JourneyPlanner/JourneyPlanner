@@ -241,6 +241,8 @@ function openUnlockDialog() {
             :is-journey-dialog-visible="isJourneyEditMenuVisible"
             :name="journeyStore.getName()"
             :destination="journeyStore.getDestination()"
+            :mapbox-full-address="journeyStore.getMapboxFullAddress()"
+            :mapbox-id="journeyStore.getMapboxID()"
             :from="new Date(journeyStore.getFromDate())"
             :to="new Date(journeyStore.getToDate())"
             @close-edit-journey-dialog="isJourneyEditMenuVisible = false"

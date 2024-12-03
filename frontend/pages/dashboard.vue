@@ -536,10 +536,19 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
     templateDestinationName.value = name as string;
     refreshTemplates();
 });
+
+//TODO code rabbit reviews
+//TODO wenn reise erstellen als gast dann activity api call error
+//TODO wenn reise verlassen redirect error zu /new wenn gast
+//TODO footer ist weird oben bei dashboard journey/template
 </script>
 
 <template>
-    <div class="h-screen" @click="closeFilterWhenOutsideClick">
+    <div
+        id="dashboard"
+        class="min-h-screen"
+        @click="closeFilterWhenOutsideClick"
+    >
         <TabView
             v-model:active-index="tabIndex"
             class="mt-5 bg-background px-2 dark:bg-background-dark md:px-8 lg:px-20"
@@ -640,7 +649,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                         </button>
                     </NuxtLink>
                 </div>
-                <div class="flex justify-center">
+                <div class="mt-3 flex justify-center">
                     <div
                         id="journeys"
                         class="mt-2 grid gap-5 md:gap-4 lg:gap-6"
@@ -659,6 +668,8 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             :from="new Date(journey.from)"
                             :to="new Date(journey.to)"
                             :role="Number(journey.role)"
+                            :mapbox-id="journey.mapbox_id"
+                            :mapbox-full-address="journey.mapbox_full_address"
                             @journey-deleted="removeJourney"
                             @journey-leave="removeJourney"
                             @journey-edited="editJourney"
@@ -747,12 +758,12 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                 </div>
                 <div
                     id="templates"
-                    class="mt-3 grid w-full grid-cols-2 gap-5 sm:grid-cols-3 xl:grid-cols-4"
+                    class="mt-5 grid w-full grid-cols-2 gap-5 sm:grid-cols-3 md:gap-4 lg:gap-6 xl:grid-cols-4 2xl:px-20"
                 >
                     <TemplateCard
                         v-for="template in templates"
                         :key="template.id"
-                        class="hidden sm:block"
+                        class="hidden md:block"
                         :class="
                             status === 'pending' && isFilterVisible
                                 ? 'hidden'
@@ -767,7 +778,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                     <TemplateCardSmall
                         v-for="template in templates"
                         :key="template.id"
-                        class="sm:hidden"
+                        class="md:hidden"
                         :class="
                             status === 'pending' && isFilterVisible
                                 ? 'hidden'
@@ -934,7 +945,6 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                         </div>
                     </div>
                 </div>
-
                 <div ref="loader">
                     <div v-if="moreTemplatesAvailable">
                         <div class="flex justify-center">

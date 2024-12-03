@@ -30,14 +30,16 @@ if (journey.getLat() && journey.getLong()) {
 }
 
 onMounted(async () => {
-    if (props.value) {
-        inputValue.value = props.value;
-    }
     Mapbox = await import("@mapbox/search-js-web");
     search.value = new Mapbox.MapboxSearchBox();
 
     isLoaded.value = true;
     await nextTick();
+
+    if (props.value) {
+        inputValue.value = props.value;
+        search.value.input.value = props.value;
+    }
 
     watch(props, () => {
         if (props.value === "") {
@@ -150,7 +152,7 @@ function clearInput() {
         class="order-4 col-span-full mb-0 flex flex-col font-nunito sm:order-3 sm:col-span-3"
         @submit.prevent
     >
-        <div v-if="isLoaded" class="relative">
+        <ClientOnly v-if="isLoaded" class="relative">
             <mapbox-search-box
                 ref="search"
                 class="font-nunito"
@@ -183,6 +185,6 @@ function clearInput() {
                     >{{ errorMessage }}</span
                 >
             </div>
-        </div>
+        </ClientOnly>
     </form>
 </template>

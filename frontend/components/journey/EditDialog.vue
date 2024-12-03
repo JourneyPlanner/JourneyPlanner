@@ -10,6 +10,8 @@ const props = defineProps({
     id: { type: String, required: true },
     name: { type: String, required: true },
     destination: { type: String, required: true },
+    mapboxFullAddress: { type: String, required: false, default: "" },
+    mapboxID: { type: String, required: false, default: "" },
     from: { type: Date, required: true },
     to: { type: Date, required: true },
 });
@@ -113,8 +115,9 @@ const onSave = handleSubmit(async (values) => {
     const journey = {
         name,
         destination,
-        mapbox_full_address: values.mapbox?.properties?.full_address,
-        mapbox_id: values.mapbox?.properties?.mapbox_id,
+        mapbox_full_address:
+            values.mapbox?.properties?.full_address || props.mapboxFullAddress,
+        mapbox_id: values.mapbox?.properties?.mapbox_id || props.mapboxID,
         from,
         to,
     };

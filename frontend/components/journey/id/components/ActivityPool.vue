@@ -48,6 +48,7 @@ const phone = ref("");
 const updated_at = ref("");
 
 const isActivityInfoVisible = ref(false);
+const { activityData } = storeToRefs(store);
 const activities = computed(() => store.activityData as Activity[]);
 const activityCount = computed(
     () =>
@@ -62,15 +63,20 @@ const toast = useToast();
 const confirm = useConfirm();
 
 onMounted(() => {
-    if (
-        containerElement.value &&
-        containerElement.value.querySelectorAll(".fc-event").length > 0 &&
-        props.inTemplate === false
-    ) {
-        new Draggable(containerElement.value, {
-            itemSelector: ".fc-event",
-        });
-    }
+    watch(
+        activityData,
+        async () => {
+            if (props.inTemplate === false) {
+                await nextTick();
+                if (containerElement.value) {
+                    new Draggable(containerElement.value, {
+                        itemSelector: ".fc-event",
+                    });
+                }
+            }
+        },
+        { immediate: true, deep: true },
+    );
 });
 
 /**
@@ -152,7 +158,7 @@ async function deleteActivity() {
                 });
                 activities.value
                     .filter((activity) => activity.id === activityId.value)
-                    .forEach((activity: Activity) => {
+                    .forEach(async (activity: Activity) => {
                         activities.value.splice(
                             activities.value.indexOf(activity),
                             1,

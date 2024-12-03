@@ -6,7 +6,10 @@
         />
         <NuxtLayout>
             <div>
-                <Toast class="w-3/4 sm:w-auto" />
+                <Toast
+                    class="w-3/4 font-nunito sm:w-auto"
+                    :pt="{ root: 'font-nunito' }"
+                />
                 <NuxtPage />
             </div>
         </NuxtLayout>

@@ -7,6 +7,7 @@ declare global {
         destination: string;
         invite: string;
         mapbox_full_address: string;
+        mapbox_id: string;
         from: string;
         to: string;
         role: number;

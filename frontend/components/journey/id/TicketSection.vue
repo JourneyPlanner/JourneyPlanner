@@ -100,21 +100,14 @@ if (weather.value && weather.value.error != "Weather data not available") {
     locationFound.value = false;
 }
 
-watch(
-    journeyStore,
-    async () => {
-        await refresh();
-        if (
-            weather.value &&
-            weather.value.error != "Weather data not available"
-        ) {
-            updateWeatherData();
-        } else {
-            locationFound.value = false;
-        }
-    },
-    { immediate: true },
-);
+watch(journeyStore, async () => {
+    await refresh();
+    if (weather.value && weather.value.error != "Weather data not available") {
+        updateWeatherData();
+    } else {
+        locationFound.value = false;
+    }
+});
 
 function updateWeatherData() {
     locationFound.value = true;

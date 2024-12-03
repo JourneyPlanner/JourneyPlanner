@@ -9,6 +9,8 @@ const props = defineProps({
     id: { type: String, required: true },
     name: { type: String, required: true },
     destination: { type: String, required: true },
+    mapboxID: { type: String, required: false },
+    mapboxFullAddress: { type: String, required: false },
     from: { type: Date, required: true },
     to: { type: Date, required: true },
     role: { type: Number, required: true },
@@ -357,6 +359,8 @@ const itemsJourneyMember = ref([
             :destination="props.destination"
             :from="props.from"
             :to="props.to"
+            :mapbox-full-address="props.mapboxFullAddress"
+            :mapbox-id="props.mapboxID"
             @close-edit-journey-dialog="isEditMenuVisible = false"
             @delete-journey="deleteJourney"
             @journey-edited="

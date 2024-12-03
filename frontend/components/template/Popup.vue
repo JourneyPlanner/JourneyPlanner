@@ -55,7 +55,7 @@ function close() {
             :draggable="false"
             dismissable-mask
             close-on-escape
-            class="collapse z-50 w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:visible sm:flex sm:w-9/12 md:rounded-xl"
+            class="collapse z-50 w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:visible sm:flex sm:w-9/12 md:w-5/12 md:rounded-xl"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10 px-0',
@@ -84,7 +84,7 @@ function close() {
                                 value: template.name,
                                 pt: { root: 'font-nunito' },
                             }"
-                            class="max-w-36 truncate text-nowrap text-2xl font-medium text-text dark:text-natural-50 xs:max-w-48 sm:max-w-72 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
+                            class="max-w-36 truncate text-nowrap text-2xl font-medium text-text dark:text-natural-50 xs:max-w-48 sm:max-w-72 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[28rem]"
                         >
                             {{ template.name }}
                         </h1>

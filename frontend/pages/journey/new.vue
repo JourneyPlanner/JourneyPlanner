@@ -56,7 +56,7 @@ const {
     refresh,
 } = useAsyncData("suggestions", () =>
     client(
-        `/api/template?per_page=3&template_destination_input=${templateDestinationInput.value}&template_destination_name=${templateDestinationName.value}`,
+        `/api/template?per_page=3&template_destination_input=${encodeURIComponent(templateDestinationInput.value)}&template_destination_name=${encodeURIComponent(templateDestinationName.value)}`,
     ),
 );
 
