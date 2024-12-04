@@ -303,7 +303,7 @@ function retrievedAddress(inputValue: string, name: string) {
                     </div>
                     <div
                         v-else-if="suggestions.length < 1"
-                        class="mt-1 w-full text-center italic"
+                        class="mt-1 w-full text-center italic text-natural-800 dark:text-natural-200"
                     >
                         <T key-name="template.suggestions.none" />
                     </div>

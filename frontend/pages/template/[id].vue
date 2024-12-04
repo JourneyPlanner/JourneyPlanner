@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const route = useRoute();
+const router = useRouter();
 
 const activityStore = useActivityStore();
 const journeyStore = useJourneyStore();
@@ -7,6 +8,24 @@ const client = useSanctumClient();
 
 const templateID = route.params.id;
 const activityDataLoaded = ref(false);
+
+const backTolgeeKey = ref("template.back.to.templates");
+const backRoute = ref("/dashboard?tab=templates");
+
+onMounted(() => {
+    const lastRoute = router.options.history.state.back as string;
+
+    if (lastRoute === "/dashboard?tab=templates" || lastRoute === null) {
+        backTolgeeKey.value = "template.back.to.templates";
+        backRoute.value = "/dashboard?tab=templates";
+    } else if (lastRoute === "/journey/new") {
+        backTolgeeKey.value = "template.back.to.new.journey";
+        backRoute.value = "/journey/new";
+    } else {
+        backTolgeeKey.value = "common.back";
+        backRoute.value = lastRoute;
+    }
+});
 
 const { data, error } = await useAsyncData("journey", () =>
     client(`/api/template/${templateID}`),
@@ -51,12 +70,12 @@ useHead({
             class="mt-5 flex w-full items-center justify-between font-semibold"
         >
             <NuxtLink
-                to="/dashboard?tab=templates"
+                :to="backRoute"
                 class="group flex items-center sm:ml-1 md:ml-2"
             >
                 <i class="pi pi-angle-left text-2xl" />
                 <p class="hidden text-2xl group-hover:underline sm:block">
-                    <T key-name="template.back" />
+                    <T :key-name="backTolgeeKey" />
                 </p>
             </NuxtLink>
         </div>
