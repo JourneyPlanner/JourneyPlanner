@@ -238,33 +238,33 @@ const itemsJourneyMember = ref([
                         {{ destination }}
                     </h2>
                     <div
-                        class="mt-1.5 w-56 border-b-2 border-dashed border-natural-200 text-sm dark:border-natural-400"
+                        class="mt-1.5 flex w-56 items-center gap-x-2 border-b-2 border-dashed border-natural-200 text-sm dark:border-natural-400"
                     >
-                        <span class="mr-1 text-calypso-400">
-                            <T key-name="dashboard.date" />
+                        <span class="text-calypso-400">
+                            <i class="pi pi-calendar" />
                         </span>
-                        <span class="-mb-1 text-text dark:text-natural-50"
+                        <span class="text-text dark:text-natural-50"
                             >{{ format(from, "dd/MM/yyyy") }}-{{
                                 format(to, "dd/MM/yyyy")
                             }}</span
                         >
                     </div>
-                    <h3
-                        class="mt-1 w-56 border-b-2 border-dashed border-natural-200 text-sm dark:border-natural-400"
+                    <div
+                        class="mt-1 flex w-56 items-center gap-x-2 border-b-2 border-dashed border-natural-200 text-sm dark:border-natural-400"
                     >
-                        <span class="mr-1 text-calypso-400">
-                            <T key-name="dashboard.role" />
+                        <span class="text-calypso-400">
+                            <i class="pi pi-user" />
                         </span>
                         <span class="text-text dark:text-natural-50">
                             <T :key-name="roleType" />
                         </span>
-                    </h3>
+                    </div>
                 </NuxtLink>
             </div>
         </div>
         <div
             id="journey-mobile"
-            class="h-32 min-w-36 rounded-md border border-calypso-300 bg-calypso-50 bg-opacity-20 p-1 dark:bg-gothic-800 md:p-2 lg:hidden"
+            class="h-[7.5rem] min-w-36 rounded-md border border-calypso-300 bg-calypso-50 bg-opacity-20 p-1 dark:bg-gothic-800 md:p-2 lg:hidden"
         >
             <div class="flex justify-between">
                 <NuxtLink
@@ -301,23 +301,22 @@ const itemsJourneyMember = ref([
                     {{ destination }}
                 </h2>
                 <h3
-                    class="mt-1.5 border-b-2 border-dashed border-natural-200 text-xs dark:border-natural-400 md:text-sm"
+                    class="mt-1.5 flex items-center gap-x-2 border-b-2 border-dashed border-natural-200 text-sm dark:border-natural-400"
                 >
-                    <span class="mr-0.5 text-calypso-400">
-                        <T key-name="dashboard.date" />
+                    <span class="text-calypso-400">
+                        <i class="pi pi-calendar" />
                     </span>
-                    <br class="sm:hidden" />
                     <span
                         class="whitespace-nowrap text-text dark:text-natural-50"
-                        >{{ format(from, "dd/MM/yyyy") }} -
-                        {{ format(to, "dd/MM/yyyy") }}</span
+                        >{{ format(from, "dd/MM/yy") }} -
+                        {{ format(to, "dd/MM/yy") }}</span
                     >
                 </h3>
                 <h3
-                    class="mt-1 border-b-2 border-dashed border-natural-200 text-xs dark:border-natural-400 md:text-sm"
+                    class="mt-1 flex items-center gap-x-2 border-b-2 border-dashed border-natural-200 text-sm dark:border-natural-400"
                 >
-                    <span class="mr-0.5 text-calypso-400">
-                        <T key-name="dashboard.role" />
+                    <span class="text-calypso-400">
+                        <i class="pi pi-user" />
                     </span>
                     <span class="text-text dark:text-natural-50">
                         <T :key-name="roleType" />

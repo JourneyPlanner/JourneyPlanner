@@ -32,16 +32,16 @@ const { value, errorMessage } = useField<string>(() => props.name);
 </script>
 
 <template>
-    <div class="relative">
+    <div class="relative mb-4">
         <Password
             :id="id"
             v-model="value"
-            panel-class="dark:bg-natural-800 dark:text-natural-50"
+            panel-class="dark:bg-natural-900 dark:text-natural-50"
             :name="name"
             toggle-mask
             class="w-full"
             :feedback="feedback"
-            input-class="font-nunito font-bold block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-natural-50 bg-natural-50 border-2 border-calypso-300 dark:border-calypso-400 focus:outline-none focus:ring-1 dark:bg-natural-800"
+            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-[100%] text-md text-text dark:text-natural-50 bg-natural-50 border-2 border-calypso-300 dark:border-calypso-400 focus:outline-none focus:ring-1 dark:bg-natural-900"
             :prompt-label="$t('form.input.password.label.prompt')"
             :weak-label="$t('form.input.password.label.weak')"
             :medium-label="$t('form.input.password.label.medium')"
@@ -88,9 +88,12 @@ const { value, errorMessage } = useField<string>(() => props.name);
                 </ul>
             </template>
         </Password>
-        <div class="h-3 text-left">
+        <div
+            class="text-left"
+            :class="errorMessage ? '-mb-1.5 mt-0.5 block' : 'hidden'"
+        >
             <span
-                class="ml-3 text-left text-xs text-mahagony-600 dark:font-bold dark:text-mahagony-300"
+                class="ml-0.5 text-left text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300"
                 >{{ errorMessage }}</span
             >
         </div>
@@ -98,7 +101,8 @@ const { value, errorMessage } = useField<string>(() => props.name);
             :for="id"
             class="pointer-events-none absolute left-0 top-0 py-4 pl-3 text-sm transition-all duration-300"
             :class="{
-                'text-natural-400': !isFocused,
+                'text-natural-600': !isFocused,
+                'dark:text-natural-200': !isFocused,
                 'text-calypso-600': isFocused,
                 '-translate-y-4 scale-75': isFocused || value,
                 'translate-y-0 scale-100': !isFocused && !value,

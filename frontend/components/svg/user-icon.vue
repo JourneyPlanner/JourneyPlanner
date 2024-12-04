@@ -9,7 +9,7 @@
             cx="14"
             cy="14"
             r="13.25"
-            class="fill-input stroke-dandelion-300 group-hover:fill-dandelion-200 dark:fill-natural-800 dark:group-hover:fill-pesto-600"
+            class="fill-natural-50 stroke-dandelion-300 group-hover:fill-dandelion-200 dark:fill-natural-800 dark:group-hover:fill-pesto-600"
             stroke-width="1.5"
         />
         <g clip-path="url(#clip0_2819_3825)">

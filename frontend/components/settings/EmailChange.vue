@@ -6,6 +6,7 @@ import * as yup from "yup";
 const props = defineProps({
     visible: { type: Boolean, required: true },
     currEmail: { type: String, required: true },
+    requiresPassword: { type: Boolean, required: true },
 });
 
 const isVisible = ref(props.visible);
@@ -14,14 +15,23 @@ const { t } = useTranslate();
 const toast = useToast();
 const client = useSanctumClient();
 
+const validationSchema = props.requiresPassword
+    ? yup.object({
+          newEmail: yup
+              .string()
+              .email(() => t.value("form.input.email.error"))
+              .required(() => t.value("form.input.required")),
+          password: yup.string().required(() => t.value("form.input.required")),
+      })
+    : yup.object({
+          newEmail: yup
+              .string()
+              .email(() => t.value("form.input.email.error"))
+              .required(() => t.value("form.input.required")),
+      });
+
 const { errors, handleSubmit, defineField, handleReset } = useForm({
-    validationSchema: yup.object({
-        newEmail: yup
-            .string()
-            .email(() => t.value("form.input.email.error"))
-            .required(() => t.value("form.input.required")),
-        password: yup.string().required(() => t.value("form.input.required")),
-    }),
+    validationSchema,
 });
 
 const [newEmail] = defineField("newEmail");
@@ -188,6 +198,7 @@ async function changeEmail() {
                             >{{ errors.newEmail }}</span
                         >
                         <div
+                            v-if="props.requiresPassword"
                             class="mt-2 flex w-2/3 items-start text-text dark:text-natural-50"
                         >
                             <T
@@ -195,6 +206,7 @@ async function changeEmail() {
                             />
                         </div>
                         <input
+                            v-if="props.requiresPassword"
                             id="passwordEmail"
                             v-model="password"
                             name="password"
@@ -203,6 +215,7 @@ async function changeEmail() {
                             @keyup.enter="onSubmit"
                         />
                         <span
+                            v-if="props.requiresPassword"
                             class="mb-3 flex w-2/3 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
                             >{{ errors.password }}</span
                         >
@@ -291,6 +304,7 @@ async function changeEmail() {
                             >{{ errors.newEmail }}</span
                         >
                         <div
+                            v-if="props.requiresPassword"
                             class="mb-2 mr-10 mt-1 flex w-full items-start pt-2 text-[0.95rem] text-text dark:text-natural-50"
                         >
                             <T
@@ -298,6 +312,7 @@ async function changeEmail() {
                             />
                         </div>
                         <input
+                            v-if="props.requiresPassword"
                             id="passwordEmailMobile"
                             v-model="password"
                             name="password"
@@ -306,6 +321,7 @@ async function changeEmail() {
                             @keyup.enter="onSubmit"
                         />
                         <span
+                            v-if="props.requiresPassword"
                             class="mb-3 mr-10 flex w-full justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
                             >{{ errors.password }}</span
                         >

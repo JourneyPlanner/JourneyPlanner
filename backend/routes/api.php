@@ -10,6 +10,7 @@ use App\Http\Controllers\Journey\UploadController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +26,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(["auth:sanctum"])->get("/user", function (Request $request) {
     return $request->user();
+});
+
+Route::middleware(["auth:sanctum"])->get("/me/requiresPassword", function (
+    Request $request
+) {
+    $user = $request->user();
+    return response()->json([
+        "requiresPassword" => !(
+            !$user->password || Hash::check("", $user->password)
+        ),
+    ]);
 });
 
 Route::get("/user/tokens/upload", function (Request $request) {

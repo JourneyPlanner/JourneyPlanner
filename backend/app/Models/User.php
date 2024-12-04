@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -53,5 +54,17 @@ class User extends Authenticatable
     public function media(): HasMany
     {
         return $this->hasMany(Media::class);
+    }
+
+    /**
+     * Generate a unique username based on the display name.
+     */
+    public static function generateUsername(string $displayName): string
+    {
+        $username = Str::slug($displayName, "_");
+        while (User::where("username", $username)->exists()) {
+            $username .= Str::lower(Str::random(4));
+        }
+        return $username;
     }
 }

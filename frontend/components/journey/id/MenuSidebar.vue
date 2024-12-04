@@ -76,7 +76,7 @@ function openUnlockDialog() {
             @hide="close"
         >
             <template #header>
-                <span class="h-0.5 w-full bg-calypso-400" />
+                <span class="h-0.5 w-full bg-calypso-300 dark:bg-calypso-600" />
                 <div
                     class="col-span-3 flex w-full flex-row justify-center text-2xl font-medium text-text dark:text-natural-50"
                 >
@@ -85,7 +85,7 @@ function openUnlockDialog() {
                     </h3>
                 </div>
                 <span
-                    class="col-span-6 col-start-5 h-0.5 w-full bg-calypso-400"
+                    class="col-span-6 col-start-5 h-0.5 w-full bg-calypso-300 dark:bg-calypso-600"
                 />
             </template>
             <div>

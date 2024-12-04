@@ -817,12 +817,12 @@ function call(editType: string) {
 
 .dark .fc .fc-prev-button,
 .dark .fc .fc-dayGridMonth-button {
-    border-width: 0.15rem 0 0.15rem 0.15rem !important;
+    border-width: 0.1rem 0 0.1rem 0.1rem !important;
 }
 
 .dark .fc .fc-next-button,
 .dark .fc .fc-timeGridWeek-button {
-    border-width: 0.15rem 0.15rem 0.15rem 0 !important;
+    border-width: 0.1rem 0.1rem 0.1rem 0 !important;
 }
 
 .dark .fc .fc-button-group {
@@ -859,7 +859,7 @@ function call(editType: string) {
     color: #f8f8f8;
     background-color: #454849;
     border-color: #e3c454;
-    border-width: 0.15rem;
+    border-width: 0.1rem;
     border-radius: 0.5rem;
     box-shadow: none !important;
 }
@@ -924,12 +924,12 @@ function call(editType: string) {
 
 .light .fc .fc-prev-button,
 .light .fc .fc-dayGridMonth-button {
-    border-width: 0.2rem 0 0.2rem 0.2rem !important;
+    border-width: 0.1rem 0 0.1rem 0.1rem !important;
 }
 
 .light .fc .fc-next-button,
 .light .fc .fc-timeGridWeek-button {
-    border-width: 0.2rem 0.2rem 0.2rem 0 !important;
+    border-width: 0.1rem 0.1rem 0.1rem 0 !important;
 }
 
 .light .fc .fc-button-group {
@@ -958,7 +958,7 @@ function call(editType: string) {
     color: #333333;
     background-color: #f8f8f8;
     border-color: #f8d351;
-    border-width: 0.2rem;
+    border-width: 0.1rem;
     border-radius: 0.5rem;
     box-shadow: none !important;
 }

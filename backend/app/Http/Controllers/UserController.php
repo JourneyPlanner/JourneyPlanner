@@ -32,7 +32,7 @@ class UserController extends Controller
     public function changePassword(Request $request): JsonResponse
     {
         $request->validate([
-            "password" => "required|string",
+            "password" => "string|nullable",
             "new_password" => [
                 "required",
                 "confirmed",
@@ -41,8 +41,9 @@ class UserController extends Controller
         ]);
 
         $user = $request->user();
+        $password = $request->password ?? "";
 
-        if (!Hash::check($request->password, $user->password)) {
+        if ($user->password && !Hash::check($password, $user->password)) {
             return response()->json(["message" => "Invalid password"], 401);
         }
 
@@ -58,13 +59,14 @@ class UserController extends Controller
     public function changeEmail(Request $request): JsonResponse
     {
         $request->validate([
-            "password" => "required|string",
+            "password" => "string|nullable",
             "email" => "required|email|unique:users",
         ]);
 
         $user = $request->user();
+        $password = $request->password ?? "";
 
-        if (!Hash::check($request->password, $user->password)) {
+        if ($user->password && !Hash::check($password, $user->password)) {
             return response()->json(["message" => "Invalid password"], 401);
         }
 
@@ -119,12 +121,13 @@ class UserController extends Controller
     public function deleteAccount(Request $request): JsonResponse
     {
         $request->validate([
-            "password" => "required|string",
+            "password" => "string|nullable",
         ]);
 
         $user = $request->user();
+        $password = $request->password ?? "";
 
-        if (!Hash::check($request->password, $user->password)) {
+        if ($user->password && !Hash::check($password, $user->password)) {
             return response()->json(["message" => "Invalid password"], 401);
         }
 

@@ -8,11 +8,15 @@
     "license": "All rights reserved",
     "require": {
         "php": "^8.2",
+        "google/apiclient-services": "^0.382.0",
         "guzzlehttp/guzzle": "^7.9",
-        "laravel/framework": "^11.31",
+        "laravel/framework": "^11.32",
         "laravel/sanctum": "^4.0",
+        "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.10",
-        "pbmedia/laravel-ffmpeg": "^8.6"
+        "pbmedia/laravel-ffmpeg": "^8.6",
+        "serdud/socialite-google-one-tap": "^2.1",
+        "socialiteproviders/microsoft": "^4.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24.0",
