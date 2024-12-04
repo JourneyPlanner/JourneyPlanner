@@ -11,6 +11,7 @@ use App\Models\Journey;
 use App\Services\MapboxService;
 use DateInterval;
 use DateTime;
+use Google\Service\CloudSearch\AllAuthenticatedUsersProto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 
@@ -124,15 +125,15 @@ class ActivityController extends Controller
             $validated["repeat_type"] &&
             (($activity->repeat_type ?? "") != $validated["repeat_type"] ||
                 ($activity->repeat_interval ?? 0) !=
-                    ($validated["repeat_interval"] ?? 0) ||
+                ($validated["repeat_interval"] ?? 0) ||
                 ($activity->repeat_interval_unit ?? "") !=
-                    ($validated["repeat_interval_unit"] ?? "") ||
+                ($validated["repeat_interval_unit"] ?? "") ||
                 ($activity->repeat_on ?? []) !=
-                    ($validated["repeat_on"] ?? []) ||
+                ($validated["repeat_on"] ?? []) ||
                 ($activity->repeat_end_date ?? "") !=
-                    ($validated["repeat_end_date"] ?? "") ||
+                ($validated["repeat_end_date"] ?? "") ||
                 ($activity->repeat_end_occurrences ?? 0) !=
-                    ($validated["repeat_end_occurrences"] ?? 0));
+                ($validated["repeat_end_occurrences"] ?? 0));
         //ddd($repeatedChanged);
 
         // Create the calendar activity if the date is provided and the activity is not repeated and has no calendar activities
@@ -171,6 +172,7 @@ class ActivityController extends Controller
 
         // Edit repeated activities
         $baseActivity = $activity->getBaseActivity();
+        $activities = [];
         if ($validated["edit_type"] == "all") {
             $activity->fill($validated);
 
@@ -234,10 +236,13 @@ class ActivityController extends Controller
                         $timeDifference
                     );
                     $editedCalendarActivity->save();
+
+                    $subActivity->parent_id = null;
+                    $activities[] = $subActivity->load("calendarActivities");
                 }
             } else {
                 // Update the current activitiy, get changes and then apply changes to all activities after this one
-                $changes = $this->updateActivitiesAfter(
+                $editedActivity = $this->updateActivitiesAfter(
                     $activity,
                     $baseActivity,
                     $editedCalendarActivity->start,
@@ -246,141 +251,57 @@ class ActivityController extends Controller
                     true
                 );
 
-                foreach ($baseActivity->children() as $childActivity) {
-                    $this->updateActivitiesAfter(
-                        $childActivity,
-                        $baseActivity,
-                        $editedCalendarActivity->start,
-                        $timeDifference,
-                        $changes,
-                        false
-                    );
+                if ($timeDifference) {
+                    $editedActivity->parent_id = null;
+                    $activities[] = $editedActivity->load("calendarActivities");
+                    foreach ($baseActivity->children() as $childActivity) {
+                        $activities[] = $this->updateActivitiesAfter(
+                            $childActivity,
+                            $editedActivity,
+                            $editedCalendarActivity->start,
+                            $timeDifference,
+                            $editedActivity->getChanges(),
+                            false
+                        )->load("calendarActivities");
+                    }
+                } else {
+                    foreach ($baseActivity->children() as $childActivity) {
+                        $this->updateActivitiesAfter(
+                            $childActivity,
+                            $baseActivity,
+                            $editedCalendarActivity->start,
+                            $timeDifference,
+                            $editedActivity->getChanges(),
+                            false
+                        );
+                    }
                 }
             }
         }
 
         // Delete activities without calendar activities unless they are the base activity
-        $baseActivity
-            ->children()
-            ->whereDoesntHave("calendarActivities")
-            ->where("id", "!=", $baseActivity->id)
-            ->delete();
+        $this->deleteActivitiesWithoutCalendarActivities($baseActivity);
 
         // Compare all activities with each other, if they have the same data, merge them
-        foreach ($baseActivity->children()->get() as $childActivity) {
-            if ($childActivity->hasSameAttributesAs($baseActivity)) {
-                $childActivity
-                    ->calendarActivities()
-                    ->update(["activity_id" => $baseActivity->id]);
-                $childActivity->delete();
-            }
-        }
-
-        foreach ($baseActivity->children()->get() as $childActivity) {
-            foreach ($baseActivity->children()->get() as $siblingActivity) {
-                if (
-                    $childActivity->hasSameAttributesAs($siblingActivity) &&
-                    $childActivity->id != $siblingActivity->id
-                ) {
-                    $siblingActivity
-                        ->calendarActivities()
-                        ->update(["activity_id" => $childActivity->id]);
-                    $siblingActivity->delete();
-                }
-            }
-        }
+        $this->mergeDuplicateActivities($baseActivity);
 
         // Replace base activity if it doesn't have any calendar activities
         if (
             !$baseActivity->calendarActivities()->count() &&
             $baseActivity->children()->count()
         ) {
-            $replacementActivity = $baseActivity->children()->first();
-            $mostCalendarActivities = $replacementActivity
-                ->calendarActivities()
-                ->count();
-            foreach ($baseActivity->children()->get() as $childActivity) {
-                if (
-                    $childActivity->calendarActivities()->count() >
-                    $mostCalendarActivities
-                ) {
-                    $replacementActivity = $childActivity;
-                    $mostCalendarActivities = $childActivity
-                        ->calendarActivities()
-                        ->count();
-                }
-            }
-
-            foreach ($baseActivity->children()->get() as $childActivity) {
-                $childActivity->parent_id = $replacementActivity->id;
-                $childActivity->save();
-            }
+            $replacementActivity = $this->replaceBaseActivity($baseActivity);
 
             $baseActivity->delete();
-            $replacementActivity->parent_id = null;
-            $replacementActivity->save();
-
             $baseActivity = $replacementActivity;
         }
 
-        $activities = $baseActivity
+        array_push($activities, $baseActivity
             ->children()
             ->with("calendarActivities")
-            ->get();
+            ->get());
         $activities[] = $baseActivity->load("calendarActivities");
         return response()->json($activities, 201);
-    }
-
-    private function resetGeocodeDataIfNeeded(
-        Activity $activity,
-        array $validated
-    ) {
-        if ($activity->isDirty("mapbox_full_address")) {
-            $activity->longitude = null;
-            $activity->latitude = null;
-            $activity->mapbox_full_address = null;
-            $activity = $this->mapboxService->setGeocodeData(
-                $activity,
-                $validated
-            );
-        }
-    }
-
-    /**
-     * Update the activities after the date of the edited calendar activity.
-     */
-    private function updateActivitiesAfter(
-        Activity $activity,
-        Activity $baseActivity,
-        DateTime $editedCalendarActivityStart,
-        ?DateInterval $timeDifference,
-        array $changes,
-        bool $reencode
-    ) {
-        $calendarActivities = $activity->calendarActivities()->get();
-        $subActivity = $activity->replicate();
-        $subActivity->save();
-        $subActivity->fill($changes);
-        $subActivity->parent_id = $baseActivity->id;
-
-        if ($reencode) {
-            $this->resetGeocodeDataIfNeeded($activity, $changes);
-        }
-        $subActivity->save();
-
-        foreach ($calendarActivities as $calendarActivity) {
-            if ($calendarActivity->start >= $editedCalendarActivityStart) {
-                $calendarActivity->activity_id = $subActivity->id;
-                if ($timeDifference) {
-                    $calendarActivity->start = $calendarActivity->start->add(
-                        $timeDifference
-                    );
-                }
-                $calendarActivity->save();
-            }
-        }
-
-        return $subActivity->getChanges();
     }
 
     /**
@@ -443,7 +364,7 @@ class ActivityController extends Controller
             $occurences =
                 $activity->repeat_end_occurrences ??
                 (($calendarActivityStart->diff($maxDate)->days + 1) / 7) *
-                    count($repeatOn);
+                count($repeatOn);
             $shiftInterval = new DateInterval("P1D");
             while ($occurences > 1) {
                 $calendarActivityStart->add($shiftInterval);
@@ -473,7 +394,7 @@ class ActivityController extends Controller
             $occurences =
                 $activity->repeat_end_occurrences ??
                 ($calendarActivityStart->diff($maxDate)->days + 1) /
-                    $repeatEveryDays;
+                $repeatEveryDays;
             $shiftInterval = new DateInterval("P" . $repeatEveryDays . "D");
 
             for ($i = 1; $i < $occurences; $i++) {
@@ -489,5 +410,133 @@ class ActivityController extends Controller
                 $repeatedActivity->save();
             }
         }
+    }
+
+    /**
+     * Replace the current base activity with the activity that has the most calendar activities.
+     */
+    private function replaceBaseActivity($baseActivity)
+    {
+        $replacementActivity = $baseActivity->children()->first();
+        $mostCalendarActivities = $replacementActivity
+            ->calendarActivities()
+            ->count();
+        foreach ($baseActivity->children()->get() as $childActivity) {
+            if (
+                $childActivity->calendarActivities()->count() >
+                $mostCalendarActivities
+            ) {
+                $replacementActivity = $childActivity;
+                $mostCalendarActivities = $childActivity
+                    ->calendarActivities()
+                    ->count();
+            }
+        }
+
+        foreach ($baseActivity->children()->get() as $childActivity) {
+            $childActivity->parent_id = $replacementActivity->id;
+            $childActivity->save();
+        }
+
+        $replacementActivity->parent_id = null;
+        $replacementActivity->save();
+
+        return $replacementActivity;
+    }
+
+    /**
+     * Merge duplicate activities.
+     */
+    private function mergeDuplicateActivities($baseActivity)
+    {
+        foreach ($baseActivity->children()->get() as $childActivity) {
+            if ($childActivity->hasSameAttributesAs($baseActivity)) {
+                $childActivity
+                    ->calendarActivities()
+                    ->update(["activity_id" => $baseActivity->id]);
+                $childActivity->delete();
+            }
+        }
+
+        foreach ($baseActivity->children()->get() as $childActivity) {
+            foreach ($baseActivity->children()->get() as $siblingActivity) {
+                if (
+                    $childActivity->hasSameAttributesAs($siblingActivity) &&
+                    $childActivity->id != $siblingActivity->id
+                ) {
+                    $siblingActivity
+                        ->calendarActivities()
+                        ->update(["activity_id" => $childActivity->id]);
+                    $siblingActivity->delete();
+                }
+            }
+        }
+    }
+
+    /**
+     * Delete activities without calendar activities unless they are the base activity.
+     */
+    private function deleteActivitiesWithoutCalendarActivities($baseActivity)
+    {
+        $baseActivity
+            ->children()
+            ->whereDoesntHave("calendarActivities")
+            ->where("id", "!=", $baseActivity->id)
+            ->delete();
+    }
+
+    /**
+     * Reset the geocode data if the address has changed.
+     */
+    private function resetGeocodeDataIfNeeded(
+        Activity $activity,
+        array $validated
+    ) {
+        if ($activity->isDirty("mapbox_full_address")) {
+            $activity->longitude = null;
+            $activity->latitude = null;
+            $activity->mapbox_full_address = null;
+            $activity = $this->mapboxService->setGeocodeData(
+                $activity,
+                $validated
+            );
+        }
+    }
+
+    /**
+     * Update the activities after the date of the edited calendar activity.
+     */
+    private function updateActivitiesAfter(
+        Activity $activity,
+        Activity $baseActivity,
+        DateTime $editedCalendarActivityStart,
+        ?DateInterval $timeDifference,
+        array $changes,
+        bool $reencode
+    ) {
+        $calendarActivities = $activity->calendarActivities()->get();
+        $subActivity = $activity->replicate();
+        $subActivity->save();
+        $subActivity->fill($changes);
+        $subActivity->parent_id = $baseActivity->id;
+
+        if ($reencode) {
+            $this->resetGeocodeDataIfNeeded($activity, $changes);
+        }
+        $subActivity->save();
+
+        foreach ($calendarActivities as $calendarActivity) {
+            if ($calendarActivity->start >= $editedCalendarActivityStart) {
+                $calendarActivity->activity_id = $subActivity->id;
+                if ($timeDifference) {
+                    $calendarActivity->start = $calendarActivity->start->add(
+                        $timeDifference
+                    );
+                }
+                $calendarActivity->save();
+            }
+        }
+
+        return $subActivity;
     }
 }
