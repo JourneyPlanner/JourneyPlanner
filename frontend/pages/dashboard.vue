@@ -464,6 +464,17 @@ const filterTemplateCreator = debounce(() => {
     refreshTemplates();
 });
 
+const changeAddress = debounce((inputValue: unknown) => {
+    templateDestinationInput.value = inputValue as string;
+    refreshTemplates();
+});
+
+function retrievedAddress(inputValue: string, name: string) {
+    templateDestinationInput.value = inputValue;
+    templateDestinationName.value = name;
+    refreshTemplates();
+}
+
 /*
 Fetches all journeys from the backend
 stores response in journeys and currentJourneys
@@ -537,12 +548,6 @@ function editJourney(journey: Journey, id: string) {
     journeys.value[index].to = journey.to;
     journeys.value[index].name = journey.name;
 }
-
-const changeAddress = debounce((inputValue: unknown, name: unknown) => {
-    templateDestinationInput.value = inputValue as string;
-    templateDestinationName.value = name as string;
-    refreshTemplates();
-});
 </script>
 
 <template>
@@ -928,6 +933,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                                 :value="templateDestinationInput"
                                 :custom-class="`.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor} !important; background-color: ${backgroundColor} !important; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none; border: solid 2px ${borderColorFocus} !important;}`"
                                 @change-address="changeAddress"
+                                @retrieved-address="retrievedAddress"
                             />
                         </div>
                         <div id="creator" class="mt-5">
@@ -1232,6 +1238,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             data-test="templates-filter-destination-drawer"
                             :custom-class="`.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor} !important; background-color: ${backgroundColor} !important; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none; border: solid 2px ${borderColorFocus} !important;}`"
                             @change-address="changeAddress"
+                            @retrieved-address="retrievedAddress"
                         />
                     </div>
                     <div id="creator" class="mt-5 w-full">

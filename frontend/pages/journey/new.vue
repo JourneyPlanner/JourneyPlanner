@@ -175,11 +175,16 @@ function copyToClipboard() {
     });
 }
 
-const changeAddress = debounce((inputValue: unknown, name: unknown) => {
+const changeAddress = debounce((inputValue: unknown) => {
     templateDestinationInput.value = inputValue as string;
-    templateDestinationName.value = name as string;
     refresh();
 });
+
+function retrievedAddress(inputValue: string, name: string) {
+    templateDestinationInput.value = inputValue;
+    templateDestinationName.value = name;
+    refresh();
+}
 </script>
 
 <template>
@@ -216,6 +221,7 @@ const changeAddress = debounce((inputValue: unknown, name: unknown) => {
                             class="relative mb-4"
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
                             @change-address="changeAddress"
+                            @retrieved-address="retrievedAddress"
                         />
                         <FormCalendar
                             id="journey-range-calendar"

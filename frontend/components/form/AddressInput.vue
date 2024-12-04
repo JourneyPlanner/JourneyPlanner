@@ -18,7 +18,7 @@ const { value: inputValue, errorMessage } = useField<string>(() => props.name);
 
 const journey = useJourneyStore();
 const config = useRuntimeConfig();
-const emit = defineEmits(["changeAddress"]);
+const emit = defineEmits(["changeAddress", "retrievedAddress"]);
 
 let longlat = [0, 0];
 const search = ref();
@@ -70,7 +70,7 @@ onMounted(async () => {
     });
 
     watch(inputValue, () => {
-        emit("changeAddress", inputValue.value, "");
+        emit("changeAddress", inputValue.value);
     });
 });
 
@@ -136,7 +136,7 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
     }
 
     emit(
-        "changeAddress",
+        "retrievedAddress",
         inputValue.value,
         event.detail.features[0].properties.name,
     );
