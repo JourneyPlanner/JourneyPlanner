@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Journey\Activity;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Journey\Activity\DeleteActivityRequest;
 use App\Http\Requests\Journey\Activity\StoreActivityRequest;
 use App\Http\Requests\Journey\Activity\UpdateActivityRequest;
 use App\Models\Activity;
@@ -125,15 +126,15 @@ class ActivityController extends Controller
             $validated["repeat_type"] &&
             (($activity->repeat_type ?? "") != $validated["repeat_type"] ||
                 ($activity->repeat_interval ?? 0) !=
-                ($validated["repeat_interval"] ?? 0) ||
+                    ($validated["repeat_interval"] ?? 0) ||
                 ($activity->repeat_interval_unit ?? "") !=
-                ($validated["repeat_interval_unit"] ?? "") ||
+                    ($validated["repeat_interval_unit"] ?? "") ||
                 ($activity->repeat_on ?? []) !=
-                ($validated["repeat_on"] ?? []) ||
+                    ($validated["repeat_on"] ?? []) ||
                 ($activity->repeat_end_date ?? "") !=
-                ($validated["repeat_end_date"] ?? "") ||
+                    ($validated["repeat_end_date"] ?? "") ||
                 ($activity->repeat_end_occurrences ?? 0) !=
-                ($validated["repeat_end_occurrences"] ?? 0));
+                    ($validated["repeat_end_occurrences"] ?? 0));
         //ddd($repeatedChanged);
 
         // Create the calendar activity if the date is provided and the activity is not repeated and has no calendar activities
@@ -296,10 +297,10 @@ class ActivityController extends Controller
             $baseActivity = $replacementActivity;
         }
 
-        array_push($activities, $baseActivity
-            ->children()
-            ->with("calendarActivities")
-            ->get());
+        array_push(
+            $activities,
+            $baseActivity->children()->with("calendarActivities")->get()
+        );
         $activities[] = $baseActivity->load("calendarActivities");
         return response()->json($activities, 201);
     }
@@ -307,11 +308,71 @@ class ActivityController extends Controller
     /**
      * Delete the specified activity from storage.
      */
-    public function destroy(Journey $journey, Activity $activity)
-    {
+    public function destroy(
+        DeleteActivityRequest $request,
+        Journey $journey,
+        Activity $activity
+    ) {
         Gate::authorize("delete", [$activity, $journey, true]);
+        $validated = $request->validated();
+        $baseActivity = $activity->getBaseActivity();
 
-        $activity->delete();
+        if ($validated["edit_type"] == "all") {
+            $baseActivity->children()->delete();
+            $baseActivity->delete();
+
+            return response()->json([], 200);
+        }
+
+        $calendarActivity = CalendarActivity::findOrFail(
+            $validated["calendar_activity_id"]
+        );
+
+        if ($validated["edit_type"] == "single") {
+            $calendarActivity->delete();
+            $this->deleteActivityIfNeeded($activity);
+        } elseif ($validated["edit_type"] == "following") {
+            $minDate = $calendarActivity->from;
+
+            foreach ($baseActivity->children()->get() as $child) {
+                $this->deleteAllCalendarActivitiesAfter($child, $minDate);
+            }
+
+            $this->deleteAllCalendarActivitiesAfter($baseActivity, $minDate);
+        }
+
+        $activities = $baseActivity
+            ->children()
+            ->with("calendarActivities")
+            ->get();
+        $activities[] = $baseActivity->load("calendarActivities");
+        return response()->json($activities, 200);
+    }
+
+    /**
+     * Generalize the activity if it has no calendar activities.
+     */
+    private function deleteActivityIfNeeded(Activity $activity)
+    {
+        if ($activity->calendarActivities()->count() === 0) {
+            $activity->delete();
+        }
+    }
+
+    /**
+     * Delete all calendar activities from an activity which start after a specified date.
+     */
+    private function deleteAllCalendarActivitiesAfter(
+        Activity $activity,
+        DateTime $minDate
+    ) {
+        foreach ($activity->calendarActivities()->get() as $calendarActivity) {
+            if ($calendarActivity->from >= $minDate) {
+                $calendarActivity->delete();
+            }
+        }
+
+        return $this->deleteActivityIfNeeded($activity);
     }
 
     /**
@@ -364,7 +425,7 @@ class ActivityController extends Controller
             $occurences =
                 $activity->repeat_end_occurrences ??
                 (($calendarActivityStart->diff($maxDate)->days + 1) / 7) *
-                count($repeatOn);
+                    count($repeatOn);
             $shiftInterval = new DateInterval("P1D");
             while ($occurences > 1) {
                 $calendarActivityStart->add($shiftInterval);
@@ -394,7 +455,7 @@ class ActivityController extends Controller
             $occurences =
                 $activity->repeat_end_occurrences ??
                 ($calendarActivityStart->diff($maxDate)->days + 1) /
-                $repeatEveryDays;
+                    $repeatEveryDays;
             $shiftInterval = new DateInterval("P" . $repeatEveryDays . "D");
 
             for ($i = 1; $i < $occurences; $i++) {
