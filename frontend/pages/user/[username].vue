@@ -124,8 +124,9 @@ onUnmounted(() => {
     }
 });
 
-const { data: templateData, refresh } = await useAsyncData("templates", () =>
-    client(`/api/user/${username.value}/template?cursor=${cursor.value}`),
+const { data: templateData, refresh } = await useAsyncData(
+    "userTemplates",
+    () => client(`/api/user/${username.value}/template?cursor=${cursor.value}`),
 );
 
 watch(
@@ -168,8 +169,6 @@ watch(showMore, () => {
         }
     }
 });
-
-const firstTemplates = computed(() => (templates.value || []).splice(0, 10));
 
 const toggle = () => {
     showMore.value = !showMore.value;
@@ -253,11 +252,23 @@ const navigateBack = () => {
                 </h1>
                 <div
                     id="templates"
-                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-5"
+                    class="relative mt-2 grid grid-cols-2 gap-5 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6"
                 >
-                    <TemplateCardSmall
-                        v-for="template in firstTemplates"
+                    <TemplateCard
+                        v-for="template in templates.slice(0, 8)"
                         :key="template.id"
+                        class="hidden md:block"
+                        :template="template"
+                        :displayed-in-profile="true"
+                        @open-template="
+                            openedTemplate = template;
+                            isTemplatePopupVisible = true;
+                        "
+                    />
+                    <TemplateCardSmall
+                        v-for="template in templates.slice(0, 4)"
+                        :key="template.id"
+                        class="md:hidden"
                         :template="template"
                         :displayed-in-profile="true"
                         @open-template="
@@ -266,8 +277,14 @@ const navigateBack = () => {
                         "
                     />
                     <div
-                        v-if="firstTemplates.length === 0"
-                        class="col-span-full"
+                        v-if="templates.slice(0, 8).length === 0"
+                        class="col-span-full hidden md:block"
+                    >
+                        <T key-name="template.none" />
+                    </div>
+                    <div
+                        v-if="templates.slice(0, 4).length === 0"
+                        class="col-span-full md:hidden"
                     >
                         <T key-name="template.none" />
                     </div>
@@ -276,12 +293,24 @@ const navigateBack = () => {
                 <div
                     v-if="showMore"
                     id="more-templates"
-                    class="mt-2 grid grid-cols-2 grid-rows-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-5"
+                    class="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6"
                 >
-                    <TemplateCardSmall
-                        v-for="template in templates"
+                    <TemplateCard
+                        v-for="template in templates.slice(8)"
                         :key="template.id"
+                        class="hidden md:block"
                         :template="template"
+                        @open-template="
+                            openedTemplate = template;
+                            isTemplatePopupVisible = true;
+                        "
+                    />
+                    <TemplateCardSmall
+                        v-for="template in templates.slice(4)"
+                        :key="template.id"
+                        class="md:hidden"
+                        :template="template"
+                        :displayed-in-profile="true"
                         @open-template="
                             openedTemplate = template;
                             isTemplatePopupVisible = true;

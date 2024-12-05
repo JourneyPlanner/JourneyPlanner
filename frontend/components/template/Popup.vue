@@ -55,7 +55,7 @@ function close() {
             :draggable="false"
             dismissable-mask
             close-on-escape
-            class="collapse z-50 w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:visible sm:flex sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-6/12 xl:w-5/12"
+            class="collapse z-50 w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:visible sm:flex sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-6/12 xl:w-6/12"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10 px-0',
@@ -96,7 +96,7 @@ function close() {
             </template>
             <div
                 id="template-content"
-                class="mx-4 mt-2 h-full xs:mx-8 sm:mx-12 md:mx-8"
+                class="mx-4 -mb-2 mt-2 h-full xs:mx-8 sm:mx-12 md:mx-8"
             >
                 <div id="details" class="flex h-32 gap-x-4">
                     <div
@@ -168,7 +168,7 @@ function close() {
                     </div>
                     <div
                         id="description"
-                        class="w-1/2 overflow-y-scroll rounded-lg border border-natural-100 p-1 text-lg font-normal text-text dark:border-natural-800 dark:bg-natural-900 dark:text-natural-50"
+                        class="mb-5 w-1/2 overflow-y-scroll rounded-lg border border-natural-100 p-1 text-lg font-normal text-text dark:border-natural-800 dark:bg-natural-900 dark:text-natural-50"
                     >
                         <p v-if="template.description">
                             {{ template.description }}
@@ -240,7 +240,7 @@ function close() {
                         </ScrollPanel>
                     </div>
                 </div>
-                <div id="buttons" class="mt-2 flex w-full justify-center">
+                <div id="buttons" class="mt-4 flex w-full justify-center">
                     <NuxtLink
                         :to="'/template/' + template.id"
                         class="mt-auto flex h-9 w-40 flex-row items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:cursor-pointer hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
