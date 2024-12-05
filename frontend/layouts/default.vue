@@ -10,7 +10,7 @@
                 to="/imprint"
                 class="hover:font-bold hover:text-calypso-400"
             >
-                <T key-name="common.imprint" />
+                <T key-name="common.imprint" default-value="Imprint" />
             </NuxtLink>
             <span class="mx-2"> | </span>
             <a
@@ -24,7 +24,10 @@
                 to="/privacy"
                 class="hover:font-bold hover:text-calypso-400"
             >
-                <T key-name="common.privacypolicy" />
+                <T
+                    key-name="common.privacypolicy"
+                    default-value="Privacy policy"
+                />
             </NuxtLink>
             <span class="mx-2"> | </span>
             <a
