@@ -10,8 +10,6 @@ use App\Http\Requests\Journey\StoreJourneyRequest;
 use App\Http\Requests\Journey\UpdateJourneyRequest;
 use App\Services\MapboxService;
 use App\Services\WeatherService;
-use DateInterval;
-use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;

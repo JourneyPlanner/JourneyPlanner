@@ -12,7 +12,6 @@ use App\Models\Journey;
 use App\Services\MapboxService;
 use DateInterval;
 use DateTime;
-use Google\Service\CloudSearch\AllAuthenticatedUsersProto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 
@@ -76,10 +75,7 @@ class ActivityController extends Controller
         }
 
         // Handle repeating activities
-        if (
-            !array_key_exists("repeat_type", $validated) ||
-            !$validated["repeat_type"]
-        ) {
+        if (!isset($validated["repeat_type"])) {
             return response()->json($activity->load("calendarActivities"), 201);
         }
 
@@ -122,8 +118,7 @@ class ActivityController extends Controller
         );
 
         $repeatedChanged =
-            array_key_exists("repeat_type", $validated) &&
-            $validated["repeat_type"] &&
+            isset($validated["repeat_type"]) &&
             (($activity->repeat_type ?? "") != $validated["repeat_type"] ||
                 ($activity->repeat_interval ?? 0) !=
                     ($validated["repeat_interval"] ?? 0) ||
@@ -135,8 +130,8 @@ class ActivityController extends Controller
                     ($validated["repeat_end_date"] ?? "") ||
                 ($activity->repeat_end_occurrences ?? 0) !=
                     ($validated["repeat_end_occurrences"] ?? 0));
-        //ddd($repeatedChanged);
 
+        $timeDifference = null;
         // Create the calendar activity if the date is provided and the activity is not repeated and has no calendar activities
         if ($activity->calendarActivities()->count() === 0) {
             $calendarActivityCreated = $this->createCalendarActivityIfNeeded(
@@ -173,6 +168,7 @@ class ActivityController extends Controller
 
         // Edit repeated activities
         $baseActivity = $activity->getBaseActivity();
+        //ddd($this->calculateDateRangesForSubActivities($baseActivity));
         $activities = [];
         if ($validated["edit_type"] == "all") {
             $activity->fill($validated);
@@ -299,7 +295,7 @@ class ActivityController extends Controller
 
         array_push(
             $activities,
-            $baseActivity->children()->with("calendarActivities")->get()
+            ...$baseActivity->children()->with("calendarActivities")->get()
         );
         $activities[] = $baseActivity->load("calendarActivities");
         return response()->json($activities, 201);
@@ -410,12 +406,11 @@ class ActivityController extends Controller
         CalendarActivity $calendarActivity
     ) {
         $calendarActivityStart = $calendarActivity->start;
-        $maxDate = $journey->to;
-        $maxDate->setTime(23, 59, 59);
         $repeatEndDate = $activity->repeat_end_date ?? $journey->to;
-        if ($repeatEndDate > $maxDate) {
-            $repeatEndDate = $maxDate;
+        if ($repeatEndDate > $journey->to) {
+            $repeatEndDate = $journey->to;
         }
+        $repeatEndDate->setTime(23, 59, 59);
 
         if (
             $activity->repeat_type == "custom" &&
@@ -424,12 +419,12 @@ class ActivityController extends Controller
             $repeatOn = $activity->repeat_on ?? [];
             $occurences =
                 $activity->repeat_end_occurrences ??
-                (($calendarActivityStart->diff($maxDate)->days + 1) / 7) *
+                (($calendarActivityStart->diff($repeatEndDate)->d + 1) / 7) *
                     count($repeatOn);
             $shiftInterval = new DateInterval("P1D");
             while ($occurences > 1) {
                 $calendarActivityStart->add($shiftInterval);
-                if ($calendarActivityStart > $maxDate) {
+                if ($calendarActivityStart > $repeatEndDate) {
                     break;
                 }
                 if (in_array($calendarActivityStart->format("D"), $repeatOn)) {
@@ -442,9 +437,10 @@ class ActivityController extends Controller
                     $occurences--;
                 }
                 if ($calendarActivityStart->format("D") == "Sun") {
-                    $shift = $activity->repeat_interval - 1;
                     $calendarActivityStart->add(
-                        new DateInterval("P" . $shift . "W")
+                        new DateInterval(
+                            "P" . ($activity->repeat_interval - 1) . "W"
+                        )
                     );
                 }
             }
@@ -454,13 +450,13 @@ class ActivityController extends Controller
                 ($activity->repeat_type == "weekly" ? 7 : 1);
             $occurences =
                 $activity->repeat_end_occurrences ??
-                ($calendarActivityStart->diff($maxDate)->days + 1) /
+                ($calendarActivityStart->diff($repeatEndDate)->d + 1) /
                     $repeatEveryDays;
             $shiftInterval = new DateInterval("P" . $repeatEveryDays . "D");
 
             for ($i = 1; $i < $occurences; $i++) {
                 $calendarActivityStart->add($shiftInterval);
-                if ($calendarActivityStart > $maxDate) {
+                if ($calendarActivityStart > $repeatEndDate) {
                     break;
                 }
                 $repeatedActivity = $calendarActivity
