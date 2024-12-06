@@ -168,7 +168,6 @@ class ActivityController extends Controller
 
         // Edit repeated activities
         $baseActivity = $activity->getBaseActivity();
-        //ddd($this->calculateDateRangesForSubActivities($baseActivity));
         $activities = [];
         if ($validated["edit_type"] == "all") {
             $activity->fill($validated);
@@ -176,35 +175,55 @@ class ActivityController extends Controller
             // Reset geocode data if the address has changed
             $this->resetGeocodeDataIfNeeded($activity, $validated);
             $activity->save();
+            $this->addTimeDifferenceIfNeeded($activity, $timeDifference);
 
+            // Get the changes to apply to the activities
             $changes = $activity->getChanges();
 
-            if ($timeDifference) {
-                foreach (
-                    $baseActivity->calendarActivities()->get()
-                    as $calendarActivity
-                ) {
-                    $calendarActivity->start = $calendarActivity->start->add(
-                        $timeDifference
-                    );
-                    $calendarActivity->save();
-                }
+            // Update the remaining activities
+            $baseActivity->update($changes);
+            $this->addTimeDifferenceIfNeeded($baseActivity, $timeDifference);
+            foreach ($baseActivity->children()->get() as $child) {
+                $child->update($changes);
+                $this->addTimeDifferenceIfNeeded($child, $timeDifference);
             }
 
-            foreach ($baseActivity->children()->get() as $child) {
-                $child->fill($changes);
-                $child->save();
-                if ($timeDifference) {
-                    foreach (
-                        $child->calendarActivities()->get()
-                        as $calendarActivity
+            // Handle repeating activities
+            if ($repeatedChanged || true) {
+                $mappings = $this->calculateDateToActivityMappings(
+                    $baseActivity
+                );
+                // Get the first calendar activity which is
+                $firstCalendarActivity = $baseActivity
+                    ->calendarActivities()
+                    ->orderBy("start")
+                    ->first();
+
+                foreach ($baseActivity->children()->get() as $child) {
+                    $childFirstCalendarActivity = $child
+                        ->calendarActivities()
+                        ->orderBy("start")
+                        ->first();
+                    if (
+                        $childFirstCalendarActivity &&
+                        $childFirstCalendarActivity->start <
+                            $firstCalendarActivity->start
                     ) {
-                        $calendarActivity->start = $calendarActivity->start->add(
-                            $timeDifference
-                        );
-                        $calendarActivity->save();
+                        $firstCalendarActivity = $childFirstCalendarActivity;
                     }
                 }
+                $this->deleteAllCalendarActivitiesAfterBaseActivity(
+                    $baseActivity,
+                    $firstCalendarActivity->start,
+                    false,
+                    false
+                );
+                $this->handleRepeatingActivity(
+                    $journey,
+                    $baseActivity,
+                    $firstCalendarActivity,
+                    $mappings
+                );
             }
         } else {
             $editedCalendarActivity = CalendarActivity::findOrFail(
@@ -248,7 +267,7 @@ class ActivityController extends Controller
                     true
                 );
 
-                if ($timeDifference) {
+                if ($timeDifference || $repeatedChanged) {
                     $editedActivity->parent_id = null;
                     $activities[] = $editedActivity->load("calendarActivities");
                     foreach ($baseActivity->children() as $childActivity) {
@@ -260,6 +279,24 @@ class ActivityController extends Controller
                             $editedActivity->getChanges(),
                             false
                         )->load("calendarActivities");
+                    }
+
+                    if ($repeatedChanged) {
+                        $mappings = $this->calculateDateToActivityMappings(
+                            $editedActivity
+                        );
+                        $this->deleteAllCalendarActivitiesAfterBaseActivity(
+                            $editedActivity,
+                            $editedCalendarActivity->start,
+                            false,
+                            false
+                        );
+                        $this->handleRepeatingActivity(
+                            $journey,
+                            $editedActivity,
+                            $editedCalendarActivity,
+                            $mappings
+                        );
                     }
                 } else {
                     foreach ($baseActivity->children() as $childActivity) {
@@ -293,12 +330,13 @@ class ActivityController extends Controller
             $baseActivity = $replacementActivity;
         }
 
+        // Combine newly created activities with the base activity and its children
         array_push(
             $activities,
             ...$baseActivity->children()->with("calendarActivities")->get()
         );
         $activities[] = $baseActivity->load("calendarActivities");
-        return response()->json($activities, 201);
+        return response()->json($activities, 200);
     }
 
     /**
@@ -328,13 +366,12 @@ class ActivityController extends Controller
             $calendarActivity->delete();
             $this->deleteActivityIfNeeded($activity);
         } elseif ($validated["edit_type"] == "following") {
-            $minDate = $calendarActivity->from;
-
-            foreach ($baseActivity->children()->get() as $child) {
-                $this->deleteAllCalendarActivitiesAfter($child, $minDate);
-            }
-
-            $this->deleteAllCalendarActivitiesAfter($baseActivity, $minDate);
+            $this->deleteAllCalendarActivitiesAfterBaseActivity(
+                $activity,
+                $calendarActivity->start,
+                true,
+                true
+            );
         }
 
         $activities = $baseActivity
@@ -346,13 +383,81 @@ class ActivityController extends Controller
     }
 
     /**
-     * Generalize the activity if it has no calendar activities.
+     * Add a time difference to the calendar activities of the activity.
      */
-    private function deleteActivityIfNeeded(Activity $activity)
-    {
-        if ($activity->calendarActivities()->count() === 0) {
-            $activity->delete();
+    private function addTimeDifferenceIfNeeded(
+        Activity $activity,
+        ?DateInterval $timeDifference
+    ) {
+        if ($timeDifference) {
+            foreach (
+                $activity->calendarActivities()->get()
+                as $calendarActivity
+            ) {
+                $calendarActivity->start = $calendarActivity->start->add(
+                    $timeDifference
+                );
+                $calendarActivity->save();
+            }
         }
+    }
+
+    /**
+     * Calculate the date ranges for the sub activities of the base activity.
+     */
+    private function calculateDateToActivityMappings(Activity $baseActivity)
+    {
+        // Create a mapping from date to activity
+        $dateToActivityMappings = [];
+        foreach (
+            $baseActivity->calendarActivities()->get()
+            as $calendarActivity
+        ) {
+            $dateToActivityMappings[
+                $calendarActivity->start->format("Y-m-d")
+            ] = $baseActivity;
+        }
+        foreach ($baseActivity->children()->get() as $childActivity) {
+            foreach (
+                $childActivity->calendarActivities()->get()
+                as $calendarActivity
+            ) {
+                $dateToActivityMappings[
+                    $calendarActivity->start->format("Y-m-d")
+                ] = $childActivity;
+            }
+        }
+
+        // Sort the date to activity mappings by date
+        ksort($dateToActivityMappings);
+
+        return $dateToActivityMappings;
+    }
+
+    /**
+     * Delete all calendar activities from an activity which start after a specified date.
+     */
+    private function deleteAllCalendarActivitiesAfterBaseActivity(
+        Activity $baseActivity,
+        DateTime $minDate,
+        bool $deleteActivities = false,
+        bool $includeCurrent = true
+    ) {
+        foreach ($baseActivity->children()->get() as $child) {
+            $this->deleteAllCalendarActivitiesAfter(
+                $child,
+                $minDate,
+                $deleteActivities,
+                $includeCurrent
+            );
+        }
+
+        $this->deleteAllCalendarActivitiesAfter(
+            $baseActivity,
+            $minDate,
+            $deleteActivities,
+            $includeCurrent
+        );
     }
 
     /**
@@ -360,15 +465,31 @@ class ActivityController extends Controller
      */
     private function deleteAllCalendarActivitiesAfter(
         Activity $activity,
-        DateTime $minDate
+        DateTime $minDate,
+        bool $deleteActivities = false,
+        bool $includeCurrent = true
     ) {
         foreach ($activity->calendarActivities()->get() as $calendarActivity) {
-            if ($calendarActivity->from >= $minDate) {
+            if ($includeCurrent && $calendarActivity->start >= $minDate) {
+                $calendarActivity->delete();
+            } elseif ($calendarActivity->start > $minDate) {
                 $calendarActivity->delete();
             }
         }
 
-        return $this->deleteActivityIfNeeded($activity);
+        if ($deleteActivities) {
+            $this->deleteActivityIfNeeded($activity);
+        }
+    }
+
+    /**
+     * Delete the activity if it has no calendar activities.
+     */
+    private function deleteActivityIfNeeded(Activity $activity)
+    {
+        if ($activity->calendarActivities()->count() === 0) {
+            $activity->delete();
+        }
     }
 
     /**
@@ -400,11 +521,13 @@ class ActivityController extends Controller
     /**
      * Repeat the activity if needed.
      */
-    public static function handleRepeatingActivity(
+    private function handleRepeatingActivity(
         Journey $journey,
         Activity $activity,
-        CalendarActivity $calendarActivity
+        CalendarActivity $calendarActivity,
+        array $mappings = []
     ) {
+        $mappingsExist = !empty($mappings);
         $calendarActivityStart = $calendarActivity->start;
         $repeatEndDate = $activity->repeat_end_date ?? $journey->to;
         if ($repeatEndDate > $journey->to) {
@@ -433,6 +556,12 @@ class ActivityController extends Controller
                         ->fill([
                             "start" => $calendarActivityStart,
                         ]);
+                    if ($mappingsExist) {
+                        $repeatedActivity->activity_id = $this->getActivityFromDateMapping(
+                            $mappings,
+                            $calendarActivityStart
+                        )->id;
+                    }
                     $repeatedActivity->save();
                     $occurences--;
                 }
@@ -464,9 +593,33 @@ class ActivityController extends Controller
                     ->fill([
                         "start" => $calendarActivityStart,
                     ]);
+                if ($mappingsExist) {
+                    $repeatedActivity->activity_id = $this->getActivityFromDateMapping(
+                        $mappings,
+                        $calendarActivityStart
+                    )->id;
+                }
                 $repeatedActivity->save();
             }
         }
+    }
+
+    /**
+     * Get the last activity before the calendar activity
+     */
+    private function getActivityFromDateMapping(
+        array $mappings,
+        DateTime $searchDate
+    ) {
+        $lastActivity = null;
+        foreach ($mappings as $date => $activity) {
+            if ($date > $searchDate->format("Y-m-d")) {
+                break;
+            }
+            $lastActivity = $activity;
+        }
+
+        return $lastActivity;
     }
 
     /**

@@ -93,10 +93,7 @@ class CalendarActivityController extends Controller
         Activity $activity,
         array $emptyActivities = []
     ) {
-        foreach ($activity->calendarActivities()->get() as $calendarActivity) {
-            $calendarActivity->delete();
-        }
-
+        $activity->calendarActivities()->delete();
         return $this->generalizeActivityIfNeeded($activity, $emptyActivities);
     }
 
