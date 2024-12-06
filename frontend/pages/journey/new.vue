@@ -310,7 +310,7 @@ function retrievedAddress(inputValue: string, name: string) {
                     <div
                         v-else
                         id="template-suggestions"
-                        class="mt-1 flex w-full flex-col"
+                        class="mb-1.5 mt-1 flex w-full flex-col"
                     >
                         <TemplateSuggestion
                             v-for="(template, index) in suggestions"
@@ -323,7 +323,10 @@ function retrievedAddress(inputValue: string, name: string) {
                             "
                         />
                     </div>
-                    <div class="mb-0.5 mr-3 mt-1.5 flex justify-end">
+                    <div
+                        v-if="isAuthenticated"
+                        class="mb-0.5 mr-3 flex justify-end"
+                    >
                         <NuxtLink
                             to="/dashboard?tab=templates"
                             class="group flex items-center gap-x-1 text-end text-natural-800 hover:text-calypso-600 dark:text-natural-200 dark:hover:text-calypso-300"
