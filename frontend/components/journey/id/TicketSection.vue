@@ -810,7 +810,7 @@ function emitScroll(target: string) {
                     </div>
                     <div v-else class="max-lg:hidden">
                         <i
-                            class="pi pi-objects-column text-2xl text-calypso-600 md:text-7xl"
+                            class="pi pi-objects-column mt-6 text-2xl text-calypso-300 md:text-7xl"
                         />
                     </div>
                     <div
@@ -877,7 +877,7 @@ function emitScroll(target: string) {
                         </button>
                         <button
                             v-else
-                            class="my-4 ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:mt-6 md:text-base"
+                            class="my-4 ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:mt-4 md:text-base"
                         >
                             <T key-name="template.use" />
                         </button>

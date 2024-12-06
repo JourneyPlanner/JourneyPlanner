@@ -12,7 +12,7 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "opened-preview"]);
 
 const client = useSanctumClient();
 
@@ -244,6 +244,7 @@ function close() {
                     <NuxtLink
                         :to="'/template/' + template.id"
                         class="mt-auto flex h-9 w-40 flex-row items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:cursor-pointer hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                        @click="$emit('opened-preview')"
                     >
                         <T key-name="template.preview" />
                     </NuxtLink>

@@ -328,15 +328,33 @@ const navigateBack = () => {
                     </div>
                 </div>
                 <div
-                    v-if="templates.length > 0"
-                    class="mt-4 flex justify-center"
+                    v-if="templates.slice(8).length > 0"
+                    class="mt-4 flex justify-center max-md:hidden"
                 >
                     <button
                         class="flex flex-col items-center justify-center text-text dark:text-natural-50"
                         @click="toggle"
                     >
-                        <span class="md:hidden">{{ toggleTextShort }}</span>
-                        <span class="max-md:hidden">{{ toggleText }}</span>
+                        <span>{{ toggleText }}</span>
+                        <span
+                            class="pi mt-1"
+                            :class="
+                                showMore
+                                    ? 'pi-chevron-up order-first mb-1'
+                                    : 'pi-chevron-down'
+                            "
+                        />
+                    </button>
+                </div>
+                <div
+                    v-if="templates.slice(4).length > 0"
+                    class="mt-4 flex justify-center md:hidden"
+                >
+                    <button
+                        class="flex flex-col items-center justify-center text-text dark:text-natural-50"
+                        @click="toggle"
+                    >
+                        <span>{{ toggleTextShort }}</span>
                         <span
                             class="pi mt-1"
                             :class="

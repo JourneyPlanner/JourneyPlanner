@@ -65,7 +65,7 @@ watch(
                 },
             });
 
-            await client(`/api/user/${props.username}/template?per_page=8`, {
+            await client(`/api/user/${props.username}/template?per_page=6`, {
                 async onResponse({ response }) {
                     if (response.ok) {
                         templates.value = response._data.data;
@@ -139,7 +139,7 @@ const close = (): void => {
                     @<span class="group-hover:underline">{{ username }}</span>
                 </NuxtLink>
             </div>
-            <div class="mt-6 flex flex-col">
+            <div class="mx-4 mt-6 flex flex-col xs:mx-6 sm:mx-11 md:mx-8">
                 <h1
                     class="text-lg font-medium text-text dark:text-natural-50 xs:text-xl md:text-xl"
                 >
@@ -149,10 +149,10 @@ const close = (): void => {
                 <div
                     v-if="!templates"
                     id="templates-loading"
-                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-4"
+                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-3"
                 >
                     <Skeleton
-                        v-for="index in 8"
+                        v-for="index in 6"
                         :key="index"
                         height="6.75rem"
                         class="rounded-md dark:bg-natural-600"
@@ -161,7 +161,7 @@ const close = (): void => {
                 <div
                     v-else
                     id="templates"
-                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-4"
+                    class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-3"
                 >
                     <TemplateCardSmall
                         v-for="template in templates"
@@ -288,7 +288,7 @@ const close = (): void => {
                     class="mt-auto flex w-full justify-center text-text dark:text-natural-50"
                 >
                     <NuxtLink
-                        class="w-full text-nowrap rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-xl font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
+                        class="w-full text-nowrap rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-lg font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
                         :to="'/user/' + username"
                     >
                         <T key-name="profile.see.full" />
