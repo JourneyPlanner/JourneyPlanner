@@ -48,6 +48,7 @@ const repeatIntervalUnit = ref();
 const repeatOn = ref();
 const repeatEndDate = ref();
 const repeatEndOccurences = ref();
+const value = ref();
 
 watch(
     () => props.onlyShow,
@@ -79,6 +80,7 @@ const emit = defineEmits([
 ]);
 
 const isVisible = ref(props.visible);
+const isRecurringActivityEditVisible = ref(false);
 const loadingSave = ref(false);
 const activeIndex = ref(0);
 const confirm = useConfirm();
@@ -112,6 +114,7 @@ interface ActivityForm {
     date: Date;
     time: string;
     repeatType: repeatType;
+    editType: string;
 }
 
 type ActivityFormErrors = Partial<Record<keyof ActivityForm, string>>;
@@ -230,6 +233,22 @@ const { handleSubmit } = useForm<ActivityForm>({
 
 const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 async function onSuccess(values: ActivityForm) {
+    if (props.calendarClicked) {
+        isRecurringActivityEditVisible.value = true;
+        value.value = values;
+    } else {
+        editActivity(values);
+    }
+}
+
+function call(editOption: string) {
+    isRecurringActivityEditVisible.value = false;
+    value.value.editType = editOption;
+    console.log(value.value);
+    editActivity(value.value);
+}
+
+async function editActivity(values: ActivityForm) {
     const durationDate = new Date(values.duration);
     const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}:00`;
 
@@ -286,6 +305,7 @@ async function onSuccess(values: ActivityForm) {
             repeat_end_date: repeatEndDate.value,
             repeat_end_occurences: repeatEndOccurences.value,
             calendar_activity_id: props.calendarActivity.id,
+            edit_type: values.editType,
         };
     } else {
         activity = {
@@ -308,6 +328,7 @@ async function onSuccess(values: ActivityForm) {
             repeat_on: repeatOn.value,
             repeat_end_date: repeatEndDate.value,
             repeat_end_occurences: repeatEndOccurences.value,
+            edit_type: "all",
         };
     }
 
@@ -329,12 +350,11 @@ async function onSuccess(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
-                    activityStore.updateActivity(
-                        response._data,
-                        props.activityId,
-                    );
+                    activityStore.updateActivity(response._data);
                     activityStore.setNewActivity(response._data);
                     if (props.calendarActivity) {
+                        console.log(props.calendarActivity);
+                        console.log(response._data);
                         emit("editCalendarActivity", activity.name);
                         emit("calendarMoved", start, end);
                     }
@@ -706,16 +726,29 @@ function changeCustomRepeat(
                                 name="date"
                                 :from="from"
                                 :to="to"
+                                :value="
+                                    props.calendarActivity
+                                        ? props.calendarActivity.start
+                                        : null
+                                "
                                 :prefill="selectedDate"
                                 translation-key="form.input.activity.date"
                                 class="w-full sm:pb-2 sm:pr-16"
                                 @date-selected="setSelectedDate"
                             />
+                            {{ console.log(props.calendarActivity) }}
                             <FormTimeInput
                                 id="calendar-time"
                                 name="time"
                                 translation-key="form.input.activity.time"
                                 :disabled="timeDisabled"
+                                :value="
+                                    props.calendarActivity
+                                        ? props.calendarActivity.start.split(
+                                              'T',
+                                          )[1]
+                                        : null
+                                "
                                 class="w-full sm:pb-2 sm:pr-16"
                             />
                             <div class="max-sm:hidden sm:pb-2 sm:pr-16">
@@ -723,8 +756,8 @@ function changeCustomRepeat(
                                     id="repeatType"
                                     name="repeatType"
                                     class="w-full"
-                                    :journey-start="props.journeyStart"
-                                    :journey-end="props.journeyEnd"
+                                    :journey-start="from"
+                                    :journey-end="to"
                                     :repeat-type="props.propRepeatType"
                                     @input="changeRepeat"
                                     @custom-input="changeCustomRepeat"
@@ -732,6 +765,11 @@ function changeCustomRepeat(
                             </div>
                         </div>
                     </div>
+                    <FormActivityRepeatEditType
+                        :visible="isRecurringActivityEditVisible"
+                        @close="isRecurringActivityEditVisible = false"
+                        @post="call"
+                    />
                     <div
                         class="max-sm:flex max-sm:w-full max-sm:flex-row max-sm:gap-x-2 sm:hidden"
                     >

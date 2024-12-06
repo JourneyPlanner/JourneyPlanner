@@ -50,7 +50,8 @@ const computedClass = computed(() => {
         >
             <template #inputicon="{ clickCallback }">
                 <InputIcon
-                    class="pi pi-clock cursor-pointer text-calypso-400"
+                    class="pi pi-clock text-calypso-400"
+                    :class="disabled ? 'cursor-not-allowed' : 'cursor-pointer'"
                     @click="clickCallback"
                 />
             </template>

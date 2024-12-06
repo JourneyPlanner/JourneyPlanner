@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UTCDate } from "@date-fns/utc";
 import type { CalendarOptions } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -34,9 +35,11 @@ if (
 const fullCalendar = ref();
 const isEditDrop = ref(false);
 const isInitializeDrop = ref(false);
+const isRemoveCall = ref(false);
+const isDeleteCall = ref(false);
 const store = useActivityStore();
 const isActivityInfoVisible = ref(false);
-const activities = computed(() => store.activityData as Activity[]);
+const activities = store.activityData as Activity[];
 const client = useSanctumClient();
 const alreadyAdded = ref(false);
 const { t } = useTranslate();
@@ -138,7 +141,7 @@ async function deleteActivity() {
                     ),
                     life: 6000,
                 });
-                activities.value
+                activities
                     .filter((activity) => activity.id === activityId.value)
                     .forEach((activity: Activity) => {
                         activity.calendar_activities.forEach(
@@ -149,11 +152,8 @@ async function deleteActivity() {
                                     .remove();
                             },
                         );
-                        activities.value.splice(
-                            activities.value.indexOf(activity),
-                            1,
-                        );
-                        store.setActivities(activities.value);
+                        activities.splice(activities.indexOf(activity), 1);
+                        store.setActivities(activities);
                     });
             }
         },
@@ -176,7 +176,14 @@ async function deleteActivity() {
     });
 }
 
-async function removeFromCalendar() {
+function removeFromCalendar() {
+    isRecurringActivityEditVisible.value = true;
+    isRemoveCall.value = true;
+    removeFromCalendarCall("all");
+}
+
+async function removeFromCalendarCall(editType: string) {
+    console.log(editType);
     const calApi = fullCalendar.value.getApi();
     await client(
         `/api/journey/${props.id}/activity/${activityId.value}/calendarActivity/${calendarId.value}`,
@@ -191,7 +198,7 @@ async function removeFromCalendar() {
                         life: 6000,
                     });
                     calApi.getEventById(calendarId.value).remove();
-                    activities.value
+                    activities
                         .filter((activity) => activity.id === activityId.value)
                         .forEach((activity: Activity) => {
                             activity.calendar_activities
@@ -202,15 +209,15 @@ async function removeFromCalendar() {
                                 )
                                 .forEach(
                                     (calendar_activity: CalendarActivity) => {
-                                        activities.value[
-                                            activities.value.indexOf(activity)
+                                        activities[
+                                            activities.indexOf(activity)
                                         ].calendar_activities.splice(
                                             activity.calendar_activities.indexOf(
                                                 calendar_activity,
                                             ),
                                             1,
                                         );
-                                        store.setActivities(activities.value);
+                                        store.setActivities(activities);
                                     },
                                 );
                         });
@@ -303,7 +310,7 @@ const calendarOptions = reactive({
     eventTextColor: text,
     slotDuration: "00:30:00",
     allDaySlot: false,
-    timeZone: "local",
+    timeZone: "UTC",
     droppable: true,
     initialDate: start,
     firstDay: 1,
@@ -321,9 +328,10 @@ const calendarOptions = reactive({
 }) as unknown as CalendarOptions;
 
 watch(addedActivity, () => {
-    const addedActivity = store.addedActivity as Activity;
-    activityId.value = addedActivity.id;
-    editCalendarActivity(addedActivity.name);
+    store.addedActivity.forEach((activity: Activity) => {
+        activityId.value = activity.id;
+        editCalendarActivity(activity.name);
+    });
 });
 
 onMounted(() => {
@@ -341,7 +349,9 @@ onMounted(() => {
                         activity.calendar_activities.forEach(
                             (calendar_activity: CalendarActivity) => {
                                 const newEnd = add(
-                                    new Date(calendar_activity.start),
+                                    new UTCDate(
+                                        calendar_activity.start.slice(0, -1),
+                                    ),
                                     {
                                         hours: parseInt(
                                             activity.estimated_duration.split(
@@ -457,8 +467,15 @@ async function initializeDropCall(editType: string, isFromPool: boolean) {
                         newActivity.calendar_activities.forEach(
                             (calendar_activity: CalendarActivity) => {
                                 console.log(calendar_activity.start);
+                                console.log(
+                                    new UTCDate(
+                                        calendar_activity.start.slice(0, -1),
+                                    ),
+                                );
                                 const newEnd = add(
-                                    new Date(calendar_activity.start),
+                                    new UTCDate(
+                                        calendar_activity.start.slice(0, -1),
+                                    ),
                                     {
                                         hours: parseInt(
                                             newActivity.estimated_duration.split(
@@ -472,23 +489,25 @@ async function initializeDropCall(editType: string, isFromPool: boolean) {
                                         ),
                                     },
                                 ).toISOString();
+                                console.log(newEnd);
                                 calApi
                                     .getEventById(calendar_activity.id)
                                     .remove();
                                 calendar_activity.end = newEnd;
                                 calendar_activity.title = newActivity.name;
+                                console.log(calendar_activity);
                                 calApi.addEvent(calendar_activity);
                             },
                         );
                     }
-                    activities.value
+                    activities
                         .filter((activity) => activity.id === activityId.value)
                         .forEach((activity: Activity) => {
-                            activities.value[
-                                activities.value.indexOf(activity)
+                            activities[
+                                activities.indexOf(activity)
                             ].calendar_activities.push(response._data);
                         });
-                    store.setActivities(activities.value);
+                    store.setActivities(activities);
                 });
             }
         },
@@ -567,7 +586,7 @@ async function editDropCall(editType: string) {
                     life: 6000,
                 });
                 close();
-                store.updateActivity(response._data, activityId.value);
+                store.updateActivity(response._data);
                 store.setNewActivity(response._data);
             }
         },
@@ -580,7 +599,7 @@ async function editDropCall(editType: string) {
 function showData(info: EventObject) {
     activityId.value = info.event._def.extendedProps.activity_id;
     calendarId.value = info.event._def.publicId;
-    activities.value
+    activities
         .filter((activity) => activity.id === activityId.value)
         .forEach((activity: Activity) => {
             if (props.currentUserRole === 1 || !isAuthenticated.value) {
@@ -609,8 +628,8 @@ function showData(info: EventObject) {
             phone.value = activity.phone;
             updated_at.value = activity.updated_at;
             isActivityInfoVisible.value = true;
-            calendarActivity.value = activities.value[
-                activities.value.indexOf(activity)
+            calendarActivity.value = activities[
+                activities.indexOf(activity)
             ].calendar_activities.filter(
                 (calendar_activity: CalendarActivity) =>
                     calendar_activity.id === calendarId.value,
@@ -624,24 +643,30 @@ function showData(info: EventObject) {
  */
 async function editCalendarActivity(name: string) {
     const calApi = fullCalendar.value.getApi();
-    activities.value
+    activities
         .filter((activity) => activity.id === activityId.value)
         .forEach((activity: Activity) => {
             activity.calendar_activities.forEach(
                 (calendar_activity: CalendarActivity) => {
                     console.log(calendar_activity.start);
+                    console.log(
+                        new UTCDate(calendar_activity.start.slice(0, -1)),
+                    );
                     if (calApi.getEventById(calendar_activity.id) !== null) {
                         calApi
                             .getEventById(calendar_activity.id)
                             .setProp("title", name);
-                        const newEnd = add(new Date(calendar_activity.start), {
-                            hours: parseInt(
-                                activity.estimated_duration.split(":")[0],
-                            ),
-                            minutes: parseInt(
-                                activity.estimated_duration.split(":")[1],
-                            ),
-                        }).toISOString();
+                        const newEnd = add(
+                            new UTCDate(calendar_activity.start.slice(0, -1)),
+                            {
+                                hours: parseInt(
+                                    activity.estimated_duration.split(":")[0],
+                                ),
+                                minutes: parseInt(
+                                    activity.estimated_duration.split(":")[1],
+                                ),
+                            },
+                        ).toISOString();
                         calApi
                             .getEventById(calendar_activity.id)
                             .setEnd(newEnd);
@@ -654,6 +679,58 @@ async function editCalendarActivity(name: string) {
                 },
             );
         });
+}
+
+async function deleteAllActivities(id: string) {
+    const calApi = fullCalendar.value.getApi();
+    const baseActivity = store.findBaseActivity(id);
+    const activities = store.getAllChildren(baseActivity.id);
+    activities.push(baseActivity);
+    activities.forEach((activity: Activity) => {
+        if (activity.calendar_activities != null) {
+            activity.calendar_activities.forEach(
+                (calendar_activity: CalendarActivity) => {
+                    calApi.getEventById(calendar_activity.id).remove();
+                },
+            );
+        }
+    });
+    console.log(activities);
+}
+
+async function addAll(moreActivities: Activity[] = []) {
+    const calApi = fullCalendar.value.getApi();
+    if (moreActivities.length > 0) {
+        activities.push(...moreActivities);
+    }
+    activities.forEach((activity: Activity) => {
+        if (activity.calendar_activities != null) {
+            activity.calendar_activities.forEach(
+                (calendar_activity: CalendarActivity) => {
+                    const newEnd = add(
+                        new UTCDate(calendar_activity.start.slice(0, -1)),
+                        {
+                            hours: parseInt(
+                                activity.estimated_duration.split(":")[0],
+                            ),
+                            minutes: parseInt(
+                                activity.estimated_duration.split(":")[1],
+                            ),
+                        },
+                    ).toISOString();
+                    calendar_activity.end = newEnd;
+                    calendar_activity.title = activity.name;
+                    if (calendar_activity.start.split(" ")[1] <= "06:00:00") {
+                        calApi.setOption("slotMinTime", "00:00:00");
+                        document.getElementsByClassName(
+                            "fc-showAllHours-button",
+                        )[0].innerHTML = "0:00 - 0:00";
+                    }
+                    calApi.addEvent(calendar_activity);
+                },
+            );
+        }
+    });
 }
 
 /**
@@ -673,6 +750,10 @@ function call(editType: string) {
         editDropCall(editType);
     } else if (isInitializeDrop.value) {
         initializeDropCall(editType, false);
+    } else if (isRemoveCall.value) {
+        console.log("deine mom");
+    } else if (isDeleteCall.value) {
+        console.log("deine mom");
     }
 }
 </script>
@@ -698,6 +779,14 @@ function call(editType: string) {
                     class="w-full"
                 />
             </div>
+            <button
+                @click="
+                    deleteAllActivities('9da9457d-7902-4c10-b69c-c5e03d7ba8d3')
+                "
+            >
+                Test
+            </button>
+            <button @click="addAll()">Test2</button>
             <JourneyIdDialogsActivityDialog
                 :id="id.toString()"
                 :activity-id="activityId"
