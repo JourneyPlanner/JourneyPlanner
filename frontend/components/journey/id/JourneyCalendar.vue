@@ -39,11 +39,12 @@ const isRemoveCall = ref(false);
 const isDeleteCall = ref(false);
 const store = useActivityStore();
 const isActivityInfoVisible = ref(false);
-const activities = store.activityData as Activity[];
+const activities = computed(() => store.activityData as Activity[]);
 const client = useSanctumClient();
 const alreadyAdded = ref(false);
 const { t } = useTranslate();
 const { addedActivity } = storeToRefs(store);
+const { oldActivity } = storeToRefs(store);
 const toast = useToast();
 const props = defineProps({
     id: {
@@ -76,6 +77,8 @@ const activityId = ref("");
 const repeatType = ref();
 const calendarId = ref("");
 const isRecurringActivityEditVisible = ref(false);
+const isRecurringActivityDeleteVisible = ref(false);
+const isRecurringActivityRemoveVisible = ref(false);
 const calendarActivity = ref();
 const onlyShow = ref(true);
 const update = ref(false);
@@ -126,9 +129,26 @@ interface Event {
     remove: () => void;
 }
 
-async function deleteActivity() {
+function deleteActivity() {
+    if (store.getActivity(activityId.value).repeat_type != null) {
+        isRecurringActivityDeleteVisible.value = true;
+        isDeleteCall.value = true;
+    } else {
+        deleteActivityCall("all");
+    }
+}
+
+async function deleteActivityCall(editType: string) {
+    const edit_type = {
+        edit_type: editType,
+    };
+    if (editType != "all") {
+        Object.assign(edit_type, { calendar_activity_id: calendarId.value });
+    }
+
     await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
         method: "delete",
+        body: edit_type,
         async onResponse({ response }) {
             if (response.ok) {
                 toast.add({
@@ -141,20 +161,7 @@ async function deleteActivity() {
                     ),
                     life: 6000,
                 });
-                activities
-                    .filter((activity) => activity.id === activityId.value)
-                    .forEach((activity: Activity) => {
-                        activity.calendar_activities.forEach(
-                            (calendar_activity: CalendarActivity) => {
-                                fullCalendar.value
-                                    .getApi()
-                                    .getEventById(calendar_activity.id)
-                                    .remove();
-                            },
-                        );
-                        activities.splice(activities.indexOf(activity), 1);
-                        store.setActivities(activities);
-                    });
+                store.updateActivity(response._data);
             }
         },
         async onRequestError() {
@@ -177,18 +184,25 @@ async function deleteActivity() {
 }
 
 function removeFromCalendar() {
-    isRecurringActivityEditVisible.value = true;
-    isRemoveCall.value = true;
-    removeFromCalendarCall("all");
+    if (store.getActivity(activityId.value).repeat_type != null) {
+        isRecurringActivityRemoveVisible.value = true;
+        isRemoveCall.value = true;
+    } else {
+        removeFromCalendarCall("all");
+    }
 }
 
 async function removeFromCalendarCall(editType: string) {
     console.log(editType);
-    const calApi = fullCalendar.value.getApi();
+    const edit_type = {
+        edit_type: editType,
+    };
+
     await client(
         `/api/journey/${props.id}/activity/${activityId.value}/calendarActivity/${calendarId.value}`,
         {
             method: "delete",
+            body: edit_type,
             async onResponse({ response }) {
                 if (response.ok) {
                     toast.add({
@@ -197,30 +211,7 @@ async function removeFromCalendarCall(editType: string) {
                         detail: t.value("calendar.remove.success.detail"),
                         life: 6000,
                     });
-                    calApi.getEventById(calendarId.value).remove();
-                    activities
-                        .filter((activity) => activity.id === activityId.value)
-                        .forEach((activity: Activity) => {
-                            activity.calendar_activities
-                                .filter(
-                                    (calendar_activity) =>
-                                        calendar_activity.id ===
-                                        calendarId.value,
-                                )
-                                .forEach(
-                                    (calendar_activity: CalendarActivity) => {
-                                        activities[
-                                            activities.indexOf(activity)
-                                        ].calendar_activities.splice(
-                                            activity.calendar_activities.indexOf(
-                                                calendar_activity,
-                                            ),
-                                            1,
-                                        );
-                                        store.setActivities(activities);
-                                    },
-                                );
-                        });
+                    store.updateActivity(response._data);
                 }
             },
             async onRequestError() {
@@ -328,10 +319,12 @@ const calendarOptions = reactive({
 }) as unknown as CalendarOptions;
 
 watch(addedActivity, () => {
-    store.addedActivity.forEach((activity: Activity) => {
-        activityId.value = activity.id;
-        editCalendarActivity(activity.name);
-    });
+    console.log(addedActivity);
+    addNewActivities(addedActivity.value);
+});
+
+watch(oldActivity, () => {
+    removeOldActivities(oldActivity.value);
 });
 
 onMounted(() => {
@@ -381,6 +374,7 @@ onMounted(() => {
                         );
                     }
                 });
+                calApi.gotoDate(props.journeyStartdate);
                 alreadyAdded.value = true;
             }
         },
@@ -444,7 +438,6 @@ async function initializeDropCall(editType: string, isFromPool: boolean) {
     isRecurringActivityEditVisible.value = false;
     Object.assign(activity.value, { edit_type: editType });
     isInitializeDrop.value = false;
-    const calApi = fullCalendar.value.getApi();
     await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
         method: "PATCH",
         body: activity.value,
@@ -461,54 +454,7 @@ async function initializeDropCall(editType: string, isFromPool: boolean) {
                     detail: t.value("calendar.add.toast.success.detail"),
                     life: 6000,
                 });
-                response._data.forEach((newActivity: Activity) => {
-                    console.log(activity);
-                    if (newActivity.calendar_activities != null) {
-                        newActivity.calendar_activities.forEach(
-                            (calendar_activity: CalendarActivity) => {
-                                console.log(calendar_activity.start);
-                                console.log(
-                                    new UTCDate(
-                                        calendar_activity.start.slice(0, -1),
-                                    ),
-                                );
-                                const newEnd = add(
-                                    new UTCDate(
-                                        calendar_activity.start.slice(0, -1),
-                                    ),
-                                    {
-                                        hours: parseInt(
-                                            newActivity.estimated_duration.split(
-                                                ":",
-                                            )[0],
-                                        ),
-                                        minutes: parseInt(
-                                            newActivity.estimated_duration.split(
-                                                ":",
-                                            )[1],
-                                        ),
-                                    },
-                                ).toISOString();
-                                console.log(newEnd);
-                                calApi
-                                    .getEventById(calendar_activity.id)
-                                    .remove();
-                                calendar_activity.end = newEnd;
-                                calendar_activity.title = newActivity.name;
-                                console.log(calendar_activity);
-                                calApi.addEvent(calendar_activity);
-                            },
-                        );
-                    }
-                    activities
-                        .filter((activity) => activity.id === activityId.value)
-                        .forEach((activity: Activity) => {
-                            activities[
-                                activities.indexOf(activity)
-                            ].calendar_activities.push(response._data);
-                        });
-                    store.setActivities(activities);
-                });
+                store.updateActivity(response._data);
             }
         },
         async onRequestError() {
@@ -587,7 +533,6 @@ async function editDropCall(editType: string) {
                 });
                 close();
                 store.updateActivity(response._data);
-                store.setNewActivity(response._data);
             }
         },
     });
@@ -599,7 +544,7 @@ async function editDropCall(editType: string) {
 function showData(info: EventObject) {
     activityId.value = info.event._def.extendedProps.activity_id;
     calendarId.value = info.event._def.publicId;
-    activities
+    activities.value
         .filter((activity) => activity.id === activityId.value)
         .forEach((activity: Activity) => {
             if (props.currentUserRole === 1 || !isAuthenticated.value) {
@@ -628,8 +573,8 @@ function showData(info: EventObject) {
             phone.value = activity.phone;
             updated_at.value = activity.updated_at;
             isActivityInfoVisible.value = true;
-            calendarActivity.value = activities[
-                activities.indexOf(activity)
+            calendarActivity.value = activities.value[
+                activities.value.indexOf(activity)
             ].calendar_activities.filter(
                 (calendar_activity: CalendarActivity) =>
                     calendar_activity.id === calendarId.value,
@@ -637,88 +582,48 @@ function showData(info: EventObject) {
         });
 }
 
-/**
- * when activity was edited in the dialog this function will update the activity in the calendar
- * @param name -- the name of the activity
- */
-async function editCalendarActivity(name: string) {
+async function removeOldActivities(oldActivities: Activity[]) {
     const calApi = fullCalendar.value.getApi();
-    activities
-        .filter((activity) => activity.id === activityId.value)
-        .forEach((activity: Activity) => {
-            activity.calendar_activities.forEach(
-                (calendar_activity: CalendarActivity) => {
-                    console.log(calendar_activity.start);
-                    console.log(
-                        new UTCDate(calendar_activity.start.slice(0, -1)),
-                    );
-                    if (calApi.getEventById(calendar_activity.id) !== null) {
-                        calApi
-                            .getEventById(calendar_activity.id)
-                            .setProp("title", name);
-                        const newEnd = add(
-                            new UTCDate(calendar_activity.start.slice(0, -1)),
-                            {
-                                hours: parseInt(
-                                    activity.estimated_duration.split(":")[0],
-                                ),
-                                minutes: parseInt(
-                                    activity.estimated_duration.split(":")[1],
-                                ),
-                            },
-                        ).toISOString();
-                        calApi
-                            .getEventById(calendar_activity.id)
-                            .setEnd(newEnd);
-                    } else {
-                        calApi.addEvent(calendar_activity);
-                        calApi
-                            .getEventById(calendar_activity.id)
-                            .setProp("title", name);
-                    }
-                },
-            );
-        });
-}
-
-async function deleteAllActivities(id: string) {
-    const calApi = fullCalendar.value.getApi();
-    const baseActivity = store.findBaseActivity(id);
-    const activities = store.getAllChildren(baseActivity.id);
-    activities.push(baseActivity);
-    activities.forEach((activity: Activity) => {
+    console.log(oldActivities);
+    oldActivities.forEach((activity: Activity) => {
+        console.log(activity);
         if (activity.calendar_activities != null) {
             activity.calendar_activities.forEach(
                 (calendar_activity: CalendarActivity) => {
-                    calApi.getEventById(calendar_activity.id).remove();
+                    if (calApi.getEventById(calendar_activity.id) !== null) {
+                        calApi.getEventById(calendar_activity.id).remove();
+                    }
                 },
             );
         }
     });
-    console.log(activities);
 }
 
-async function addAll(moreActivities: Activity[] = []) {
+async function addNewActivities(activity: Activity[]) {
     const calApi = fullCalendar.value.getApi();
-    if (moreActivities.length > 0) {
-        activities.push(...moreActivities);
-    }
-    activities.forEach((activity: Activity) => {
+    console.log(activity);
+    activity.forEach((activity: Activity) => {
+        console.log(activity);
         if (activity.calendar_activities != null) {
             activity.calendar_activities.forEach(
                 (calendar_activity: CalendarActivity) => {
-                    const newEnd = add(
-                        new UTCDate(calendar_activity.start.slice(0, -1)),
-                        {
-                            hours: parseInt(
-                                activity.estimated_duration.split(":")[0],
-                            ),
-                            minutes: parseInt(
-                                activity.estimated_duration.split(":")[1],
-                            ),
-                        },
-                    ).toISOString();
+                    if (calApi.getEventById(calendar_activity.id) !== null) {
+                        calApi.getEventById(calendar_activity.id).remove();
+                    }
+                    const newEnd = add(new UTCDate(calendar_activity.start), {
+                        hours: parseInt(
+                            activity.estimated_duration.split(":")[0],
+                        ),
+                        minutes: parseInt(
+                            activity.estimated_duration.split(":")[1],
+                        ),
+                    }).toISOString();
                     calendar_activity.end = newEnd;
+                    console.log(calendar_activity.start);
+                    console.log(
+                        parseInt(activity.estimated_duration.split(":")[0]),
+                    );
+                    console.log(newEnd);
                     calendar_activity.title = activity.name;
                     if (calendar_activity.start.split(" ")[1] <= "06:00:00") {
                         calApi.setOption("slotMinTime", "00:00:00");
@@ -731,17 +636,7 @@ async function addAll(moreActivities: Activity[] = []) {
             );
         }
     });
-}
-
-/**
- * when activity was already in the calendar and then moved manually via the dialog this function will update the location of the activity in the calendar
- * @param start -- the start date of the activity
- * @param end -- the end date of the activity
- */
-function moveActivity(start: Date, end: Date) {
-    const calApi = fullCalendar.value.getApi();
-    calApi.getEventById(calendarId.value).setStart(start);
-    calApi.getEventById(calendarId.value).setEnd(end);
+    console.log(activities);
 }
 
 function call(editType: string) {
@@ -751,9 +646,11 @@ function call(editType: string) {
     } else if (isInitializeDrop.value) {
         initializeDropCall(editType, false);
     } else if (isRemoveCall.value) {
-        console.log("deine mom");
+        removeFromCalendarCall(editType);
+        isRemoveCall.value = false;
     } else if (isDeleteCall.value) {
-        console.log("deine mom");
+        deleteActivityCall(editType);
+        isDeleteCall.value = false;
     }
 }
 </script>
@@ -762,6 +659,16 @@ function call(editType: string) {
         <FormActivityRepeatEditType
             :visible="isRecurringActivityEditVisible"
             @close="isRecurringActivityEditVisible = false"
+            @post="call"
+        />
+        <FormActivityRepeatEditTypeDelete
+            :visible="isRecurringActivityDeleteVisible"
+            @close="isRecurringActivityDeleteVisible = false"
+            @post="call"
+        />
+        <FormActivityRepeatEditTypeRemove
+            :visible="isRecurringActivityRemoveVisible"
+            @close="isRecurringActivityRemoveVisible = false"
             @post="call"
         />
         <div
@@ -779,14 +686,6 @@ function call(editType: string) {
                     class="w-full"
                 />
             </div>
-            <button
-                @click="
-                    deleteAllActivities('9da9457d-7902-4c10-b69c-c5e03d7ba8d3')
-                "
-            >
-                Test
-            </button>
-            <button @click="addAll()">Test2</button>
             <JourneyIdDialogsActivityDialog
                 :id="id.toString()"
                 :activity-id="activityId"
@@ -816,8 +715,6 @@ function call(editType: string) {
                 @close="isActivityInfoVisible = false"
                 @delete-activity="deleteActivity"
                 @remove-from-calendar="removeFromCalendar"
-                @edit-calendar-activity="editCalendarActivity"
-                @calendar-moved="moveActivity"
             />
         </div>
     </div>

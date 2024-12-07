@@ -80,19 +80,19 @@ const post = () => {
     >
         <template #header>
             <div class="flex w-[90%] items-center">
-                <div class="h-0.5 w-5 bg-calypso-400" />
+                <div class="h-0.5 w-5 bg-mahagony-600" />
                 <div
                     class="flex-grow-5 mx-3 text-3xl text-text dark:text-natural-50"
                 >
-                    <T key-name="activity.repeat.edit" />
+                    <T key-name="journey.delete" />
                 </div>
-                <div class="h-0.5 flex-grow bg-calypso-400" />
+                <div class="h-0.5 flex-grow bg-mahagony-600" />
             </div>
         </template>
         <div class="text-text dark:text-natural-50">
             <T key-name="activity.recurring.event" />
             <br />
-            <T key-name="activity.repeat.edit.choose" />
+            <T key-name="activity.repeat.delete.choose" />
             <div>
                 <input
                     v-if="!singleVisible"
@@ -165,10 +165,10 @@ const post = () => {
                     </button>
                 </div>
                 <button
-                    class="mt-auto flex items-center justify-center rounded-md border-[3px] border-dandelion-300 bg-natural-50 px-8 py-0.5 text-center text-base font-semibold hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
+                    class="mt-auto flex items-center justify-center rounded-md border-[3px] border-mahagony-500 bg-natural-50 px-8 py-0.5 text-center text-base font-semibold hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-mahagony-500030"
                     @click="post"
                 >
-                    <T key-name="common.edit" />
+                    <T key-name="activity.delete" />
                 </button>
             </div>
         </div>

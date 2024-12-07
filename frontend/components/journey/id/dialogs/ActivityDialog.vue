@@ -39,6 +39,7 @@ const props = defineProps({
 
 console.log(props.propRepeatType);
 
+const noSingle = ref(false);
 const onlyShowRef = ref(props.onlyShow);
 const updateRef = ref(props.update);
 const calendarClickedRef = ref(props.calendarClicked);
@@ -234,6 +235,14 @@ const { handleSubmit } = useForm<ActivityForm>({
 const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 async function onSuccess(values: ActivityForm) {
     if (props.calendarClicked) {
+        if (
+            props.propRepeatType != repeatType.value &&
+            repeatType.value != null
+        ) {
+            noSingle.value = true;
+        } else {
+            noSingle.value = false;
+        }
         isRecurringActivityEditVisible.value = true;
         value.value = values;
     } else {
@@ -249,6 +258,7 @@ function call(editOption: string) {
 }
 
 async function editActivity(values: ActivityForm) {
+    noSingle.value = false;
     const durationDate = new Date(values.duration);
     const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}:00`;
 
@@ -351,7 +361,6 @@ async function editActivity(values: ActivityForm) {
                     close();
                     loadingSave.value = false;
                     activityStore.updateActivity(response._data);
-                    activityStore.setNewActivity(response._data);
                     if (props.calendarActivity) {
                         console.log(props.calendarActivity);
                         console.log(response._data);
@@ -399,6 +408,8 @@ async function editActivity(values: ActivityForm) {
                     close();
                     loadingSave.value = false;
                     activityStore.addActivity(response._data);
+                    const activites = [] as Activity[];
+                    activites.push(...response._data);
                     activityStore.setNewActivity(response._data);
                 }
             },
@@ -767,6 +778,7 @@ function changeCustomRepeat(
                     </div>
                     <FormActivityRepeatEditType
                         :visible="isRecurringActivityEditVisible"
+                        :no-single="noSingle"
                         @close="isRecurringActivityEditVisible = false"
                         @post="call"
                     />
