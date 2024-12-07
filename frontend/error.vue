@@ -21,33 +21,35 @@ async function clear(target) {
                         <button
                             class="-ml-6 place-self-start md:-ml-0"
                             data-test="error-logo-to-startpage"
-                            @click="clear('/')"
+                            @click="clear('/dashboard')"
                         >
                             <SvgLogoHorizontalBlue class="w-44 lg:w-52" />
                         </button>
                         <h1
-                            class="mt-8 text-7xl font-bold text-calypso-600 dark:text-calypso-400 md:mt-14 md:text-9xl"
+                            class="mt-8 text-7xl font-bold text-calypso-600 dark:text-calypso-400 md:mt-14 md:text-8xl"
                         >
                             {{ error.statusCode }}
                         </h1>
-                        <h2 class="mt-3 text-3xl font-bold md:mt-5 md:text-4xl">
+                        <h2
+                            class="mt-3 text-3xl font-semibold max-md:text-center md:mt-5 md:text-4xl"
+                        >
                             {{ error.message }}
                         </h2>
-                        <p class="mt-3 text-lg md:mt-5 md:text-xl">
+                        <p class="mt-3 text-base md:mt-5 md:text-lg">
                             <T key-name="error.information" />
                         </p>
                         <h3
-                            class="mb-1.5 mt-5 place-self-start text-xl font-semibold md:text-3xl"
+                            class="mb-1.5 mt-5 place-self-start text-lg font-semibold md:mt-12 md:text-xl"
                         >
                             <T key-name="error.what.todo" />
                         </h3>
                         <ol
-                            class="ml-5 mt-1 list-outside list-disc space-y-1.5 pl-1.5 text-lg md:pl-3 md:text-xl"
+                            class="ml-5 mt-1 list-outside list-disc space-y-1.5 pl-1.5 text-base md:pl-3 md:text-lg"
                         >
                             <li>
                                 <button
                                     data-test="error-back-button"
-                                    class="text-calypso-500 hover:underline dark:text-calypso-300"
+                                    class="text-calypso-600 hover:underline dark:text-calypso-300"
                                     @click="clear('/')"
                                 >
                                     <T key-name="common.back" />
@@ -57,7 +59,7 @@ async function clear(target) {
                             <li>
                                 <button
                                     data-test="error-create-journey-button"
-                                    class="text-calypso-500 hover:underline dark:text-calypso-300"
+                                    class="text-calypso-600 hover:underline dark:text-calypso-300"
                                     @click="clear('/journey/new')"
                                 >
                                     <T
@@ -70,7 +72,7 @@ async function clear(target) {
                                 <NuxtLink
                                     data-test="error-mail-link"
                                     to="mailto:contact@journeyplanner.io"
-                                    class="text-calypso-500 hover:underline dark:text-calypso-300"
+                                    class="text-calypso-600 hover:underline dark:text-calypso-300"
                                 >
                                     <T key-name="error.contact.link" />
                                 </NuxtLink>
@@ -81,7 +83,7 @@ async function clear(target) {
                                     data-test="error-github-issue-link"
                                     to="https://github.com/JourneyPlanner/JourneyPlanner/issues/new/choose"
                                     target="_blank"
-                                    class="text-calypso-500 hover:underline dark:text-calypso-300"
+                                    class="text-calypso-600 hover:underline dark:text-calypso-300"
                                 >
                                     <T key-name="error.github.link" />
                                 </NuxtLink>
