@@ -16,7 +16,7 @@ const { t } = useTranslate();
 
 const isVisible = ref(props.visible);
 const created_at = ref({ day: NaN, month: NaN, year: NaN });
-const templates = ref<Template[]>();
+const templates = ref<Template[]>([]);
 const openedTemplate = ref<Template>();
 const isTemplatePopupVisible = ref(false);
 

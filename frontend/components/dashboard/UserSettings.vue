@@ -11,6 +11,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["close"]);
 
+const nuxtApp = useNuxtApp();
 const isVisible = ref(props.visible);
 const { t } = useTranslate();
 const colorScheme = ref("");
@@ -75,7 +76,11 @@ onMounted(() => {
 });
 
 const { data: requiresPassword, refresh: refreshRequiresPassword } =
-    await useAsyncData("reqpw", () => client(`/api/me/requiresPassword`));
+    await useAsyncData("reqpw", () => client(`/api/me/requiresPassword`), {
+        getCachedData(key) {
+            return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+        },
+    });
 
 const close = () => {
     emit("close");

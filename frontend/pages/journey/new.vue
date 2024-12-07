@@ -9,7 +9,7 @@ const { t } = useTranslate();
 const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 const toast = useToast();
-const store = useDashboardStore();
+const store = useJourneysStore();
 
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());

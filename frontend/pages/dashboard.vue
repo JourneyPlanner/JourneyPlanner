@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useDashboardStore } from "@/stores/dashboard";
 import { useTranslate } from "@tolgee/vue";
 import { compareAsc, compareDesc } from "date-fns";
 import debounce from "~/utils/debounce";
@@ -11,10 +10,11 @@ definePageMeta({
 const { t } = useTranslate();
 const router = useRouter();
 const route = useRoute();
-const store = useDashboardStore();
+const journeysStore = useJourneysStore();
+const templatesStore = useTemplateStore();
 const client = useSanctumClient();
 const toast = useToast();
-
+const nuxtApp = useNuxtApp();
 const colorMode = useColorMode();
 
 const searchInput = ref();
@@ -27,7 +27,7 @@ const items = ref();
 //journeys
 const journeys = ref<Journey[]>([]);
 const currentJourneys = ref<Journey[]>([]);
-currentJourneys.value = store.journeys;
+currentJourneys.value = journeysStore.journeys;
 
 //user settings
 const user = ref();
@@ -40,21 +40,28 @@ const isFilterVisible = ref<boolean>(route.query.filter_open === "true");
 const filterDialog = ref<HTMLElement>();
 const usernames = ref<string[]>([]);
 const templates = ref<Template[]>([]);
-const moreTemplatesAvailable = ref<boolean>(true);
-const TEMPLATE_MAX_LENGTH = 31;
-const templateJourneyLengthMinMax = ref<Array<number>>([
-    1,
-    TEMPLATE_MAX_LENGTH,
-]);
-const sortby = ref("");
-const sortorder = ref("");
-const templateDestinationInput = ref("");
-const templateDestinationName = ref("");
-const templateCreator = ref("");
-const cursor = ref<string | null>(null);
-const nextCursor = ref<string | null>(null);
 const observer = ref<IntersectionObserver>();
 const loader = ref<HTMLElement | undefined>();
+
+const filters = reactive({
+    TEMPLATE_MAX_LENGTH: templatesStore.getFilter("TEMPLATE_MAX_LENGTH"),
+    PER_PAGE: templatesStore.getFilter("PER_PAGE"),
+    moreTemplatesAvailable: templatesStore.getFilter("moreTemplatesAvailable"),
+    templateJourneyLengthMinMax: templatesStore.getFilter(
+        "templateJourneyLengthMinMax",
+    ),
+    sortby: templatesStore.getFilter("sortby"),
+    sortorder: templatesStore.getFilter("sortorder"),
+    templateDestinationInput: templatesStore.getFilter(
+        "templateDestinationInput",
+    ),
+    templateDestinationName: templatesStore.getFilter(
+        "templateDestinationName",
+    ),
+    templateCreator: templatesStore.getFilter("templateCreator"),
+    cursor: templatesStore.getFilter("cursor"),
+    nextCursor: templatesStore.getFilter("nextCursor"),
+});
 
 const borderColor = ref();
 const borderColorFocus = ref();
@@ -145,10 +152,10 @@ onMounted(() => {
                     const target = entries[0];
                     if (target.isIntersecting) {
                         if (
-                            moreTemplatesAvailable.value &&
+                            filters.moreTemplatesAvailable &&
                             !isFilterVisible.value
                         ) {
-                            cursor.value = nextCursor.value;
+                            filters.cursor = filters.nextCursor;
                             refresh();
                         }
                     }
@@ -171,8 +178,8 @@ onMounted(() => {
                                 ),
                                 icon: "pi pi-sort-amount-up",
                                 command: () => {
-                                    sortby.value = "length";
-                                    sortorder.value = "asc";
+                                    filters.sortby.value = "length";
+                                    filters.sortorder.value = "asc";
                                     refreshTemplates();
                                 },
                             },
@@ -182,8 +189,8 @@ onMounted(() => {
                                 ),
                                 icon: "pi pi-sort-amount-down",
                                 command: () => {
-                                    sortby.value = "length";
-                                    sortorder.value = "desc";
+                                    filters.sortby.value = "length";
+                                    filters.sortorder.value = "desc";
                                     refreshTemplates();
                                 },
                             },
@@ -197,8 +204,8 @@ onMounted(() => {
                                 label: t.value("dashboard.sort.ascending"),
                                 icon: "pi pi-sort-alpha-up",
                                 command: () => {
-                                    sortby.value = "name";
-                                    sortorder.value = "asc";
+                                    filters.sortby.value = "name";
+                                    filters.sortorder.value = "asc";
                                     refreshTemplates();
                                 },
                             },
@@ -206,8 +213,8 @@ onMounted(() => {
                                 label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-down",
                                 command: () => {
-                                    sortby.value = "name";
-                                    sortorder.value = "desc";
+                                    filters.sortby.value = "name";
+                                    filters.sortorder.value = "desc";
                                     refreshTemplates();
                                 },
                             },
@@ -221,8 +228,8 @@ onMounted(() => {
                                 label: t.value("dashboard.sort.ascending"),
                                 icon: "pi pi-sort-alpha-up",
                                 command: () => {
-                                    sortby.value = "destination";
-                                    sortorder.value = "asc";
+                                    filters.sortby.value = "destination";
+                                    filters.sortorder.value = "asc";
                                     refreshTemplates();
                                 },
                             },
@@ -230,8 +237,8 @@ onMounted(() => {
                                 label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-down",
                                 command: () => {
-                                    sortby.value = "destination";
-                                    sortorder.value = "desc";
+                                    filters.sortby.value = "destination";
+                                    filters.sortorder.value = "desc";
                                     refreshTemplates();
                                 },
                             },
@@ -310,18 +317,26 @@ onMounted(() => {
         { immediate: true },
     );
 
-    watch(templateJourneyLengthMinMax, () => {
+    watch(filters.templateJourneyLengthMinMax, () => {
         let temp;
         if (
-            templateJourneyLengthMinMax.value[0] >
-            templateJourneyLengthMinMax.value[1]
+            filters.templateJourneyLengthMinMax.value[0] >
+            filters.templateJourneyLengthMinMax.value[1]
         ) {
-            temp = templateJourneyLengthMinMax.value[0];
-            templateJourneyLengthMinMax.value[0] =
-                templateJourneyLengthMinMax.value[1];
-            templateJourneyLengthMinMax.value[1] = temp;
+            temp = filters.templateJourneyLengthMinMax.value[0];
+            filters.templateJourneyLengthMinMax.value[0] =
+                filters.templateJourneyLengthMinMax.value[1];
+            filters.templateJourneyLengthMinMax.value[1] = temp;
         }
     });
+
+    watch(
+        filters,
+        () => {
+            templatesStore.setFilters(filters);
+        },
+        { deep: true },
+    );
 
     watch(
         () => colorMode.preference,
@@ -344,10 +359,31 @@ const {
     data: templateDataDashboard,
     refresh,
     status,
-} = await useAsyncData("templates", () =>
-    client(
-        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=40&template_name=${searchValue.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_journey_length_max_const=${TEMPLATE_MAX_LENGTH}&template_destination_input=${templateDestinationInput.value}&template_destination_name=${templateDestinationName.value}&template_creator=${templateCreator.value}&cursor=${cursor.value}`,
-    ),
+} = await useAsyncData(
+    "templates",
+    () =>
+        client(`/api/template`, {
+            params: {
+                sort_by: filters.sortby,
+                order: filters.sortorder,
+                template_name: searchValue.value,
+                template_journey_length_min:
+                    filters.templateJourneyLengthMinMax[0],
+                template_journey_length_max:
+                    filters.templateJourneyLengthMinMax[1],
+                template_journey_length_max_const: filters.TEMPLATE_MAX_LENGTH,
+                template_destination_input: filters.templateDestinationInput,
+                template_destination_name: filters.templateDestinationName,
+                template_creator: filters.templateCreator,
+                cursor: filters.cursor,
+                per_page: filters.PER_PAGE,
+            },
+        }),
+    {
+        getCachedData(key) {
+            return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+        },
+    },
 );
 
 watch(
@@ -357,10 +393,10 @@ watch(
             templates.value.push(...templateDataDashboard.value.data);
 
             if (templateDataDashboard.value.next_cursor === null) {
-                moreTemplatesAvailable.value = false;
+                filters.moreTemplatesAvailable = false;
             } else {
-                nextCursor.value = templateDataDashboard.value.next_cursor;
-                moreTemplatesAvailable.value = true;
+                filters.nextCursor = templateDataDashboard.value.next_cursor;
+                filters.moreTemplatesAvailable = true;
             }
         }
     },
@@ -369,9 +405,9 @@ watch(
 
 const refreshTemplates = () => {
     templates.value = [];
-    cursor.value = null;
-    nextCursor.value = null;
-    moreTemplatesAvailable.value = true;
+    filters.cursor = null;
+    filters.nextCursor = null;
+    filters.moreTemplatesAvailable = true;
     refresh();
 };
 
@@ -406,7 +442,7 @@ const closeFilterWhenOutsideClick = (event: MouseEvent) => {
 const openTemplateDialog = (template: Template) => {
     openedTemplate.value = template;
     isTemplatePopupVisible.value = true;
-    router.replace({
+    router.push({
         query: {
             tab: "templates",
             id: template ? template.id : null,
@@ -433,11 +469,12 @@ const searchTemplate = debounce(() => {
 
 const isFiltered = computed(() => {
     return (
-        templateJourneyLengthMinMax.value[0] !== 1 ||
-        templateJourneyLengthMinMax.value[1] !== TEMPLATE_MAX_LENGTH ||
-        templateDestinationInput.value !== "" ||
-        templateDestinationName.value !== "" ||
-        templateCreator.value !== ""
+        filters.templateJourneyLengthMinMax[0] !== 1 ||
+        filters.templateJourneyLengthMinMax[1] !==
+            filters.TEMPLATE_MAX_LENGTH ||
+        filters.templateDestinationInput !== "" ||
+        filters.templateDestinationName !== "" ||
+        filters.templateCreator !== ""
     );
 });
 
@@ -445,10 +482,7 @@ const isFiltered = computed(() => {
  * clear template filters
  */
 function clearFilters() {
-    templateJourneyLengthMinMax.value = [1, TEMPLATE_MAX_LENGTH];
-    templateDestinationInput.value = "";
-    templateDestinationName.value = "";
-    templateCreator.value = "";
+    Object.assign(filters, templatesStore.resetFilters());
     searchValue.value = "";
     refreshTemplates();
 }
@@ -457,7 +491,7 @@ function clearFilters() {
  * get username(s) for AutoComplete for created by template filter
  */
 function getUser() {
-    client(`/api/user?search=${templateCreator.value}&per_page=25`).then(
+    client(`/api/user?search=${filters.templateCreator}&per_page=25`).then(
         (res) => {
             usernames.value = res.data.map((user: User) => user.username);
         },
@@ -472,13 +506,13 @@ const filterTemplateCreator = debounce(() => {
 });
 
 const changeAddress = debounce((inputValue: unknown) => {
-    templateDestinationInput.value = inputValue as string;
+    filters.templateDestinationInput = inputValue as string;
     refreshTemplates();
 });
 
 function retrievedAddress(inputValue: string, name: string) {
-    templateDestinationInput.value = inputValue;
-    templateDestinationName.value = name;
+    filters.templateDestinationInput = inputValue;
+    filters.templateDestinationName = name;
     refreshTemplates();
 }
 
@@ -487,13 +521,23 @@ Fetches all journeys from the backend
 stores response in journeys and currentJourneys
 also sets journeys in the store
 */
-const { data } = await useAsyncData("journeys", () => client("/api/journey"));
+const { data } = await useAsyncData("journeys", () => client("/api/journey"), {
+    getCachedData(key) {
+        return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+    },
+});
 journeys.value = data.value;
 currentJourneys.value = data.value;
-store.setJourneys(data.value);
+journeysStore.setJourneys(data.value);
 
-const { data: currUser } = await useAsyncData("currUser", () =>
-    client(`/api/me`),
+const { data: currUser } = await useAsyncData(
+    "currUserDashboard",
+    () => client(`/api/me`),
+    {
+        getCachedData(key) {
+            return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+        },
+    },
 );
 
 user.value = currUser.value;
@@ -858,10 +902,12 @@ function editJourney(journey: Journey, id: string) {
                             </div>
                             <div class="mt-3 px-1">
                                 <Slider
-                                    v-model="templateJourneyLengthMinMax"
+                                    v-model="
+                                        filters.templateJourneyLengthMinMax
+                                    "
                                     range
                                     :min="1"
-                                    :max="TEMPLATE_MAX_LENGTH"
+                                    :max="filters.TEMPLATE_MAX_LENGTH"
                                     class="w-full"
                                     :pt="{
                                         root: 'bg-natural-200 dark:bg-natural-300',
@@ -876,19 +922,26 @@ function editJourney(journey: Journey, id: string) {
                                     class="-px-1 mt-2.5 flex justify-between text-natural-500 dark:text-natural-300"
                                 >
                                     <span>1</span>
-                                    <span>{{ TEMPLATE_MAX_LENGTH }}+</span>
+                                    <span
+                                        >{{
+                                            filters.TEMPLATE_MAX_LENGTH
+                                        }}+</span
+                                    >
                                 </div>
                                 <div class="mt-1 flex flex-row gap-x-3">
                                     <T
                                         key-name="dashboard.template.filter.length.from"
                                     />
                                     <InputNumber
-                                        v-model="templateJourneyLengthMinMax[0]"
+                                        v-model="
+                                            filters
+                                                .templateJourneyLengthMinMax[0]
+                                        "
                                         data-test="templates-filter-length-min"
                                         input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                         input-id="min"
                                         :min="1"
-                                        :max="TEMPLATE_MAX_LENGTH"
+                                        :max="filters.TEMPLATE_MAX_LENGTH"
                                         :allow-empty="false"
                                         @input="refreshTemplates()"
                                     />
@@ -896,12 +949,15 @@ function editJourney(journey: Journey, id: string) {
                                         key-name="dashboard.template.filter.length.to"
                                     />
                                     <InputNumber
-                                        v-model="templateJourneyLengthMinMax[1]"
+                                        v-model="
+                                            filters
+                                                .templateJourneyLengthMinMax[1]
+                                        "
                                         data-test="templates-filter-length-max"
                                         input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                         input-id="max"
                                         :min="1"
-                                        :max="TEMPLATE_MAX_LENGTH"
+                                        :max="filters.TEMPLATE_MAX_LENGTH"
                                         :allow-empty="false"
                                         @input="refreshTemplates()"
                                     />
@@ -931,7 +987,7 @@ function editJourney(journey: Journey, id: string) {
                                 id="template-destination"
                                 name="destination"
                                 data-test="templates-filter-destination"
-                                :value="templateDestinationInput"
+                                :value="filters.templateDestinationInput"
                                 :custom-class="`.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor} !important; background-color: ${backgroundColor} !important; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none; border: solid 2px ${borderColorFocus} !important;}`"
                                 @change-address="changeAddress"
                                 @retrieved-address="retrievedAddress"
@@ -956,7 +1012,7 @@ function editJourney(journey: Journey, id: string) {
                                 />
                             </p>
                             <AutoComplete
-                                v-model="templateCreator"
+                                v-model="filters.templateCreator"
                                 data-test="templates-filter-creator"
                                 input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem]"
                                 :pt="{
@@ -991,7 +1047,7 @@ function editJourney(journey: Journey, id: string) {
                 </div>
                 <div ref="loader">
                     <div
-                        v-if="moreTemplatesAvailable"
+                        v-if="filters.moreTemplatesAvailable"
                         data-test="templates-loading"
                     >
                         <div class="flex justify-center">
@@ -1003,7 +1059,7 @@ function editJourney(journey: Journey, id: string) {
                     </div>
                 </div>
                 <div
-                    v-if="!moreTemplatesAvailable"
+                    v-if="!filters.moreTemplatesAvailable"
                     class="mt-5 flex w-full flex-col justify-center gap-x-2 text-center sm:flex sm:flex-row sm:text-left"
                 >
                     <T key-name="dashboard.templates.nomoretemplates" />
@@ -1168,10 +1224,10 @@ function editJourney(journey: Journey, id: string) {
                         </div>
                         <div class="mt-3 px-1">
                             <Slider
-                                v-model="templateJourneyLengthMinMax"
+                                v-model="filters.templateJourneyLengthMinMax"
                                 range
                                 :min="1"
-                                :max="TEMPLATE_MAX_LENGTH"
+                                :max="filters.TEMPLATE_MAX_LENGTH"
                                 class="w-full"
                                 :pt="{
                                     root: 'bg-natural-200 dark:bg-natural-300',
@@ -1186,19 +1242,21 @@ function editJourney(journey: Journey, id: string) {
                                 class="-px-1 mt-2.5 flex justify-between text-natural-500 dark:text-natural-300"
                             >
                                 <span>1</span>
-                                <span>{{ TEMPLATE_MAX_LENGTH }}+</span>
+                                <span>{{ filters.TEMPLATE_MAX_LENGTH }}+</span>
                             </div>
                             <div class="mt-1 flex flex-row gap-x-3">
                                 <T
                                     key-name="dashboard.template.filter.length.from"
                                 />
                                 <InputNumber
-                                    v-model="templateJourneyLengthMinMax[0]"
+                                    v-model="
+                                        filters.templateJourneyLengthMinMax[0]
+                                    "
                                     data-test="templates-filter-length-min-drawer"
                                     input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                     input-id="min"
                                     :min="1"
-                                    :max="TEMPLATE_MAX_LENGTH"
+                                    :max="filters.TEMPLATE_MAX_LENGTH"
                                     :allow-empty="false"
                                     @input="refreshTemplates()"
                                 />
@@ -1206,12 +1264,14 @@ function editJourney(journey: Journey, id: string) {
                                     key-name="dashboard.template.filter.length.to"
                                 />
                                 <InputNumber
-                                    v-model="templateJourneyLengthMinMax[1]"
+                                    v-model="
+                                        filters.templateJourneyLengthMinMax[1]
+                                    "
                                     data-test="templates-filter-length-max-drawer"
                                     input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                     input-id="max"
                                     :min="1"
-                                    :max="TEMPLATE_MAX_LENGTH"
+                                    :max="filters.TEMPLATE_MAX_LENGTH"
                                     :allow-empty="false"
                                     @input="refreshTemplates()"
                                 />
@@ -1257,7 +1317,7 @@ function editJourney(journey: Journey, id: string) {
                         </p>
                         <AutoComplete
                             ref="creator"
-                            v-model="templateCreator"
+                            v-model="filters.templateCreator"
                             data-test="templates-filter-creator-drawer"
                             input-class="bg-natural-50 w-full dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem]"
                             :pt="{
