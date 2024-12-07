@@ -1354,7 +1354,7 @@ function editJourney(journey: Journey, id: string) {
             </Sidebar>
             <TemplatePopup
                 v-if="openedTemplate"
-                :template="openedTemplate!"
+                :template="openedTemplate"
                 :is-template-dialog-visible="isTemplatePopupVisible"
                 @close="closeTemplateDialog()"
             />

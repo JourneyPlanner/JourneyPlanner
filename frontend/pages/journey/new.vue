@@ -362,7 +362,7 @@ function retrievedAddress(inputValue: string, name: string) {
         <div id="dialogs" class="z-30">
             <TemplatePopup
                 v-if="openedTemplate"
-                :template="openedTemplate!"
+                :template="openedTemplate"
                 :is-template-dialog-visible="isTemplatePopupVisible"
                 @close="
                     isTemplatePopupVisible = false;
