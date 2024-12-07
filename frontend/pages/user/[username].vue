@@ -10,6 +10,11 @@ const toast = useToast();
 const username = ref(route.params.username);
 const displayname = ref("");
 
+const MAX_FIRST_TEMPLATES = {
+    MOBILE: 4,
+    DESKTOP: 8,
+};
+
 const { data, error } = await useAsyncData("user", () =>
     client(`/api/user/${username.value}`),
 );
@@ -46,13 +51,13 @@ const toggleTextShort = ref(t.value("profile.showMore.short"));
 const allowedRoutes = ["/journey", "/dashboard?tab=templates"];
 const isCloseIcon = ref(false);
 const templates = ref<Template[]>([]);
-const openedTemplate = ref();
-const isTemplatePopupVisible = ref(false);
+const openedTemplate = ref<Template | undefined>();
+const isTemplatePopupVisible = ref<boolean>(false);
 const moreTemplatesAvailable = ref<boolean>(true);
 const cursor = ref<string | null>(null);
 const nextCursor = ref<string | null>(null);
 const observer = ref<IntersectionObserver>();
-const loader = ref();
+const loader = ref<HTMLElement | undefined>();
 
 onMounted(async () => {
     const lastRoute = router.options.history.state.back as string;
@@ -170,6 +175,19 @@ watch(showMore, () => {
     }
 });
 
+const firstEightTemplates = computed(() =>
+    templates.value.slice(0, MAX_FIRST_TEMPLATES.DESKTOP),
+);
+const firstFourTemplates = computed(() =>
+    templates.value.slice(0, MAX_FIRST_TEMPLATES.MOBILE),
+);
+const remainingTemplatesDesktop = computed(() =>
+    templates.value.slice(MAX_FIRST_TEMPLATES.DESKTOP),
+);
+const remainingTemplatesMobile = computed(() =>
+    templates.value.slice(MAX_FIRST_TEMPLATES.MOBILE),
+);
+
 const toggle = () => {
     showMore.value = !showMore.value;
     toggleText.value = showMore.value
@@ -192,6 +210,11 @@ const navigateBack = () => {
     } else {
         router.push("/dashboard");
     }
+};
+
+const openTemplateDialog = (template: Template) => {
+    openedTemplate.value = template;
+    isTemplatePopupVisible.value = true;
 };
 </script>
 
@@ -255,35 +278,29 @@ const navigateBack = () => {
                     class="relative mt-2 grid grid-cols-2 gap-5 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6"
                 >
                     <TemplateCard
-                        v-for="template in templates.slice(0, 8)"
+                        v-for="template in firstEightTemplates"
                         :key="template.id"
                         class="hidden md:block"
                         :template="template"
                         :displayed-in-profile="true"
-                        @open-template="
-                            openedTemplate = template;
-                            isTemplatePopupVisible = true;
-                        "
+                        @open-template="openTemplateDialog(template)"
                     />
                     <TemplateCardSmall
-                        v-for="template in templates.slice(0, 4)"
+                        v-for="template in firstFourTemplates"
                         :key="template.id"
                         class="md:hidden"
                         :template="template"
                         :displayed-in-profile="true"
-                        @open-template="
-                            openedTemplate = template;
-                            isTemplatePopupVisible = true;
-                        "
+                        @open-template="openTemplateDialog(template)"
                     />
                     <div
-                        v-if="templates.slice(0, 8).length === 0"
+                        v-if="firstEightTemplates.length === 0"
                         class="col-span-full hidden md:block"
                     >
                         <T key-name="template.none" />
                     </div>
                     <div
-                        v-if="templates.slice(0, 4).length === 0"
+                        v-if="firstFourTemplates.length === 0"
                         class="col-span-full md:hidden"
                     >
                         <T key-name="template.none" />
@@ -296,25 +313,19 @@ const navigateBack = () => {
                     class="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6"
                 >
                     <TemplateCard
-                        v-for="template in templates.slice(8)"
+                        v-for="template in remainingTemplatesDesktop"
                         :key="template.id"
                         class="hidden md:block"
                         :template="template"
-                        @open-template="
-                            openedTemplate = template;
-                            isTemplatePopupVisible = true;
-                        "
+                        @open-template="openTemplateDialog(template)"
                     />
                     <TemplateCardSmall
-                        v-for="template in templates.slice(4)"
+                        v-for="template in remainingTemplatesMobile"
                         :key="template.id"
                         class="md:hidden"
                         :template="template"
                         :displayed-in-profile="true"
-                        @open-template="
-                            openedTemplate = template;
-                            isTemplatePopupVisible = true;
-                        "
+                        @open-template="openTemplateDialog(template)"
                     />
                 </div>
                 <div ref="loader" class="col-span-full">
@@ -328,7 +339,7 @@ const navigateBack = () => {
                     </div>
                 </div>
                 <div
-                    v-if="templates.slice(8).length > 0"
+                    v-if="remainingTemplatesDesktop.length > 0"
                     class="mt-4 flex justify-center max-md:hidden"
                 >
                     <button
@@ -347,7 +358,7 @@ const navigateBack = () => {
                     </button>
                 </div>
                 <div
-                    v-if="templates.slice(4).length > 0"
+                    v-if="remainingTemplatesMobile.length > 0"
                     class="mt-4 flex justify-center md:hidden"
                 >
                     <button
@@ -374,7 +385,7 @@ const navigateBack = () => {
                 :is-template-dialog-visible="isTemplatePopupVisible"
                 @close="
                     isTemplatePopupVisible = false;
-                    openedTemplate = null;
+                    openedTemplate = undefined;
                 "
             />
         </div>

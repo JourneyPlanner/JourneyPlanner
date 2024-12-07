@@ -5,6 +5,7 @@ const router = useRouter();
 const activityStore = useActivityStore();
 const journeyStore = useJourneyStore();
 const client = useSanctumClient();
+const { isAuthenticated } = useSanctumAuth();
 
 const templateID = route.params.id;
 const activityDataLoaded = ref(false);
@@ -15,10 +16,16 @@ const backRoute = ref("/dashboard?tab=templates");
 onMounted(() => {
     const lastRoute = router.options.history.state.back as string;
 
-    if (lastRoute === "/dashboard?tab=templates" || lastRoute === null) {
+    if (
+        lastRoute.startsWith("/dashboard?tab=templates") &&
+        isAuthenticated.value
+    ) {
         backTolgeeKey.value = "template.back.to.templates";
-        backRoute.value = "/dashboard?tab=templates";
-    } else if (lastRoute === "/journey/new") {
+        backRoute.value = lastRoute;
+    } else if (lastRoute.startsWith("/journey/new") && !isAuthenticated.value) {
+        backTolgeeKey.value = "template.back.to.new.journey";
+        backRoute.value = lastRoute;
+    } else if (!isAuthenticated.value) {
         backTolgeeKey.value = "template.back.to.new.journey";
         backRoute.value = "/journey/new";
     } else {
@@ -67,17 +74,24 @@ useHead({
     <div class="flex flex-col font-nunito text-text dark:text-natural-50">
         <div
             id="header"
-            class="mt-5 flex w-full items-center justify-between font-semibold"
+            class="mt-5 flex w-full items-center justify-between font-semibold md:mt-3"
         >
             <NuxtLink
                 :to="backRoute"
                 class="group flex items-center sm:ml-1 md:ml-2"
             >
                 <i class="pi pi-angle-left text-2xl" />
-                <p class="hidden text-2xl group-hover:underline sm:block">
+                <span
+                    class="ml-1.5 mt-0.5 text-xl group-hover:underline md:text-2xl"
+                >
                     <T :key-name="backTolgeeKey" />
-                </p>
+                </span>
             </NuxtLink>
+            <button
+                class="ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:text-base"
+            >
+                <T key-name="template.use" />
+            </button>
         </div>
         <JourneyIdTicketSection
             :daysto-end="-1"
@@ -125,6 +139,12 @@ useHead({
             />
         </div>
         <JourneyIdActivityMap v-if="activityDataLoaded" />
-        <div id="extra-dialogs" />
+        <div class="my-5 flex justify-center">
+            <button
+                class="ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:text-base"
+            >
+                <T key-name="template.use" />
+            </button>
+        </div>
     </div>
 </template>

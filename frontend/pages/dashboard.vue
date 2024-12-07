@@ -20,7 +20,7 @@ const colorMode = useColorMode();
 const searchInput = ref();
 const searchInputMobile = ref();
 const searchValue = ref<string>("");
-const tabIndex = ref(0);
+const tabIndex = ref<number>(0);
 const menu = ref();
 const items = ref();
 
@@ -31,7 +31,7 @@ currentJourneys.value = store.journeys;
 
 //user settings
 const user = ref();
-const isUserSettingsVisible = ref(false);
+const isUserSettingsVisible = ref<boolean>(false);
 
 //templates
 const openedTemplate = ref<Template>();
@@ -41,8 +41,11 @@ const filterDialog = ref<HTMLElement>();
 const usernames = ref<string[]>([]);
 const templates = ref<Template[]>([]);
 const moreTemplatesAvailable = ref<boolean>(true);
-const templateMaxLength = 31;
-const templateJourneyLengthMinMax = ref<Array<number>>([1, templateMaxLength]);
+const TEMPLATE_MAX_LENGTH = 31;
+const templateJourneyLengthMinMax = ref<Array<number>>([
+    1,
+    TEMPLATE_MAX_LENGTH,
+]);
 const sortby = ref("");
 const sortorder = ref("");
 const templateDestinationInput = ref("");
@@ -51,7 +54,7 @@ const templateCreator = ref("");
 const cursor = ref<string | null>(null);
 const nextCursor = ref<string | null>(null);
 const observer = ref<IntersectionObserver>();
-const loader = ref();
+const loader = ref<HTMLElement | undefined>();
 
 const borderColor = ref();
 const borderColorFocus = ref();
@@ -307,23 +310,6 @@ onMounted(() => {
         { immediate: true },
     );
 
-    watch(isTemplatePopupVisible, (value) => {
-        if (value) {
-            router.push({
-                query: {
-                    tab: "templates",
-                    id: openedTemplate.value ? openedTemplate.value.id : null,
-                },
-            });
-        } else {
-            router.push({
-                query: {
-                    tab: "templates",
-                },
-            });
-        }
-    });
-
     watch(templateJourneyLengthMinMax, () => {
         let temp;
         if (
@@ -360,7 +346,7 @@ const {
     status,
 } = await useAsyncData("templates", () =>
     client(
-        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=40&template_name=${searchValue.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_journey_length_max_const=${templateMaxLength}&template_destination_input=${templateDestinationInput.value}&template_destination_name=${templateDestinationName.value}&template_creator=${templateCreator.value}&cursor=${cursor.value}`,
+        `/api/template?sort_by=${sortby.value}&order=${sortorder.value}&per_page=40&template_name=${searchValue.value}&template_journey_length_min=${templateJourneyLengthMinMax.value[0]}&template_journey_length_max=${templateJourneyLengthMinMax.value[1]}&template_journey_length_max_const=${TEMPLATE_MAX_LENGTH}&template_destination_input=${templateDestinationInput.value}&template_destination_name=${templateDestinationName.value}&template_creator=${templateCreator.value}&cursor=${cursor.value}`,
     ),
 );
 
@@ -417,6 +403,27 @@ const closeFilterWhenOutsideClick = (event: MouseEvent) => {
     }
 };
 
+const openTemplateDialog = (template: Template) => {
+    openedTemplate.value = template;
+    isTemplatePopupVisible.value = true;
+    router.replace({
+        query: {
+            tab: "templates",
+            id: template ? template.id : null,
+        },
+    });
+};
+
+const closeTemplateDialog = () => {
+    isTemplatePopupVisible.value = false;
+    openedTemplate.value = undefined;
+    router.push({
+        query: {
+            tab: "templates",
+        },
+    });
+};
+
 /**
  * debounce search input to prevent too many requests
  */
@@ -427,7 +434,7 @@ const searchTemplate = debounce(() => {
 const isFiltered = computed(() => {
     return (
         templateJourneyLengthMinMax.value[0] !== 1 ||
-        templateJourneyLengthMinMax.value[1] !== templateMaxLength ||
+        templateJourneyLengthMinMax.value[1] !== TEMPLATE_MAX_LENGTH ||
         templateDestinationInput.value !== "" ||
         templateDestinationName.value !== "" ||
         templateCreator.value !== ""
@@ -438,7 +445,7 @@ const isFiltered = computed(() => {
  * clear template filters
  */
 function clearFilters() {
-    templateJourneyLengthMinMax.value = [1, templateMaxLength];
+    templateJourneyLengthMinMax.value = [1, TEMPLATE_MAX_LENGTH];
     templateDestinationInput.value = "";
     templateDestinationName.value = "";
     templateCreator.value = "";
@@ -801,10 +808,7 @@ function editJourney(journey: Journey, id: string) {
                         "
                         :template="template"
                         :data-test="'template-' + template.id"
-                        @open-template="
-                            openedTemplate = template;
-                            isTemplatePopupVisible = true;
-                        "
+                        @open-template="openTemplateDialog(template)"
                     />
                     <TemplateCardSmall
                         v-for="template in templates"
@@ -817,10 +821,7 @@ function editJourney(journey: Journey, id: string) {
                         "
                         :template="template"
                         :data-test="'small-template-' + template.id"
-                        @open-template="
-                            openedTemplate = template;
-                            isTemplatePopupVisible = true;
-                        "
+                        @open-template="openTemplateDialog(template)"
                     />
                     <h4
                         v-if="
@@ -860,7 +861,7 @@ function editJourney(journey: Journey, id: string) {
                                     v-model="templateJourneyLengthMinMax"
                                     range
                                     :min="1"
-                                    :max="templateMaxLength"
+                                    :max="TEMPLATE_MAX_LENGTH"
                                     class="w-full"
                                     :pt="{
                                         root: 'bg-natural-200 dark:bg-natural-300',
@@ -875,7 +876,7 @@ function editJourney(journey: Journey, id: string) {
                                     class="-px-1 mt-2.5 flex justify-between text-natural-500 dark:text-natural-300"
                                 >
                                     <span>1</span>
-                                    <span>{{ templateMaxLength }}+</span>
+                                    <span>{{ TEMPLATE_MAX_LENGTH }}+</span>
                                 </div>
                                 <div class="mt-1 flex flex-row gap-x-3">
                                     <T
@@ -887,7 +888,7 @@ function editJourney(journey: Journey, id: string) {
                                         input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                         input-id="min"
                                         :min="1"
-                                        :max="templateMaxLength"
+                                        :max="TEMPLATE_MAX_LENGTH"
                                         :allow-empty="false"
                                         @input="refreshTemplates()"
                                     />
@@ -900,7 +901,7 @@ function editJourney(journey: Journey, id: string) {
                                         input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                         input-id="max"
                                         :min="1"
-                                        :max="templateMaxLength"
+                                        :max="TEMPLATE_MAX_LENGTH"
                                         :allow-empty="false"
                                         @input="refreshTemplates()"
                                     />
@@ -1103,7 +1104,7 @@ function editJourney(journey: Journey, id: string) {
                 </button>
             </div>
         </div>
-        <div id="dialogs" class="relative z-50">
+        <div id="dialogs" class="z-50">
             <Sidebar
                 v-model:visible="isFilterVisible"
                 modal
@@ -1170,7 +1171,7 @@ function editJourney(journey: Journey, id: string) {
                                 v-model="templateJourneyLengthMinMax"
                                 range
                                 :min="1"
-                                :max="templateMaxLength"
+                                :max="TEMPLATE_MAX_LENGTH"
                                 class="w-full"
                                 :pt="{
                                     root: 'bg-natural-200 dark:bg-natural-300',
@@ -1185,7 +1186,7 @@ function editJourney(journey: Journey, id: string) {
                                 class="-px-1 mt-2.5 flex justify-between text-natural-500 dark:text-natural-300"
                             >
                                 <span>1</span>
-                                <span>{{ templateMaxLength }}+</span>
+                                <span>{{ TEMPLATE_MAX_LENGTH }}+</span>
                             </div>
                             <div class="mt-1 flex flex-row gap-x-3">
                                 <T
@@ -1197,7 +1198,7 @@ function editJourney(journey: Journey, id: string) {
                                     input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                     input-id="min"
                                     :min="1"
-                                    :max="templateMaxLength"
+                                    :max="TEMPLATE_MAX_LENGTH"
                                     :allow-empty="false"
                                     @input="refreshTemplates()"
                                 />
@@ -1210,7 +1211,7 @@ function editJourney(journey: Journey, id: string) {
                                     input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
                                     input-id="max"
                                     :min="1"
-                                    :max="templateMaxLength"
+                                    :max="TEMPLATE_MAX_LENGTH"
                                     :allow-empty="false"
                                     @input="refreshTemplates()"
                                 />
@@ -1295,10 +1296,7 @@ function editJourney(journey: Journey, id: string) {
                 v-if="openedTemplate"
                 :template="openedTemplate!"
                 :is-template-dialog-visible="isTemplatePopupVisible"
-                @close="
-                    isTemplatePopupVisible = false;
-                    openedTemplate = undefined;
-                "
+                @close="closeTemplateDialog()"
             />
             <TieredMenu
                 id="overlay_tmenu"

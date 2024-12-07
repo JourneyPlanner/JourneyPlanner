@@ -175,7 +175,7 @@ function emitScroll(target: string) {
 </script>
 
 <template>
-    <div class="mt-8 flex h-fit flex-wrap">
+    <div class="mt-4 flex h-fit flex-wrap md:mt-8">
         <div class="flex w-full items-center justify-center md:hidden">
             <div
                 class="group w-[90%] [perspective:1000px] sm:w-5/6"
@@ -810,7 +810,7 @@ function emitScroll(target: string) {
                     </div>
                     <div v-else class="max-lg:hidden">
                         <i
-                            class="pi pi-objects-column mt-6 text-2xl text-calypso-300 md:text-7xl"
+                            class="pi pi-objects-column mt-6 text-7xl text-calypso-300"
                         />
                     </div>
                     <div

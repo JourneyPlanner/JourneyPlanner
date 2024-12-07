@@ -175,6 +175,11 @@ function copyToClipboard() {
     });
 }
 
+const openTemplateDialog = (template: Template) => {
+    openedTemplate.value = template;
+    isTemplatePopupVisible.value = true;
+};
+
 const changeAddress = debounce((inputValue: unknown) => {
     templateDestinationInput.value = inputValue as string;
     refresh();
@@ -317,10 +322,7 @@ function retrievedAddress(inputValue: string, name: string) {
                             :key="template.id"
                             :index="index"
                             :template="template"
-                            @open-template="
-                                openedTemplate = template;
-                                isTemplatePopupVisible = true;
-                            "
+                            @open-template="openTemplateDialog(template)"
                         />
                     </div>
                     <div

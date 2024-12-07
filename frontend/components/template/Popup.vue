@@ -38,11 +38,11 @@ watch(
     { immediate: true },
 );
 
-function close() {
+const close = (): void => {
     activities.value = [];
     activityCount.value = null;
     emit("close");
-}
+};
 </script>
 
 <template>
@@ -259,10 +259,10 @@ function close() {
             position="bottom"
             :auto-z-index="true"
             :draggable="false"
-            class="z-50 mt-auto flex h-[85%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden lg:-z-10"
+            class="z-50 mt-auto flex h-[85%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden"
             :pt="{
                 root: {
-                    class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden ',
+                    class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:hidden ',
                 },
                 header: {
                     class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50 rounded-3xl',
@@ -391,7 +391,7 @@ function close() {
                                 }"
                             >
                                 <div
-                                    class="mx-2 my-2 grid grid-cols-2 gap-1 md:grid-cols-3 lg:grid-cols-4"
+                                    class="mx-2 my-2 grid grid-cols-2 gap-1 text-text dark:text-natural-50 md:grid-cols-3 lg:grid-cols-4"
                                 >
                                     <div
                                         v-for="activity in activities"
@@ -400,7 +400,7 @@ function close() {
                                     >
                                         <div
                                             :key="activity.id"
-                                            class="relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-calypso-400 bg-light px-2 py-1 text-base font-normal dark:border-calypso-600 dark:bg-dark sm:h-16 sm:text-base lg:rounded-xl"
+                                            class="relative col-span-1 mx-1 my-1 h-14 rounded-md border border-calypso-400 bg-light px-2 py-1 text-base font-normal dark:border-calypso-600 dark:bg-dark sm:h-16 sm:text-base lg:rounded-xl"
                                         >
                                             <div class="flex sm:pt-1">
                                                 <p
@@ -415,7 +415,7 @@ function close() {
                                                     {{ activity.name }}
                                                 </p>
                                             </div>
-                                            <div class="flex items-center pb-4">
+                                            <div class="flex items-center">
                                                 <SvgClock
                                                     class="mr-2 h-4 w-4"
                                                 />

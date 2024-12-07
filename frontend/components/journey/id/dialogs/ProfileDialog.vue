@@ -76,6 +76,11 @@ watch(
     },
 );
 
+const openTemplateDialog = (template: Template): void => {
+    openedTemplate.value = template;
+    isTemplatePopupVisible.value = true;
+};
+
 const close = (): void => {
     emit("close");
 };
@@ -168,10 +173,7 @@ const close = (): void => {
                         :key="template.id"
                         :template="template"
                         :displayed-in-profile="true"
-                        @open-template="
-                            openedTemplate = template;
-                            isTemplatePopupVisible = true;
-                        "
+                        @open-template="openTemplateDialog(template)"
                     />
                     <div
                         v-if="templates && templates.length === 0"
@@ -272,10 +274,7 @@ const close = (): void => {
                         :key="template.id"
                         :template="template"
                         :displayed-in-profile="true"
-                        @open-template="
-                            openedTemplate = template;
-                            isTemplatePopupVisible = true;
-                        "
+                        @open-template="openTemplateDialog(template)"
                     />
                     <div
                         v-if="templates && templates.length === 0"
