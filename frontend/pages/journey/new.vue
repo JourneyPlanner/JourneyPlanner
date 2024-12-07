@@ -194,14 +194,22 @@ function retrievedAddress(inputValue: string, name: string) {
 
 <template>
     <div>
+        <div>
+            <SvgCloud
+                class="invisible absolute left-[28%] top-72 h-14 overflow-hidden object-none md:visible"
+            />
+            <SvgCloud
+                class="invisible absolute right-[20%] top-36 h-16 overflow-hidden object-none md:visible"
+            />
+        </div>
         <div class="absolute left-4 top-4 z-50">
             <NuxtLink :to="cancel">
                 <SvgLogoHorizontalBlue class="w-44 lg:w-56" />
             </NuxtLink>
         </div>
-        <div class="z-10 flex flex-col">
+        <div class="relative flex flex-col">
             <div
-                class="z-20 mt-10 flex items-center justify-center px-4 font-nunito sm:mt-8"
+                class="mt-10 flex items-center justify-center px-4 font-nunito sm:mt-8"
             >
                 <fieldset
                     id="create-journey"
@@ -351,17 +359,11 @@ function retrievedAddress(inputValue: string, name: string) {
         <SvgWomanSuitcaseRight
             class="absolute bottom-0 right-0 hidden h-44 sm:block"
         />
-        <div class="z-10">
-            <SvgCloud
-                class="invisible absolute left-[28%] top-72 z-0 h-14 overflow-hidden object-none md:visible"
-            />
-            <SvgCloud
-                class="invisible absolute right-[20%] top-36 z-0 h-16 overflow-hidden object-none md:visible"
-            />
-        </div>
-        <div id="dialogs" class="z-30">
+        <div class="z-50">
             <TemplatePopup
                 v-if="openedTemplate"
+                id="template-popup-create-new-journey"
+                class="z-50"
                 :template="openedTemplate"
                 :is-template-dialog-visible="isTemplatePopupVisible"
                 @close="

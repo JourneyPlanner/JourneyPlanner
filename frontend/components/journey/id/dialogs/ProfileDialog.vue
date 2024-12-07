@@ -152,7 +152,7 @@ const close = (): void => {
                     {{ username }}
                 </h1>
                 <div
-                    v-if="!templates"
+                    v-if="templates.length === 0"
                     id="templates-loading"
                     class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-3"
                 >

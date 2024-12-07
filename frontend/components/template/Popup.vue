@@ -58,7 +58,7 @@ const close = (): void => {
             class="collapse z-50 w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:visible sm:flex sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-6/12 xl:w-6/12"
             :pt="{
                 root: {
-                    class: 'font-nunito bg-background dark:bg-background-dark z-10 px-0',
+                    class: 'font-nunito bg-background dark:bg-background-dark z-50 px-0',
                 },
                 header: {
                     class: 'flex pt-3 pb-2 font-nunito bg-background dark:bg-background-dark pl-2',

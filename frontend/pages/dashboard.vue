@@ -1356,6 +1356,7 @@ function editJourney(journey: Journey, id: string) {
             </Sidebar>
             <TemplatePopup
                 v-if="openedTemplate"
+                id="template-popup-dashboard"
                 :template="openedTemplate"
                 :is-template-dialog-visible="isTemplatePopupVisible"
                 @close="closeTemplateDialog()"
@@ -1365,7 +1366,7 @@ function editJourney(journey: Journey, id: string) {
                 ref="menu"
                 :model="items"
                 popup
-                class="z-30 rounded-xl border-2 border-natural-200 bg-natural-50 dark:border-natural-900 dark:bg-natural-800"
+                class="rounded-xl border-2 border-natural-200 bg-natural-50 dark:border-natural-900 dark:bg-natural-800"
                 :pt="{
                     menuitem: {
                         class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-300 rounded-md',
