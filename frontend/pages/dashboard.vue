@@ -180,8 +180,8 @@ onMounted(() => {
                                 ),
                                 icon: "pi pi-sort-amount-up",
                                 command: () => {
-                                    filters.sortby.value = "length";
-                                    filters.sortorder.value = "asc";
+                                    filters.sortby = "length";
+                                    filters.sortorder = "asc";
                                     refreshTemplates();
                                 },
                             },
@@ -191,8 +191,8 @@ onMounted(() => {
                                 ),
                                 icon: "pi pi-sort-amount-down",
                                 command: () => {
-                                    filters.sortby.value = "length";
-                                    filters.sortorder.value = "desc";
+                                    filters.sortby = "length";
+                                    filters.sortorder = "desc";
                                     refreshTemplates();
                                 },
                             },
@@ -206,8 +206,8 @@ onMounted(() => {
                                 label: t.value("dashboard.sort.ascending"),
                                 icon: "pi pi-sort-alpha-up",
                                 command: () => {
-                                    filters.sortby.value = "name";
-                                    filters.sortorder.value = "asc";
+                                    filters.sortby = "name";
+                                    filters.sortorder = "asc";
                                     refreshTemplates();
                                 },
                             },
@@ -215,8 +215,8 @@ onMounted(() => {
                                 label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-down",
                                 command: () => {
-                                    filters.sortby.value = "name";
-                                    filters.sortorder.value = "desc";
+                                    filters.sortby = "name";
+                                    filters.sortorder = "desc";
                                     refreshTemplates();
                                 },
                             },
@@ -230,8 +230,8 @@ onMounted(() => {
                                 label: t.value("dashboard.sort.ascending"),
                                 icon: "pi pi-sort-alpha-up",
                                 command: () => {
-                                    filters.sortby.value = "destination";
-                                    filters.sortorder.value = "asc";
+                                    filters.sortby = "destination";
+                                    filters.sortorder = "asc";
                                     refreshTemplates();
                                 },
                             },
@@ -239,8 +239,8 @@ onMounted(() => {
                                 label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-down",
                                 command: () => {
-                                    filters.sortby.value = "destination";
-                                    filters.sortorder.value = "desc";
+                                    filters.sortby = "destination";
+                                    filters.sortorder = "desc";
                                     refreshTemplates();
                                 },
                             },
