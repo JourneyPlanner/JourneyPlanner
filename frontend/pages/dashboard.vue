@@ -11,7 +11,7 @@ const { t } = useTranslate();
 const router = useRouter();
 const route = useRoute();
 const journeysStore = useJourneysStore();
-const templatesStore = useTemplateStore();
+const templateFilterstore = useTemplateFilterStore();
 const client = useSanctumClient();
 const toast = useToast();
 const nuxtApp = useNuxtApp();
@@ -44,23 +44,25 @@ const observer = ref<IntersectionObserver>();
 const loader = ref<HTMLElement | undefined>();
 
 const filters = reactive({
-    TEMPLATE_MAX_LENGTH: templatesStore.getFilter("TEMPLATE_MAX_LENGTH"),
-    PER_PAGE: templatesStore.getFilter("PER_PAGE"),
-    moreTemplatesAvailable: templatesStore.getFilter("moreTemplatesAvailable"),
-    templateJourneyLengthMinMax: templatesStore.getFilter(
+    TEMPLATE_MAX_LENGTH: templateFilterstore.getFilter("TEMPLATE_MAX_LENGTH"),
+    PER_PAGE: templateFilterstore.getFilter("PER_PAGE"),
+    moreTemplatesAvailable: templateFilterstore.getFilter(
+        "moreTemplatesAvailable",
+    ),
+    templateJourneyLengthMinMax: templateFilterstore.getFilter(
         "templateJourneyLengthMinMax",
     ),
-    sortby: templatesStore.getFilter("sortby"),
-    sortorder: templatesStore.getFilter("sortorder"),
-    templateDestinationInput: templatesStore.getFilter(
+    sortby: templateFilterstore.getFilter("sortby"),
+    sortorder: templateFilterstore.getFilter("sortorder"),
+    templateDestinationInput: templateFilterstore.getFilter(
         "templateDestinationInput",
     ),
-    templateDestinationName: templatesStore.getFilter(
+    templateDestinationName: templateFilterstore.getFilter(
         "templateDestinationName",
     ),
-    templateCreator: templatesStore.getFilter("templateCreator"),
-    cursor: templatesStore.getFilter("cursor"),
-    nextCursor: templatesStore.getFilter("nextCursor"),
+    templateCreator: templateFilterstore.getFilter("templateCreator"),
+    cursor: templateFilterstore.getFilter("cursor"),
+    nextCursor: templateFilterstore.getFilter("nextCursor"),
 });
 
 const borderColor = ref();
@@ -333,7 +335,7 @@ onMounted(() => {
     watch(
         filters,
         () => {
-            templatesStore.setFilters(filters);
+            templateFilterstore.setFilters(filters);
         },
         { deep: true },
     );
@@ -482,7 +484,7 @@ const isFiltered = computed(() => {
  * clear template filters
  */
 function clearFilters() {
-    Object.assign(filters, templatesStore.resetFilters());
+    Object.assign(filters, templateFilterstore.resetFilters());
     searchValue.value = "";
     refreshTemplates();
 }

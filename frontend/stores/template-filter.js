@@ -2,11 +2,12 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 //template store for the template tab on the dashboard
-export const useTemplateStore = defineStore("filters", () => {
+export const useTemplateFilterStore = defineStore("template-filter", () => {
     const TEMPLATE_MAX_LENGTH = 31;
     const PER_PAGE = 40;
 
     const DEFAULT_FILTERS = {
+        TEMPLATE_MAX_LENGTH: TEMPLATE_MAX_LENGTH,
         moreTemplatesAvailable: true,
         templateJourneyLengthMinMax: [1, TEMPLATE_MAX_LENGTH],
         PER_PAGE: PER_PAGE,

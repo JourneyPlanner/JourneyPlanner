@@ -22,7 +22,7 @@ onMounted(() => {
     ) {
         backTolgeeKey.value = "template.back.to.templates";
         backRoute.value = lastRoute;
-    } else if (lastRoute.startsWith("/journey/new") && !isAuthenticated.value) {
+    } else if (lastRoute.startsWith("/journey/new") && isAuthenticated.value) {
         backTolgeeKey.value = "template.back.to.new.journey";
         backRoute.value = lastRoute;
     } else if (!isAuthenticated.value) {
