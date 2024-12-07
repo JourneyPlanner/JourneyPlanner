@@ -375,9 +375,13 @@ const {
                 template_journey_length_max:
                     filters.templateJourneyLengthMinMax[1],
                 template_journey_length_max_const: filters.TEMPLATE_MAX_LENGTH,
-                template_destination_input: filters.templateDestinationInput,
-                template_destination_name: filters.templateDestinationName,
-                template_creator: filters.templateCreator,
+                template_destination_input: encodeURIComponent(
+                    filters.templateDestinationInput,
+                ),
+                template_destination_name: encodeURIComponent(
+                    filters.templateDestinationName,
+                ),
+                template_creator: encodeURIComponent(filters.templateCreator),
                 cursor: filters.cursor,
                 per_page: filters.PER_PAGE,
             },
@@ -1320,7 +1324,7 @@ function editJourney(journey: Journey, id: string) {
                         <FormAddressInput
                             id="template-destination"
                             name="destination"
-                            value=""
+                            :value="filters.templateDestinationInput"
                             data-test="templates-filter-destination-drawer"
                             :custom-class="`.SearchIcon {visibility: hidden;} .Input {border: solid 2px ${borderColor} !important; background-color: ${backgroundColor} !important; padding-left: 0.625rem; padding-top: 0rem; padding-bottom: 0rem;} .Input:focus {box-shadow: none; border: solid 2px ${borderColorFocus} !important;}`"
                             @change-address="changeAddress"

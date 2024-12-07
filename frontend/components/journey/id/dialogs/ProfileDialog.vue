@@ -301,7 +301,7 @@ const close = (): void => {
         <div id="dialogs">
             <TemplatePopup
                 v-if="openedTemplate"
-                :template="openedTemplate!"
+                :template="openedTemplate"
                 :is-template-dialog-visible="isTemplatePopupVisible"
                 @close="
                     isTemplatePopupVisible = false;
