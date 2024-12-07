@@ -31,7 +31,7 @@ class CalendarActivityController extends Controller
                 $emptyActivities
             );
         } elseif ($validated["edit_type"] === "following") {
-            $minDate = $calendarActivity->from;
+            $minDate = $calendarActivity->start;
 
             foreach ($baseActivity->children()->get() as $child) {
                 $emptyActivities = $this->removeAllCalendarActivitiesAfter(
