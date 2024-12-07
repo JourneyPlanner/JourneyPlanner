@@ -19,6 +19,7 @@ const created_at = ref({ day: NaN, month: NaN, year: NaN });
 const templates = ref<Template[]>([]);
 const openedTemplate = ref<Template>();
 const isTemplatePopupVisible = ref(false);
+const isLoading = ref(true);
 
 watch(
     () => props.visible,
@@ -65,10 +66,12 @@ watch(
                 },
             });
 
+            isLoading.value = true;
             await client(`/api/user/${props.username}/template?per_page=6`, {
                 async onResponse({ response }) {
                     if (response.ok) {
                         templates.value = response._data.data;
+                        isLoading.value = false;
                     }
                 },
             });
@@ -152,7 +155,7 @@ const close = (): void => {
                     {{ username }}
                 </h1>
                 <div
-                    v-if="templates.length === 0"
+                    v-if="isLoading"
                     id="templates-loading"
                     class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-3"
                 >
@@ -253,7 +256,7 @@ const close = (): void => {
                     {{ username }}
                 </h1>
                 <div
-                    v-if="!templates"
+                    v-if="isLoading"
                     id="templates-loading"
                     class="relative mt-2 grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 lg:grid-cols-4"
                 >

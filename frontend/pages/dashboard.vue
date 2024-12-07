@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
 import { compareAsc, compareDesc } from "date-fns";
+import type { InputNumberInputEvent } from "primevue/inputnumber";
 import debounce from "~/utils/debounce";
 
 definePageMeta({
@@ -320,15 +321,17 @@ onMounted(() => {
     );
 
     watch(filters.templateJourneyLengthMinMax, () => {
+        console.log(filters.templateJourneyLengthMinMax);
+
         let temp;
         if (
-            filters.templateJourneyLengthMinMax.value[0] >
-            filters.templateJourneyLengthMinMax.value[1]
+            filters.templateJourneyLengthMinMax[0] >
+            filters.templateJourneyLengthMinMax[1]
         ) {
-            temp = filters.templateJourneyLengthMinMax.value[0];
-            filters.templateJourneyLengthMinMax.value[0] =
-                filters.templateJourneyLengthMinMax.value[1];
-            filters.templateJourneyLengthMinMax.value[1] = temp;
+            temp = filters.templateJourneyLengthMinMax[0];
+            filters.templateJourneyLengthMinMax[0] =
+                filters.templateJourneyLengthMinMax[1];
+            filters.templateJourneyLengthMinMax[1] = temp;
         }
     });
 
@@ -336,6 +339,7 @@ onMounted(() => {
         filters,
         () => {
             templateFilterstore.setFilters(filters);
+            console.log(filters.templateJourneyLengthMinMax);
         },
         { deep: true },
     );
@@ -515,6 +519,18 @@ const changeAddress = debounce((inputValue: unknown) => {
 function retrievedAddress(inputValue: string, name: string) {
     filters.templateDestinationInput = inputValue;
     filters.templateDestinationName = name;
+    refreshTemplates();
+}
+
+/**
+ * workaround for primevue inputnumber field not updating v-model value after input
+ * it is needed to blur the input field to update the value
+ * @param $event input event
+ */
+function refocus($event: InputNumberInputEvent) {
+    const target = $event.originalEvent.target as HTMLElement;
+    target.blur();
+    target.focus();
     refreshTemplates();
 }
 
@@ -944,14 +960,14 @@ function editJourney(journey: Journey, id: string) {
                                         input-id="min"
                                         :min="1"
                                         :max="filters.TEMPLATE_MAX_LENGTH"
-                                        :allow-empty="false"
-                                        @input="refreshTemplates()"
+                                        :allow-empty="true"
+                                        @input="refocus($event)"
                                     />
                                     <T
                                         key-name="dashboard.template.filter.length.to"
                                     />
                                     <InputNumber
-                                        v-model="
+                                        v-model.number="
                                             filters
                                                 .templateJourneyLengthMinMax[1]
                                         "
@@ -960,8 +976,8 @@ function editJourney(journey: Journey, id: string) {
                                         input-id="max"
                                         :min="1"
                                         :max="filters.TEMPLATE_MAX_LENGTH"
-                                        :allow-empty="false"
-                                        @input="refreshTemplates()"
+                                        :allow-empty="true"
+                                        @input="refocus($event)"
                                     />
                                     <T key-name="template.days" />
                                 </div>
@@ -1033,7 +1049,7 @@ function editJourney(journey: Journey, id: string) {
                                 @update:model-value="filterTemplateCreator()"
                                 @complete="getUser()"
                                 @item-select="refreshTemplates()"
-                                @clear="(refreshTemplates(), getUser())"
+                                @clear="refreshTemplates(), getUser()"
                             />
                         </div>
                         <div class="flex justify-end pb-1 pt-20">
@@ -1259,8 +1275,8 @@ function editJourney(journey: Journey, id: string) {
                                     input-id="min"
                                     :min="1"
                                     :max="filters.TEMPLATE_MAX_LENGTH"
-                                    :allow-empty="false"
-                                    @input="refreshTemplates()"
+                                    :allow-empty="true"
+                                    @input="refocus($event)"
                                 />
                                 <T
                                     key-name="dashboard.template.filter.length.to"
@@ -1274,8 +1290,8 @@ function editJourney(journey: Journey, id: string) {
                                     input-id="max"
                                     :min="1"
                                     :max="filters.TEMPLATE_MAX_LENGTH"
-                                    :allow-empty="false"
-                                    @input="refreshTemplates()"
+                                    :allow-empty="true"
+                                    @input="refocus($event)"
                                 />
                                 <T key-name="template.days" />
                             </div>
@@ -1338,7 +1354,7 @@ function editJourney(journey: Journey, id: string) {
                             "
                             @complete="getUser()"
                             @item-select="refreshTemplates()"
-                            @clear="(refreshTemplates(), getUser())"
+                            @clear="refreshTemplates(), getUser()"
                         />
                     </div>
                     <div
