@@ -10,13 +10,14 @@
                 to="/imprint"
                 class="hover:font-bold hover:text-calypso-400"
             >
-                <T key-name="common.imprint" />
+                <T key-name="common.imprint" default-value="Imprint" />
             </NuxtLink>
             <span class="mx-2"> | </span>
-            <a
-                href="mailto:contact@journeyplanner.io"
+            <NuxtLink
+                to="mailto:contact@journeyplanner.io"
                 class="hover:font-bold hover:text-calypso-400"
-                >contact@journeyplanner.io</a
+            >
+                contact@journeyplanner.io</NuxtLink
             >
             <br class="sm:hidden" />
             <span class="invisible mx-2 sm:visible"> | </span>
@@ -24,14 +25,17 @@
                 to="/privacy"
                 class="hover:font-bold hover:text-calypso-400"
             >
-                <T key-name="common.privacypolicy" />
+                <T
+                    key-name="common.privacypolicy"
+                    default-value="Privacy policy"
+                />
             </NuxtLink>
             <span class="mx-2"> | </span>
-            <a
-                href="https://github.com/JourneyPlanner/JourneyPlanner"
+            <NuxtLink
+                to="https://github.com/JourneyPlanner/JourneyPlanner"
                 target="_blank"
                 class="hover:font-bold hover:text-calypso-400"
-                >GitHub</a
+                >GitHub</NuxtLink
             >
         </footer>
     </div>
