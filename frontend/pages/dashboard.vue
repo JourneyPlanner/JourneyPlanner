@@ -321,8 +321,6 @@ onMounted(() => {
     );
 
     watch(filters.templateJourneyLengthMinMax, () => {
-        console.log(filters.templateJourneyLengthMinMax);
-
         let temp;
         if (
             filters.templateJourneyLengthMinMax[0] >
@@ -339,7 +337,6 @@ onMounted(() => {
         filters,
         () => {
             templateFilterstore.setFilters(filters);
-            console.log(filters.templateJourneyLengthMinMax);
         },
         { deep: true },
     );
@@ -527,12 +524,14 @@ function retrievedAddress(inputValue: string, name: string) {
  * it is needed to blur the input field to update the value
  * @param $event input event
  */
-function refocus($event: InputNumberInputEvent) {
-    const target = $event.originalEvent.target as HTMLElement;
+const refocus = debounce(async ($event: unknown) => {
+    const target = ($event as InputNumberInputEvent).originalEvent
+        .target as HTMLElement;
     target.blur();
     target.focus();
+    await nextTick();
     refreshTemplates();
-}
+});
 
 /*
 Fetches all journeys from the backend
@@ -956,8 +955,9 @@ function editJourney(journey: Journey, id: string) {
                                                 .templateJourneyLengthMinMax[0]
                                         "
                                         data-test="templates-filter-length-min"
-                                        input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
+                                        input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400 placeholder:text-natural-600 dark:placeholder:text-natural-200"
                                         input-id="min"
+                                        placeholder="1"
                                         :min="1"
                                         :max="filters.TEMPLATE_MAX_LENGTH"
                                         :allow-empty="true"
@@ -972,8 +972,11 @@ function editJourney(journey: Journey, id: string) {
                                                 .templateJourneyLengthMinMax[1]
                                         "
                                         data-test="templates-filter-length-max"
-                                        input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
+                                        input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400 placeholder:text-natural-600 dark:placeholder:text-natural-200"
                                         input-id="max"
+                                        :placeholder="
+                                            String(filters.TEMPLATE_MAX_LENGTH)
+                                        "
                                         :min="1"
                                         :max="filters.TEMPLATE_MAX_LENGTH"
                                         :allow-empty="true"
@@ -1271,8 +1274,9 @@ function editJourney(journey: Journey, id: string) {
                                         filters.templateJourneyLengthMinMax[0]
                                     "
                                     data-test="templates-filter-length-min-drawer"
-                                    input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
+                                    input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400 placeholder:text-natural-600 dark:placeholder:text-natural-200"
                                     input-id="min"
+                                    placeholder="1"
                                     :min="1"
                                     :max="filters.TEMPLATE_MAX_LENGTH"
                                     :allow-empty="true"
@@ -1286,8 +1290,11 @@ function editJourney(journey: Journey, id: string) {
                                         filters.templateJourneyLengthMinMax[1]
                                     "
                                     data-test="templates-filter-length-max-drawer"
-                                    input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400"
+                                    input-class="w-11 rounded border-2 border-natural-300 dark:border-natural-800 dark:bg-natural-700 bg-natural-50 pl-1 font-nunito focus:border-calypso-400 dark:focus:border-calypso-400 placeholder:text-natural-600 dark:placeholder:text-natural-200"
                                     input-id="max"
+                                    :placeholder="
+                                        String(filters.TEMPLATE_MAX_LENGTH)
+                                    "
                                     :min="1"
                                     :max="filters.TEMPLATE_MAX_LENGTH"
                                     :allow-empty="true"
