@@ -5,9 +5,8 @@ useHead({
     title: `${error.value.statusCode || "Error"} | JourneyPlanner`,
 });
 
-function clear(navigateFunction) {
-    clearError();
-    navigateFunction();
+async function clear(target) {
+    await clearError({ redirect: target });
 }
 </script>
 
@@ -22,7 +21,7 @@ function clear(navigateFunction) {
                         <button
                             class="-ml-6 place-self-start md:-ml-0"
                             data-test="error-logo-to-startpage"
-                            @click="clear(navigateTo('/'))"
+                            @click="clear('/')"
                         >
                             <SvgLogoHorizontalBlue class="w-44 lg:w-52" />
                         </button>
@@ -46,20 +45,20 @@ function clear(navigateFunction) {
                             class="ml-5 mt-1 list-outside list-disc space-y-1.5 pl-1.5 text-lg md:pl-3 md:text-xl"
                         >
                             <li>
-                                <T key-name="error.back" />
                                 <button
                                     data-test="error-back-button"
                                     class="text-calypso-500 hover:underline dark:text-calypso-300"
-                                    @click="clear(router.back())"
+                                    @click="clear('/')"
                                 >
-                                    <T key-name="error.back.link" />
+                                    <T key-name="common.back" />
                                 </button>
+                                <T key-name="error.startpage" />
                             </li>
                             <li>
                                 <button
                                     data-test="error-create-journey-button"
                                     class="text-calypso-500 hover:underline dark:text-calypso-300"
-                                    @click="clear(navigateTo('/journey/new'))"
+                                    @click="clear('/journey/new')"
                                 >
                                     <T
                                         key-name="error.create.new.journey.link"
@@ -80,7 +79,7 @@ function clear(navigateFunction) {
                             <li>
                                 <NuxtLink
                                     data-test="error-github-issue-link"
-                                    href="https://github.com/JourneyPlanner/JourneyPlanner/issues/new/choose"
+                                    to="https://github.com/JourneyPlanner/JourneyPlanner/issues/new/choose"
                                     target="_blank"
                                     class="text-calypso-500 hover:underline dark:text-calypso-300"
                                 >
