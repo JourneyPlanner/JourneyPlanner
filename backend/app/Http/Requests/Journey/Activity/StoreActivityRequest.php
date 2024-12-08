@@ -46,7 +46,8 @@ class StoreActivityRequest extends FormRequest
             "repeat_interval" => "required_if:repeat_type,custom|integer",
             "repeat_interval_unit" =>
                 "required_if:repeat_type,custom|in:days,weeks",
-            "repeat_on" => "required_if:repeat_interval_unit,weeks|nullable|array",
+            "repeat_on" =>
+                "required_if:repeat_interval_unit,weeks|nullable|array",
             "repeat_on.*" => "in:Mon,Tue,Wed,Thu,Fri,Sat,Sun",
             "repeat_end_date" => "nullable|date",
             "repeat_end_occurrences" => "nullable|integer",

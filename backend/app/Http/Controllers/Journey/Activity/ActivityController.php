@@ -186,7 +186,10 @@ class ActivityController extends Controller
             // Update the remaining activities
             if ($baseActivity->id !== $activity->id) {
                 $baseActivity->update($changes);
-                $this->addTimeDifferenceIfNeeded($baseActivity, $timeDifference);
+                $this->addTimeDifferenceIfNeeded(
+                    $baseActivity,
+                    $timeDifference
+                );
             }
             foreach ($baseActivity->children()->get() as $child) {
                 if ($child->id === $activity->id) {
