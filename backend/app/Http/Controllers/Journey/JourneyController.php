@@ -138,28 +138,6 @@ class JourneyController extends Controller
         $oldMapboxFullAddress = $journey->mapbox_full_address;
         $journey->fill($validated);
 
-        if ($journey->isDirty("end_date")) {
-            foreach (
-                $journey
-                    ->activities()
-                    ->where("repeat_end_date", null)
-                    ->andWhere("repeat_end_occurrences", null)
-                    ->get()
-                as $activity
-            ) {
-                $lastCalendarActivity = $activity
-                    ->calendarActivities()
-                    ->orderBy("start", "desc")
-                    ->first();
-
-                ActivityController::handleRepeatingActivity(
-                    $journey,
-                    $activity,
-                    $lastCalendarActivity
-                );
-            }
-        }
-
         // Reset geocode data if the address has changed
         if (
             $oldMapboxFullAddress !==
