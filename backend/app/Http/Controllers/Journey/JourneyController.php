@@ -152,6 +152,22 @@ class JourneyController extends Controller
             );
         }
 
+        if ($journey->isDirty("to")) {
+            foreach (
+                $journey
+                    ->activities()
+                    ->whereNotNull("repeat_type")
+                    ->where("parent_id", null)
+                    ->get()
+                as $activity
+            ) {
+                ActivityController::handleRepetitionCriteraUpdate(
+                    $journey,
+                    $activity
+                );
+            }
+        }
+
         // Save journey
         $journey->save();
 
