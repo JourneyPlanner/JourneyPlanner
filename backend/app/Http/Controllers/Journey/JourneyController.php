@@ -10,6 +10,7 @@ use App\Http\Requests\Journey\UpdateJourneyRequest;
 use App\Models\JourneyUser;
 use App\Services\MapboxService;
 use App\Services\WeatherService;
+use DateInterval;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -97,6 +98,86 @@ class JourneyController extends Controller
             $journey->users()->attach(Auth::id(), [
                 "role" => JourneyUser::JOURNEY_GUIDE_ROLE_ID,
             ]);
+        }
+
+        if ($validated["template_id"]) {
+            $journey->created_from = $validated["template_id"];
+            $journey->save();
+
+            // Copy the activities from the template journey
+            $templateJourney = Journey::find($validated["template_id"]);
+            $timeshift = $journey->from->diff($templateJourney->from);
+            $journeyLength = $journey->from->diff($journey->to)->days;
+            foreach (
+                $templateJourney
+                    ->activities()
+                    ->with("calendarActivities")
+                    ->get()
+                as $activity
+            ) {
+                $newActivity = $activity->replicate();
+                $newActivity->journey_id = $journey->id;
+                $newActivity->save();
+
+                // Copy the calendar activities
+                if ($validated["calendar_activity_insert_mode"] === "direct") {
+                    foreach (
+                        $activity->calendarActivities
+                        as $calendarActivity
+                    ) {
+                        $newDate = $calendarActivity->start->add($timeshift);
+                        if ($newDate <= $journey->to) {
+                            $newCalendarActivity = $calendarActivity->replicate();
+                            $newCalendarActivity->activity_id =
+                                $newActivity->id;
+                            $newCalendarActivity->start = $newDate;
+                            $newCalendarActivity->save();
+                        }
+                    }
+                } elseif (
+                    $validated["calendar_activity_insert_mode"] === "smart"
+                ) {
+                    $additionalWeekDayShift =
+                        $journey->from->format("N") -
+                        $templateJourney->from->format("N");
+                    if ($additionalWeekDayShift < 0) {
+                        $additionalWeekDayShift += 7;
+                    }
+
+                    foreach (
+                        $activity->calendarActivities
+                        as $calendarActivity
+                    ) {
+                        $newDate = $calendarActivity->start
+                            ->add($timeshift)
+                            ->add(
+                                new DateInterval(
+                                    "P" . $additionalWeekDayShift . "D"
+                                )
+                            );
+
+                        if ($newDate <= $journey->to) {
+                            $newCalendarActivity = $calendarActivity->replicate();
+                            $newCalendarActivity->activity_id =
+                                $newActivity->id;
+                            $newCalendarActivity->start = $newDate;
+                            $newCalendarActivity->save();
+                        } elseif (
+                            $journey->to->diff($newDate)->days <
+                            $additionalWeekDayShift
+                        ) {
+                            $newDate = $newDate->sub(
+                                new DateInterval("P" . $journeyLength . "D")
+                            );
+                            $newCalendarActivity = $calendarActivity->replicate();
+                            $newCalendarActivity->activity_id =
+                                $newActivity->id;
+                            $newCalendarActivity->start = $newDate;
+                            $newCalendarActivity->save();
+                        }
+                    }
+                }
+            }
         }
 
         return response()->json(
