@@ -70,7 +70,7 @@
         "mapbox-gl": "^3.7.0",
         "nuxt-auth-sanctum": "^0.5.2",
         "nuxt-primevue": "^3.0.0",
-        "prettier": "^3.3.3",
+        "prettier": "^3.4.2",
         "prettier-plugin-tailwindcss": "^0.6.9",
         "typescript": "^5.6.3",
         "vue-tsc": "^2.1.10",
