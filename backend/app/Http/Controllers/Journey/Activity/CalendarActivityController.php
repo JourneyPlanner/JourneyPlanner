@@ -78,7 +78,7 @@ class CalendarActivityController extends Controller
         $emptyActivities
     ) {
         foreach ($activity->calendarActivities()->get() as $calendarActivity) {
-            if ($calendarActivity->from >= $minDate) {
+            if ($calendarActivity->start >= $minDate) {
                 $calendarActivity->delete();
             }
         }

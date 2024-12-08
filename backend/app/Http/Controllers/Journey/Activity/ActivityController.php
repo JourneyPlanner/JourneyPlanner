@@ -155,7 +155,7 @@ class ActivityController extends Controller
             }
         } elseif (isset($validated["date"])) {
             $editedCalendarActivity = CalendarActivity::findOrFail(
-                $validated["calendar_activity_id"]
+                $validated["calendar_activity_id"] ?? ""
             );
 
             if (!isset($validated["time"])) {
@@ -184,15 +184,20 @@ class ActivityController extends Controller
             $changes = $activity->getChanges();
 
             // Update the remaining activities
-            $baseActivity->update($changes);
-            $this->addTimeDifferenceIfNeeded($baseActivity, $timeDifference);
+            if ($baseActivity->id !== $activity->id) {
+                $baseActivity->update($changes);
+                $this->addTimeDifferenceIfNeeded($baseActivity, $timeDifference);
+            }
             foreach ($baseActivity->children()->get() as $child) {
+                if ($child->id === $activity->id) {
+                    continue;
+                }
                 $child->update($changes);
                 $this->addTimeDifferenceIfNeeded($child, $timeDifference);
             }
 
             // Handle repeating activities
-            if ($repeatedChanged || true) {
+            if ($repeatedChanged) {
                 $mappings = $this->calculateDateToActivityMappings(
                     $baseActivity
                 );
