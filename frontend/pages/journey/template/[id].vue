@@ -192,7 +192,7 @@ function copyToClipboard() {
                 <fieldset
                     v-if="page == 1"
                     id="create-journey"
-                    class="w-full rounded-3xl border-2 border-calypso-300 bg-natural-50 px-2 shadow-sm dark:border-calypso-600 dark:bg-background-dark xs:px-5 sm:w-1/4 md:w-1/3"
+                    class="w-full rounded-3xl border-2 border-calypso-300 bg-natural-50 px-2 shadow-sm dark:border-calypso-600 dark:bg-background-dark xs:px-5 sm:w-1/4 md:w-2/5"
                 >
                     <legend
                         for="create-journey"
@@ -281,7 +281,7 @@ function copyToClipboard() {
                 <fieldset
                     v-else-if="page == 2"
                     id="create-journey"
-                    class="w-full rounded-3xl border-2 border-calypso-300 bg-natural-50 px-2 shadow-sm dark:border-calypso-600 dark:bg-background-dark xs:px-5 sm:w-1/4 md:w-1/3"
+                    class="w-full rounded-3xl border-2 border-calypso-300 bg-natural-50 px-2 shadow-sm dark:border-calypso-600 dark:bg-background-dark xs:px-5 sm:w-1/4 md:w-2/5"
                 >
                     <legend
                         for="create-journey"
@@ -293,62 +293,175 @@ function copyToClipboard() {
                         <div>
                             <T key-name="template.choose.option" />
                         </div>
-                        <Accordion v-model:active-index="activeIndex">
+                        <Accordion
+                            v-model:active-index="activeIndex"
+                            class="font-nunito"
+                        >
                             <AccordionTab
                                 :header="t('template.shift.common')"
-                                class="border-b border-natural-300"
+                                :pt="{
+                                    root: () => ({
+                                        class: [
+                                            {
+                                                'border-2 border-calypso-300 rounded-lg':
+                                                    activeIndex === 0,
+                                                'border-b-0': activeIndex === 1,
+                                                'border-b-2 border-natural-300 dark:border-natural-300':
+                                                    activeIndex === 2,
+                                            },
+                                        ],
+                                    }),
+                                    headerTitle: {
+                                        class: 'font-semibold text-lg',
+                                    },
+                                    headerAction: () => ({
+                                        class: [
+                                            ' font-semibold text-text dark:text-natural-50 py-1.5',
+                                            {
+                                                'bg-gothic-50 dark:bg-background-dark':
+                                                    activeIndex === 0,
+                                                'bg-background dark:bg-background-dark':
+                                                    activeIndex !== 0,
+                                            },
+                                        ],
+                                    }),
+                                    content: {
+                                        class: 'bg-gothic-50 dark:bg-background-dark text-text dark:text-natural-50 rounded-lg',
+                                    },
+                                }"
                             >
-                                <div>
-                                    <span
-                                        ><T
+                                <div
+                                    class="border-t-2 border-calypso-300 pt-3 dark:border-calypso-600"
+                                >
+                                    <span>
+                                        <T
                                             key-name="template.shift.common.description.part.1"
-                                    /></span>
+                                        />
+                                    </span>
                                     <br />
                                     <br />
-                                    <li class="ml-5">
-                                        <span
-                                            ><T
-                                                key-name="template.shift.common.description.part.2"
-                                        /></span>
-                                    </li>
-                                    <li class="ml-5">
-                                        <span
-                                            ><T
-                                                key-name="template.shift.common.description.part.3"
-                                        /></span>
-                                    </li>
+                                    <ol class="ml-5 list-disc">
+                                        <li>
+                                            <span>
+                                                <T
+                                                    key-name="template.shift.common.description.part.2"
+                                                />
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <span>
+                                                <T
+                                                    key-name="template.shift.common.description.part.3"
+                                                />
+                                            </span>
+                                        </li>
+                                    </ol>
                                 </div>
                             </AccordionTab>
-                            <AccordionTab :header="t('template.shift.smart')">
-                                <div>
-                                    <span
-                                        ><T
+                            <AccordionTab
+                                :header="t('template.shift.smart')"
+                                :pt="{
+                                    root: () => ({
+                                        class: [
+                                            {
+                                                'border-2 border-calypso-300 rounded-lg':
+                                                    activeIndex === 1,
+                                                'border-b-0': activeIndex === 2,
+                                                'border-b-2 border-natural-300 dark:border-natural-300':
+                                                    activeIndex === 3 ||
+                                                    activeIndex === 0,
+                                            },
+                                        ],
+                                    }),
+                                    headerTitle: {
+                                        class: 'font-semibold text-lg',
+                                    },
+                                    headerAction: () => ({
+                                        class: [
+                                            ' font-semibold text-text dark:text-natural-50 py-1.5',
+                                            {
+                                                'bg-gothic-50 dark:bg-background-dark':
+                                                    activeIndex === 1,
+                                                'bg-background dark:bg-background-dark':
+                                                    activeIndex !== 1,
+                                            },
+                                        ],
+                                    }),
+                                    content: {
+                                        class: 'bg-gothic-50 dark:bg-background-dark text-text dark:text-natural-50 rounded-lg',
+                                    },
+                                }"
+                            >
+                                <div
+                                    class="border-t-2 border-calypso-300 pt-3 dark:border-calypso-600"
+                                >
+                                    <span>
+                                        <T
                                             key-name="template.shift.smart.description.part.1"
-                                    /></span>
+                                        />
+                                    </span>
                                     <br />
                                     <br />
-                                    <li class="ml-5">
-                                        <span
-                                            ><T
-                                                key-name="template.shift.smart.description.part.2"
-                                        /></span>
-                                    </li>
-                                    <li class="ml-5">
-                                        <span
-                                            ><T
-                                                key-name="template.shift.smart.description.part.3"
-                                        /></span>
-                                    </li>
+                                    <ol class="ml-5 list-disc">
+                                        <li>
+                                            <span>
+                                                <T
+                                                    key-name="template.shift.smart.description.part.2"
+                                                />
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <span>
+                                                <T
+                                                    key-name="template.shift.smart.description.part.3"
+                                                />
+                                            </span>
+                                        </li>
+                                    </ol>
                                 </div>
                             </AccordionTab>
                             <AccordionTab
                                 :header="t('template.shift.activitypool')"
+                                :pt="{
+                                    root: () => ({
+                                        class: [
+                                            {
+                                                'border-2 border-calypso-300 rounded-lg':
+                                                    activeIndex === 2,
+                                                'border-b-0': activeIndex === 3,
+                                                'border-b-2 border-natural-300 dark:border-natural-300':
+                                                    activeIndex === 1 ||
+                                                    activeIndex === 0,
+                                            },
+                                        ],
+                                    }),
+                                    headerTitle: {
+                                        class: 'font-semibold text-lg',
+                                    },
+                                    headerAction: () => ({
+                                        class: [
+                                            ' font-semibold text-text dark:text-natural-50 py-1.5',
+                                            {
+                                                'bg-gothic-50 dark:bg-background-dark':
+                                                    activeIndex === 2,
+                                                'bg-background dark:bg-background-dark':
+                                                    activeIndex !== 2,
+                                            },
+                                        ],
+                                    }),
+                                    content: {
+                                        class: 'bg-gothic-50 dark:bg-background-dark text-text dark:text-natural-50 rounded-lg',
+                                    },
+                                }"
                             >
-                                <div>
-                                    <span
-                                        ><T
+                                <div
+                                    class="border-t-2 border-calypso-300 pt-3 dark:border-calypso-600"
+                                >
+                                    <span>
+                                        <T
                                             key-name="template.shift.activitypool.description"
-                                    /></span>
+                                        />
+                                    </span>
                                 </div>
                             </AccordionTab>
                         </Accordion>
@@ -380,14 +493,12 @@ function copyToClipboard() {
                 </fieldset>
             </div>
         </div>
-        <SvgPeopleBackpackMap class="absolute bottom-14 hidden h-44 lg:block" />
+        <SvgPeopleBackpackMap class="absolute bottom-0 hidden h-44 lg:block" />
         <SvgWomanSuitcaseLeft
-            class="absolute bottom-14 block h-44 lg:right-44"
+            class="absolute bottom-0 hidden h-44 sm:block lg:right-44"
         />
-        <SvgWomanSuitcaseRight class="absolute bottom-14 right-0 block h-44" />
-        <Divider
-            type="solid"
-            class="border-10 absolute bottom-9 mt-2 border pt-0 text-natural-100 dark:text-natural-700"
+        <SvgWomanSuitcaseRight
+            class="absolute bottom-0 right-0 hidden h-44 sm:block"
         />
     </div>
 </template>
