@@ -37,8 +37,6 @@ const props = defineProps({
     propRepeatType: { type: String, default: " " },
 });
 
-console.log(props.propRepeatType);
-
 const noSingle = ref(false);
 const onlyShowRef = ref(props.onlyShow);
 const updateRef = ref(props.update);
@@ -253,7 +251,6 @@ async function onSuccess(values: ActivityForm) {
 function call(editOption: string) {
     isRecurringActivityEditVisible.value = false;
     value.value.editType = editOption;
-    console.log(value.value);
     editActivity(value.value);
 }
 
@@ -293,7 +290,6 @@ async function editActivity(values: ActivityForm) {
 
     let activity = undefined;
     if (props.calendarClicked) {
-        console.log(date);
         activity = {
             name: values.name,
             estimated_duration: duration,
@@ -362,8 +358,6 @@ async function editActivity(values: ActivityForm) {
                     loadingSave.value = false;
                     activityStore.updateActivity(response._data);
                     if (props.calendarActivity) {
-                        console.log(props.calendarActivity);
-                        console.log(response._data);
                         emit("editCalendarActivity", activity.name);
                         emit("calendarMoved", start, end);
                     }
@@ -446,7 +440,6 @@ async function editActivity(values: ActivityForm) {
 }
 
 function onInvalidSubmit({ errors }: { errors: ActivityFormErrors }) {
-    console.log(errors);
     if (errors.link) {
         activeIndex.value = 1;
     } else if (errors.date || errors.time || errors.repeatType) {
@@ -485,7 +478,6 @@ function setSelectedDate(date: Date) {
 }
 
 function changeRepeat(selectedRepeat: string) {
-    console.log(selectedRepeat);
     if (selectedRepeat == t.value("activity.repeat.custom")) {
         repeatType.value = "custom";
     } else if (selectedRepeat == t.value("activity.repeat.daily")) {
@@ -747,7 +739,6 @@ function changeCustomRepeat(
                                 class="w-full sm:pb-2 sm:pr-16"
                                 @date-selected="setSelectedDate"
                             />
-                            {{ console.log(props.calendarActivity) }}
                             <FormTimeInput
                                 id="calendar-time"
                                 name="time"

@@ -8,8 +8,8 @@ const props = defineProps({
         type: Object as PropType<User>,
         required: true,
     },
-    journeyStart: { type: Date, required: true },
-    journeyEnd: { type: Date, required: true },
+    journeyStart: { type: Date, default: new Date() },
+    journeyEnd: { type: Date, default: new Date() },
 });
 
 const emit = defineEmits(["close"]);

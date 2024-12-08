@@ -26,7 +26,6 @@ watch(
         } else {
             editOption.value = "single";
         }
-        console.log(props.noSingle);
         singleVisible.value = value;
     },
 );
@@ -37,10 +36,8 @@ const close = () => {
 };
 
 const post = () => {
-    console.log(editOption.value);
     emit("close");
     emit("post", editOption.value);
-    console.log(editOption.value);
     editOption.value = "single";
 };
 </script>

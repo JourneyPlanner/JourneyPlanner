@@ -32,10 +32,7 @@ const daysInJourney = ref(
     Math.ceil(differenceInHours(props.journeyEnd, props.journeyStart) / 24) + 1,
 );
 
-console.log(daysInJourney.value);
-
 const { value, errorMessage } = useField<repeatType>(() => props.name);
-console.log(props.repeatType);
 if (props.repeatType == "custom") {
     value.value = { name: t.value("activity.repeat.custom"), value: 2 };
 } else if (props.repeatType == "daily") {
@@ -63,7 +60,6 @@ const customInput = () => {
 };
 
 function changeRepeat() {
-    console.log(value);
     if (value.value.value > daysInJourney.value) {
         value.value.name = t.value("activity.repeat.not");
         toast.add({

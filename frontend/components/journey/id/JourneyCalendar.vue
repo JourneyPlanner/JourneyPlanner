@@ -38,6 +38,7 @@ const isInitializeDrop = ref(false);
 const isRemoveCall = ref(false);
 const isDeleteCall = ref(false);
 const store = useActivityStore();
+const journeyStore = useJourneyStore();
 const isActivityInfoVisible = ref(false);
 const activities = computed(() => store.activityData as Activity[]);
 const client = useSanctumClient();
@@ -193,7 +194,6 @@ function removeFromCalendar() {
 }
 
 async function removeFromCalendarCall(editType: string) {
-    console.log(editType);
     const edit_type = {
         edit_type: editType,
     };
@@ -319,12 +319,16 @@ const calendarOptions = reactive({
 }) as unknown as CalendarOptions;
 
 watch(addedActivity, () => {
-    console.log(addedActivity);
     addNewActivities(addedActivity.value);
 });
 
 watch(oldActivity, () => {
     removeOldActivities(oldActivity.value);
+});
+
+watch(journeyStore, () => {
+    const calApi = fullCalendar.value.getApi();
+    calApi.gotoDate(journeyStore.getFromDate());
 });
 
 onMounted(() => {
@@ -385,6 +389,7 @@ onMounted(() => {
  * @param info -- the event object with data about the activity
  */
 async function initializeDrop(info: EventObject) {
+    const calApi = fullCalendar.value.getApi();
     isInitializeDrop.value = true;
     let calenderActivityId;
     const isFromPool = ref(false);
@@ -392,8 +397,6 @@ async function initializeDrop(info: EventObject) {
     const date = startTime.split("T")[0];
     let time = startTime.split("T")[1];
     time = time.substring(0, time.length - 8);
-    console.log(date);
-    console.log(time);
     if ((activityId.value = info.event._def.extendedProps.activity_id)) {
         activityId.value = info.event._def.extendedProps.activity_id;
         calenderActivityId = info.event._def.publicId;
@@ -411,8 +414,6 @@ async function initializeDrop(info: EventObject) {
         };
     }
 
-    console.log(info.event);
-    console.log(activityId.value);
     if (
         store.getActivity(activityId.value).repeat_type != null &&
         !isFromPool.value
@@ -422,17 +423,14 @@ async function initializeDrop(info: EventObject) {
         store.getActivity(activityId.value).repeat_type != null &&
         isFromPool.value
     ) {
-        initializeDropCall(
-            store.getActivity(activityId.value).repeat_type,
-            isFromPool.value,
-        );
+        initializeDropCall(store.getActivity(activityId.value).repeat_type);
     } else {
-        initializeDropCall("all", isFromPool.value);
+        initializeDropCall("all");
     }
+    calApi.getEventById(info.event._def.publicId).remove();
 }
 
-async function initializeDropCall(editType: string, isFromPool: boolean) {
-    console.log(isFromPool);
+async function initializeDropCall(editType: string) {
     isRecurringActivityEditVisible.value = false;
     Object.assign(activity.value, { edit_type: editType });
     isInitializeDrop.value = false;
@@ -440,11 +438,6 @@ async function initializeDropCall(editType: string, isFromPool: boolean) {
         method: "PATCH",
         body: activity.value,
         async onResponse({ response }) {
-            console.log(response._data);
-            console.log(response._data.activity_id);
-            response._data.forEach((activity: Activity) => {
-                console.log(activity.id);
-            });
             if (response.ok) {
                 toast.add({
                     severity: "success",
@@ -510,7 +503,6 @@ function editDrop(info: EventObject) {
 }
 
 async function editDropCall(editType: string) {
-    console.log(editType);
     isEditDrop.value = false;
     isRecurringActivityEditVisible.value = false;
     Object.assign(activity.value, { edit_type: editType });
@@ -553,7 +545,6 @@ function showData(info: EventObject) {
                 update.value = false;
                 onlyShow.value = true;
             }
-            console.log(activity);
             address.value = activity.address;
             repeatType.value = activity.repeat_type;
             cost.value = activity.cost;
@@ -582,9 +573,7 @@ function showData(info: EventObject) {
 
 async function removeOldActivities(oldActivities: Activity[]) {
     const calApi = fullCalendar.value.getApi();
-    console.log(oldActivities);
     oldActivities.forEach((activity: Activity) => {
-        console.log(activity);
         if (activity.calendar_activities != null) {
             activity.calendar_activities.forEach(
                 (calendar_activity: CalendarActivity) => {
@@ -599,9 +588,7 @@ async function removeOldActivities(oldActivities: Activity[]) {
 
 async function addNewActivities(activity: Activity[]) {
     const calApi = fullCalendar.value.getApi();
-    console.log(activity);
     activity.forEach((activity: Activity) => {
-        console.log(activity);
         if (activity.calendar_activities != null) {
             activity.calendar_activities.forEach(
                 (calendar_activity: CalendarActivity) => {
@@ -617,11 +604,6 @@ async function addNewActivities(activity: Activity[]) {
                         ),
                     }).toISOString();
                     calendar_activity.end = newEnd;
-                    console.log(calendar_activity.start);
-                    console.log(
-                        parseInt(activity.estimated_duration.split(":")[0]),
-                    );
-                    console.log(newEnd);
                     calendar_activity.title = activity.name;
                     if (calendar_activity.start.split(" ")[1] <= "06:00:00") {
                         calApi.setOption("slotMinTime", "00:00:00");
@@ -634,15 +616,13 @@ async function addNewActivities(activity: Activity[]) {
             );
         }
     });
-    console.log(activities);
 }
 
 function call(editType: string) {
-    console.log(editType);
     if (isEditDrop.value) {
         editDropCall(editType);
     } else if (isInitializeDrop.value) {
-        initializeDropCall(editType, false);
+        initializeDropCall(editType);
     } else if (isRemoveCall.value) {
         removeFromCalendarCall(editType);
         isRemoveCall.value = false;

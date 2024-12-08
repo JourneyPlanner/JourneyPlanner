@@ -16,44 +16,32 @@ export const useActivityStore = defineStore("activities", () => {
     }
 
     function setNewActivity(activity) {
-        console.log(activity);
         this.addedActivity = activity;
     }
 
     function updateActivity(activity) {
         oldActivity.value = [];
         activity.forEach((element) => {
-            console.log(element);
-            console.log(element.parent_id == null);
             if (
                 element.parent_id == null &&
                 this.activityData.findIndex((obj) => obj.id === element.id) !=
                     -1
             ) {
                 const baseActivity = this.findBaseActivity(element);
-                console.log(baseActivity);
                 const activities = this.getAllChildren(baseActivity.id);
                 activities.push(baseActivity);
-                console.log(activities);
                 activities.forEach((activity) => {
                     const index = this.activityData.findIndex(
                         (obj) => obj.id === activity.id,
                     );
-                    console.log(index);
-                    console.log(this.activityData[index]);
-                    console.log(this.activityData);
                     oldActivity.value.push(this.activityData[index]);
                     this.activityData = this.activityData
                         .slice(0, index)
                         .concat(this.activityData.slice(index + 1));
-                    console.log(this.activityData);
                 });
             }
-            console.log(element);
         });
         this.activityData.push(...activity);
-        console.log(activity);
-        console.log(this.activityData);
         this.setNewActivity(activity);
     }
 
@@ -73,10 +61,6 @@ export const useActivityStore = defineStore("activities", () => {
     function getAllChildren(id) {
         let children = [];
         activityData.value.forEach((item) => {
-            console.log(item);
-            console.log(item.parent_id);
-            console.log(id);
-            console.log(item.parent_id == id);
             if (item.parent_id == id) {
                 children.push(item);
                 children.push(...getAllChildren(item.id));
