@@ -249,6 +249,12 @@ class ActivityController extends Controller
             ]);
 
             if ($validated["edit_type"] == "single") {
+                if ($repeatedChanged) {
+                    abort(
+                        400,
+                        "You cannot change the repeat settings of a single activity."
+                    );
+                }
                 $subActivity = $activity->replicate();
                 $subActivity->fill($validated);
                 $this->resetGeocodeDataIfNeeded($activity, $validated);
