@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useDashboardStore = defineStore("dashboard", () => {
+export const useJourneysStore = defineStore("journeys", () => {
     const journeys = ref([]);
 
     function setJourneys(journeys) {

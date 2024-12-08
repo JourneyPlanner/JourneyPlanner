@@ -11,6 +11,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["close"]);
 
+const nuxtApp = useNuxtApp();
 const isVisible = ref(props.visible);
 const { t } = useTranslate();
 const colorScheme = ref("");
@@ -75,7 +76,11 @@ onMounted(() => {
 });
 
 const { data: requiresPassword, refresh: refreshRequiresPassword } =
-    await useAsyncData("reqpw", () => client(`/api/me/requiresPassword`));
+    await useAsyncData("reqpw", () => client(`/api/me/requiresPassword`), {
+        getCachedData(key) {
+            return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+        },
+    });
 
 const close = () => {
     emit("close");
@@ -263,7 +268,7 @@ function blur(e: Event) {
             :auto-z-index="true"
             :draggable="false"
             :header="t('dashboard.user.settings')"
-            class="-z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-4/5 md:rounded-xl"
+            class="z-50 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-4/5 md:rounded-xl"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',

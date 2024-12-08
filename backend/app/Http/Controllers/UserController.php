@@ -13,6 +13,31 @@ use Illuminate\Database\Eloquent\Builder;
 class UserController extends Controller
 {
     /**
+     * Get all users.
+     */
+    public function index()
+    {
+        $validated = request()->validate([
+            "per_page" => "nullable|integer|min:1|max:100",
+            "search" => "nullable|string",
+        ]);
+
+        $perPage = $validated["per_page"] ?? 10;
+        $search = $validated["search"] ?? "";
+
+        $users = User::when($search, function ($query) use ($search) {
+            $query
+                ->where("username", "like", "%$search%")
+                ->orWhere("display_name", "like", "%$search%");
+        })
+            ->orderBy("username", "asc")
+            ->simplePaginate($perPage, ["username", "display_name"])
+            ->withQueryString();
+
+        return response()->json($users);
+    }
+
+    /**
      * Get a user by username.
      */
     public function show(string $username)

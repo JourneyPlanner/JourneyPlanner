@@ -15,6 +15,7 @@ const emit = defineEmits(["close"]);
 const { isAuthenticated } = useSanctumAuth();
 
 const journeyStore = useJourneyStore();
+const activityStore = useActivityStore();
 const isDialogVisible = ref(false);
 
 watch(
@@ -33,7 +34,11 @@ function close() {
 <template>
     <div>
         <div
-            v-if="currUser?.role === 1 || !isAuthenticated"
+            v-if="
+                currUser?.role === 1 ||
+                !isAuthenticated ||
+                currUser?.id === 'TEMPLATE'
+            "
             class="flex justify-center md:justify-start"
         >
             <div
@@ -43,6 +48,7 @@ function close() {
                     <T key-name="journey.activities" />
                 </div>
                 <button
+                    v-if="currUser?.id !== 'TEMPLATE'"
                     class="-mb-3 ml-auto flex items-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-1.5 py-1.5 pr-2.5 text-sm font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 sm:px-2 sm:py-1 sm:text-base lg:mb-4"
                     @click="isDialogVisible = !isDialogVisible"
                 >
@@ -54,11 +60,23 @@ function close() {
                         <T key-name="journey.button.create.activity" />
                     </span>
                 </button>
+                <span
+                    v-else
+                    class="-mb-3.5 ml-auto text-base md:text-lg lg:mb-1"
+                >
+                    {{ activityStore.activityData.length }}
+                    <T key-name="template.activities" />
+                </span>
             </div>
         </div>
         <JourneyIdComponentsActivityPool
-            v-if="currUser?.role === 1 || !isAuthenticated"
+            v-if="
+                currUser?.role === 1 ||
+                !isAuthenticated ||
+                currUser?.id === 'TEMPLATE'
+            "
             :id="journeyStore.getID()"
+            :in-template="currUser?.id === 'TEMPLATE'"
             @open-new-activity-dialog="isDialogVisible = true"
         />
         <JourneyIdDialogsActivityDialog

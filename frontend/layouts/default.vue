@@ -4,7 +4,7 @@
             <slot class="" />
         </main>
         <footer
-            class="mb-auto mt-auto w-full flex-wrap justify-center py-2 text-center font-nunito text-xs text-natural-600 dark:text-natural-400 md:text-sm"
+            class="z-10 mb-auto mt-auto w-full flex-wrap justify-center py-2 text-center font-nunito text-xs text-natural-600 dark:text-natural-400 md:text-sm"
         >
             <NuxtLink
                 to="/imprint"

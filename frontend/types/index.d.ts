@@ -7,6 +7,7 @@ declare global {
         destination: string;
         invite: string;
         mapbox_full_address: string;
+        mapbox_id: string;
         from: string;
         to: string;
         role: number;
@@ -125,7 +126,14 @@ declare global {
     }
 
     interface Template {
+        id: string;
         name: string;
         description: string;
+        destination: string;
+        length: number;
+        mapbox_full_address: string;
+        users: User[];
+        from: string;
+        to: string;
     }
 }

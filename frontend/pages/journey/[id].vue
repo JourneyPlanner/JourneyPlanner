@@ -41,6 +41,12 @@ const uploadResult = ref();
 const upload = ref();
 const calendar = ref();
 
+onMounted(() => {
+    if (route.query.username) {
+        isMemberSidebarVisible.value = true;
+    }
+});
+
 const { data, error } = await useAsyncData("journey", () =>
     client(`/api/journey/${journeyId}`),
 );
@@ -69,7 +75,7 @@ if (isAuthenticated.value) {
 await client(`/api/journey/${journeyId}/activity`, {
     async onResponse({ response }) {
         if (response.ok) {
-            activityStore.setActivities(response._data);
+            activityStore.setActivities(response._data.activities);
             activityDataLoaded.value = true;
         }
     },
@@ -284,7 +290,9 @@ function scrollToTarget(target: string) {
 </script>
 
 <template>
-    <div class="flex flex-col font-nunito text-text dark:text-natural-50">
+    <div
+        class="flex flex-col overflow-x-hidden font-nunito text-text dark:text-natural-50"
+    >
         <JourneyIdMemberSidebar
             :journey-i-d="String(journeyId)"
             :is-member-sidebar-visible="isMemberSidebarVisible"
@@ -318,7 +326,9 @@ function scrollToTarget(target: string) {
                         : router.push('/dashboard')
                 "
             >
-                <SvgDashboardIcon class="h-7 w-7 md:h-6 md:w-6" />
+                <SvgDashboardIcon
+                    class="h-7 w-7 fill-text dark:fill-natural-50 md:h-6 md:w-6"
+                />
                 <p class="hidden text-2xl group-hover:underline sm:block">
                     Dashboard
                 </p>

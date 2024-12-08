@@ -21,6 +21,7 @@ class JourneyPolicy
     public function view(?User $user, Journey $journey, bool $allowGuests): bool
     {
         return ($allowGuests && $this->guestJourney($journey)) ||
+            $this->journeyTemplate($journey) ||
             ($user && $this->journeyMember($user, $journey));
     }
 
@@ -83,6 +84,11 @@ class JourneyPolicy
     private function guestJourney(Journey $journey): bool
     {
         return $journey->is_guest;
+    }
+
+    private function journeyTemplate(Journey $journey): bool
+    {
+        return $journey->is_template;
     }
 
     /**

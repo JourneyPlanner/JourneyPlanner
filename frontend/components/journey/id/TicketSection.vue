@@ -3,7 +3,7 @@ import { useTranslate } from "@tolgee/vue";
 import { format } from "date-fns";
 import JSConfetti from "js-confetti";
 
-defineProps({
+const props = defineProps({
     hundredsDays: {
         type: Number,
         required: true,
@@ -27,6 +27,14 @@ defineProps({
     currUser: {
         type: Object as PropType<User>,
         required: true,
+    },
+    isTemplate: {
+        type: Boolean,
+        default: false,
+    },
+    templateId: {
+        type: String,
+        default: "",
     },
 });
 
@@ -61,7 +69,9 @@ const flip = () => {
 };
 
 const { data: weather, refresh } = await useAsyncData("weather", () =>
-    client(`/api/journey/${journeyStore.getID()}/weather`),
+    client(
+        `/api/journey/${props.isTemplate ? props.templateId : journeyStore.getID()}/weather`,
+    ),
 );
 
 if (weather.value && weather.value.error != "Weather data not available") {
@@ -90,21 +100,14 @@ if (weather.value && weather.value.error != "Weather data not available") {
     locationFound.value = false;
 }
 
-watch(
-    journeyStore,
-    async () => {
-        await refresh();
-        if (
-            weather.value &&
-            weather.value.error != "Weather data not available"
-        ) {
-            updateWeatherData();
-        } else {
-            locationFound.value = false;
-        }
-    },
-    { immediate: true },
-);
+watch(journeyStore, async () => {
+    await refresh();
+    if (weather.value && weather.value.error != "Weather data not available") {
+        updateWeatherData();
+    } else {
+        locationFound.value = false;
+    }
+});
 
 function updateWeatherData() {
     locationFound.value = true;
@@ -172,7 +175,7 @@ function emitScroll(target: string) {
 </script>
 
 <template>
-    <div class="mt-8 flex h-fit flex-wrap">
+    <div class="mt-4 flex h-fit flex-wrap md:mt-8">
         <div class="flex w-full items-center justify-center md:hidden">
             <div
                 class="group w-[90%] [perspective:1000px] sm:w-5/6"
@@ -222,15 +225,17 @@ function emitScroll(target: string) {
                                             class="text-md mb-2 w-5/6 rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50 md:w-4/5"
                                             disabled
                                             :value="
-                                                format(
-                                                    journeyStore.getFromDate(),
-                                                    'dd/MM/yyyy',
-                                                ) +
-                                                ' - ' +
-                                                format(
-                                                    journeyStore.getToDate(),
-                                                    'dd/MM/yyyy',
-                                                )
+                                                !isTemplate
+                                                    ? format(
+                                                          journeyStore.getFromDate(),
+                                                          'dd/MM/yyyy',
+                                                      ) +
+                                                      ' - ' +
+                                                      format(
+                                                          journeyStore.getToDate(),
+                                                          'dd/MM/yyyy',
+                                                      )
+                                                    : '----'
                                             "
                                         />
                                     </div>
@@ -273,7 +278,7 @@ function emitScroll(target: string) {
                                     class="relative flex h-full w-full flex-col overflow-hidden"
                                 >
                                     <div
-                                        class="absolute left-2 top-2 z-50 flex h-[1.25rem] w-[1.25rem] cursor-pointer items-center justify-center rounded-full text-center text-sm text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                        class="absolute left-2 top-2 z-10 flex h-[1.25rem] w-[1.25rem] cursor-pointer items-center justify-center rounded-full text-center text-sm text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
                                         @click.stop="
                                             isLicenseVisible = !isLicenseVisible
                                         "
@@ -485,15 +490,17 @@ function emitScroll(target: string) {
                                 class="text-md mb-2 rounded-md bg-natural-100 px-2.5 pb-1 pt-1 font-bold text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50 md:w-5/6 lg:w-2/3"
                                 disabled
                                 :value="
-                                    format(
-                                        journeyStore.getFromDate(),
-                                        'dd/MM/yyyy',
-                                    ) +
-                                    ' - ' +
-                                    format(
-                                        journeyStore.getToDate(),
-                                        'dd/MM/yyyy',
-                                    )
+                                    !isTemplate
+                                        ? format(
+                                              journeyStore.getFromDate(),
+                                              'dd/MM/yyyy',
+                                          ) +
+                                          ' - ' +
+                                          format(
+                                              journeyStore.getToDate(),
+                                              'dd/MM/yyyy',
+                                          )
+                                        : '----'
                                 "
                             />
                         </div>
@@ -598,7 +605,7 @@ function emitScroll(target: string) {
                                                 value: weatherType,
                                                 pt: { root: 'font-nunito' },
                                             }"
-                                            class="z-50 h-6 w-32 overflow-hidden overflow-ellipsis text-nowrap text-center"
+                                            class="h-6 w-32 overflow-hidden overflow-ellipsis text-nowrap text-center"
                                             >{{ weatherType }}
                                         </span>
                                     </div>
@@ -676,7 +683,7 @@ function emitScroll(target: string) {
                 >
                     <!-- flip clock container -->
                     <div
-                        v-if="hundredsDays <= 0"
+                        v-if="hundredsDays <= 0 && !isTemplate"
                         class="relative mx-3 my-2 grid grid-cols-2 gap-x-1 text-4xl font-bold text-text dark:text-natural-50 lg:text-6xl"
                     >
                         <div class="bg-black relative rounded-xl p-1 py-2">
@@ -724,7 +731,7 @@ function emitScroll(target: string) {
                     </div>
 
                     <div
-                        v-else
+                        v-else-if="!isTemplate"
                         class="relative mx-3 my-2 grid grid-cols-3 gap-x-1 text-4xl font-bold text-text dark:text-natural-50 lg:gap-x-2 lg:text-6xl"
                     >
                         <!-- left side -->
@@ -801,10 +808,15 @@ function emitScroll(target: string) {
                             </div>
                         </div>
                     </div>
+                    <div v-else class="max-lg:hidden">
+                        <i
+                            class="pi pi-objects-column mt-6 text-7xl text-calypso-300"
+                        />
+                    </div>
                     <div
                         class="flex items-center justify-start text-center lg:flex-col"
                     >
-                        <p class="text-base font-bold">
+                        <p v-if="!isTemplate" class="text-base font-bold">
                             <T key-name="journey.countdown.days" />
                         </p>
                         <p
@@ -820,16 +832,26 @@ function emitScroll(target: string) {
                             <T key-name="journey.countdown.finished" />
                         </p>
                         <p
-                            v-else
+                            v-else-if="!isTemplate"
                             class="w-full pl-1 text-base font-bold lg:text-lg"
                         >
                             <T key-name="journey.countdown.until" />
                         </p>
+                        <div v-else>
+                            <h5
+                                class="mt-4 font-semibold text-text dark:text-natural-50 max-sm:hidden md:text-xl"
+                            >
+                                <T key-name="template.use" />
+                            </h5>
+                            <p class="p-2 text-sm max-xs:hidden sm:text-base">
+                                <T key-name="template.use.description" />
+                            </p>
+                        </div>
                         <button
                             v-if="
                                 duringJourney ||
-                                currUser?.role !== 1 ||
-                                !isAuthenticated
+                                (currUser?.role !== 1 && !isTemplate) ||
+                                (!isAuthenticated && !isTemplate)
                             "
                             class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
                             @click="emitScroll('calendarRef')"
@@ -847,11 +869,17 @@ function emitScroll(target: string) {
                             <T key-name="journey.button.countdown.celebrate" />
                         </button>
                         <button
-                            v-else
+                            v-else-if="!isTemplate"
                             class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[100%] xl:w-[120%]"
                             @click="toggleActivityDialog"
                         >
                             <T key-name="journey.button.create.activity" />
+                        </button>
+                        <button
+                            v-else
+                            class="my-4 ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:mt-4 md:text-base"
+                        >
+                            <T key-name="template.use" />
                         </button>
                     </div>
                 </div>

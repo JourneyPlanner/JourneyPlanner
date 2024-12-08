@@ -241,12 +241,14 @@ function openUnlockDialog() {
             :is-journey-dialog-visible="isJourneyEditMenuVisible"
             :name="journeyStore.getName()"
             :destination="journeyStore.getDestination()"
+            :mapbox-full-address="journeyStore.getMapboxFullAddress()"
+            :mapbox-id="journeyStore.getMapboxID()"
             :from="new Date(journeyStore.getFromDate())"
             :to="new Date(journeyStore.getToDate())"
             @close-edit-journey-dialog="isJourneyEditMenuVisible = false"
             @journey-edited="journeyEdited"
         />
-        <JourneyIdDialogsTemplateDialog
+        <JourneyIdDialogsCreateTemplateDialog
             v-if="currUser?.role === 1"
             :is-create-template-visible="isCreateTemplateVisible"
             @close-template-dialog="isCreateTemplateVisible = false"

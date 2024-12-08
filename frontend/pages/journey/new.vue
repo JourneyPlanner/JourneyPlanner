@@ -9,14 +9,17 @@ const { t } = useTranslate();
 const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 const toast = useToast();
-const store = useDashboardStore();
-const journeyStore = useJourneyStore();
-journeyStore.resetJourney();
+const store = useJourneysStore();
 
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
 const loading = ref(false);
+const openedTemplate = ref<Template>();
+const isTemplatePopupVisible = ref(false);
+const templateDestinationInput = ref("");
+const templateDestinationName = ref("");
+const suggestions = ref<Template[]>([]);
 
 const title = t.value("title.journey.create");
 useHead({
@@ -40,6 +43,30 @@ if (!isAuthenticated.value) {
     journeyInviteLink.value =
         window.location.origin + "/invite/" + journeyInvite.value;
 }
+
+/**
+ * Fetches all templates from the backend
+ * stores response in templates ref
+ */
+const {
+    data: templateData,
+    status,
+    refresh,
+} = await useAsyncData("suggestions", () =>
+    client(
+        `/api/template?per_page=3&template_destination_input=${encodeURIComponent(templateDestinationInput.value)}&template_destination_name=${encodeURIComponent(templateDestinationName.value)}`,
+    ),
+);
+
+watch(
+    templateData,
+    () => {
+        if (templateData.value) {
+            suggestions.value = templateData.value.data;
+        }
+    },
+    { immediate: true },
+);
 
 /**
  * form validation
@@ -147,18 +174,42 @@ function copyToClipboard() {
         life: 2000,
     });
 }
+
+const openTemplateDialog = (template: Template) => {
+    openedTemplate.value = template;
+    isTemplatePopupVisible.value = true;
+};
+
+const changeAddress = debounce((inputValue: unknown) => {
+    templateDestinationInput.value = inputValue as string;
+    refresh();
+});
+
+function retrievedAddress(inputValue: string, name: string) {
+    templateDestinationInput.value = inputValue;
+    templateDestinationName.value = name;
+    refresh();
+}
 </script>
 
 <template>
     <div>
-        <div class="absolute left-4 top-4">
+        <div>
+            <SvgCloud
+                class="invisible absolute left-[28%] top-72 h-14 overflow-hidden object-none md:visible"
+            />
+            <SvgCloud
+                class="invisible absolute right-[20%] top-36 h-16 overflow-hidden object-none md:visible"
+            />
+        </div>
+        <div class="absolute left-4 top-4 z-50">
             <NuxtLink :to="cancel">
                 <SvgLogoHorizontalBlue class="w-44 lg:w-56" />
             </NuxtLink>
         </div>
-        <div class="z-10 flex min-h-screen flex-col justify-between">
+        <div class="relative flex flex-col">
             <div
-                class="z-50 mt-16 flex items-center justify-center px-4 font-nunito"
+                class="mt-10 flex items-center justify-center px-4 font-nunito sm:mt-8"
             >
                 <fieldset
                     id="create-journey"
@@ -166,7 +217,7 @@ function copyToClipboard() {
                 >
                     <legend
                         for="create-journey"
-                        class="mb-5 text-center text-2xl font-bold text-text dark:text-natural-50 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
+                        class="text-center text-2xl font-bold text-text dark:text-natural-50 md:mb-5 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>
@@ -180,8 +231,10 @@ function copyToClipboard() {
                             id="journey-destination"
                             name="journeyDestination"
                             :placeholder="t('form.input.journey.destination')"
-                            class="relative mb-5"
+                            class="relative mb-4"
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
+                            @change-address="changeAddress"
+                            @retrieved-address="retrievedAddress"
                         />
                         <FormCalendar
                             id="journey-range-calendar"
@@ -195,7 +248,6 @@ function copyToClipboard() {
                         />
 
                         <div v-if="isAuthenticated" class="relative my-2 flex">
-                            <!-- TODO lightmode bg color anpassen? -->
                             <input
                                 id="journey-invite"
                                 v-model="journeyInviteLink"
@@ -221,8 +273,7 @@ function copyToClipboard() {
                                 </button>
                             </div>
                         </div>
-
-                        <div class="mb-5 mt-6 flex justify-between gap-5">
+                        <div class="mb-3 mt-6 flex justify-between gap-5">
                             <NuxtLink :to="cancel">
                                 <button
                                     type="button"
@@ -250,26 +301,75 @@ function copyToClipboard() {
                     </form>
                 </fieldset>
             </div>
-            <div class="z-10">
+            <div class="mt-2 flex items-center justify-center px-4 font-nunito">
                 <div
-                    class="relative flex flex-row items-end justify-between border-b border-natural-200"
+                    id="template-section"
+                    class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-2/4 md:w-2/5"
                 >
-                    <SvgPeopleBackpackMap class="hidden h-full lg:flex" />
-                    <div
-                        class="mt-2 flex h-full w-full flex-row items-end justify-between sm:mt-0 lg:absolute lg:inset-0 lg:justify-end"
+                    <h3
+                        class="-m-0.5 ml-4 mt-0.5 text-lg font-semibold text-natural-800 dark:text-natural-200"
                     >
-                        <SvgWomanSuitcaseLeft />
-                        <SvgWomanSuitcaseRight class="ml-10 mr-5" />
+                        <T key-name="template.suggestions" />
+                    </h3>
+                    <div v-if="status === 'pending'" class="mt-1 flex w-full">
+                        <ProgressSpinner class="w-10" />
+                    </div>
+                    <div
+                        v-else-if="suggestions.length < 1"
+                        class="mt-1 w-full text-center italic text-natural-800 dark:text-natural-200"
+                    >
+                        <T key-name="template.suggestions.none" />
+                    </div>
+                    <div
+                        v-else
+                        id="template-suggestions"
+                        class="mb-1.5 mt-1 flex w-full flex-col"
+                    >
+                        <TemplateSuggestion
+                            v-for="(template, index) in suggestions"
+                            :key="template.id"
+                            :index="index"
+                            :template="template"
+                            @open-template="openTemplateDialog(template)"
+                        />
+                    </div>
+                    <div
+                        v-if="isAuthenticated"
+                        class="mb-0.5 mr-3 flex justify-end"
+                    >
+                        <NuxtLink
+                            to="/dashboard?tab=templates"
+                            class="group flex items-center gap-x-1 text-end text-natural-800 hover:text-calypso-600 dark:text-natural-200 dark:hover:text-calypso-300"
+                        >
+                            <span class="group-hover:underline">
+                                <T key-name="template.all" />
+                            </span>
+                            <i
+                                class="pi pi-chevron-right text-xs hover:no-underline"
+                            />
+                        </NuxtLink>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="z-10">
-            <SvgCloud
-                class="invisible absolute left-[28%] top-72 z-0 h-14 overflow-hidden object-none md:visible"
-            />
-            <SvgCloud
-                class="invisible absolute right-[20%] top-36 z-0 h-16 overflow-hidden object-none md:visible"
+        <SvgPeopleBackpackMap class="absolute bottom-0 hidden h-44 lg:block" />
+        <SvgWomanSuitcaseLeft
+            class="absolute bottom-0 hidden h-44 sm:block lg:right-44"
+        />
+        <SvgWomanSuitcaseRight
+            class="absolute bottom-0 right-0 hidden h-44 sm:block"
+        />
+        <div class="z-50">
+            <TemplatePopup
+                v-if="openedTemplate"
+                id="template-popup-create-new-journey"
+                class="z-50"
+                :template="openedTemplate"
+                :is-template-dialog-visible="isTemplatePopupVisible"
+                @close="
+                    isTemplatePopupVisible = false;
+                    openedTemplate = undefined;
+                "
             />
         </div>
     </div>

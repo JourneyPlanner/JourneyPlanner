@@ -30,6 +30,14 @@ export const useJourneyStore = defineStore("journey", () => {
         return this.journey.destination;
     }
 
+    function getMapboxFullAddress() {
+        return this.journey.mapbox_full_address;
+    }
+
+    function getMapboxID() {
+        return this.journey.mapbox_id;
+    }
+
     function getFromDate() {
         return this.journey.from;
     }
@@ -72,6 +80,8 @@ export const useJourneyStore = defineStore("journey", () => {
         getName,
         getInvite,
         getDestination,
+        getMapboxFullAddress,
+        getMapboxID,
         getFromDate,
         getToDate,
         getLong,
