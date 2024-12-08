@@ -5,23 +5,41 @@ import { v4 as uuidv4 } from "uuid";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 
+const route = useRoute();
+const router = useRouter();
 const { t } = useTranslate();
 const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 const toast = useToast();
 const store = useJourneysStore();
+const journeyStore = useJourneyStore();
+journeyStore.resetJourney();
 
+const templateID = route.params.id;
+const activeIndex = ref(0);
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
 const loading = ref(false);
-const openedTemplate = ref<Template>();
-const isTemplatePopupVisible = ref(false);
-const templateDestinationInput = ref("");
-const templateDestinationName = ref("");
-const suggestions = ref<Template[]>([]);
+const page = ref(1);
 
 const title = t.value("title.journey.create");
+const { data } = await useAsyncData("journey", () =>
+    client(`/api/template/${templateID}`),
+);
+
+watch(
+    activeIndex,
+    () => {
+        if (activeIndex.value == null) {
+            activeIndex.value = 0;
+        }
+    },
+    { immediate: true },
+);
+
+console.log(data);
+console.log(data.value.destination);
 useHead({
     title: `${title} | JourneyPlanner`,
 });
@@ -43,30 +61,6 @@ if (!isAuthenticated.value) {
     journeyInviteLink.value =
         window.location.origin + "/invite/" + journeyInvite.value;
 }
-
-/**
- * Fetches all templates from the backend
- * stores response in templates ref
- */
-const {
-    data: templateData,
-    status,
-    refresh,
-} = await useAsyncData("suggestions", () =>
-    client(
-        `/api/template?per_page=3&template_destination_input=${encodeURIComponent(templateDestinationInput.value)}&template_destination_name=${encodeURIComponent(templateDestinationName.value)}`,
-    ),
-);
-
-watch(
-    templateData,
-    () => {
-        if (templateData.value) {
-            suggestions.value = templateData.value.data;
-        }
-    },
-    { immediate: true },
-);
 
 /**
  * form validation
@@ -174,22 +168,6 @@ function copyToClipboard() {
         life: 2000,
     });
 }
-
-const openTemplateDialog = (template: Template) => {
-    openedTemplate.value = template;
-    isTemplatePopupVisible.value = true;
-};
-
-const changeAddress = debounce((inputValue: unknown) => {
-    templateDestinationInput.value = inputValue as string;
-    refresh();
-});
-
-function retrievedAddress(inputValue: string, name: string) {
-    templateDestinationInput.value = inputValue;
-    templateDestinationName.value = name;
-    refresh();
-}
 </script>
 
 <template>
@@ -199,7 +177,7 @@ function retrievedAddress(inputValue: string, name: string) {
                 class="invisible absolute left-[22%] top-20 h-20 overflow-hidden object-none md:visible"
             />
             <SvgCloud
-                class="invisible absolute right-[20%] top-36 h-16 overflow-hidden object-none md:visible"
+                class="invisible absolute right-[25%] top-80 h-[4.5rem] overflow-hidden object-none md:visible"
             />
         </div>
         <div class="absolute left-4 top-4 z-50">
@@ -212,8 +190,9 @@ function retrievedAddress(inputValue: string, name: string) {
                 class="mt-10 flex items-center justify-center px-4 font-nunito sm:mt-8"
             >
                 <fieldset
+                    v-if="page == 1"
                     id="create-journey"
-                    class="w-full rounded-2xl border-2 border-calypso-300 bg-calypso-200 bg-opacity-30 px-2 shadow-sm dark:bg-gothic-300 dark:bg-opacity-20 xs:px-5 sm:w-1/4 md:w-1/3"
+                    class="w-full rounded-3xl border-2 border-calypso-300 bg-natural-50 px-2 shadow-sm dark:border-calypso-600 dark:bg-background-dark xs:px-5 sm:w-1/4 md:w-1/3"
                 >
                     <legend
                         for="create-journey"
@@ -226,15 +205,14 @@ function retrievedAddress(inputValue: string, name: string) {
                             id="journey-name"
                             name="journeyName"
                             translation-key="form.input.journey.name"
+                            border-color="natural-300"
                         />
-                        <FormAddressInput
+                        <input
                             id="journey-destination"
                             name="journeyDestination"
-                            :placeholder="t('form.input.journey.destination')"
-                            class="relative mb-4"
-                            custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
-                            @change-address="changeAddress"
-                            @retrieved-address="retrievedAddress"
+                            disabled
+                            class="font peer mb-4 flex w-full items-center justify-center rounded-lg border-2 border-natural-300 bg-natural-100 px-2.5 py-2.5 text-xl text-natural-700 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-300"
+                            :value="data.destination"
                         />
                         <FormCalendar
                             id="journey-range-calendar"
@@ -274,103 +252,142 @@ function retrievedAddress(inputValue: string, name: string) {
                             </div>
                         </div>
                         <div class="mb-3 mt-6 flex justify-between gap-5">
-                            <NuxtLink :to="cancel">
-                                <button
-                                    type="button"
-                                    class="rounded-xl border-2 border-mahagony-500 bg-natural-50 px-7 py-1 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-mahagony-500 dark:hover:bg-opacity-30"
-                                >
-                                    <T key-name="common.button.cancel" />
-                                </button>
-                            </NuxtLink>
+                            <button
+                                type="button"
+                                class="w-36 rounded-xl border-2 border-mahagony-500 bg-natural-50 px-7 py-1 text-text hover:bg-mahagony-300 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-mahagony-500 dark:hover:bg-opacity-30"
+                                @click="router.back()"
+                            >
+                                <T key-name="common.button.cancel" />
+                            </button>
 
                             <Button
                                 :loading="loading"
-                                type="submit"
+                                type="button"
+                                :label="t('common.button.continue')"
+                                :pt="{
+                                    root: {
+                                        class: 'flex items-center justify-center',
+                                    },
+                                    label: {
+                                        class: 'display-block flex-none font-nunito',
+                                    },
+                                }"
+                                class="w-36 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-7 py-1 text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                @click="page = 2"
+                            />
+                        </div>
+                    </form>
+                </fieldset>
+                <fieldset
+                    v-else-if="page == 2"
+                    id="create-journey"
+                    class="w-full rounded-3xl border-2 border-calypso-300 bg-natural-50 px-2 shadow-sm dark:border-calypso-600 dark:bg-background-dark xs:px-5 sm:w-1/4 md:w-1/3"
+                >
+                    <legend
+                        for="create-journey"
+                        class="text-center text-2xl font-bold text-text dark:text-natural-50 md:mb-5 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
+                    >
+                        <T key-name="form.header.journey.create" />
+                    </legend>
+                    <form class="px-1 lg:px-5" @submit="onSubmit">
+                        <div>
+                            <T key-name="template.choose.option" />
+                        </div>
+                        <Accordion v-model:active-index="activeIndex">
+                            <AccordionTab
+                                :header="t('template.shift.common')"
+                                class="border-b border-natural-300"
+                            >
+                                <div>
+                                    <span
+                                        ><T
+                                            key-name="template.shift.common.description.part.1"
+                                    /></span>
+                                    <br />
+                                    <br />
+                                    <li class="ml-5">
+                                        <span
+                                            ><T
+                                                key-name="template.shift.common.description.part.2"
+                                        /></span>
+                                    </li>
+                                    <li class="ml-5">
+                                        <span
+                                            ><T
+                                                key-name="template.shift.common.description.part.3"
+                                        /></span>
+                                    </li>
+                                </div>
+                            </AccordionTab>
+                            <AccordionTab :header="t('template.shift.smart')">
+                                <div>
+                                    <span
+                                        ><T
+                                            key-name="template.shift.smart.description.part.1"
+                                    /></span>
+                                    <br />
+                                    <br />
+                                    <li class="ml-5">
+                                        <span
+                                            ><T
+                                                key-name="template.shift.smart.description.part.2"
+                                        /></span>
+                                    </li>
+                                    <li class="ml-5">
+                                        <span
+                                            ><T
+                                                key-name="template.shift.smart.description.part.3"
+                                        /></span>
+                                    </li>
+                                </div>
+                            </AccordionTab>
+                            <AccordionTab
+                                :header="t('template.shift.activitypool')"
+                            >
+                                <div>
+                                    <span
+                                        ><T
+                                            key-name="template.shift.activitypool.description"
+                                    /></span>
+                                </div>
+                            </AccordionTab>
+                        </Accordion>
+                        <div class="mb-3 mt-6 flex justify-between gap-5">
+                            <button
+                                type="button"
+                                class="w-36 rounded-xl border-2 border-natural-400 bg-natural-50 px-7 py-1 text-text hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-natural-950"
+                                @click="console.log(activeIndex)"
+                            >
+                                <T key-name="common.back" />
+                            </button>
+
+                            <Button
+                                :loading="loading"
+                                type="button"
                                 :label="t('common.button.create')"
                                 :pt="{
                                     root: {
                                         class: 'flex items-center justify-center',
                                     },
                                     label: {
-                                        class: 'display-block flex-none font-bold font-nunito',
+                                        class: 'display-block flex-none font-nunito',
                                     },
                                 }"
-                                class="rounded-xl border-2 border-dandelion-300 bg-natural-50 px-7 py-1 font-bold text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                class="w-36 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-7 py-1 text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
                             />
                         </div>
                     </form>
                 </fieldset>
             </div>
-            <div class="mt-2 flex items-center justify-center px-4 font-nunito">
-                <div
-                    id="template-section"
-                    class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-2/4 md:w-2/5"
-                >
-                    <h3
-                        class="-m-0.5 ml-4 mt-0.5 text-lg font-semibold text-natural-800 dark:text-natural-200"
-                    >
-                        <T key-name="template.suggestions" />
-                    </h3>
-                    <div v-if="status === 'pending'" class="mt-1 flex w-full">
-                        <ProgressSpinner class="w-10" />
-                    </div>
-                    <div
-                        v-else-if="suggestions.length < 1"
-                        class="mt-1 w-full text-center italic text-natural-800 dark:text-natural-200"
-                    >
-                        <T key-name="template.suggestions.none" />
-                    </div>
-                    <div
-                        v-else
-                        id="template-suggestions"
-                        class="mb-1.5 mt-1 flex w-full flex-col"
-                    >
-                        <TemplateSuggestion
-                            v-for="(template, index) in suggestions"
-                            :key="template.id"
-                            :index="index"
-                            :template="template"
-                            @open-template="openTemplateDialog(template)"
-                        />
-                    </div>
-                    <div
-                        v-if="isAuthenticated"
-                        class="mb-0.5 mr-3 flex justify-end"
-                    >
-                        <NuxtLink
-                            to="/dashboard?tab=templates"
-                            class="group flex items-center gap-x-1 text-end text-natural-800 hover:text-calypso-600 dark:text-natural-200 dark:hover:text-calypso-300"
-                        >
-                            <span class="group-hover:underline">
-                                <T key-name="template.all" />
-                            </span>
-                            <i
-                                class="pi pi-chevron-right text-xs hover:no-underline"
-                            />
-                        </NuxtLink>
-                    </div>
-                </div>
-            </div>
         </div>
-        <SvgPeopleBackpackMap class="absolute bottom-0 hidden h-44 lg:block" />
+        <SvgPeopleBackpackMap class="absolute bottom-14 hidden h-44 lg:block" />
         <SvgWomanSuitcaseLeft
-            class="absolute bottom-0 hidden h-44 sm:block lg:right-44"
+            class="absolute bottom-14 block h-44 lg:right-44"
         />
-        <SvgWomanSuitcaseRight
-            class="absolute bottom-0 right-0 hidden h-44 sm:block"
+        <SvgWomanSuitcaseRight class="absolute bottom-14 right-0 block h-44" />
+        <Divider
+            type="solid"
+            class="border-10 absolute bottom-9 mt-2 border pt-0 text-natural-100 dark:text-natural-700"
         />
-        <div class="z-50">
-            <TemplatePopup
-                v-if="openedTemplate"
-                id="template-popup-create-new-journey"
-                class="z-50"
-                :template="openedTemplate"
-                :is-template-dialog-visible="isTemplatePopupVisible"
-                @close="
-                    isTemplatePopupVisible = false;
-                    openedTemplate = undefined;
-                "
-            />
-        </div>
     </div>
 </template>
