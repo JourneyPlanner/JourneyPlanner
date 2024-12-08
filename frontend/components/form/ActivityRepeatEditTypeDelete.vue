@@ -98,6 +98,7 @@ const post = () => {
                     v-if="!singleVisible"
                     id="thisEvent"
                     v-model="editOption"
+                    name="thisEvent"
                     type="radio"
                     checked
                     value="single"
@@ -105,7 +106,7 @@ const post = () => {
                 />
                 <label
                     v-if="!singleVisible"
-                    for="endDate"
+                    for="thisEvent"
                     class="pl-2"
                     :class="{
                         'text-natural-400 dark:text-natural-300': true,
@@ -119,13 +120,14 @@ const post = () => {
                 <input
                     id="followingEvents"
                     v-model="editOption"
+                    name="followingEvents"
                     type="radio"
                     value="following"
                     class="form-radio text-blue-600"
                     :checked="singleVisible"
                 />
                 <label
-                    for="endDate"
+                    for="followingEvents"
                     class="pl-2"
                     :class="{
                         'text-natural-400 dark:text-natural-300': true,
@@ -139,12 +141,13 @@ const post = () => {
                 <input
                     id="allEvents"
                     v-model="editOption"
+                    name="allEvents"
                     type="radio"
                     value="all"
                     class="form-radio text-blue-600"
                 />
                 <label
-                    for="endDate"
+                    for="allEvents"
                     class="pl-2"
                     :class="{
                         'text-natural-400 dark:text-natural-300': true,
