@@ -342,9 +342,7 @@ onMounted(() => {
                         activity.calendar_activities.forEach(
                             (calendar_activity: CalendarActivity) => {
                                 const newEnd = add(
-                                    new UTCDate(
-                                        calendar_activity.start.slice(0, -1),
-                                    ),
+                                    new UTCDate(calendar_activity.start),
                                     {
                                         hours: parseInt(
                                             activity.estimated_duration.split(
