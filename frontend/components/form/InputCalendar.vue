@@ -6,11 +6,16 @@ const props = defineProps({
     from: { type: Date, required: true },
     to: { type: Date, required: true },
     translationKey: { type: String, default: "" },
+    value: { type: String, default: null },
 });
 
 const emit = defineEmits(["date-selected"]);
 
 const { value, errorMessage } = useField<Date>(() => props.name);
+
+if (props.value !== null && props.value !== "") {
+    value.value = new Date(props.value);
+}
 
 const dateSelected = () => {
     emit("date-selected", value.value);
