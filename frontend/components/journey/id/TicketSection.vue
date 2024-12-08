@@ -63,7 +63,7 @@ const weatherCodeTomorrow = ref();
 const weatherCodeInTwoDays = ref();
 const weatherCodeInThreeDays = ref();
 const locationFound = ref(true);
-const createJourneyFromTemplate = `/journey/template/${props.templateId}`;
+const createJourneyFromTemplate = `/journey/new/template/${props.templateId}`;
 
 const flip = () => {
     isFlipped.value = !isFlipped.value;

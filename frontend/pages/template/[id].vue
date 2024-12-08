@@ -12,7 +12,7 @@ const activityDataLoaded = ref(false);
 
 const backTolgeeKey = ref("template.back.to.templates");
 const backRoute = ref("/dashboard?tab=templates");
-const createJourneyFromTemplate = `/journey/template/${templateID}`;
+const createJourneyFromTemplate = `/journey/new/template/${templateID}`;
 
 onMounted(() => {
     const lastRoute = router.options.history.state.back as string;

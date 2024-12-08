@@ -240,13 +240,22 @@ const close = (): void => {
                         </ScrollPanel>
                     </div>
                 </div>
-                <div id="buttons" class="mt-4 flex w-full justify-center">
+                <div
+                    id="buttons"
+                    class="mt-4 flex w-full justify-center gap-x-5"
+                >
                     <NuxtLink
                         :to="'/template/' + template.id"
-                        class="mt-auto flex h-9 w-40 flex-row items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:cursor-pointer hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                        class="mt-auto flex h-9 w-44 flex-row items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:cursor-pointer hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                         @click="$emit('opened-preview')"
                     >
                         <T key-name="template.preview" />
+                    </NuxtLink>
+                    <NuxtLink
+                        :to="'/journey/new/template/' + template.id"
+                        class="mt-auto flex h-9 w-44 flex-row items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 text-center text-text hover:cursor-pointer hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                    >
+                        <T key-name="template.use" />
                     </NuxtLink>
                 </div>
             </div>
@@ -438,13 +447,19 @@ const close = (): void => {
                     </div>
                 </div>
                 <div
-                    class="mt-auto flex w-full justify-center text-text dark:text-natural-50"
+                    class="mt-auto flex w-full gap-x-2 text-text dark:text-natural-50"
                 >
                     <NuxtLink
-                        class="w-full rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-xl font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
+                        class="flex h-10 items-center rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-base font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
                         :to="'/template/' + template.id"
                     >
                         <T key-name="template.preview" />
+                    </NuxtLink>
+                    <NuxtLink
+                        :to="'/journey/new/template/' + template.id"
+                        class="flex h-10 items-center rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-base font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
+                    >
+                        <T key-name="template.use" />
                     </NuxtLink>
                 </div>
             </div>
