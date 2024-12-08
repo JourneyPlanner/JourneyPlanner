@@ -8,9 +8,9 @@
     "license": "All rights reserved",
     "require": {
         "php": "^8.2",
-        "google/apiclient-services": "^0.382.0",
+        "google/apiclient-services": "^0.384.0",
         "guzzlehttp/guzzle": "^7.9",
-        "laravel/framework": "^11.32",
+        "laravel/framework": "^11.33",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.10",
@@ -19,10 +19,10 @@
         "socialiteproviders/microsoft": "^4.5"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.24.0",
+        "fakerphp/faker": "^1.24.1",
         "laravel/breeze": "^2.2",
         "laravel/pint": "^1.18",
-        "laravel/sail": "^1.38",
+        "laravel/sail": "^1.39",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.5",
         "phpunit/phpunit": "^11.4",

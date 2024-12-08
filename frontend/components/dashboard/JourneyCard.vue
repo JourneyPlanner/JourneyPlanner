@@ -9,6 +9,8 @@ const props = defineProps({
     id: { type: String, required: true },
     name: { type: String, required: true },
     destination: { type: String, required: true },
+    mapboxID: { type: String, required: false },
+    mapboxFullAddress: { type: String, required: false },
     from: { type: Date, required: true },
     to: { type: Date, required: true },
     role: { type: Number, required: true },
@@ -202,8 +204,11 @@ const itemsJourneyMember = ref([
             id="journey-desktop"
             class="relative hidden hover:cursor-pointer lg:block"
         >
-            <SvgDashboardJourney :link="link" class="dark:hidden" />
-            <SvgDashboardJourneyDark :link="link" class="hidden dark:block" />
+            <SvgDashboardJourneyCard :link="link" class="dark:hidden" />
+            <SvgDashboardJourneyCardDark
+                :link="link"
+                class="hidden dark:block"
+            />
             <div class="absolute left-10 top-6">
                 <div class="flex w-56 justify-between">
                     <NuxtLink
@@ -307,7 +312,7 @@ const itemsJourneyMember = ref([
                         <i class="pi pi-calendar" />
                     </span>
                     <span
-                        class="whitespace-nowrap text-text dark:text-natural-50"
+                        class="truncate whitespace-nowrap text-text dark:text-natural-50"
                         >{{ format(from, "dd/MM/yy") }} -
                         {{ format(to, "dd/MM/yy") }}</span
                     >
@@ -354,6 +359,8 @@ const itemsJourneyMember = ref([
             :destination="props.destination"
             :from="props.from"
             :to="props.to"
+            :mapbox-full-address="props.mapboxFullAddress"
+            :mapbox-id="props.mapboxID"
             @close-edit-journey-dialog="isEditMenuVisible = false"
             @delete-journey="deleteJourney"
             @journey-edited="

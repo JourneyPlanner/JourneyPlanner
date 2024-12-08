@@ -6,7 +6,10 @@
         />
         <NuxtLayout>
             <div>
-                <Toast class="w-3/4 sm:w-auto" />
+                <Toast
+                    class="w-3/4 font-nunito sm:w-auto"
+                    :pt="{ root: 'font-nunito' }"
+                />
                 <NuxtPage />
             </div>
         </NuxtLayout>
@@ -24,6 +27,10 @@
 </template>
 
 <style>
+:root {
+    --p-focus-ring-color: #327597;
+}
+
 /* default background in light and dark: mode  */
 body {
     @apply min-h-screen bg-background font-nunito dark:bg-background-dark;

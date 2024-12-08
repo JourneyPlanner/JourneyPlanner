@@ -10,7 +10,28 @@ const props = defineProps({
 
 const currentRole = ref(props.role);
 const isProfileDialogVisible = ref(false);
+const route = useRoute();
+const router = useRouter();
 const emit = defineEmits(["changeRole"]);
+
+onMounted(() => {
+    if (route.query.username) {
+        if (route.query.username === props.username) {
+            isProfileDialogVisible.value = true;
+        }
+    }
+
+    watch(
+        () => isProfileDialogVisible.value,
+        (value) => {
+            if (value) {
+                router.push({ query: { username: props.username } });
+            } else {
+                router.push({ query: {} });
+            }
+        },
+    );
+});
 
 function changeRole(selectedRole: number) {
     if (props.currentId === props.id) return;
@@ -33,17 +54,11 @@ const roleType = computed(() => {
                 value: displayName,
                 pt: { root: 'font-nunito' },
             }"
-            class="w-2/3 cursor-pointer overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50 max-sm:hidden"
+            class="w-2/3 cursor-pointer overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50"
             @click="isProfileDialogVisible = true"
         >
             {{ displayName }}
         </h2>
-        <NuxtLink
-            class="w-2/3 cursor-pointer overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 text-xl font-medium text-text dark:text-natural-50 sm:hidden"
-            :to="'/user/' + username"
-        >
-            {{ displayName }}
-        </NuxtLink>
         <div
             class="w-1/4 rounded-md p-0.5 px-1 text-center"
             :class="
@@ -85,10 +100,12 @@ const roleType = computed(() => {
             <T key-name="journey.sidebar.list.member" />
         </h4>
     </form>
-    <JourneyIdDialogsProfileDialog
-        :visible="isProfileDialogVisible"
-        :username="username"
-        :displayname="displayName"
-        @close="isProfileDialogVisible = false"
-    />
+    <div id="dialogs">
+        <JourneyIdDialogsProfileDialog
+            :visible="isProfileDialogVisible"
+            :username="username"
+            :displayname="displayName"
+            @close="isProfileDialogVisible = false"
+        />
+    </div>
 </template>

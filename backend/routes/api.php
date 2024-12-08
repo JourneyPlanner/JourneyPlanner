@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(["auth:sanctum"])->get("/user", function (Request $request) {
+Route::middleware(["auth:sanctum"])->get("/me", function (Request $request) {
     return $request->user();
 });
 
@@ -87,9 +87,18 @@ Route::get("journey/{journey}/weather", [
     "getWeather",
 ]);
 
-Route::apiResource("template", TemplateController::class)
-    ->middleware("auth:sanctum")
-    ->only("store");
+Route::post("template", [TemplateController::class, "store"])->middleware(
+    "auth:sanctum"
+);
+
+Route::get("template", [TemplateController::class, "index"]);
+
+Route::get("template/{journey}", [JourneyController::class, "show"]);
+Route::get("template/{journey}/activity", [ActivityController::class, "index"]);
+Route::get("user/{username}/template", [
+    TemplateController::class,
+    "userTemplatesIndex",
+]);
 
 Route::get("project", [ProjectController::class, "getProjectData"]);
 
@@ -119,3 +128,4 @@ Route::delete("user/delete-account", [
 ])->middleware("auth:sanctum");
 
 Route::get("user/{username}", [UserController::class, "show"]);
+Route::get("user", [UserController::class, "index"]);

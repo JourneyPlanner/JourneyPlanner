@@ -97,6 +97,7 @@ export default defineNuxtConfig({
                 "InputIcon",
                 "InputNumber",
                 "IconField",
+                "InputNumber",
                 "ProgressSpinner",
                 "DataTable",
                 "Column",
@@ -106,17 +107,13 @@ export default defineNuxtConfig({
                 "Dropdown",
                 "Accordion",
                 "AccordionTab",
+                "Slider",
+                "AutoComplete",
             ],
         },
     },
     veeValidate: {
         autoImports: true,
-        componentNames: {
-            Form: "VeeForm",
-            Field: "VeeField",
-            FieldArray: "VeeFieldArray",
-            ErrorMessage: "VeeErrorMessage",
-        },
     },
     sanctum: {
         baseUrl: process.env.NUXT_BACKEND_URL, // Laravel API
@@ -129,6 +126,9 @@ export default defineNuxtConfig({
             onLogout: "/login",
             onAuthOnly: "/login",
             onGuestOnly: "/dashboard",
+        },
+        endpoints: {
+            user: "/api/me",
         },
     },
 });

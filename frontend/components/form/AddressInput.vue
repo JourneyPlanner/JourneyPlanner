@@ -18,6 +18,7 @@ const { value: inputValue, errorMessage } = useField<string>(() => props.name);
 
 const journey = useJourneyStore();
 const config = useRuntimeConfig();
+const emit = defineEmits(["changeAddress", "retrievedAddress"]);
 
 let longlat = [0, 0];
 const search = ref();
@@ -29,16 +30,22 @@ if (journey.getLat() && journey.getLong()) {
 }
 
 onMounted(async () => {
-    if (props.value) {
-        inputValue.value = props.value;
-    }
     Mapbox = await import("@mapbox/search-js-web");
     search.value = new Mapbox.MapboxSearchBox();
+
     isLoaded.value = true;
     await nextTick();
+
     if (props.value) {
+        inputValue.value = props.value;
         search.value.input.value = props.value;
     }
+
+    watch(props, () => {
+        if (props.value === "") {
+            search.value.input.value = props.value;
+        }
+    });
 
     if (props.disabled) {
         search.value.input.disabled = true;
@@ -60,6 +67,10 @@ onMounted(async () => {
             search.value.input.style.cursor = "text";
             search.value.input.style.backgroundColor = input;
         }
+    });
+
+    watch(inputValue, () => {
+        emit("changeAddress", inputValue.value);
     });
 });
 
@@ -112,7 +123,6 @@ function changeInput(event: InputEvent) {
 
 function handleRetrieve(event: MapBoxRetrieveEvent) {
     mapbox.value = event.detail.features[0];
-
     if (event.detail.features[0].properties.full_address) {
         inputValue.value = event.detail.features[0].properties.full_address;
     } else if (event.detail.features[0].properties.name_preferred) {
@@ -124,6 +134,17 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
     } else {
         inputValue.value = "";
     }
+
+    emit(
+        "retrievedAddress",
+        inputValue.value,
+        event.detail.features[0].properties.name,
+    );
+}
+
+function clearInput() {
+    inputValue.value = "";
+    emit("changeAddress", "", "");
 }
 </script>
 <template>
@@ -146,7 +167,7 @@ function handleRetrieve(event: MapBoxRetrieveEvent) {
                     cssText: `.Input {border-radius: 0.5rem; font-family: Nunito; font-size: 1rem; line-height: 1.5rem; border-style: solid;  border-width:2px; border-color: ${border};} .Input:focus {border-radius: 0.5rem; border: solid 2px ${border};} .SearchBox {box-shadow: none;} .Results {font-family: Nunito;} .ResultsAttribution {color: ${placeholderColor}} .SearchIcon {fill: #50A1C0;} .ActionIcon {color: ${placeholderColor}}  ${css} ${customClass}`,
                 }"
                 @input="changeInput"
-                @clear="inputValue = ''"
+                @clear="clearInput"
                 @retrieve="
                     (event: MapBoxRetrieveEvent) => handleRetrieve(event)
                 "

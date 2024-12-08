@@ -8,6 +8,7 @@ use App\Models\Journey;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Journey\StoreJourneyRequest;
 use App\Http\Requests\Journey\UpdateJourneyRequest;
+use App\Models\JourneyUser;
 use App\Services\MapboxService;
 use App\Services\WeatherService;
 use Illuminate\Support\Facades\Auth;
@@ -51,7 +52,16 @@ class JourneyController extends Controller
         $journeys = Auth::user()
             ->journeys()
             ->where("is_template", false)
-            ->get(["id", "name", "destination", "from", "to", "role"]);
+            ->get([
+                "id",
+                "name",
+                "destination",
+                "mapbox_full_address",
+                "mapbox_id",
+                "from",
+                "to",
+                "role",
+            ]);
 
         return response()->json($journeys);
     }
@@ -85,7 +95,9 @@ class JourneyController extends Controller
 
         if (!$guestMode) {
             // Add the authenticated user to the journey with the role of 1 (journey guide)
-            $journey->users()->attach(Auth::id(), ["role" => 1]);
+            $journey->users()->attach(Auth::id(), [
+                "role" => JourneyUser::JOURNEY_GUIDE_ROLE_ID,
+            ]);
         }
 
         return response()->json(

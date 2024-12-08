@@ -280,7 +280,7 @@ const calendarOptions = reactive({
                     )[0].innerHTML = "";
                     document.getElementsByClassName(
                         "fc-showAllHours-button",
-                    )[0].innerHTML = "0:00 - 0:00";
+                    )[0].innerHTML = "0:00 - 24:00";
                 }
             },
         },
@@ -335,7 +335,7 @@ onMounted(() => {
             if (!alreadyAdded.value) {
                 document.getElementsByClassName(
                     "fc-showAllHours-button",
-                )[0].innerHTML = "6:00 - 0:00";
+                )[0].innerHTML = "6:00 - 24:00";
                 const activityData = store.activityData as Activity[];
                 activityData.forEach((activity: Activity) => {
                     if (activity.calendar_activities != null) {
@@ -365,7 +365,7 @@ onMounted(() => {
                                     calApi.setOption("slotMinTime", "00:00:00");
                                     document.getElementsByClassName(
                                         "fc-showAllHours-button",
-                                    )[0].innerHTML = "0:00 - 0:00";
+                                    )[0].innerHTML = "0:00 - 24:00";
                                 }
                                 calApi.addEvent(calendar_activity);
                             },
@@ -677,7 +677,9 @@ function call(editType: string) {
                     <T key-name="journey.calendar" />
                 </div>
             </div>
-            <div class="z-0 mt-1 h-[25rem] overflow-y-scroll pr-2 md:h-[35rem]">
+            <div
+                class="z-0 mt-1 h-[25rem] overflow-x-hidden overflow-y-scroll pr-2 md:h-[35rem]"
+            >
                 <FullCalendar
                     ref="fullCalendar"
                     :options="calendarOptions"

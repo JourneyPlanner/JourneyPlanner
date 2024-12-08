@@ -20,6 +20,11 @@ const props = defineProps({
     },
     journeyStart: { type: Date, required: true },
     journeyEnd: { type: Date, required: true },
+    inTemplate: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
 });
 
 defineEmits(["openNewActivityDialog"]);
@@ -45,6 +50,7 @@ const phone = ref("");
 const updated_at = ref("");
 
 const isActivityInfoVisible = ref(false);
+const { activityData } = storeToRefs(store);
 const activities = computed(() => store.activityData as Activity[]);
 const activityCount = computed(
     () =>
@@ -59,14 +65,20 @@ const toast = useToast();
 const confirm = useConfirm();
 
 onMounted(() => {
-    if (
-        containerElement.value &&
-        containerElement.value.querySelectorAll(".fc-event").length > 0
-    ) {
-        new Draggable(containerElement.value, {
-            itemSelector: ".fc-event",
-        });
-    }
+    watch(
+        activityData,
+        async () => {
+            if (props.inTemplate === false) {
+                await nextTick();
+                if (containerElement.value) {
+                    new Draggable(containerElement.value, {
+                        itemSelector: ".fc-event",
+                    });
+                }
+            }
+        },
+        { immediate: true, deep: true },
+    );
 });
 
 /**
@@ -148,7 +160,7 @@ async function deleteActivity(activity_id: string) {
                 });
                 activities.value
                     .filter((activity) => activity.id === activity_id)
-                    .forEach((activity: Activity) => {
+                    .forEach(async (activity: Activity) => {
                         activities.value.splice(
                             activities.value.indexOf(activity),
                             1,
@@ -208,7 +220,7 @@ const itemsJourneyGuide = ref([
             class="h-40 w-[90%] rounded-2xl border-[3px] border-dashed border-calypso-300 dark:border-calypso-600 dark:bg-background-dark max-lg:mt-5 sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] lg:ml-0 lg:w-full lg:rounded-3xl"
         >
             <div
-                v-if="activityCount <= 0"
+                v-if="activityCount <= 0 && !inTemplate"
                 class="flex h-full cursor-pointer items-center justify-center text-center font-nunito text-natural-500"
                 @click="$emit('openNewActivityDialog')"
             >
@@ -260,6 +272,7 @@ const itemsJourneyGuide = ref([
                                     {{ activity.name }}
                                 </p>
                                 <button
+                                    v-if="!inTemplate"
                                     class="pi pi-ellipsis-v"
                                     aria-haspopup="true"
                                     aria-controls="overlay_menu"
