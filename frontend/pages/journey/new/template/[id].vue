@@ -24,10 +24,15 @@ const loading = ref(false);
 const page = ref(1);
 
 const title = t.value("title.journey.create");
-const { data } = await useAsyncData("journey", () =>
+const { data: user } = await useAsyncData("templateUser", () =>
+    client(`/api/template/${templateID}/user`),
+);
+
+const { data: template } = await useAsyncData("template", () =>
     client(`/api/template/${templateID}`),
 );
 
+console.log(template);
 watch(
     activeIndex,
     () => {
@@ -38,8 +43,8 @@ watch(
     { immediate: true },
 );
 
-console.log(data);
-console.log(data.value.destination);
+console.log(template);
+console.log(template.value.destination);
 useHead({
     title: `${title} | JourneyPlanner`,
 });
@@ -168,6 +173,10 @@ function copyToClipboard() {
         life: 2000,
     });
 }
+
+function validateData() {
+    console.log(handleSubmit);
+}
 </script>
 
 <template>
@@ -200,6 +209,14 @@ function copyToClipboard() {
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>
+                    <div
+                        class="-mt-5 mb-4 pl-6 text-sm text-natural-700 dark:text-natural-200"
+                    >
+                        <T key-name="template.using" />
+                        "{{ template.name }}"
+                        <T key-name="template.by" />
+                        {{ user[0].username }}
+                    </div>
                     <form class="px-1 lg:px-5" @submit="onSubmit">
                         <FormInput
                             id="journey-name"
@@ -212,7 +229,7 @@ function copyToClipboard() {
                             name="journeyDestination"
                             disabled
                             class="font peer mb-4 flex w-full items-center justify-center rounded-lg border-2 border-natural-300 bg-natural-100 px-2.5 py-2.5 text-xl text-natural-700 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-300"
-                            :value="data.destination"
+                            :value="template.destination"
                         />
                         <FormCalendar
                             id="journey-range-calendar"
@@ -273,7 +290,7 @@ function copyToClipboard() {
                                     },
                                 }"
                                 class="w-36 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-7 py-1 text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
-                                @click="page = 2"
+                                @click="validateData"
                             />
                         </div>
                     </form>
@@ -469,7 +486,7 @@ function copyToClipboard() {
                             <button
                                 type="button"
                                 class="w-36 rounded-xl border-2 border-natural-400 bg-natural-50 px-7 py-1 text-text hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-natural-950"
-                                @click="console.log(activeIndex)"
+                                @click="page = 1"
                             >
                                 <T key-name="common.back" />
                             </button>
