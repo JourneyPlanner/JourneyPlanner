@@ -46,16 +46,16 @@ export const useActivityStore = defineStore("activities", () => {
     }
 
     function findBaseActivity(activity) {
-        let newActiviy = activity;
-        while (newActiviy.parent_id != null) {
-            newActiviy =
-                this.activityData[
-                    this.activityData.findIndex(
-                        (obj) => obj.id === newActiviy.parent_id,
+        let newActivity = activity;
+        while (newActivity.parent_id != null) {
+            newActivity =
+                activityData.value[
+                    activityData.value.findIndex(
+                        (obj) => obj.id === newActivity.parent_id,
                     )
                 ];
         }
-        return newActiviy;
+        return newActivity;
     }
 
     function getAllChildren(id) {
@@ -70,8 +70,8 @@ export const useActivityStore = defineStore("activities", () => {
     }
 
     function getActivity(id) {
-        return this.activityData[
-            this.activityData.findIndex((obj) => obj.id === id)
+        return activityData.value[
+            activityData.value.findIndex((obj) => obj.id === id)
         ];
     }
 

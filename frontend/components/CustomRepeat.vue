@@ -154,7 +154,7 @@ function changePlural() {
 function toggleDay(index: number) {
     days.value[index].active = !days.value[index].active;
 }
-const getItemClass = (option: repeatType) => {
+const getItemClass = (option: RepeatType) => {
     return option.value * repeatNumber.value > props.daysInJourney
         ? "text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 !cursor-not-allowed"
         : "hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600";
@@ -191,7 +191,7 @@ function changeRepeat() {
     }
 }
 
-function changeOccurences() {
+function changeOccurrences() {
     console.log(
         timeModeselected.value.value *
             repeatNumber.value *
@@ -454,8 +454,8 @@ function changeOccurences() {
                                     class: 'flex flex-col items-end w-6',
                                 },
                             }"
-                            @input="changeOccurences"
-                            @blur="changeOccurences"
+                            @input="changeOccurrences"
+                            @blur="changeOccurrences"
                         />
 
                         <span
@@ -684,8 +684,8 @@ function changeOccurences() {
                                     class: 'flex flex-col items-end w-6',
                                 },
                             }"
-                            @input="changeOccurences"
-                            @blur="changeOccurences"
+                            @input="changeOccurrences"
+                            @blur="changeOccurrences"
                         />
                         <span
                             :class="{

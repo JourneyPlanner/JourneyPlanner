@@ -95,7 +95,7 @@ declare global {
         role: number;
     }
 
-    interface repeatType {
+    interface RepeatType {
         name: string;
         value: number;
     }

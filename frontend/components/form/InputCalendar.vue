@@ -6,31 +6,39 @@ const props = defineProps({
     from: { type: Date, required: true },
     to: { type: Date, required: true },
     translationKey: { type: String, default: "" },
-    value: { type: String, default: null },
 });
 
 const emit = defineEmits(["date-selected"]);
 
 const { value, errorMessage } = useField<Date>(() => props.name);
 
-if (props.value !== null && props.value !== "") {
-    value.value = new Date(props.value);
-}
-
 const dateSelected = () => {
     emit("date-selected", value.value);
 };
 
-if (props.prefill instanceof Date) {
-    value.value = props.prefill;
-}
+const initializeDate = (dateInput: string | Date | null) => {
+    if (!dateInput) return;
 
-watch(
-    () => props.prefill,
-    () => {
-        value.value = new Date(props.prefill);
-    },
-);
+    try {
+        if (dateInput instanceof Date) {
+            value.value = dateInput;
+            return;
+        }
+
+        const parsedDate = new Date(dateInput);
+        if (isNaN(parsedDate.getTime())) {
+            throw new Error("Invalid date format");
+        }
+        value.value = parsedDate;
+    } catch (error) {
+        console.error(`Failed to parse date: ${error}`);
+        errorMessage.value = "Invalid date format";
+    }
+};
+
+watch([() => props.prefill], ([newPrefill]) => {
+    initializeDate(newPrefill);
+});
 </script>
 
 <template>

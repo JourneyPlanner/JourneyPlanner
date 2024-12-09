@@ -16,10 +16,10 @@ const props = defineProps({
 const emit = defineEmits(["input", "customInput"]);
 
 const repeatModes = ref([
-    { name: t.value("activity.repeat.not"), value: 0 },
-    { name: t.value("activity.repeat.daily"), value: 1 },
-    { name: t.value("activity.repeat.weekly"), value: 7 },
-    { name: t.value("activity.repeat.custom"), value: 2 },
+    { name: () => t.value("activity.repeat.not"), value: 0 },
+    { name: () => t.value("activity.repeat.daily"), value: 1 },
+    { name: () => t.value("activity.repeat.weekly"), value: 7 },
+    { name: () => t.value("activity.repeat.custom"), value: 2 },
 ]);
 
 const showCustomizeRepeat = ref(false);
@@ -32,7 +32,7 @@ const daysInJourney = ref(
     Math.ceil(differenceInHours(props.journeyEnd, props.journeyStart) / 24) + 1,
 );
 
-const { value, errorMessage } = useField<repeatType>(() => props.name);
+const { value, errorMessage } = useField<RepeatType>(() => props.name);
 if (props.repeatType == "custom") {
     value.value = { name: t.value("activity.repeat.custom"), value: 2 };
 } else if (props.repeatType == "daily") {
@@ -96,7 +96,7 @@ function createCustomRepeat(
     showCustomizeRepeat.value = false;
 }
 
-const getItemClass = (option: repeatType) => {
+const getItemClass = (option: RepeatType) => {
     return option.value > daysInJourney.value
         ? "text-text dark:text-natural-50 bg-natural-100 dark:bg-natural-900 !cursor-not-allowed "
         : "hover:bg-dandelion-100 text-text dark:text-natural-50 bg-natural-50 dark:bg-natural-900 dark:hover:bg-pesto-600";

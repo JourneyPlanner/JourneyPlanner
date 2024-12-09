@@ -89,7 +89,9 @@ const activityStore = useActivityStore();
 const to = new Date(store.getToDate());
 const from = new Date(store.getFromDate());
 
-const selectedDate = ref();
+const selectedDate = props.calendarActivity
+    ? ref(props.calendarActivity.start)
+    : ref();
 const timeDisabled = ref(true);
 
 watch(
@@ -112,7 +114,7 @@ interface ActivityForm {
     open: string;
     date: Date;
     time: string;
-    repeatType: repeatType;
+    repeatType: RepeatType;
     editType: string;
 }
 
@@ -729,11 +731,6 @@ function changeCustomRepeat(
                                 name="date"
                                 :from="from"
                                 :to="to"
-                                :value="
-                                    props.calendarActivity
-                                        ? props.calendarActivity.start
-                                        : null
-                                "
                                 :prefill="selectedDate"
                                 translation-key="form.input.activity.date"
                                 class="w-full sm:pb-2 sm:pr-16"
