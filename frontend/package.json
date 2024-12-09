@@ -60,7 +60,7 @@
     "devDependencies": {
         "@nuxtjs/color-mode": "^3.5.2",
         "@nuxtjs/tailwindcss": "^6.12.2",
-        "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+        "@trivago/prettier-plugin-sort-imports": "^5.1.0",
         "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
         "@types/mapbox-gl": "^3.4.1",
         "@types/qrcode": "^1.5.5",
