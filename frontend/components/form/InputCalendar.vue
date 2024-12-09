@@ -16,16 +16,29 @@ const dateSelected = () => {
     emit("date-selected", value.value);
 };
 
-if (props.prefill instanceof Date) {
-    value.value = props.prefill;
-}
+const initializeDate = (dateInput: string | Date | null) => {
+    if (!dateInput) return;
 
-watch(
-    () => props.prefill,
-    () => {
-        value.value = new Date(props.prefill);
-    },
-);
+    try {
+        if (dateInput instanceof Date) {
+            value.value = dateInput;
+            return;
+        }
+
+        const parsedDate = new Date(dateInput);
+        if (isNaN(parsedDate.getTime())) {
+            throw new Error("Invalid date format");
+        }
+        value.value = parsedDate;
+    } catch (error) {
+        console.error(`Failed to parse date: ${error}`);
+        errorMessage.value = "Invalid date format";
+    }
+};
+
+watch([() => props.prefill], ([newPrefill]) => {
+    initializeDate(newPrefill);
+});
 </script>
 
 <template>
