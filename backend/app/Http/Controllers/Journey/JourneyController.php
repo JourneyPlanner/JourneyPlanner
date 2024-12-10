@@ -100,7 +100,7 @@ class JourneyController extends Controller
             ]);
         }
 
-        if ($validated["template_id"]) {
+        if (isset($validated["template_id"])) {
             $journey->created_from = $validated["template_id"];
             $journey->save();
 
