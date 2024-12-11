@@ -112,13 +112,6 @@ const { errors, handleSubmit } = useForm({
     validationSchema,
 });
 
-/**
- * form submit
- * when submitting the form, values are checked for validation with handleSubmit
- * and then a journey object is created and sent to the backend
- */
-const onSubmit = handleSubmit(async () => {});
-
 function copyToClipboard() {
     navigator.clipboard.writeText(journeyInviteLink.value);
     toast.add({
@@ -269,10 +262,10 @@ const handleBlur = () => {
                             <T key-name="template.using" />
                             "{{ template.name }}"
                             <T key-name="template.by" />
-                            {{ user[0].username }}
+                            {{ user && user[0] ? user[0].username : "" }}
                         </div>
                     </div>
-                    <form class="px-1 lg:px-5" @submit="onSubmit">
+                    <form class="px-1 lg:px-5">
                         <div class="relative mb-4">
                             <input
                                 id="journey-name"
@@ -479,7 +472,7 @@ const handleBlur = () => {
                             {{ user[0].username }}
                         </div>
                     </div>
-                    <form class="px-1 lg:px-5" @submit="onSubmit">
+                    <form class="px-1 lg:px-5">
                         <div class="text-text dark:text-natural-50">
                             <T key-name="template.choose.option" />
                         </div>

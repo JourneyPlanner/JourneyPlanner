@@ -74,9 +74,16 @@ onMounted(() => {
                         draggableInstance.destroy();
                         draggableInstance = null;
                     }
-                    draggableInstance = new Draggable(containerElement.value, {
-                        itemSelector: ".fc-event",
-                    });
+                    try {
+                        draggableInstance = new Draggable(
+                            containerElement.value,
+                            {
+                                itemSelector: ".fc-event",
+                            },
+                        );
+                    } catch (error) {
+                        console.error("Failed to initialize Draggable:", error);
+                    }
                 }
             }
         },
