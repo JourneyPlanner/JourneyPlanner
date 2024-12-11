@@ -149,7 +149,7 @@ async function startSubmit() {
     const journeyName = name.value;
     const destination = template.value.destination;
     const from = format(journeyRange.value[0], "yyyy-MM-dd");
-    const to = format(journeyRange.value[0], "yyyy-MM-dd");
+    const to = format(journeyRange.value[1], "yyyy-MM-dd");
     const invite = journeyInvite.value;
 
     let calendarInsertMode;
