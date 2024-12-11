@@ -10,6 +10,14 @@ const props = defineProps({
         type: Boolean,
         required: true,
     },
+    namePrefill: {
+        type: String,
+        default: null,
+    },
+    datePrefill: {
+        type: Array as PropType<string[]>,
+        default: null,
+    },
 });
 
 const emit = defineEmits(["close", "opened-preview"]);
@@ -252,7 +260,13 @@ const close = (): void => {
                         <T key-name="template.preview" />
                     </NuxtLink>
                     <NuxtLink
-                        :to="'/journey/new/template/' + template.id"
+                        :to="{
+                            path: '/journey/new/template/' + template.id,
+                            query: {
+                                namePrefill: namePrefill,
+                                datePrefill: datePrefill,
+                            },
+                        }"
                         class="mt-auto flex h-9 w-44 flex-row items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 text-center text-text hover:cursor-pointer hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                     >
                         <T key-name="template.use" />

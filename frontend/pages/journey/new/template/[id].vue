@@ -17,14 +17,22 @@ const journeyStore = useJourneyStore();
 journeyStore.resetJourney();
 
 const templateID = route.params.id;
+const namePrefill = route.query.namePrefill;
+const datePrefill = route.query.datePrefill as string[];
+let dateRange;
+if (datePrefill) {
+    datePrefill?.forEach((element) => {
+        dateRange.push(new Date(element));
+    });
+}
 const activeIndex = ref(0);
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
 const loading = ref(false);
 const page = ref(1);
-const name = ref("");
-const journeyRange = ref();
+const name = ref(namePrefill);
+const journeyRange = ref(dateRange);
 const tooShort = ref(false);
 const isInfoDialogVisible = ref(false);
 const isFocused = ref(false);
@@ -44,11 +52,6 @@ const days = ref(
         new UTCDate(template.value.from),
     ) + 1,
 );
-console.log(new UTCDate(template.value.from));
-console.log(new UTCDate(template.value.to));
-console.log(template);
-console.log(days);
-
 watch(
     activeIndex,
     () => {
@@ -127,17 +130,14 @@ function copyToClipboard() {
 }
 
 const validateData = handleSubmit(async () => {
-    console.log(name.value);
     page.value = 2;
 });
 
 function backToFirstSite() {
-    console.log(name.value);
     page.value = 1;
 }
 
 async function startSubmit() {
-    console.log("west");
     loading.value = true;
     toast.add({
         severity: "info",
@@ -148,8 +148,12 @@ async function startSubmit() {
 
     const journeyName = name.value;
     const destination = template.value.destination;
-    const from = format(journeyRange.value[0], "yyyy-MM-dd");
-    const to = format(journeyRange.value[1], "yyyy-MM-dd");
+    const from = journeyRange.value
+        ? format(journeyRange.value[0], "yyyy-MM-dd")
+        : null;
+    const to = journeyRange.value
+        ? format(journeyRange.value[1], "yyyy-MM-dd")
+        : null;
     const invite = journeyInvite.value;
 
     let calendarInsertMode;
@@ -220,13 +224,13 @@ const handleBlur = () => {
 </script>
 
 <template>
-    <div>
+    <div class="overflow-hidden">
         <div>
             <SvgCloud
-                class="invisible absolute left-[23rem] top-20 h-20 overflow-hidden object-none md:visible"
+                class="absolute left-[23rem] top-20 hidden h-20 overflow-hidden object-none md:visible"
             />
             <SvgCloud
-                class="invisible absolute right-[26rem] top-80 h-[4.5rem] overflow-hidden object-none md:visible"
+                class="absolute right-[26rem] top-80 hidden h-[4.5rem] overflow-hidden object-none md:visible"
             />
         </div>
         <div class="absolute left-4 top-4 z-50">
@@ -456,22 +460,24 @@ const handleBlur = () => {
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>
-                    <div
-                        v-tooltip.bottom="
-                            t('template.using') +
-                            ':  &quot;' +
-                            template.name +
-                            '&quot; ' +
-                            t('template.by') +
-                            ' ' +
-                            user[0].username
-                        "
-                        class="col-span-2 mb-4 overflow-hidden overflow-ellipsis text-nowrap pl-1 text-sm text-natural-700 dark:text-natural-200 md:-mt-5 lg:pl-6"
-                    >
-                        <T key-name="template.using" />
-                        "{{ template.name }}"
-                        <T key-name="template.by" />
-                        {{ user[0].username }}
+                    <div class="w-80 sm:w-full">
+                        <div
+                            v-tooltip.bottom="
+                                t('template.using') +
+                                ':  &quot;' +
+                                template.name +
+                                '&quot; ' +
+                                t('template.by') +
+                                ' ' +
+                                user[0].username
+                            "
+                            class="col-span-2 mb-4 overflow-hidden overflow-ellipsis text-nowrap pl-1 text-sm text-natural-700 dark:text-natural-200 md:-mt-5 lg:pl-6"
+                        >
+                            <T key-name="template.using" />
+                            "{{ template.name }}"
+                            <T key-name="template.by" />
+                            {{ user[0].username }}
+                        </div>
                     </div>
                     <form class="px-1 lg:px-5" @submit="onSubmit">
                         <div class="text-text dark:text-natural-50">
@@ -704,9 +710,11 @@ const handleBlur = () => {
         </div>
         <SvgPeopleBackpackMap class="absolute bottom-14 hidden h-44 lg:block" />
         <SvgWomanSuitcaseLeft
-            class="absolute bottom-14 block h-44 lg:right-44"
+            class="absolute bottom-14 block h-28 md:h-44 lg:right-44"
         />
-        <SvgWomanSuitcaseRight class="absolute bottom-14 right-0 block h-44" />
+        <SvgWomanSuitcaseRight
+            class="absolute bottom-14 right-0 block h-28 md:h-44"
+        />
         <Divider
             type="solid"
             class="border-10 absolute bottom-9 mt-2 border pt-0 text-natural-100 dark:text-natural-700"

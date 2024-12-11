@@ -20,6 +20,8 @@ const isTemplatePopupVisible = ref(false);
 const templateDestinationInput = ref("");
 const templateDestinationName = ref("");
 const suggestions = ref<Template[]>([]);
+const journeyName = ref();
+const journeyRange = ref();
 
 const title = t.value("title.journey.create");
 useHead({
@@ -190,6 +192,17 @@ function retrievedAddress(inputValue: string, name: string) {
     templateDestinationName.value = name;
     refresh();
 }
+
+function changeName(newName: string) {
+    journeyName.value = newName;
+}
+
+function changeRange(newRange: Date[]) {
+    journeyRange.value = [];
+    newRange.forEach((element: Date) => {
+        journeyRange.value.push(element.toISOString());
+    });
+}
 </script>
 
 <template>
@@ -226,6 +239,7 @@ function retrievedAddress(inputValue: string, name: string) {
                             id="journey-name"
                             name="journeyName"
                             translation-key="form.input.journey.name"
+                            @change-input="changeName"
                         />
                         <FormAddressInput
                             id="journey-destination"
@@ -240,6 +254,7 @@ function retrievedAddress(inputValue: string, name: string) {
                             id="journey-range-calendar"
                             name="journeyRange"
                             translation-key="form.input.journey.dates"
+                            @change-input="changeRange"
                         />
                         <Divider
                             v-if="isAuthenticated"
@@ -366,6 +381,8 @@ function retrievedAddress(inputValue: string, name: string) {
                 class="z-50"
                 :template="openedTemplate"
                 :is-template-dialog-visible="isTemplatePopupVisible"
+                :name-prefill="journeyName"
+                :date-prefill="journeyRange"
                 @close="
                     isTemplatePopupVisible = false;
                     openedTemplate = undefined;
