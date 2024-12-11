@@ -50,6 +50,11 @@ const days = ref(
         new UTCDate(template.value.from),
     ) + 1,
 );
+
+onMounted(() => {
+    resetForm();
+});
+
 watch(
     activeIndex,
     () => {
@@ -86,27 +91,25 @@ if (!isAuthenticated.value) {
  * form validation
  * when submitting form, fields are checked for validation
  */
-const validationSchema = useForm({
-    validationSchema: yup.object({
-        journeyName: yup
-            .string()
-            .required(t.value("form.error.journey.name"))
-            .matches(/^(?!\s+$).*/, t.value("form.error.journey.name"))
-            .label(t.value("form.input.journey.name")),
-        journeyRange: yup
-            .array()
-            .of(
-                yup
-                    .date()
-                    .required(t.value("form.error.journey.dates"))
-                    .label(t.value("form.input.journey.dates")),
-            )
-            .required(t.value("form.error.journey.dates"))
-            .label(t.value("form.input.journey.dates")),
-    }),
+const validationSchema = yup.object({
+    journeyName: yup
+        .string()
+        .required(t.value("form.error.journey.name"))
+        .matches(/^(?!\s+$).*/, t.value("form.error.journey.name"))
+        .label(t.value("form.input.journey.name")),
+    journeyRange: yup
+        .array()
+        .of(
+            yup
+                .date()
+                .required(t.value("form.error.journey.dates"))
+                .label(t.value("form.input.journey.dates")),
+        )
+        .required(t.value("form.error.journey.dates"))
+        .label(t.value("form.input.journey.dates")),
 });
 
-const { errors, handleSubmit } = useForm({
+const { errors, handleSubmit, resetForm } = useForm({
     validationSchema,
 });
 
@@ -268,10 +271,10 @@ const handleBlur = () => {
                     <form class="px-1 lg:px-5">
                         <div class="relative mb-4">
                             <input
-                                id="journey-name"
+                                id="journeyName"
                                 v-model="name"
                                 type="text"
-                                name="journey-name"
+                                name="journeyName"
                                 placeholder=" "
                                 class="placeholder:text-transparent dark: peer w-full rounded-lg border-2 border-natural-300 bg-natural-50 px-2.5 pb-1 pt-4 text-base font-bold text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                             />
