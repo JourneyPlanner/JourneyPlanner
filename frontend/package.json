@@ -18,6 +18,7 @@
         "install-all": "npm install && cd ../backend && npm install && composer install && cd ../docker/dev && docker compose pull"
     },
     "dependencies": {
+        "@date-fns/utc": "^2.1.0",
         "@fullcalendar/core": "^6.1.11",
         "@fullcalendar/daygrid": "^6.1.15",
         "@fullcalendar/interaction": "^6.1.15",

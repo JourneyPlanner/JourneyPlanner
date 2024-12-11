@@ -10,7 +10,6 @@ const props = defineProps({
     autocomplete: { type: String, default: "" },
     translationKey: { type: String, required: true },
     prefill: { type: String, default: "" },
-    borderColor: { type: String, default: "calypso-300" },
 });
 
 const { value, errorMessage } = useField(() => props.name);
@@ -19,7 +18,7 @@ if (props.prefill) {
     value.value = props.prefill;
 }
 
-defineEmits(["input"]);
+defineEmits(["input", "changeInput"]);
 </script>
 
 <template>
@@ -30,12 +29,12 @@ defineEmits(["input"]);
             :type="type || 'text'"
             :name="name"
             :autocomplete="autocomplete || 'off'"
-            class="placeholder:text-transparent peer w-full rounded-lg border-2 bg-natural-50 px-2.5 pb-1 pt-4 text-base font-bold text-text focus:border-calypso-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50"
-            :class="`border-${borderColor}`"
+            class="placeholder:text-transparent peer w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-4 text-base font-bold text-text focus:border-calypso-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50"
             placeholder=" "
             @focus="isFocused = true"
             @blur="isFocused = false"
             @input="$emit('input', $event)"
+            @keyup="$emit('changeInput', value)"
         />
         <label
             :for="id"

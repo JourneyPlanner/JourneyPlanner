@@ -24,7 +24,13 @@ if (props.prefill) {
     value.value = props.prefill as Date[];
 }
 
-defineEmits(["input"]);
+const emit = defineEmits(["input", "changeInput"]);
+
+function handleSelect(event: Date) {
+    emit("input", event);
+    handleFocus();
+    emit("changeInput", value.value);
+}
 </script>
 
 <template>
@@ -42,9 +48,9 @@ defineEmits(["input"]);
             hide-on-range-selection
             date-format="dd/mm/yy"
             panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
-            input-class="block rounded-lg px-2.5 pb-1 pt-4 w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 dark:bg-natural-900 border-2 border-calypso-300 dark:border-calypso-400 focus:outline-none focus:ring-1"
+            input-class="border-calypso-300 block rounded-lg px-2.5 pt-4 pb-1  w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 dark:bg-natural-900 border-2 dark:border-calypso-400 focus:outline-none focus:ring-1"
             :pt="{
-                root: { class: 'w-3/5' },
+                root: { class: 'lg:w-3/5' },
                 panel: { class: 'text-text font-nunito z-50' },
                 header: {
                     class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-900 dark:text-natural-50',
@@ -58,7 +64,7 @@ defineEmits(["input"]);
             @focus="handleFocus"
             @hide="handleBlur"
             @input="handleFocus"
-            @date-select="($emit('input', $event), handleFocus)"
+            @date-select="handleSelect($event)"
         />
         <br />
         <div class="ml-0.5 mt-1 h-3 leading-3">
