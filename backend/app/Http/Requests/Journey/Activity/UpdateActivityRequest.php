@@ -19,4 +19,20 @@ class UpdateActivityRequest extends StoreActivityRequest
             true,
         ]);
     }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        $rules = parent::rules();
+        $rules["name"] = "nullable|string";
+        $rules["estimated_duration"] = "nullable|date_format:H:i:s";
+        $rules["edit_type"] = "required|in:single,following,all";
+        $rules["calendar_activity_id"] =
+            "required_unless:edit_type,all|exists:calendar_activities,id";
+        return $rules;
+    }
 }

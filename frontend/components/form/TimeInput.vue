@@ -30,7 +30,7 @@ const computedClass = computed(() => {
 </script>
 
 <template>
-    <div class="mb-0 flex flex-col sm:mb-2">
+    <div class="mb-2 flex flex-col sm:mb-2">
         <label :for="id" class="text-sm font-medium md:text-base">
             <T :key-name="translationKey" />
         </label>
@@ -50,7 +50,8 @@ const computedClass = computed(() => {
         >
             <template #inputicon="{ clickCallback }">
                 <InputIcon
-                    class="pi pi-clock cursor-pointer text-calypso-400"
+                    class="pi pi-clock text-calypso-400"
+                    :class="disabled ? 'cursor-not-allowed' : 'cursor-pointer'"
                     @click="clickCallback"
                 />
             </template>

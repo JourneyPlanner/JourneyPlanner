@@ -38,8 +38,8 @@ class Journey extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        "from" => "date",
-        "to" => "date",
+        "from" => "datetime",
+        "to" => "datetime",
     ];
 
     /**
