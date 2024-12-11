@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { UTCDate } from "@date-fns/utc";
 import { useTranslate } from "@tolgee/vue";
-import { format } from "date-fns";
+import { differenceInDays, format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
@@ -22,6 +23,11 @@ const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
 const loading = ref(false);
 const page = ref(1);
+const name = ref("");
+const journeyRange = ref();
+const tooShort = ref(false);
+const isInfoDialogVisible = ref(false);
+const isFocused = ref(false);
 
 const title = t.value("title.journey.create");
 const { data: user } = await useAsyncData("templateUser", () =>
@@ -32,7 +38,17 @@ const { data: template } = await useAsyncData("template", () =>
     client(`/api/template/${templateID}`),
 );
 
+const days = ref(
+    differenceInDays(
+        new UTCDate(template.value.to),
+        new UTCDate(template.value.from),
+    ) + 1,
+);
+console.log(new UTCDate(template.value.from));
+console.log(new UTCDate(template.value.to));
 console.log(template);
+console.log(days);
+
 watch(
     activeIndex,
     () => {
@@ -43,8 +59,6 @@ watch(
     { immediate: true },
 );
 
-console.log(template);
-console.log(template.value.destination);
 useHead({
     title: `${title} | JourneyPlanner`,
 });
@@ -71,19 +85,13 @@ if (!isAuthenticated.value) {
  * form validation
  * when submitting form, fields are checked for validation
  */
-const { handleSubmit } = useForm({
+const validationSchema = useForm({
     validationSchema: yup.object({
         journeyName: yup
             .string()
             .required(t.value("form.error.journey.name"))
             .matches(/^(?!\s+$).*/, t.value("form.error.journey.name"))
             .label(t.value("form.input.journey.name")),
-        journeyDestination: yup
-            .string()
-            .min(1, t.value("form.error.journey.destination"))
-            .required(t.value("form.error.journey.destination"))
-            .matches(/^(?!\s+$).*/, t.value("form.error.journey.destination"))
-            .label(t.value("form.input.journey.destination")),
         journeyRange: yup
             .array()
             .of(
@@ -97,12 +105,39 @@ const { handleSubmit } = useForm({
     }),
 });
 
+const { errors, handleSubmit } = useForm({
+    validationSchema,
+});
+
 /**
  * form submit
  * when submitting the form, values are checked for validation with handleSubmit
  * and then a journey object is created and sent to the backend
  */
-const onSubmit = handleSubmit(async (values) => {
+const onSubmit = handleSubmit(async () => {});
+
+function copyToClipboard() {
+    navigator.clipboard.writeText(journeyInviteLink.value);
+    toast.add({
+        severity: "info",
+        summary: t.value("common.toast.info.heading"),
+        detail: t.value("common.invite.toast.info"),
+        life: 2000,
+    });
+}
+
+const validateData = handleSubmit(async () => {
+    console.log(name.value);
+    page.value = 2;
+});
+
+function backToFirstSite() {
+    console.log(name.value);
+    page.value = 1;
+}
+
+async function startSubmit() {
+    console.log("west");
     loading.value = true;
     toast.add({
         severity: "info",
@@ -111,23 +146,34 @@ const onSubmit = handleSubmit(async (values) => {
         life: 6000,
     });
 
-    const name = values.journeyName;
-    const destination = values.journeyDestination;
-    const from = format(values.journeyRange[0], "yyyy-MM-dd");
-    const to = format(values.journeyRange[1], "yyyy-MM-dd");
+    const journeyName = name.value;
+    const destination = template.value.destination;
+    const from = format(journeyRange.value[0], "yyyy-MM-dd");
+    const to = format(journeyRange.value[0], "yyyy-MM-dd");
     const invite = journeyInvite.value;
-    const mapbox_full_address = values.mapbox?.properties.full_address;
-    const mapbox_id = values.mapbox?.properties.mapbox_id;
+
+    let calendarInsertMode;
+    switch (activeIndex.value) {
+        case 0:
+            calendarInsertMode = "direct";
+            break;
+        case 1:
+            calendarInsertMode = "smart";
+            break;
+        case 2:
+            calendarInsertMode = "pool";
+            break;
+    }
 
     const journey = {
-        name,
+        name: journeyName,
         destination,
-        mapbox_full_address: mapbox_full_address,
-        mapbox_id: mapbox_id,
         from,
         to,
         invite,
         role: 1,
+        template_id: templateID,
+        calendar_activity_insert_mode: calendarInsertMode,
     };
 
     await client("/api/journey", {
@@ -162,31 +208,25 @@ const onSubmit = handleSubmit(async (values) => {
             loading.value = false;
         },
     });
-});
-
-function copyToClipboard() {
-    navigator.clipboard.writeText(journeyInviteLink.value);
-    toast.add({
-        severity: "info",
-        summary: t.value("common.toast.info.heading"),
-        detail: t.value("common.invite.toast.info"),
-        life: 2000,
-    });
 }
 
-function validateData() {
-    console.log(handleSubmit);
-}
+const handleFocus = () => {
+    isFocused.value = true;
+};
+
+const handleBlur = () => {
+    isFocused.value = false;
+};
 </script>
 
 <template>
     <div>
         <div>
             <SvgCloud
-                class="invisible absolute left-[22%] top-20 h-20 overflow-hidden object-none md:visible"
+                class="invisible absolute left-[23rem] top-20 h-20 overflow-hidden object-none md:visible"
             />
             <SvgCloud
-                class="invisible absolute right-[25%] top-80 h-[4.5rem] overflow-hidden object-none md:visible"
+                class="invisible absolute right-[26rem] top-80 h-[4.5rem] overflow-hidden object-none md:visible"
             />
         </div>
         <div class="absolute left-4 top-4 z-50">
@@ -209,33 +249,143 @@ function validateData() {
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>
-                    <div
-                        class="-mt-5 mb-4 pl-6 text-sm text-natural-700 dark:text-natural-200"
-                    >
-                        <T key-name="template.using" />
-                        "{{ template.name }}"
-                        <T key-name="template.by" />
-                        {{ user[0].username }}
+                    <div class="grid w-[96%] grid-cols-2">
+                        <div
+                            v-tooltip.bottom="
+                                t('template.using') +
+                                ':  &quot;' +
+                                template.name +
+                                '&quot; ' +
+                                t('template.by') +
+                                ' ' +
+                                user[0].username
+                            "
+                            class="col-span-2 mb-4 overflow-hidden overflow-ellipsis text-nowrap pl-1 text-sm text-natural-700 dark:text-natural-200 md:-mt-5 lg:pl-6"
+                        >
+                            <T key-name="template.using" />
+                            "{{ template.name }}"
+                            <T key-name="template.by" />
+                            {{ user[0].username }}
+                        </div>
                     </div>
                     <form class="px-1 lg:px-5" @submit="onSubmit">
-                        <FormInput
-                            id="journey-name"
-                            name="journeyName"
-                            translation-key="form.input.journey.name"
-                            border-color="natural-300"
-                        />
+                        <div class="relative mb-4">
+                            <input
+                                id="journey-name"
+                                v-model="name"
+                                type="text"
+                                name="journey-name"
+                                placeholder=" "
+                                class="placeholder:text-transparent dark: peer w-full rounded-lg border-2 border-natural-300 bg-natural-50 px-2.5 pb-1 pt-4 text-base font-bold text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                            />
+                            <label
+                                for="journey-name"
+                                class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-natural-400 transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-natural-600 peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-calypso-600 dark:peer-placeholder-shown:text-natural-200"
+                            >
+                                <T key-name="form.input.journey.name" />
+                            </label>
+                            <div
+                                class="w-full text-left leading-3"
+                                :class="
+                                    errors.journeyName
+                                        ? '-mb-1.5 mt-0.5 block'
+                                        : 'hidden'
+                                "
+                            >
+                                <span
+                                    class="ml-0.5 text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300"
+                                    >{{ errors.journeyName }}</span
+                                >
+                            </div>
+                        </div>
                         <input
                             id="journey-destination"
                             name="journeyDestination"
                             disabled
-                            class="font peer mb-4 flex w-full items-center justify-center rounded-lg border-2 border-natural-300 bg-natural-100 px-2.5 py-2.5 text-xl text-natural-700 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-300"
+                            class="font text-medium peer mb-4 flex w-full items-center justify-center rounded-lg border-2 border-natural-300 bg-natural-100 px-2.5 py-2.5 text-natural-700 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-300"
                             :value="template.destination"
                         />
-                        <FormCalendar
-                            id="journey-range-calendar"
-                            name="journeyRange"
-                            translation-key="form.input.journey.dates"
-                        />
+                        <div class="relative">
+                            <Calendar
+                                id="journey-range-calendar"
+                                v-model="journeyRange"
+                                name="journeyRange"
+                                selection-mode="range"
+                                :manual-input="true"
+                                :number-of-months="1"
+                                show-other-months
+                                select-other-months
+                                hide-on-range-selection
+                                date-format="dd/mm/yy"
+                                panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
+                                input-class="border-natural-300 hover:border-calypso-400 dark:hover:border-calypso-400s block rounded-lg px-2.5 pt-4 pb-1  w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 border-2 dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 focus:outline-none focus:border-calypso-400 dark:focus:border-calypso-400 dark:hover:border-calypso-400"
+                                :pt="{
+                                    root: { class: 'lg:w-3/5' },
+                                    panel: {
+                                        class: 'text-text font-nunito z-50',
+                                    },
+                                    header: {
+                                        class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-900 dark:text-natural-50',
+                                    },
+                                    title: {
+                                        class: 'text-text dark:text-natural-50 flex gap-1 font-nunito',
+                                    },
+                                    dayLabel: { class: 'text-calypso-400' },
+                                    datepickerMask: {
+                                        class: 'text-text bg-natural-900',
+                                    },
+                                }"
+                                @focus="handleFocus"
+                                @hide="handleBlur"
+                                @input="handleFocus"
+                            />
+                            <br />
+                            <div class="ml-0.5 mt-1 h-3 leading-3">
+                                <span
+                                    class="text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300"
+                                    >{{ errors.journeyRange }}</span
+                                >
+                            </div>
+                            <label
+                                for="journey-range-calendar"
+                                class="pointer-events-none absolute left-0 top-0 overflow-hidden whitespace-nowrap py-4 pl-2.5 text-sm transition-all duration-300"
+                                :class="{
+                                    'text-natural-600': !isFocused,
+                                    'dark:text-natural-200': !isFocused,
+                                    'text-calypso-600': isFocused,
+                                    '-translate-x-6 -translate-y-4 scale-75':
+                                        isFocused || journeyRange,
+                                    'translate-y-0 scale-100':
+                                        !isFocused && !journeyRange,
+                                }"
+                            >
+                                <T key-name="form.input.journey.dates" />
+                            </label>
+                        </div>
+                        <div
+                            class="flex items-center text-xs text-natural-700 dark:text-natural-400"
+                        >
+                            <T key-name="template.recommended.duration" />
+                            {{ days }}
+                            <T key-name="template.days" />
+                            <button
+                                type="button"
+                                @click="isInfoDialogVisible = true"
+                            >
+                                <span
+                                    class="pi pi-info-circle pl-1"
+                                    :class="
+                                        tooShort
+                                            ? 'text-dandelion-400 dark:text-pesto-600'
+                                            : 'text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100'
+                                    "
+                                ></span>
+                            </button>
+                            <TemplateDialogsCreationDurationInfo
+                                :is-visible="isInfoDialogVisible"
+                                @close="isInfoDialogVisible = false"
+                            />
+                        </div>
                         <Divider
                             v-if="isAuthenticated"
                             type="solid"
@@ -249,12 +399,12 @@ function validateData() {
                                 type="text"
                                 name="journey-invite"
                                 disabled
-                                class="peer w-[90%] rounded-lg border-2 border-calypso-300 bg-natural-100 px-2.5 pb-1 pt-4 text-base font-medium text-natural-500 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-700 dark:text-natural-300"
+                                class="peer w-[90%] rounded-lg border-2 border-natural-300 bg-natural-100 px-2.5 pb-1 pt-4 text-base font-medium text-natural-600 focus:outline-none focus:ring-1 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-300"
                                 placeholder=" "
                             />
                             <label
                                 for="journey-invite"
-                                class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-calypso-500 transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-natural-400 peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-calypso-500 dark:text-calypso-300"
+                                class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-natural-600 transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-natural-400 peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-calypso-500 dark:text-natural-300"
                             >
                                 <T key-name="form.input.journey.invite" />
                             </label>
@@ -306,8 +456,25 @@ function validateData() {
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>
+                    <div
+                        v-tooltip.bottom="
+                            t('template.using') +
+                            ':  &quot;' +
+                            template.name +
+                            '&quot; ' +
+                            t('template.by') +
+                            ' ' +
+                            user[0].username
+                        "
+                        class="col-span-2 mb-4 overflow-hidden overflow-ellipsis text-nowrap pl-1 text-sm text-natural-700 dark:text-natural-200 md:-mt-5 lg:pl-6"
+                    >
+                        <T key-name="template.using" />
+                        "{{ template.name }}"
+                        <T key-name="template.by" />
+                        {{ user[0].username }}
+                    </div>
                     <form class="px-1 lg:px-5" @submit="onSubmit">
-                        <div>
+                        <div class="text-text dark:text-natural-50">
                             <T key-name="template.choose.option" />
                         </div>
                         <Accordion
@@ -320,7 +487,7 @@ function validateData() {
                                     root: () => ({
                                         class: [
                                             {
-                                                'border-2 border-calypso-300 rounded-lg':
+                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600':
                                                     activeIndex === 0,
                                                 'border-b-0': activeIndex === 1,
                                                 'border-b-2 border-natural-300 dark:border-natural-300':
@@ -335,16 +502,24 @@ function validateData() {
                                         class: [
                                             ' font-semibold text-text dark:text-natural-50 py-1.5',
                                             {
-                                                'bg-gothic-50 dark:bg-background-dark':
+                                                'bg-gothic-50 dark:bg-gothic-900':
                                                     activeIndex === 0,
                                                 'bg-background dark:bg-background-dark':
                                                     activeIndex !== 0,
                                             },
                                         ],
                                     }),
-                                    content: {
-                                        class: 'bg-gothic-50 dark:bg-background-dark text-text dark:text-natural-50 rounded-lg',
-                                    },
+                                    content: () => ({
+                                        class: [
+                                            'text-text dark:text-natural-50 rounded-lg',
+                                            {
+                                                'bg-gothic-50 dark:bg-gothic-900':
+                                                    activeIndex === 0,
+                                                'bg-background dark:bg-background-dark':
+                                                    activeIndex !== 0,
+                                            },
+                                        ],
+                                    }),
                                 }"
                             >
                                 <div
@@ -381,7 +556,7 @@ function validateData() {
                                     root: () => ({
                                         class: [
                                             {
-                                                'border-2 border-calypso-300 rounded-lg':
+                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600 dark:bg-gothic-900':
                                                     activeIndex === 1,
                                                 'border-b-0': activeIndex === 2,
                                                 'border-b-2 border-natural-300 dark:border-natural-300':
@@ -397,16 +572,24 @@ function validateData() {
                                         class: [
                                             ' font-semibold text-text dark:text-natural-50 py-1.5',
                                             {
-                                                'bg-gothic-50 dark:bg-background-dark':
+                                                'bg-gothic-50 dark:bg-gothic-900':
                                                     activeIndex === 1,
                                                 'bg-background dark:bg-background-dark':
                                                     activeIndex !== 1,
                                             },
                                         ],
                                     }),
-                                    content: {
-                                        class: 'bg-gothic-50 dark:bg-background-dark text-text dark:text-natural-50 rounded-lg',
-                                    },
+                                    content: () => ({
+                                        class: [
+                                            'text-text dark:text-natural-50 rounded-lg',
+                                            {
+                                                'bg-gothic-50 dark:bg-gothic-900':
+                                                    activeIndex === 1,
+                                                'bg-background dark:bg-background-dark':
+                                                    activeIndex !== 1,
+                                            },
+                                        ],
+                                    }),
                                 }"
                             >
                                 <div
@@ -443,7 +626,7 @@ function validateData() {
                                     root: () => ({
                                         class: [
                                             {
-                                                'border-2 border-calypso-300 rounded-lg':
+                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600':
                                                     activeIndex === 2,
                                                 'border-b-0': activeIndex === 3,
                                                 'border-b-2 border-natural-300 dark:border-natural-300':
@@ -459,16 +642,24 @@ function validateData() {
                                         class: [
                                             ' font-semibold text-text dark:text-natural-50 py-1.5',
                                             {
-                                                'bg-gothic-50 dark:bg-background-dark':
+                                                'bg-gothic-50 dark:bg-gothic-900':
                                                     activeIndex === 2,
                                                 'bg-background dark:bg-background-dark':
                                                     activeIndex !== 2,
                                             },
                                         ],
                                     }),
-                                    content: {
-                                        class: 'bg-gothic-50 dark:bg-background-dark text-text dark:text-natural-50 rounded-lg',
-                                    },
+                                    content: () => ({
+                                        class: [
+                                            'text-text dark:text-natural-50 rounded-lg',
+                                            {
+                                                'bg-gothic-50 dark:bg-gothic-900':
+                                                    activeIndex === 2,
+                                                'bg-background dark:bg-background-dark':
+                                                    activeIndex !== 2,
+                                            },
+                                        ],
+                                    }),
                                 }"
                             >
                                 <div
@@ -486,7 +677,7 @@ function validateData() {
                             <button
                                 type="button"
                                 class="w-36 rounded-xl border-2 border-natural-400 bg-natural-50 px-7 py-1 text-text hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-natural-950"
-                                @click="page = 1"
+                                @click="backToFirstSite"
                             >
                                 <T key-name="common.back" />
                             </button>
@@ -504,18 +695,21 @@ function validateData() {
                                     },
                                 }"
                                 class="w-36 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-7 py-1 text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                @click="startSubmit"
                             />
                         </div>
                     </form>
                 </fieldset>
             </div>
         </div>
-        <SvgPeopleBackpackMap class="absolute bottom-0 hidden h-44 lg:block" />
+        <SvgPeopleBackpackMap class="absolute bottom-14 hidden h-44 lg:block" />
         <SvgWomanSuitcaseLeft
-            class="absolute bottom-0 hidden h-44 sm:block lg:right-44"
+            class="absolute bottom-14 block h-44 lg:right-44"
         />
-        <SvgWomanSuitcaseRight
-            class="absolute bottom-0 right-0 hidden h-44 sm:block"
+        <SvgWomanSuitcaseRight class="absolute bottom-14 right-0 block h-44" />
+        <Divider
+            type="solid"
+            class="border-10 absolute bottom-9 mt-2 border pt-0 text-natural-100 dark:text-natural-700"
         />
     </div>
 </template>
