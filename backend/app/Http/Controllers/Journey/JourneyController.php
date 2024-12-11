@@ -105,7 +105,9 @@ class JourneyController extends Controller
             $journey->save();
 
             // Copy the activities from the template journey
-            $templateJourney = Journey::find($validated["template_id"]);
+            $templateJourney = Journey::where("id", $validated["template_id"])
+                ->where("is_template", true)
+                ->firstOrFail();
             $timeshift = $templateJourney->from->diff($journey->from);
             $journeyLength = ceil($journey->from->diff($journey->to)->d / 7);
             if ($validated["calendar_activity_insert_mode"] === "smart") {
