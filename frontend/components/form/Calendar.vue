@@ -24,10 +24,9 @@ if (props.prefill) {
     value.value = props.prefill as Date[];
 }
 
-const emit = defineEmits(["input", "changeInput"]);
+const emit = defineEmits(["changeInput"]);
 
-function handleSelect(event: Date) {
-    emit("input", event);
+function handleSelect() {
     handleFocus();
     emit("changeInput", value.value);
 }
@@ -64,7 +63,7 @@ function handleSelect(event: Date) {
             @focus="handleFocus"
             @hide="handleBlur"
             @input="handleFocus"
-            @date-select="handleSelect($event)"
+            @date-select="handleSelect()"
         />
         <br />
         <div class="ml-0.5 mt-1 h-3 leading-3">

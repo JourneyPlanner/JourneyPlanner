@@ -13,12 +13,10 @@ const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 const toast = useToast();
 const store = useJourneysStore();
-const journeyStore = useJourneyStore();
-journeyStore.resetJourney();
 
 const templateID = route.params.id;
-const namePrefill = route.query.namePrefill;
-const datePrefill = route.query.datePrefill as string[];
+const namePrefill = route.query.name;
+const datePrefill = route.query.date as string[];
 let dateRange;
 if (datePrefill) {
     datePrefill?.forEach((element) => {
@@ -248,15 +246,17 @@ const handleBlur = () => {
                     </legend>
                     <div class="grid w-[96%] grid-cols-2">
                         <div
-                            v-tooltip.bottom="
-                                t('template.using') +
-                                ':  &quot;' +
-                                template.name +
-                                '&quot; ' +
-                                t('template.by') +
-                                ' ' +
-                                user[0].username
-                            "
+                            v-tooltip.bottom="{
+                                value:
+                                    t('template.using') +
+                                    ':  &quot;' +
+                                    template.name +
+                                    '&quot; ' +
+                                    t('template.by') +
+                                    ' ' +
+                                    user[0].username,
+                                pt: { root: 'font-nunito' },
+                            }"
                             class="col-span-2 mb-4 overflow-hidden overflow-ellipsis text-nowrap pl-1 text-sm text-natural-700 dark:text-natural-200 md:-mt-5 lg:pl-6"
                         >
                             <T key-name="template.using" />
@@ -364,7 +364,8 @@ const handleBlur = () => {
                         >
                             <T key-name="template.recommended.duration" />
                             {{ days }}
-                            <T key-name="template.days" />
+                            <T v-if="days > 1" key-name="template.days" />
+                            <T v-else-if="days == 1" key-name="template.day" />
                             <button
                                 type="button"
                                 @click="isInfoDialogVisible = true"
@@ -378,10 +379,6 @@ const handleBlur = () => {
                                     "
                                 ></span>
                             </button>
-                            <TemplateDialogsCreationDurationInfo
-                                :is-visible="isInfoDialogVisible"
-                                @close="isInfoDialogVisible = false"
-                            />
                         </div>
                         <Divider
                             v-if="isAuthenticated"
@@ -455,15 +452,17 @@ const handleBlur = () => {
                     </legend>
                     <div class="w-80 sm:w-full">
                         <div
-                            v-tooltip.bottom="
-                                t('template.using') +
-                                ':  &quot;' +
-                                template.name +
-                                '&quot; ' +
-                                t('template.by') +
-                                ' ' +
-                                user[0].username
-                            "
+                            v-tooltip.bottom="{
+                                value:
+                                    t('template.using') +
+                                    ':  &quot;' +
+                                    template.name +
+                                    '&quot; ' +
+                                    t('template.by') +
+                                    ' ' +
+                                    user[0].username,
+                                pt: { root: 'font-nunito' },
+                            }"
                             class="col-span-2 mb-4 overflow-hidden overflow-ellipsis text-nowrap pl-1 text-sm text-natural-700 dark:text-natural-200 md:-mt-5 lg:pl-6"
                         >
                             <T key-name="template.using" />
@@ -712,5 +711,11 @@ const handleBlur = () => {
             type="solid"
             class="border-10 absolute bottom-9 mt-2 border pt-0 text-natural-100 dark:text-natural-700"
         />
+        <div id="dialogs">
+            <TemplateDialogsCreationDurationInfo
+                :is-visible="isInfoDialogVisible"
+                @close="isInfoDialogVisible = false"
+            />
+        </div>
     </div>
 </template>
