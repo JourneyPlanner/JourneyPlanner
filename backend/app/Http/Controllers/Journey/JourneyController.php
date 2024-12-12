@@ -120,74 +120,65 @@ class JourneyController extends Controller
                     $additionalWeekDayShift += 7;
                 }
             }
-            if ($validated["calendar_activity_insert_mode"] !== "pool") {
-                foreach (
-                    $templateJourney
-                        ->activities()
-                        ->with("calendarActivities")
-                        ->get()
-                    as $activity
-                ) {
-                    $newActivity = $activity->replicate();
-                    $newActivity->journey_id = $journey->id;
-                    $newActivity->save();
+            foreach (
+                $templateJourney
+                    ->activities()
+                    ->with("calendarActivities")
+                    ->get()
+                as $activity
+            ) {
+                $newActivity = $activity->replicate();
+                $newActivity->journey_id = $journey->id;
+                $newActivity->save();
 
-                    // Copy the calendar activities
-                    if (
-                        $validated["calendar_activity_insert_mode"] === "direct"
+                // Copy the calendar activities
+                if ($validated["calendar_activity_insert_mode"] === "direct") {
+                    foreach (
+                        $activity->calendarActivities
+                        as $calendarActivity
                     ) {
-                        foreach (
-                            $activity->calendarActivities
-                            as $calendarActivity
-                        ) {
-                            $newDate = $calendarActivity->start->add(
-                                $timeshift
-                            );
-                            if ($newDate <= $journey->to) {
-                                $newCalendarActivity = $calendarActivity->replicate();
-                                $newCalendarActivity->activity_id =
-                                    $newActivity->id;
-                                $newCalendarActivity->start = $newDate;
-                                $newCalendarActivity->save();
-                            }
-                        }
-                    } elseif (
-                        $validated["calendar_activity_insert_mode"] === "smart"
-                    ) {
-                        foreach (
-                            $activity->calendarActivities
-                            as $calendarActivity
-                        ) {
-                            $newDate = $calendarActivity->start
-                                ->add($timeshift)
-                                ->add(
-                                    new DateInterval(
-                                        "P" . $additionalWeekDayShift . "D"
-                                    )
-                                );
+                        $newDate = $calendarActivity->start->add($timeshift);
+                        if ($newDate <= $journey->to) {
                             $newCalendarActivity = $calendarActivity->replicate();
                             $newCalendarActivity->activity_id =
                                 $newActivity->id;
+                            $newCalendarActivity->start = $newDate;
+                            $newCalendarActivity->save();
+                        }
+                    }
+                } elseif (
+                    $validated["calendar_activity_insert_mode"] === "smart"
+                ) {
+                    foreach (
+                        $activity->calendarActivities
+                        as $calendarActivity
+                    ) {
+                        $newDate = $calendarActivity->start
+                            ->add($timeshift)
+                            ->add(
+                                new DateInterval(
+                                    "P" . $additionalWeekDayShift . "D"
+                                )
+                            );
+                        $newCalendarActivity = $calendarActivity->replicate();
+                        $newCalendarActivity->activity_id = $newActivity->id;
 
-                            if ($newDate > $endDate) {
-                                if (
-                                    $journey->to->diff($newDate)->d <=
-                                    $additionalWeekDayShift + 1
-                                ) {
-                                    $newDate = $newDate->sub(
-                                        new DateInterval(
-                                            "P" . $journeyLength . "W"
-                                        )
-                                    );
-                                } else {
-                                    continue;
-                                }
+                        if ($newDate > $endDate) {
+                            if (
+                                $journey->to->diff($newDate)->d <=
+                                $additionalWeekDayShift + 1
+                            ) {
+                                $newDate = $newDate->sub(
+                                    new DateInterval("P" . $journeyLength . "W")
+                                );
+                            } else {
+                                continue;
                             }
+                        }
 
-                            if ($newDate > $journey->from) {
-                                $newCalendarActivity->start = $newDate;
-                                $newCalendarActivity->save();
-                            }
+                        if ($newDate > $journey->from) {
+                            $newCalendarActivity->start = $newDate;
+                            $newCalendarActivity->save();
                         }
                     }
                 }
