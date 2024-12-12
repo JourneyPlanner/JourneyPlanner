@@ -47,7 +47,8 @@ class TemplateController extends Controller
         // Check if the requested journey is a template
         Gate::authorize("journeyTemplate", $journey);
 
-        // Fetch template creator
+        // Load the template creator
+        $journey->load("users:id,display_name,username");
 
         return response()->json($journey);
     }

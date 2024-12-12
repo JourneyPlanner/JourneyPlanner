@@ -205,9 +205,7 @@ class JourneyController extends Controller
         // Check if the authenticated user is a member of the requested journey
         Gate::authorize("view", [$journey, true]);
 
-        return response()->json(
-            $journey->users()->get(["id", "display_name", "username", "role"])
-        );
+        return response()->json($journey);
     }
 
     /**
