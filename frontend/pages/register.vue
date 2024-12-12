@@ -23,27 +23,28 @@ if (route.query.redirect?.toString().startsWith("/invite")) {
 
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
-        email: yup
-            .string()
-            .email(t.value("form.input.email.error"))
-            .required(t.value("form.input.required")),
-        display_name: yup.string().required(t.value("form.input.required")),
-        password: yup
-            .string()
-            .min(8, t.value("form.input.password.error"))
-            .required(t.value("form.input.required")),
-        password_confirmation: yup
-            .string()
-            .oneOf(
-                [yup.ref("password")],
-                t.value("form.input.password.repeat.error"),
-            )
-            .required(t.value("form.input.required")),
-        terms: yup
-            .boolean()
-            .oneOf([true], t.value("form.input.terms.error"))
-            .required(t.value("form.input.terms.error")),
-    }),
+  email: yup
+    .string()
+    .transform((value) => value?.toLowerCase())
+    .email(t.value("form.input.email.error"))
+    .required(t.value("form.input.required")),
+  display_name: yup.string().required(t.value("form.input.required")),
+  password: yup
+    .string()
+    .min(8, t.value("form.input.password.error"))
+    .required(t.value("form.input.required")),
+  password_confirmation: yup
+    .string()
+    .oneOf(
+      [yup.ref("password")],
+      t.value("form.input.password.repeat.error")
+    )
+    .required(t.value("form.input.required")),
+  terms: yup
+    .boolean()
+    .oneOf([true], t.value("form.input.terms.error"))
+    .required(t.value("form.input.terms.error")),
+   }),
 });
 
 const onSubmit = handleSubmit((values) => {
