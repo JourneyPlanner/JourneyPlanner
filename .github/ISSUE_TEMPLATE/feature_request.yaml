@@ -15,7 +15,7 @@ body:
         check if this feature has already been suggested.
       options:
         - label: I have searched the existing issues
-          required: false
+          required: true
   - type: textarea
     attributes:
       label: Description
@@ -26,6 +26,8 @@ body:
     attributes:
       label: Describe the solution you'd like
       description: If you have a solution in mind, please describe it.
+    validations:
+      required: true
   - type: textarea
     id: additional-context
     attributes:
