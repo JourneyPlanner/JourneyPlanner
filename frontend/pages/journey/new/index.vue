@@ -199,9 +199,12 @@ function changeName(newName: string) {
 
 function changeRange(newRange: Date[]) {
     journeyRange.value = [];
-    newRange.forEach((element: Date) => {
-        journeyRange.value.push(element.toISOString());
-    });
+    console.log(newRange);
+    newRange
+        .filter((value) => value != null)
+        .forEach((element: Date) => {
+            journeyRange.value?.push(element.toISOString());
+        });
 }
 </script>
 

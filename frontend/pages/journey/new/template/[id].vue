@@ -15,34 +15,34 @@ const toast = useToast();
 const store = useJourneysStore();
 
 const templateID = route.params.id;
-const namePrefill = route.query.name;
-const datePrefill = route.query.date as string[];
-let dateRange;
-if (datePrefill) {
-    datePrefill?.forEach((element) => {
-        dateRange.push(new Date(element));
-    });
-}
+const namePrefill = (route.query.name as string) || "";
+const datePrefill = (route.query.date as string[]) || null;
+
+const template = ref({
+    name: "tolle Reise",
+    destination: "East Melissa",
+    from: "2025-09-03T00:00:00.000000Z",
+    to: "2025-09-12T00:00:00.000000Z",
+    user: [{ username: "Roman Nebs" }],
+});
+
 const activeIndex = ref(0);
+const { value: name, setValue } = useField("journeyName");
+setValue(namePrefill);
+const journeyRange = ref(
+    datePrefill ? datePrefill.map((date) => new Date(date)) : null,
+);
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
 const loading = ref(false);
 const page = ref(1);
-const name = ref(namePrefill);
-const journeyRange = ref(dateRange);
+
 const tooShort = ref(false);
 const isInfoDialogVisible = ref(false);
 const isFocused = ref(false);
 
 const title = t.value("title.journey.create");
-const { data: user } = await useAsyncData("templateUser", () =>
-    client(`/api/template/${templateID}/user`),
-);
-
-const { data: template } = await useAsyncData("template", () =>
-    client(`/api/template/${templateID}`),
-);
 
 const days = ref(
     differenceInDays(
@@ -50,20 +50,18 @@ const days = ref(
         new UTCDate(template.value.from),
     ) + 1,
 );
-
-onMounted(() => {
-    resetForm();
-});
-
-watch(
-    activeIndex,
-    () => {
-        if (activeIndex.value == null) {
-            activeIndex.value = 0;
-        }
-    },
-    { immediate: true },
-);
+if (datePrefill != null) {
+    const newDuration =
+        differenceInDays(
+            new UTCDate(datePrefill[1]),
+            new UTCDate(datePrefill[0]),
+        ) + 1;
+    if (days.value > newDuration) {
+        tooShort.value = true;
+    } else {
+        tooShort.value = false;
+    }
+}
 
 useHead({
     title: `${title} | JourneyPlanner`,
@@ -87,32 +85,7 @@ if (!isAuthenticated.value) {
         window.location.origin + "/invite/" + journeyInvite.value;
 }
 
-/**
- * form validation
- * when submitting form, fields are checked for validation
- */
-const validationSchema = yup.object({
-    journeyName: yup
-        .string()
-        .required(t.value("form.error.journey.name"))
-        .matches(/^(?!\s+$).*/, t.value("form.error.journey.name"))
-        .label(t.value("form.input.journey.name")),
-    journeyRange: yup
-        .array()
-        .of(
-            yup
-                .date()
-                .required(t.value("form.error.journey.dates"))
-                .label(t.value("form.input.journey.dates")),
-        )
-        .required(t.value("form.error.journey.dates"))
-        .label(t.value("form.input.journey.dates")),
-});
-
-const { errors, handleSubmit, resetForm } = useForm({
-    validationSchema,
-});
-
+// Copy to clipboard
 function copyToClipboard() {
     navigator.clipboard.writeText(journeyInviteLink.value);
     toast.add({
@@ -123,14 +96,29 @@ function copyToClipboard() {
     });
 }
 
-const validateData = handleSubmit(async () => {
-    page.value = 2;
+// Validation Schema
+const { errors, handleSubmit } = useForm({
+    validationSchema: yup.object({
+        journeyRange: yup
+            .array()
+            .of(yup.date().required(t.value("form.error.journey.date.invalid")))
+            .min(2, t.value("form.error.journey.date.min")),
+        journeyName: yup
+            .string()
+            .trim()
+            .required(t.value("form.error.journey.name"))
+            .matches(/^(?!\s+$).*/, t.value("form.error.journey.name.invalid")),
+    }),
 });
 
-function backToFirstSite() {
-    page.value = 1;
+// Form Submission
+const validateData = handleSubmit(onSuccess);
+
+async function onSuccess() {
+    page.value = 2;
 }
 
+// Start submit logic
 async function startSubmit() {
     loading.value = true;
     toast.add({
@@ -215,6 +203,26 @@ const handleFocus = () => {
 const handleBlur = () => {
     isFocused.value = false;
 };
+
+const backToFirstSite = () => {
+    page.value = 1;
+};
+
+function changeDuration() {
+    if (journeyRange.value) {
+        const newDuration =
+            differenceInDays(
+                new UTCDate(journeyRange.value[1]),
+                new UTCDate(journeyRange.value[0]),
+            ) + 1;
+        if (days.value > newDuration) {
+            tooShort.value = true;
+        } else {
+            tooShort.value = false;
+        }
+        console.log(newDuration);
+    }
+}
 </script>
 
 <template>
@@ -257,7 +265,7 @@ const handleBlur = () => {
                                     '&quot; ' +
                                     t('template.by') +
                                     ' ' +
-                                    user[0].username,
+                                    template.user[0].username,
                                 pt: { root: 'font-nunito' },
                             }"
                             class="col-span-2 mb-4 overflow-hidden overflow-ellipsis text-nowrap pl-1 text-sm text-natural-700 dark:text-natural-200 md:-mt-5 lg:pl-6"
@@ -265,12 +273,16 @@ const handleBlur = () => {
                             <T key-name="template.using" />
                             "{{ template.name }}"
                             <T key-name="template.by" />
-                            {{ user && user[0] ? user[0].username : "" }}
+                            {{
+                                template.user && template.user[0]
+                                    ? template.user[0].username
+                                    : ""
+                            }}
                         </div>
                     </div>
-                    <form class="px-1 lg:px-5">
+                    <form class="px-1 lg:px-5" @submit="validateData">
                         <div class="relative mb-4">
-                            <input
+                            <Field
                                 id="journeyName"
                                 v-model="name"
                                 type="text"
@@ -306,39 +318,43 @@ const handleBlur = () => {
                             :value="template.destination"
                         />
                         <div class="relative">
-                            <Calendar
-                                id="journey-range-calendar"
-                                v-model="journeyRange"
-                                name="journeyRange"
-                                selection-mode="range"
-                                :manual-input="true"
-                                :number-of-months="1"
-                                show-other-months
-                                select-other-months
-                                hide-on-range-selection
-                                date-format="dd/mm/yy"
-                                panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
-                                input-class="border-natural-300 hover:border-calypso-400 dark:hover:border-calypso-400s block rounded-lg px-2.5 pt-4 pb-1  w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 border-2 dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 focus:outline-none focus:border-calypso-400 dark:focus:border-calypso-400 dark:hover:border-calypso-400"
-                                :pt="{
-                                    root: { class: 'lg:w-3/5' },
-                                    panel: {
-                                        class: 'text-text font-nunito z-50',
-                                    },
-                                    header: {
-                                        class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-900 dark:text-natural-50',
-                                    },
-                                    title: {
-                                        class: 'text-text dark:text-natural-50 flex gap-1 font-nunito',
-                                    },
-                                    dayLabel: { class: 'text-calypso-400' },
-                                    datepickerMask: {
-                                        class: 'text-text bg-natural-900',
-                                    },
-                                }"
-                                @focus="handleFocus"
-                                @hide="handleBlur"
-                                @input="handleFocus"
-                            />
+                            <Field v-slot="{ field }" name="journeyRange">
+                                <Calendar
+                                    id="journey-range-calendar"
+                                    v-model="journeyRange"
+                                    v-bind="field"
+                                    name="journeyRange"
+                                    selection-mode="range"
+                                    :manual-input="true"
+                                    :number-of-months="1"
+                                    show-other-months
+                                    select-other-months
+                                    hide-on-range-selection
+                                    date-format="dd/mm/yy"
+                                    panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
+                                    input-class="border-natural-300 hover:border-calypso-400 dark:hover:border-calypso-400s block rounded-lg px-2.5 pt-4 pb-1  w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 border-2 dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 focus:outline-none focus:border-calypso-400 dark:focus:border-calypso-400 dark:hover:border-calypso-400"
+                                    :pt="{
+                                        root: { class: 'lg:w-3/5' },
+                                        panel: {
+                                            class: 'text-text font-nunito z-50',
+                                        },
+                                        header: {
+                                            class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-900 dark:text-natural-50',
+                                        },
+                                        title: {
+                                            class: 'text-text dark:text-natural-50 flex gap-1 font-nunito',
+                                        },
+                                        dayLabel: { class: 'text-calypso-400' },
+                                        datepickerMask: {
+                                            class: 'text-text bg-natural-900',
+                                        },
+                                    }"
+                                    @focus="handleFocus"
+                                    @hide="handleBlur"
+                                    @input="handleFocus"
+                                    @date-select="changeDuration()"
+                                />
+                            </Field>
                             <br />
                             <div class="ml-0.5 mt-1 h-3 leading-3">
                                 <span
@@ -364,6 +380,7 @@ const handleBlur = () => {
                         </div>
                         <div
                             class="flex items-center text-xs text-natural-700 dark:text-natural-400"
+                            :class="errors.journeyRange ? 'mt-2' : '-mt-3'"
                         >
                             <T key-name="template.recommended.duration" />
                             {{ days }}
@@ -425,8 +442,7 @@ const handleBlur = () => {
                             </button>
 
                             <Button
-                                :loading="loading"
-                                type="button"
+                                type="submit"
                                 :label="t('common.button.continue')"
                                 :pt="{
                                     root: {
@@ -437,7 +453,6 @@ const handleBlur = () => {
                                     },
                                 }"
                                 class="w-36 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-7 py-1 text-text hover:bg-dandelion-200 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
-                                @click="validateData"
                             />
                         </div>
                     </form>
@@ -463,7 +478,7 @@ const handleBlur = () => {
                                     '&quot; ' +
                                     t('template.by') +
                                     ' ' +
-                                    user[0].username,
+                                    template.user[0].username,
                                 pt: { root: 'font-nunito' },
                             }"
                             class="col-span-2 mb-4 overflow-hidden overflow-ellipsis text-nowrap pl-1 text-sm text-natural-700 dark:text-natural-200 md:-mt-5 lg:pl-6"
@@ -471,7 +486,7 @@ const handleBlur = () => {
                             <T key-name="template.using" />
                             "{{ template.name }}"
                             <T key-name="template.by" />
-                            {{ user[0].username }}
+                            {{ template.user[0].username }}
                         </div>
                     </div>
                     <form class="px-1 lg:px-5">
