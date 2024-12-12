@@ -18,13 +18,10 @@ const templateID = route.params.id;
 const namePrefill = (route.query.name as string) || "";
 const datePrefill = (route.query.date as string[]) || null;
 
-const template = ref({
-    name: "tolle Reise",
-    destination: "East Melissa",
-    from: "2025-09-03T00:00:00.000000Z",
-    to: "2025-09-12T00:00:00.000000Z",
-    user: [{ username: "Roman Nebs" }],
-});
+const { data: template } = await useAsyncData("template", () =>
+    client(`/api/template/${templateID}`),
+);
+console.log(template);
 
 const activeIndex = ref(0);
 const { value: name, setValue } = useField("journeyName");
@@ -43,6 +40,16 @@ const isInfoDialogVisible = ref(false);
 const isFocused = ref(false);
 
 const title = t.value("title.journey.create");
+
+watch(
+    activeIndex,
+    () => {
+        if (activeIndex.value == null) {
+            activeIndex.value = 0;
+        }
+    },
+    { immediate: true },
+);
 
 const days = ref(
     differenceInDays(
@@ -265,7 +272,7 @@ function changeDuration() {
                                     '&quot; ' +
                                     t('template.by') +
                                     ' ' +
-                                    template.user[0].username,
+                                    template.users[0].username,
                                 pt: { root: 'font-nunito' },
                             }"
                             class="col-span-2 mb-4 overflow-hidden overflow-ellipsis text-nowrap pl-1 text-sm text-natural-700 dark:text-natural-200 md:-mt-5 lg:pl-6"
@@ -274,8 +281,8 @@ function changeDuration() {
                             "{{ template.name }}"
                             <T key-name="template.by" />
                             {{
-                                template.user && template.user[0]
-                                    ? template.user[0].username
+                                template.users && template.users[0]
+                                    ? template.users[0].username
                                     : ""
                             }}
                         </div>
@@ -332,9 +339,9 @@ function changeDuration() {
                                     hide-on-range-selection
                                     date-format="dd/mm/yy"
                                     panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
-                                    input-class="border-natural-300 hover:border-calypso-400 dark:hover:border-calypso-400s block rounded-lg px-2.5 pt-4 pb-1  w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 border-2 dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 focus:outline-none focus:border-calypso-400 dark:focus:border-calypso-400 dark:hover:border-calypso-400"
+                                    input-class="border-natural-300 hover:border-calypso-400 dark:hover:border-calypso-400 block rounded-lg px-2.5 pt-4 pb-1  w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 border-2 dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 focus:outline-none focus:border-calypso-400 dark:focus:border-calypso-400 dark:hover:border-calypso-400"
                                     :pt="{
-                                        root: { class: 'lg:w-3/5' },
+                                        root: { class: 'lg:w-4/5 w-11/12' },
                                         panel: {
                                             class: 'text-text font-nunito z-50',
                                         },
@@ -460,7 +467,7 @@ function changeDuration() {
                 <fieldset
                     v-else-if="page == 2"
                     id="create-journey"
-                    class="w-full rounded-3xl border-2 border-calypso-300 bg-natural-50 px-2 shadow-sm dark:border-calypso-600 dark:bg-background-dark xs:px-5 sm:w-1/4 md:w-2/5"
+                    class="z-50 w-full rounded-3xl border-2 border-calypso-300 bg-natural-50 px-2 shadow-sm dark:border-calypso-600 dark:bg-background-dark xs:px-5 sm:w-1/4 md:w-2/5 xl:w-[40rem]"
                 >
                     <legend
                         for="create-journey"
@@ -478,7 +485,7 @@ function changeDuration() {
                                     '&quot; ' +
                                     t('template.by') +
                                     ' ' +
-                                    template.user[0].username,
+                                    template.users[0].username,
                                 pt: { root: 'font-nunito' },
                             }"
                             class="col-span-2 mb-4 overflow-hidden overflow-ellipsis text-nowrap pl-1 text-sm text-natural-700 dark:text-natural-200 md:-mt-5 lg:pl-6"
@@ -486,7 +493,7 @@ function changeDuration() {
                             <T key-name="template.using" />
                             "{{ template.name }}"
                             <T key-name="template.by" />
-                            {{ template.user[0].username }}
+                            {{ template.users[0].username }}
                         </div>
                     </div>
                     <form class="px-1 lg:px-5">

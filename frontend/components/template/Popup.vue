@@ -465,6 +465,12 @@ const close = (): void => {
                 >
                     <NuxtLink
                         class="flex h-10 items-center rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-base font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
+                        :to="'/template/' + template.id"
+                    >
+                        <T key-name="template.preview" />
+                    </NuxtLink>
+                    <NuxtLink
+                        class="flex h-10 items-center rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-base font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
                         :to="{
                             path: '/journey/new/template/' + template.id,
                             query: {
@@ -474,12 +480,6 @@ const close = (): void => {
                         }"
                     >
                         <T key-name="template.preview" />
-                    </NuxtLink>
-                    <NuxtLink
-                        :to="'/journey/new/template/' + template.id"
-                        class="flex h-10 items-center rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-base font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
-                    >
-                        <T key-name="template.use" />
                     </NuxtLink>
                 </div>
             </div>

@@ -27,7 +27,7 @@ const close = () => {
             :draggable="false"
             close-on-escape
             dismissable-mask
-            class="z-50 mx-5 -mt-80 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-1/3 xl:w-1/4"
+            class="mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-1/3"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10 max-sm:collapse',
