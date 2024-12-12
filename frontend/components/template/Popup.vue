@@ -479,7 +479,7 @@ const close = (): void => {
                             },
                         }"
                     >
-                        <T key-name="template.preview" />
+                        <T key-name="template.use" />
                     </NuxtLink>
                 </div>
             </div>

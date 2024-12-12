@@ -108,8 +108,9 @@ const { errors, handleSubmit } = useForm({
     validationSchema: yup.object({
         journeyRange: yup
             .array()
-            .of(yup.date().required(t.value("form.error.journey.date.invalid")))
-            .min(2, t.value("form.error.journey.date.min")),
+            .of(yup.date().required(t.value("form.error.journey.dates")))
+            .min(2, t.value("form.error.journey.dates"))
+            .required(t.value("form.error.journey.dates")),
         journeyName: yup
             .string()
             .trim()
@@ -332,7 +333,7 @@ function changeDuration() {
                                     v-bind="field"
                                     name="journeyRange"
                                     selection-mode="range"
-                                    :manual-input="true"
+                                    :manual-input="false"
                                     :number-of-months="1"
                                     show-other-months
                                     select-other-months
@@ -502,7 +503,7 @@ function changeDuration() {
                         </div>
                         <Accordion
                             v-model:active-index="activeIndex"
-                            class="font-nunito"
+                            class="max-h-[25rem] overflow-scroll font-nunito"
                         >
                             <AccordionTab
                                 :header="t('template.shift.common')"
