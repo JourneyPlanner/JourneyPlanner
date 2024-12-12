@@ -40,6 +40,19 @@ class TemplateController extends Controller
     }
 
     /**
+     * Show the requested template.
+     */
+    public function show(Journey $journey)
+    {
+        // Check if the requested journey is a template
+        Gate::authorize("journeyTemplate", $journey);
+
+        // Fetch template creator
+
+        return response()->json($journey);
+    }
+
+    /**
      * Display all templates created by the user.
      */
     public function userTemplatesIndex(string $username)

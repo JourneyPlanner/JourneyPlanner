@@ -18,7 +18,7 @@ class JourneyUserController extends Controller
     public function index(Journey $journey): JsonResponse
     {
         // authorize the user
-        Gate::authorize("view", [$journey, true]);
+        Gate::authorize("view", [$journey, false]);
 
         // return the users of the journey in json format
         return response()->json(

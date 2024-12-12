@@ -99,7 +99,6 @@ Route::get("user/{username}/template", [
     TemplateController::class,
     "userTemplatesIndex",
 ]);
-Route::get("template/{journey}/user", [JourneyUserController::class, "index"]);
 
 Route::get("project", [ProjectController::class, "getProjectData"]);
 

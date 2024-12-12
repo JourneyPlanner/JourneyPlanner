@@ -108,11 +108,14 @@ class JourneyController extends Controller
             $templateJourney = Journey::where("id", $validated["template_id"])
                 ->where("is_template", true)
                 ->firstOrFail();
+            // Calculate the time difference between template start and new journey start
             $timeshift = $templateJourney->from->diff($journey->from);
+            // Calculate journey length in weeks, rounding up partial weeks
             $journeyLength = ceil($journey->from->diff($journey->to)->d / 7);
+            $endDate = $journey->to;
+            $endDate->setTime(23, 59, 59);
             if ($validated["calendar_activity_insert_mode"] === "smart") {
-                $endDate = $journey->to;
-                $endDate->setTime(23, 59, 59);
+                // Calculate additional days needed to align weekdays between template and new journey
                 $additionalWeekDayShift =
                     $templateJourney->from->format("N") -
                     $journey->from->format("N");
@@ -138,7 +141,7 @@ class JourneyController extends Controller
                         as $calendarActivity
                     ) {
                         $newDate = $calendarActivity->start->add($timeshift);
-                        if ($newDate <= $journey->to) {
+                        if ($newDate <= $endDate) {
                             $newCalendarActivity = $calendarActivity->replicate();
                             $newCalendarActivity->activity_id =
                                 $newActivity->id;
@@ -202,7 +205,9 @@ class JourneyController extends Controller
         // Check if the authenticated user is a member of the requested journey
         Gate::authorize("view", [$journey, true]);
 
-        return response()->json($journey);
+        return response()->json(
+            $journey->users()->get(["id", "display_name", "username", "role"])
+        );
     }
 
     /**
