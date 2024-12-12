@@ -40,31 +40,6 @@ body:
       placeholder: Tell us what you expected to happen
     validations:
       required: true
-  - type: checkboxes
-    id: reproducable
-    attributes:
-      label: Were you able to reproduce the error/bug?
-      description: Did you try to reproduce the bug and did you succeed?
-      options:
-        - label: Reproduced the bug
-          required: false
-        - label: Couldn't reproduce the bug
-          required: false
-        - label: Didn't try reproducing the bug
-          required: false
-  - type: dropdown
-    id: browsers
-    attributes:
-      label: What browser are you seeing the problem on?
-      multiple: true
-      options:
-        - Chrome
-        - Firefox
-        - Safari
-        - Microsoft Edge
-        - Other
-    validations:
-      required: true
   - type: textarea
     id: further-information
     attributes:
@@ -72,8 +47,3 @@ body:
       description: >-
         If needed, please provide additional information about your issue
         (attachments, links, references, etc.).
-  - type: markdown
-    attributes:
-      value: >-
-        This template was generated with [Issue Forms
-        Creator](https://issue-forms-creator.netlify.app)
