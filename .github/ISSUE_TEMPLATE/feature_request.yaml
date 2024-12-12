@@ -1,0 +1,38 @@
+name: Feature Request
+description: Feature Request
+title: '[feat]: '
+labels:
+  - to-check
+  - enhancement
+body:
+  - type: checkboxes
+    id: existing-feat-request
+    attributes:
+      label: Is there an existing issue for this?
+      description: >-
+        Please [search 🔍 the        
+        issues](https://github.com/JourneyPlanner/JourneyPlanner/issues) to
+        check if this feature has already been suggested.
+      options:
+        - label: I have searched the existing issues
+          required: false
+  - type: textarea
+    attributes:
+      label: Description
+      description: A clear and concise description of the problem or missing capability
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe the solution you'd like
+      description: If you have a solution in mind, please describe it.
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context or screenshots about the feature request here
+  - type: markdown
+    attributes:
+      value: >-
+        This template was generated with [Issue Forms
+        Creator](https://issue-forms-creator.netlify.app)
