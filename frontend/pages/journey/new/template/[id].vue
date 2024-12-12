@@ -21,7 +21,6 @@ const datePrefill = (route.query.date as string[]) || null;
 const { data: template } = await useAsyncData("template", () =>
     client(`/api/template/${templateID}`),
 );
-console.log(template);
 
 const activeIndex = ref(0);
 const { value: name, setValue } = useField("journeyName");
@@ -228,7 +227,6 @@ function changeDuration() {
         } else {
             tooShort.value = false;
         }
-        console.log(newDuration);
     }
 }
 </script>
