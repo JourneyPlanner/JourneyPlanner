@@ -199,7 +199,6 @@ function changeName(newName: string) {
 
 function changeRange(newRange: Date[]) {
     journeyRange.value = [];
-    console.log(newRange);
     newRange
         .filter((value) => value != null)
         .forEach((element: Date) => {

@@ -22,12 +22,32 @@ const { data: template } = await useAsyncData("template", () =>
     client(`/api/template/${templateID}`),
 );
 
+const { errors, handleSubmit, validateField } = useForm({
+    validationSchema: yup.object({
+        journeyRange: yup
+            .array()
+            .of(yup.date().required(t.value("form.error.journey.dates")))
+            .min(2, t.value("form.error.journey.dates"))
+            .required(t.value("form.error.journey.dates")),
+        journeyName: yup
+            .string()
+            .trim()
+            .required(t.value("form.error.journey.name"))
+            .matches(/^(?!\s+$).*/, t.value("form.error.journey.name.invalid")),
+    }),
+});
+
 const activeIndex = ref(0);
 const { value: name, setValue } = useField("journeyName");
 setValue(namePrefill);
-const journeyRange = ref(
-    datePrefill ? datePrefill.map((date) => new Date(date)) : null,
-);
+const { value: journeyRange, setValue: setJourneyRange } = useField<
+    Date[] | null
+>("journeyRange");
+
+if (datePrefill) {
+    setJourneyRange(datePrefill.map((date) => new Date(date)));
+    await validateField("journeyRange");
+}
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
@@ -103,26 +123,17 @@ function copyToClipboard() {
 }
 
 // Validation Schema
-const { errors, handleSubmit } = useForm({
-    validationSchema: yup.object({
-        journeyRange: yup
-            .array()
-            .of(yup.date().required(t.value("form.error.journey.dates")))
-            .min(2, t.value("form.error.journey.dates"))
-            .required(t.value("form.error.journey.dates")),
-        journeyName: yup
-            .string()
-            .trim()
-            .required(t.value("form.error.journey.name"))
-            .matches(/^(?!\s+$).*/, t.value("form.error.journey.name.invalid")),
-    }),
-});
 
 // Form Submission
-const validateData = handleSubmit(onSuccess);
+const validateData = handleSubmit(onSuccess, onResponeError);
 
 async function onSuccess() {
+    console.log(journeyRange);
     page.value = 2;
+}
+
+async function onResponeError() {
+    console.log(journeyRange);
 }
 
 // Start submit logic
@@ -329,6 +340,7 @@ function changeDuration() {
                                     id="journey-range-calendar"
                                     v-model="journeyRange"
                                     v-bind="field"
+                                    :value="journeyRange"
                                     name="journeyRange"
                                     selection-mode="range"
                                     :manual-input="false"
