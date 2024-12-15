@@ -61,6 +61,7 @@ const activityCount = computed(
 const client = useSanctumClient();
 const toast = useToast();
 const confirm = useConfirm();
+let draggableInstance: Draggable | null = null;
 
 onMounted(() => {
     watch(
@@ -69,9 +70,20 @@ onMounted(() => {
             if (props.inTemplate === false) {
                 await nextTick();
                 if (containerElement.value) {
-                    new Draggable(containerElement.value, {
-                        itemSelector: ".fc-event",
-                    });
+                    if (draggableInstance) {
+                        draggableInstance.destroy();
+                        draggableInstance = null;
+                    }
+                    try {
+                        draggableInstance = new Draggable(
+                            containerElement.value,
+                            {
+                                itemSelector: ".fc-event",
+                            },
+                        );
+                    } catch (error) {
+                        console.error("Failed to initialize Draggable:", error);
+                    }
                 }
             }
         },

@@ -63,6 +63,7 @@ const weatherCodeTomorrow = ref();
 const weatherCodeInTwoDays = ref();
 const weatherCodeInThreeDays = ref();
 const locationFound = ref(true);
+const createJourneyFromTemplate = `/journey/new/template/${props.templateId}`;
 
 const flip = () => {
     isFlipped.value = !isFlipped.value;
@@ -875,12 +876,13 @@ function emitScroll(target: string) {
                         >
                             <T key-name="journey.button.create.activity" />
                         </button>
-                        <button
+                        <NuxtLink
                             v-else
+                            :to="createJourneyFromTemplate"
                             class="my-4 ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:mt-4 md:text-base"
                         >
                             <T key-name="template.use" />
-                        </button>
+                        </NuxtLink>
                     </div>
                 </div>
             </div>

@@ -18,7 +18,7 @@ if (props.prefill) {
     value.value = props.prefill;
 }
 
-defineEmits(["input"]);
+defineEmits(["input", "changeInput"]);
 </script>
 
 <template>
@@ -34,6 +34,7 @@ defineEmits(["input"]);
             @focus="isFocused = true"
             @blur="isFocused = false"
             @input="$emit('input', $event)"
+            @keyup="$emit('changeInput', value)"
         />
         <label
             :for="id"

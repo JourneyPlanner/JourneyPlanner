@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import Calendar from "primevue/calendar";
 import { useField } from "vee-validate";
 
-const isFocused = ref(false);
+const isFocused = ref<boolean>(false);
 
 const handleFocus = () => {
     isFocused.value = true;
@@ -16,7 +15,7 @@ const props = defineProps({
     name: { type: String, required: true },
     id: { type: String, required: true },
     translationKey: { type: String, required: true },
-    prefill: { type: Array, default: undefined as unknown as Date[] },
+    prefill: { type: Array as PropType<Date[]>, default: undefined },
 });
 
 const { value, errorMessage } = useField<Date[]>(() => props.name);
@@ -34,23 +33,24 @@ function handleSelect() {
 
 <template>
     <div class="relative">
-        <!-- TODO: language (de/en)-->
         <Calendar
             :id="id"
             v-model="value"
             :name="name"
             selection-mode="range"
-            :manual-input="true"
+            :manual-input="false"
             :number-of-months="1"
             show-other-months
             select-other-months
             hide-on-range-selection
             date-format="dd/mm/yy"
             panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
-            input-class="border-calypso-300 block rounded-lg px-2.5 pt-4 pb-1  w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 dark:bg-natural-900 border-2 dark:border-calypso-400 focus:outline-none focus:ring-1"
+            input-class="border-natural-300 hover:border-calypso-400 font-nunito  dark:hover:border-calypso-400 block rounded-lg px-2.5 pt-4 pb-1  w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 border-2 dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 focus:outline-none focus:border-calypso-400 dark:focus:border-calypso-400 dark:hover:border-calypso-400"
             :pt="{
-                root: { class: 'lg:w-3/5' },
-                panel: { class: 'text-text font-nunito z-50' },
+                root: { class: 'lg:w-4/5 w-11/12' },
+                panel: {
+                    class: 'text-text font-nunito z-50',
+                },
                 header: {
                     class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-900 dark:text-natural-50',
                 },
@@ -58,7 +58,9 @@ function handleSelect() {
                     class: 'text-text dark:text-natural-50 flex gap-1 font-nunito',
                 },
                 dayLabel: { class: 'text-calypso-400' },
-                datepickerMask: { class: 'text-text bg-natural-900' },
+                datepickerMask: {
+                    class: 'text-text bg-natural-900',
+                },
             }"
             @focus="handleFocus"
             @hide="handleBlur"
