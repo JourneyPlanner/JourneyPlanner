@@ -48,6 +48,9 @@ if (datePrefill) {
     setJourneyRange(datePrefill.map((date) => new Date(date)));
     await validateField("journeyRange");
 }
+
+const storeJourneyRange = ref();
+const storeJourneyName = ref();
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
@@ -125,15 +128,12 @@ function copyToClipboard() {
 // Validation Schema
 
 // Form Submission
-const validateData = handleSubmit(onSuccess, onResponeError);
+const validateData = handleSubmit(onSuccess);
 
 async function onSuccess() {
-    console.log(journeyRange);
+    storeJourneyName.value = name.value;
+    storeJourneyRange.value = journeyRange.value;
     page.value = 2;
-}
-
-async function onResponeError() {
-    console.log(journeyRange);
 }
 
 // Start submit logic
@@ -146,13 +146,13 @@ async function startSubmit() {
         life: 6000,
     });
 
-    const journeyName = name.value;
+    const journeyName = storeJourneyName.value;
     const destination = template.value.destination;
-    const from = journeyRange.value
-        ? format(journeyRange.value[0], "yyyy-MM-dd")
+    const from = storeJourneyRange.value
+        ? format(storeJourneyRange.value[0], "yyyy-MM-dd")
         : null;
-    const to = journeyRange.value
-        ? format(journeyRange.value[1], "yyyy-MM-dd")
+    const to = storeJourneyRange.value
+        ? format(storeJourneyRange.value[1], "yyyy-MM-dd")
         : null;
     const invite = journeyInvite.value;
 
@@ -223,6 +223,8 @@ const handleBlur = () => {
 };
 
 const backToFirstSite = () => {
+    name.value = storeJourneyName.value;
+    journeyRange.value = storeJourneyRange.value;
     page.value = 1;
 };
 
@@ -413,7 +415,7 @@ function changeDuration() {
                                     class="pi pi-info-circle pl-1"
                                     :class="
                                         tooShort
-                                            ? 'text-dandelion-400 dark:text-pesto-600'
+                                            ? 'text-dandelion-400 dark:text-dandelion-300'
                                             : 'text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100'
                                     "
                                 ></span>
@@ -514,7 +516,7 @@ function changeDuration() {
                         </div>
                         <Accordion
                             v-model:active-index="activeIndex"
-                            class="max-h-[25rem] overflow-scroll font-nunito"
+                            class="font-nunito"
                         >
                             <AccordionTab
                                 :header="t('template.shift.common')"
@@ -522,7 +524,7 @@ function changeDuration() {
                                     root: () => ({
                                         class: [
                                             {
-                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600 max-lg:max-h-[10rem] overflow-scroll':
+                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600 max-lg:max-h-[10rem] max-lg:overflow-y-scroll':
                                                     activeIndex === 0,
                                                 'border-b-0': activeIndex === 1,
                                                 'border-b-2 border-natural-300 dark:border-natural-300':
