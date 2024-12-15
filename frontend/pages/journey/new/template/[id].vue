@@ -394,6 +394,7 @@ function changeDuration() {
                             <T v-else-if="days == 1" key-name="template.day" />
                             <button
                                 type="button"
+                                class="z-50 flex cursor-pointer items-center"
                                 @click="isInfoDialogVisible = true"
                             >
                                 <span
@@ -509,7 +510,7 @@ function changeDuration() {
                                     root: () => ({
                                         class: [
                                             {
-                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600':
+                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600 max-lg:max-h-[10rem] overflow-scroll':
                                                     activeIndex === 0,
                                                 'border-b-0': activeIndex === 1,
                                                 'border-b-2 border-natural-300 dark:border-natural-300':
@@ -578,7 +579,7 @@ function changeDuration() {
                                     root: () => ({
                                         class: [
                                             {
-                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600 dark:bg-gothic-900':
+                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600 dark:bg-gothic-900 max-lg:max-h-[10rem] overflow-scroll':
                                                     activeIndex === 1,
                                                 'border-b-0': activeIndex === 2,
                                                 'border-b-2 border-natural-300 dark:border-natural-300':
@@ -648,7 +649,7 @@ function changeDuration() {
                                     root: () => ({
                                         class: [
                                             {
-                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600':
+                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600 max-lg:max-h-[10rem] overflow-scroll':
                                                     activeIndex === 2,
                                                 'border-b-0': activeIndex === 3,
                                                 'border-b-2 border-natural-300 dark:border-natural-300':
