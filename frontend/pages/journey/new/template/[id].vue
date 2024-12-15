@@ -16,7 +16,7 @@ const store = useJourneysStore();
 
 const templateID = route.params.id;
 const namePrefill = (route.query.name as string) || "";
-const datePrefill = (route.query.date as string[]) || null;
+let datePrefill = (route.query.date as string[]) || null;
 
 const storedJourneyRange = ref<Date[] | null>(null);
 const storedJourneyName = ref<string | null>(null);
@@ -207,8 +207,10 @@ async function startSubmit() {
 }
 
 const backToFirstSite = () => {
-    //name.value = storeJourneyName.value;
-    //journeyRange.value = storeJourneyRange.value;
+    name.value = storedJourneyName.value;
+    datePrefill = storedJourneyRange.value?.map((date) =>
+        date.toISOString(),
+    ) as string[];
     page.value = 1;
 };
 
