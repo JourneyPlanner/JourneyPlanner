@@ -144,7 +144,8 @@ const onSubmit = handleSubmit(async (values) => {
                     detail: t.value("form.journey.toast.success"),
                     life: 3000,
                 });
-                store.addJourney(journey);
+                response._data.journey.role = 1;
+                store.addJourney(response._data.journey);
                 if (!isAuthenticated.value) {
                     localStorage.setItem(
                         "JP_guest_journey_id",

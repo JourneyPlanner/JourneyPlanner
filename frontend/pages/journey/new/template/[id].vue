@@ -18,11 +18,14 @@ const templateID = route.params.id;
 const namePrefill = (route.query.name as string) || "";
 const datePrefill = (route.query.date as string[]) || null;
 
+const storedJourneyRange = ref<Date[] | null>(null);
+const storedJourneyName = ref<string | null>(null);
+
 const { data: template } = await useAsyncData("template", () =>
     client(`/api/template/${templateID}`),
 );
 
-const { errors, handleSubmit, validateField } = useForm({
+const { errors, handleSubmit } = useForm({
     validationSchema: yup.object({
         journeyRange: yup
             .array()
@@ -39,18 +42,10 @@ const { errors, handleSubmit, validateField } = useForm({
 
 const activeIndex = ref(0);
 const { value: name, setValue } = useField("journeyName");
-setValue(namePrefill);
-const { value: journeyRange, setValue: setJourneyRange } = useField<
-    Date[] | null
->("journeyRange");
-
-if (datePrefill) {
-    setJourneyRange(datePrefill.map((date) => new Date(date)));
-    await validateField("journeyRange");
+if (namePrefill) {
+    setValue(namePrefill);
 }
 
-const storeJourneyRange = ref();
-const storeJourneyName = ref();
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
@@ -59,7 +54,6 @@ const page = ref(1);
 
 const tooShort = ref(false);
 const isInfoDialogVisible = ref(false);
-const isFocused = ref(false);
 
 const title = t.value("title.journey.create");
 
@@ -79,6 +73,7 @@ const days = ref(
         new UTCDate(template.value.from),
     ) + 1,
 );
+
 if (datePrefill != null) {
     const newDuration =
         differenceInDays(
@@ -125,16 +120,12 @@ function copyToClipboard() {
     });
 }
 
-// Validation Schema
-
-// Form Submission
-const validateData = handleSubmit(onSuccess);
-
-async function onSuccess() {
-    storeJourneyName.value = name.value;
-    storeJourneyRange.value = journeyRange.value;
+// first page form submission
+const validateData = handleSubmit((values) => {
+    storedJourneyName.value = values.journeyName;
+    storedJourneyRange.value = values.journeyRange;
     page.value = 2;
-}
+});
 
 // Start submit logic
 async function startSubmit() {
@@ -146,13 +137,13 @@ async function startSubmit() {
         life: 6000,
     });
 
-    const journeyName = storeJourneyName.value;
+    const journeyName = storedJourneyName.value;
     const destination = template.value.destination;
-    const from = storeJourneyRange.value
-        ? format(storeJourneyRange.value[0], "yyyy-MM-dd")
+    const from = storedJourneyRange.value
+        ? format(storedJourneyRange.value[0], "yyyy-MM-dd")
         : null;
-    const to = storeJourneyRange.value
-        ? format(storeJourneyRange.value[1], "yyyy-MM-dd")
+    const to = storedJourneyRange.value
+        ? format(storedJourneyRange.value[1], "yyyy-MM-dd")
         : null;
     const invite = journeyInvite.value;
 
@@ -191,7 +182,8 @@ async function startSubmit() {
                     detail: t.value("form.journey.toast.success"),
                     life: 3000,
                 });
-                store.addJourney(journey);
+                response._data.journey.role = 1;
+                store.addJourney(response._data.journey);
                 if (!isAuthenticated.value) {
                     localStorage.setItem(
                         "JP_guest_journey_id",
@@ -214,27 +206,16 @@ async function startSubmit() {
     });
 }
 
-const handleFocus = () => {
-    isFocused.value = true;
-};
-
-const handleBlur = () => {
-    isFocused.value = false;
-};
-
 const backToFirstSite = () => {
-    name.value = storeJourneyName.value;
-    journeyRange.value = storeJourneyRange.value;
+    //name.value = storeJourneyName.value;
+    //journeyRange.value = storeJourneyRange.value;
     page.value = 1;
 };
 
-function changeDuration() {
-    if (journeyRange.value) {
+function changeDuration(range: Date[]) {
+    if (range && range.length === 2) {
         const newDuration =
-            differenceInDays(
-                new UTCDate(journeyRange.value[1]),
-                new UTCDate(journeyRange.value[0]),
-            ) + 1;
+            differenceInDays(new UTCDate(range[1]), new UTCDate(range[0])) + 1;
         if (days.value > newDuration) {
             tooShort.value = true;
         } else {
@@ -245,7 +226,7 @@ function changeDuration() {
 </script>
 
 <template>
-    <div class="overflow-hidden">
+    <div>
         <div>
             <SvgCloud
                 class="absolute left-[23rem] top-20 hidden h-20 overflow-hidden object-none md:visible"
@@ -259,7 +240,7 @@ function changeDuration() {
                 <SvgLogoHorizontalBlue class="w-44 lg:w-56" />
             </NuxtLink>
         </div>
-        <div class="relative flex flex-col">
+        <div class="flex flex-col">
             <div
                 class="mt-10 flex items-center justify-center px-4 font-nunito sm:mt-8"
             >
@@ -336,68 +317,15 @@ function changeDuration() {
                             class="font text-medium peer mb-4 flex w-full items-center justify-center rounded-lg border-2 border-natural-300 bg-natural-100 px-2.5 py-2.5 text-natural-700 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-300"
                             :value="template.destination"
                         />
-                        <div class="relative">
-                            <Field v-slot="{ field }" name="journeyRange">
-                                <Calendar
-                                    id="journey-range-calendar"
-                                    v-model="journeyRange"
-                                    v-bind="field"
-                                    :value="journeyRange"
-                                    name="journeyRange"
-                                    selection-mode="range"
-                                    :manual-input="false"
-                                    :number-of-months="1"
-                                    show-other-months
-                                    select-other-months
-                                    hide-on-range-selection
-                                    date-format="dd/mm/yy"
-                                    panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
-                                    input-class="border-natural-300 hover:border-calypso-400 dark:hover:border-calypso-400 block rounded-lg px-2.5 pt-4 pb-1  w-full text-md text-text dark:text-natural-50 font-bold bg-natural-50 border-2 dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 focus:outline-none focus:border-calypso-400 dark:focus:border-calypso-400 dark:hover:border-calypso-400"
-                                    :pt="{
-                                        root: { class: 'lg:w-4/5 w-11/12' },
-                                        panel: {
-                                            class: 'text-text font-nunito z-50',
-                                        },
-                                        header: {
-                                            class: 'flex justify-between border-b bg-natural-50 dark:bg-natural-900 dark:text-natural-50',
-                                        },
-                                        title: {
-                                            class: 'text-text dark:text-natural-50 flex gap-1 font-nunito',
-                                        },
-                                        dayLabel: { class: 'text-calypso-400' },
-                                        datepickerMask: {
-                                            class: 'text-text bg-natural-900',
-                                        },
-                                    }"
-                                    @focus="handleFocus"
-                                    @hide="handleBlur"
-                                    @input="handleFocus"
-                                    @date-select="changeDuration()"
-                                />
-                            </Field>
-                            <br />
-                            <div class="ml-0.5 mt-1 h-3 leading-3">
-                                <span
-                                    class="text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300"
-                                    >{{ errors.journeyRange }}</span
-                                >
-                            </div>
-                            <label
-                                for="journey-range-calendar"
-                                class="pointer-events-none absolute left-0 top-0 overflow-hidden whitespace-nowrap py-4 pl-2.5 text-sm transition-all duration-300"
-                                :class="{
-                                    'text-natural-600': !isFocused,
-                                    'dark:text-natural-200': !isFocused,
-                                    'text-calypso-600': isFocused,
-                                    '-translate-x-6 -translate-y-4 scale-75':
-                                        isFocused || journeyRange,
-                                    'translate-y-0 scale-100':
-                                        !isFocused && !journeyRange,
-                                }"
-                            >
-                                <T key-name="form.input.journey.dates" />
-                            </label>
-                        </div>
+                        <FormCalendarRange
+                            id="journey-range-calendar"
+                            name="journeyRange"
+                            translation-key="form.input.journey.dates"
+                            :prefill="
+                                datePrefill?.map((date) => new Date(date))
+                            "
+                            @change-input="changeDuration"
+                        />
                         <div
                             class="flex items-center text-xs text-natural-700 dark:text-natural-400"
                             :class="errors.journeyRange ? 'mt-2' : '-mt-3'"
@@ -421,6 +349,7 @@ function changeDuration() {
                                 ></span>
                             </button>
                         </div>
+
                         <Divider
                             v-if="isAuthenticated"
                             type="solid"
@@ -485,7 +414,7 @@ function changeDuration() {
                 >
                     <legend
                         for="create-journey"
-                        class="text-center text-2xl font-bold text-text dark:text-natural-50 md:mb-5 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
+                        class="px-2 text-center text-2xl font-bold text-text dark:text-natural-50 md:mb-5 lg:text-3xl xl:ml-4 xl:text-left"
                     >
                         <T key-name="form.header.journey.create" />
                     </legend>
@@ -516,7 +445,7 @@ function changeDuration() {
                         </div>
                         <Accordion
                             v-model:active-index="activeIndex"
-                            class="font-nunito"
+                            class="font-nunito lg:max-h-[21rem] lg:min-h-[21rem]"
                         >
                             <AccordionTab
                                 :header="t('template.shift.common')"
@@ -524,7 +453,7 @@ function changeDuration() {
                                     root: () => ({
                                         class: [
                                             {
-                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600 max-lg:max-h-[10rem] max-lg:overflow-y-scroll':
+                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600':
                                                     activeIndex === 0,
                                                 'border-b-0': activeIndex === 1,
                                                 'border-b-2 border-natural-300 dark:border-natural-300':
@@ -593,7 +522,7 @@ function changeDuration() {
                                     root: () => ({
                                         class: [
                                             {
-                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600 dark:bg-gothic-900 max-lg:max-h-[10rem] overflow-scroll':
+                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600 dark:bg-gothic-900':
                                                     activeIndex === 1,
                                                 'border-b-0': activeIndex === 2,
                                                 'border-b-2 border-natural-300 dark:border-natural-300':
@@ -663,7 +592,7 @@ function changeDuration() {
                                     root: () => ({
                                         class: [
                                             {
-                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600 max-lg:max-h-[10rem] overflow-scroll':
+                                                'border-2 border-calypso-300 rounded-lg dark:border-calypso-600':
                                                     activeIndex === 2,
                                                 'border-b-0': activeIndex === 3,
                                                 'border-b-2 border-natural-300 dark:border-natural-300':
@@ -748,7 +677,7 @@ function changeDuration() {
         />
         <Divider
             type="solid"
-            class="border-10 absolute bottom-9 mt-2 border pt-0 text-natural-100 dark:text-natural-700"
+            class="border-10 absolute bottom-9 mt-0 border pt-0 text-natural-100 dark:text-natural-700"
         />
         <div id="dialogs">
             <TemplateDialogsCreationDurationInfo
