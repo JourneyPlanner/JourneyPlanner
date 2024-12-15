@@ -67,24 +67,15 @@ watch(
     { immediate: true },
 );
 
-const days = ref(
+const duration = ref(
     differenceInDays(
         new UTCDate(template.value.to),
         new UTCDate(template.value.from),
     ) + 1,
 );
 
-if (datePrefill != null) {
-    const newDuration =
-        differenceInDays(
-            new UTCDate(datePrefill[1]),
-            new UTCDate(datePrefill[0]),
-        ) + 1;
-    if (days.value > newDuration) {
-        tooShort.value = true;
-    } else {
-        tooShort.value = false;
-    }
+if (datePrefill?.length === 2) {
+    changeDuration(datePrefill.map((date) => new Date(date)) as Date[]);
 }
 
 useHead({
@@ -214,11 +205,19 @@ const backToFirstSite = () => {
     page.value = 1;
 };
 
+/**
+ * when the duration of the journey is changed, check if it is too short
+ * @param range - the range of the journey
+ */
 function changeDuration(range: Date[]) {
-    if (range && range.length === 2) {
+    if (
+        range?.length === 2 &&
+        range[0] instanceof Date &&
+        range[1] instanceof Date
+    ) {
         const newDuration =
             differenceInDays(new UTCDate(range[1]), new UTCDate(range[0])) + 1;
-        if (days.value > newDuration) {
+        if (duration.value > newDuration) {
             tooShort.value = true;
         } else {
             tooShort.value = false;
@@ -324,7 +323,9 @@ function changeDuration(range: Date[]) {
                             name="journeyRange"
                             translation-key="form.input.journey.dates"
                             :prefill="
-                                datePrefill?.map((date) => new Date(date))
+                                datePrefill?.length === 2
+                                    ? datePrefill.map((date) => new Date(date))
+                                    : undefined
                             "
                             @change-input="changeDuration"
                         />
@@ -333,9 +334,12 @@ function changeDuration(range: Date[]) {
                             :class="errors.journeyRange ? 'mt-2' : '-mt-3'"
                         >
                             <T key-name="template.recommended.duration" />
-                            {{ days }}
-                            <T v-if="days > 1" key-name="template.days" />
-                            <T v-else-if="days == 1" key-name="template.day" />
+                            {{ duration }}
+                            <T v-if="duration > 1" key-name="template.days" />
+                            <T
+                                v-else-if="duration == 1"
+                                key-name="template.day"
+                            />
                             <button
                                 type="button"
                                 class="z-50 flex cursor-pointer items-center"
