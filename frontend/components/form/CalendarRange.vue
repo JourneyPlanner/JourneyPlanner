@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
 
-const isFocused = ref(false);
+const isFocused = ref<boolean>(false);
 
 const handleFocus = () => {
     isFocused.value = true;
@@ -15,7 +15,7 @@ const props = defineProps({
     name: { type: String, required: true },
     id: { type: String, required: true },
     translationKey: { type: String, required: true },
-    prefill: { type: Array, default: undefined as unknown as Date[] },
+    prefill: { type: Array as PropType<Date[]>, default: undefined },
 });
 
 const { value, errorMessage } = useField<Date[]>(() => props.name);

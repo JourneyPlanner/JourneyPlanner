@@ -1056,7 +1056,7 @@ function editJourney(journey: Journey, id: string) {
                                 @update:model-value="filterTemplateCreator()"
                                 @complete="getUser()"
                                 @item-select="refreshTemplates()"
-                                @clear="refreshTemplates(), getUser()"
+                                @clear="(refreshTemplates(), getUser())"
                             />
                         </div>
                         <div class="flex justify-end pb-1 pt-20">
@@ -1365,7 +1365,7 @@ function editJourney(journey: Journey, id: string) {
                             "
                             @complete="getUser()"
                             @item-select="refreshTemplates()"
-                            @clear="refreshTemplates(), getUser()"
+                            @clear="(refreshTemplates(), getUser())"
                         />
                     </div>
                     <div

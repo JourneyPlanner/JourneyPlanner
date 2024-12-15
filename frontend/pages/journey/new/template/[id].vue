@@ -447,7 +447,7 @@ function changeDuration(range: Date[]) {
                         </div>
                         <Accordion
                             v-model:active-index="activeIndex"
-                            class="font-nunito lg:max-h-[21rem] lg:min-h-[21rem]"
+                            class="font-nunito xl:max-h-[21rem] xl:min-h-[21rem]"
                         >
                             <AccordionTab
                                 :header="t('template.shift.common')"
