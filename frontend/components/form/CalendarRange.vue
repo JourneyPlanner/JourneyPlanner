@@ -34,9 +34,9 @@ function handleSelect() {
 <template>
     <div class="relative">
         <Calendar
-            id="journey-range-calendar"
+            :id="id"
             v-model="value"
-            name="journeyRange"
+            :name="name"
             selection-mode="range"
             :manual-input="false"
             :number-of-months="1"
