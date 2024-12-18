@@ -32,6 +32,9 @@ class StoreJourneyRequest extends FormRequest
             "invite" => "sometimes|uuid",
             "mapbox_id" => "nullable|string",
             "mapbox_full_address" => "nullable|string",
+            "template_id" => "nullable|exists:journeys,id",
+            "calendar_activity_insert_mode" =>
+                "required_with:template_id|string|in:direct,smart,pool",
         ];
     }
 }

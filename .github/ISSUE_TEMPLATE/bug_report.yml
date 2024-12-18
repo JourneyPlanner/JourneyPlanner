@@ -1,0 +1,49 @@
+name: Bug report
+description: Create a new bug report
+title: '[bug]: <title>'
+labels:
+  - bug
+  - to-check
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        🛑 *Make sure you are reporting an issue. For feature requests, please
+        use [Feature
+        Request](https://github.com/JourneyPlanner/JourneyPlanner/issues/new/choose).*
+  - type: checkboxes
+    id: existing-issue
+    attributes:
+      label: Is there an existing issue for this?
+      description: >-
+        Please [search 🔍 the
+        issues](https://github.com/JourneyPlanner/JourneyPlanner/issues) to
+        check if this bug has already been reported.
+      options:
+        - label: I have searched the existing issues
+          required: true
+  - type: textarea
+    id: what-should-have-happened
+    attributes:
+      label: What happened/What didn't happen?
+      description: >-
+        Tell us step by step what happened/didn't happen so we can reproduce and
+        fix this bug. Provide images if available..
+      placeholder: A step by step explanation of what happened/should have happened
+    validations:
+      required: true
+  - type: textarea
+    id: what-did-you-expect
+    attributes:
+      label: What did you expect to happen?
+      description: What did you expect to happen?
+      placeholder: Tell us what you expected to happen
+    validations:
+      required: true
+  - type: textarea
+    id: further-information
+    attributes:
+      label: Further Information
+      description: >-
+        If needed, please provide additional information about your issue
+        (attachments, links, references, etc.).

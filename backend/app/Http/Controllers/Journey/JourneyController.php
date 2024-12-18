@@ -11,6 +11,7 @@ use App\Http\Requests\Journey\UpdateJourneyRequest;
 use App\Models\JourneyUser;
 use App\Services\MapboxService;
 use App\Services\WeatherService;
+use DateInterval;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -98,6 +99,94 @@ class JourneyController extends Controller
             $journey->users()->attach(Auth::id(), [
                 "role" => JourneyUser::JOURNEY_GUIDE_ROLE_ID,
             ]);
+        }
+
+        if (isset($validated["template_id"])) {
+            $journey->created_from = $validated["template_id"];
+            $journey->save();
+
+            // Copy the activities from the template journey
+            $templateJourney = Journey::where("id", $validated["template_id"])
+                ->where("is_template", true)
+                ->firstOrFail();
+            // Calculate the time difference between template start and new journey start
+            $timeshift = $templateJourney->from->diff($journey->from);
+            // Calculate journey length in weeks, rounding up partial weeks
+            $journeyLength = ceil($journey->from->diff($journey->to)->d / 7);
+            $endDate = $journey->to;
+            $endDate->setTime(23, 59, 59);
+            if ($validated["calendar_activity_insert_mode"] === "smart") {
+                // Calculate additional days needed to align weekdays between template and new journey
+                $additionalWeekDayShift =
+                    $templateJourney->from->format("N") -
+                    $journey->from->format("N");
+                if ($additionalWeekDayShift < 0) {
+                    $additionalWeekDayShift += 7;
+                }
+            }
+            foreach (
+                $templateJourney
+                    ->activities()
+                    ->with("calendarActivities")
+                    ->get()
+                as $activity
+            ) {
+                $newActivity = $activity->replicate();
+                $newActivity->journey_id = $journey->id;
+                $newActivity->save();
+
+                // Copy the calendar activities
+                if ($validated["calendar_activity_insert_mode"] === "direct") {
+                    foreach (
+                        $activity->calendarActivities
+                        as $calendarActivity
+                    ) {
+                        $newDate = $calendarActivity->start->add($timeshift);
+                        if ($newDate <= $endDate) {
+                            $newCalendarActivity = $calendarActivity->replicate();
+                            $newCalendarActivity->activity_id =
+                                $newActivity->id;
+                            $newCalendarActivity->start = $newDate;
+                            $newCalendarActivity->save();
+                        }
+                    }
+                } elseif (
+                    $validated["calendar_activity_insert_mode"] === "smart"
+                ) {
+                    foreach (
+                        $activity->calendarActivities
+                        as $calendarActivity
+                    ) {
+                        $newDate = $calendarActivity->start
+                            ->add($timeshift)
+                            ->add(
+                                new DateInterval(
+                                    "P" . $additionalWeekDayShift . "D"
+                                )
+                            );
+                        $newCalendarActivity = $calendarActivity->replicate();
+                        $newCalendarActivity->activity_id = $newActivity->id;
+
+                        if ($newDate > $endDate) {
+                            if (
+                                $journey->to->diff($newDate)->d <=
+                                $additionalWeekDayShift + 1
+                            ) {
+                                $newDate = $newDate->sub(
+                                    new DateInterval("P" . $journeyLength . "W")
+                                );
+                            } else {
+                                continue;
+                            }
+                        }
+
+                        if ($newDate > $journey->from) {
+                            $newCalendarActivity->start = $newDate;
+                            $newCalendarActivity->save();
+                        }
+                    }
+                }
+            }
         }
 
         return response()->json(

@@ -20,6 +20,8 @@ const isTemplatePopupVisible = ref(false);
 const templateDestinationInput = ref("");
 const templateDestinationName = ref("");
 const suggestions = ref<Template[]>([]);
+const journeyName = ref();
+const journeyRange = ref();
 
 const title = t.value("title.journey.create");
 useHead({
@@ -142,7 +144,8 @@ const onSubmit = handleSubmit(async (values) => {
                     detail: t.value("form.journey.toast.success"),
                     life: 3000,
                 });
-                store.addJourney(journey);
+                response._data.journey.role = 1;
+                store.addJourney(response._data.journey);
                 if (!isAuthenticated.value) {
                     localStorage.setItem(
                         "JP_guest_journey_id",
@@ -190,13 +193,26 @@ function retrievedAddress(inputValue: string, name: string) {
     templateDestinationName.value = name;
     refresh();
 }
+
+function changeName(newName: string) {
+    journeyName.value = newName;
+}
+
+function changeRange(newRange: Date[]) {
+    journeyRange.value = [];
+    newRange
+        .filter((value) => value != null)
+        .forEach((element: Date) => {
+            journeyRange.value?.push(element.toISOString());
+        });
+}
 </script>
 
 <template>
     <div>
         <div>
             <SvgCloud
-                class="invisible absolute left-[28%] top-72 h-14 overflow-hidden object-none md:visible"
+                class="invisible absolute left-[22%] top-20 h-20 overflow-hidden object-none md:visible"
             />
             <SvgCloud
                 class="invisible absolute right-[20%] top-36 h-16 overflow-hidden object-none md:visible"
@@ -226,6 +242,7 @@ function retrievedAddress(inputValue: string, name: string) {
                             id="journey-name"
                             name="journeyName"
                             translation-key="form.input.journey.name"
+                            @change-input="changeName"
                         />
                         <FormAddressInput
                             id="journey-destination"
@@ -240,6 +257,7 @@ function retrievedAddress(inputValue: string, name: string) {
                             id="journey-range-calendar"
                             name="journeyRange"
                             translation-key="form.input.journey.dates"
+                            @change-input="changeRange"
                         />
                         <Divider
                             v-if="isAuthenticated"
@@ -366,6 +384,8 @@ function retrievedAddress(inputValue: string, name: string) {
                 class="z-50"
                 :template="openedTemplate"
                 :is-template-dialog-visible="isTemplatePopupVisible"
+                :name-prefill="journeyName"
+                :date-prefill="journeyRange"
                 @close="
                     isTemplatePopupVisible = false;
                     openedTemplate = undefined;

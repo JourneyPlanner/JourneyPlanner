@@ -12,6 +12,7 @@ const activityDataLoaded = ref(false);
 
 const backTolgeeKey = ref("template.back.to.templates");
 const backRoute = ref("/dashboard?tab=templates");
+const createJourneyFromTemplate = `/journey/new/template/${templateID}`;
 
 onMounted(() => {
     const lastRoute = router.options.history.state.back as string;
@@ -87,11 +88,12 @@ useHead({
                     <T :key-name="backTolgeeKey" />
                 </span>
             </NuxtLink>
-            <button
+            <NuxtLink
+                :to="createJourneyFromTemplate"
                 class="ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:text-base"
             >
                 <T key-name="template.use" />
-            </button>
+            </NuxtLink>
         </div>
         <JourneyIdTicketSection
             :daysto-end="-1"
@@ -140,11 +142,12 @@ useHead({
         </div>
         <JourneyIdActivityMap v-if="activityDataLoaded" />
         <div class="my-5 flex justify-center">
-            <button
+            <NuxtLink
+                :to="createJourneyFromTemplate"
                 class="ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:text-base"
             >
                 <T key-name="template.use" />
-            </button>
+            </NuxtLink>
         </div>
     </div>
 </template>
