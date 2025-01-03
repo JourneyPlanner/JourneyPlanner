@@ -31,6 +31,12 @@ class Activity extends Model
         "cost",
         "description",
         "location",
+        "repeat_type",
+        "repeat_interval",
+        "repeat_interval_unit",
+        "repeat_on",
+        "repeat_end_date",
+        "repeat_end_occurrences",
     ];
 
     /**
@@ -50,11 +56,54 @@ class Activity extends Model
     }
 
     /**
+     * The parent activity that the activity belongs to.
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Activity::class, "parent_id");
+    }
+
+    /**
+     * Get the base activity of the activity.
+     */
+    public function getBaseActivity(): Activity
+    {
+        return $this->parent()->first()
+            ? $this->parent()->first()->getBaseActivity()
+            : $this;
+    }
+
+    /**
+     * The children activities that the activity belongs to.
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(Activity::class, "parent_id");
+    }
+
+    /**
+     * Check if the activity has the same attributes as another activity.
+     */
+    public function hasSameAttributesAs(Activity $other): bool
+    {
+        foreach ($this->attributes as $key => $value) {
+            if ($key != "id") {
+                if ($this->$key != $other->$key) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * The attributes that should be cast.
      *
      * @var array
      */
     protected $casts = [
         "estimated_duration" => "datetime:H:i:s",
+        "repeat_end_date" => "datetime",
     ];
 }

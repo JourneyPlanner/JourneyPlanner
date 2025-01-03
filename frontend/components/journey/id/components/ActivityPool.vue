@@ -18,6 +18,8 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    journeyStart: { type: Date, required: true },
+    journeyEnd: { type: Date, required: true },
     inTemplate: {
         type: Boolean,
         required: false,
@@ -145,7 +147,7 @@ const confirmDelete = (event: Event) => {
                 detail: t.value("journey.delete.detail"),
                 life: 3000,
             });
-            deleteActivity();
+            deleteActivity(activityId.value);
         },
     });
 };
@@ -153,8 +155,8 @@ const confirmDelete = (event: Event) => {
 /*
  * delete activity
  */
-async function deleteActivity() {
-    await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
+async function deleteActivity(activity_id: string) {
+    await client(`/api/journey/${props.id}/activity/${activity_id}`, {
         method: "delete",
         async onResponse({ response }) {
             if (response.ok) {
@@ -169,7 +171,7 @@ async function deleteActivity() {
                     life: 6000,
                 });
                 activities.value
-                    .filter((activity) => activity.id === activityId.value)
+                    .filter((activity) => activity.id === activity_id)
                     .forEach(async (activity: Activity) => {
                         activities.value.splice(
                             activities.value.indexOf(activity),
@@ -363,6 +365,8 @@ const itemsJourneyGuide = ref([
             :phone="phone"
             :updated-at="updated_at"
             :update="update"
+            :journey-start="props.journeyStart"
+            :journey-end="props.journeyEnd"
             @close="isActivityInfoVisible = false"
             @delete-activity="deleteActivity"
         />
