@@ -86,25 +86,15 @@ class Activity extends Model
      */
     public function hasSameAttributesAs(Activity $other): bool
     {
-        return $this->name === $other->name &&
-            $this->estimated_duration == $other->estimated_duration &&
-            $this->opening_hours === $other->opening_hours &&
-            $this->email === $other->email &&
-            $this->phone === $other->phone &&
-            $this->link === $other->link &&
-            $this->cost === $other->cost &&
-            $this->description === $other->description &&
-            $this->mapbox_id === $other->mapbox_id &&
-            $this->mapbox_full_address === $other->mapbox_full_address &&
-            $this->address === $other->address &&
-            $this->longitude === $other->longitude &&
-            $this->latitude === $other->latitude &&
-            $this->repeat_type === $other->repeat_type &&
-            $this->repeat_interval === $other->repeat_interval &&
-            $this->repeat_interval_unit === $other->repeat_interval_unit &&
-            $this->repeat_on === $other->repeat_on &&
-            $this->repeat_end_date === $other->repeat_end_date &&
-            $this->repeat_end_occurrences === $other->repeat_end_occurrences;
+        foreach ($this->attributes as $key => $value) {
+            if ($key != "id") {
+                if ($this->$key != $other->$key) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**

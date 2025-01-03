@@ -13,6 +13,7 @@ use App\Services\MapboxService;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class ActivityController extends Controller
@@ -111,6 +112,8 @@ class ActivityController extends Controller
         Journey $journey,
         Activity $activity
     ) {
+        $activity->hasSameAttributesAs($activity);
+
         // Validate the request
         $validated = $request->validated();
 
@@ -124,15 +127,15 @@ class ActivityController extends Controller
             isset($validated["repeat_type"]) &&
             (($activity->repeat_type ?? "") != $validated["repeat_type"] ||
                 ($activity->repeat_interval ?? 0) !=
-                    ($validated["repeat_interval"] ?? 0) ||
+                ($validated["repeat_interval"] ?? 0) ||
                 ($activity->repeat_interval_unit ?? "") !=
-                    ($validated["repeat_interval_unit"] ?? "") ||
+                ($validated["repeat_interval_unit"] ?? "") ||
                 ($activity->repeat_on ?? []) !=
-                    ($validated["repeat_on"] ?? []) ||
+                ($validated["repeat_on"] ?? []) ||
                 ($activity->repeat_end_date ?? "") !=
-                    ($validated["repeat_end_date"] ?? "") ||
+                ($validated["repeat_end_date"] ?? "") ||
                 ($activity->repeat_end_occurrences ?? 0) !=
-                    ($validated["repeat_end_occurrences"] ?? 0));
+                ($validated["repeat_end_occurrences"] ?? 0));
 
         $timeDifference = null;
         // Create the calendar activity if the date is provided and the activity is not repeated and has no calendar activities
@@ -172,7 +175,7 @@ class ActivityController extends Controller
         // Edit repeated activities
         $baseActivity = $activity->getBaseActivity();
         $activities = [];
-        if ($validated["edit_type"] == "all") {
+        if ($validated["edit_type"] == UpdateActivityRequest::EDIT_TYPE_ALL) {
             $activity->fill($validated);
 
             // Reset geocode data if the address has changed
@@ -219,7 +222,7 @@ class ActivityController extends Controller
                 true,
             ]);
 
-            if ($validated["edit_type"] == "single") {
+            if ($validated["edit_type"] == UpdateActivityRequest::EDIT_TYPE_SINGLE) {
                 if ($repeatedChanged) {
                     abort(
                         400,
@@ -346,7 +349,7 @@ class ActivityController extends Controller
         $validated = $request->validated();
         $baseActivity = $activity->getBaseActivity();
 
-        if ($validated["edit_type"] == "all") {
+        if ($validated["edit_type"] == UpdateActivityRequest::EDIT_TYPE_ALL) {
             $baseActivity->children()->delete();
             $baseActivity->delete();
 
@@ -357,10 +360,10 @@ class ActivityController extends Controller
             $validated["calendar_activity_id"]
         );
 
-        if ($validated["edit_type"] == "single") {
+        if ($validated["edit_type"] == UpdateActivityRequest::EDIT_TYPE_SINGLE) {
             $calendarActivity->delete();
             static::deleteActivityIfNeeded($activity);
-        } elseif ($validated["edit_type"] == "following") {
+        } elseif ($validated["edit_type"] == UpdateActivityRequest::EDIT_TYPE_FOLLOWING) {
             static::deleteAllCalendarActivitiesAfterBaseActivity(
                 $activity,
                 $calendarActivity->start,
@@ -396,7 +399,7 @@ class ActivityController extends Controller
             if (
                 $childFirstCalendarActivity &&
                 $childFirstCalendarActivity->start <
-                    $firstCalendarActivity->start
+                $firstCalendarActivity->start
             ) {
                 $firstCalendarActivity = $childFirstCalendarActivity;
             }
@@ -447,18 +450,14 @@ class ActivityController extends Controller
             $baseActivity->calendarActivities()->get()
             as $calendarActivity
         ) {
-            $dateToActivityMappings[
-                $calendarActivity->start->format("Y-m-d")
-            ] = $baseActivity;
+            $dateToActivityMappings[$calendarActivity->start->format("Y-m-d")] = $baseActivity;
         }
         foreach ($baseActivity->children()->get() as $childActivity) {
             foreach (
                 $childActivity->calendarActivities()->get()
                 as $calendarActivity
             ) {
-                $dateToActivityMappings[
-                    $calendarActivity->start->format("Y-m-d")
-                ] = $childActivity;
+                $dateToActivityMappings[$calendarActivity->start->format("Y-m-d")] = $childActivity;
             }
         }
 
@@ -521,9 +520,11 @@ class ActivityController extends Controller
      */
     private static function deleteActivityIfNeeded(Activity $activity)
     {
-        if ($activity->calendarActivities()->count() === 0) {
-            $activity->delete();
-        }
+        return DB::transaction(function () use ($activity) {
+            if ($activity->calendarActivities()->count() === 0) {
+                $activity->delete();
+            }
+        });
     }
 
     /**
@@ -577,7 +578,7 @@ class ActivityController extends Controller
             $occurences =
                 $activity->repeat_end_occurrences ??
                 (($calendarActivityStart->diff($repeatEndDate)->d + 1) / 7) *
-                    count($repeatOn);
+                count($repeatOn);
             $shiftInterval = new DateInterval("P1D");
             while ($occurences > 1) {
                 $calendarActivityStart->add($shiftInterval);
@@ -614,7 +615,7 @@ class ActivityController extends Controller
             $occurences =
                 $activity->repeat_end_occurrences ??
                 ($calendarActivityStart->diff($repeatEndDate)->d + 1) /
-                    $repeatEveryDays;
+                $repeatEveryDays;
             $shiftInterval = new DateInterval("P" . $repeatEveryDays . "D");
 
             for ($i = 1; $i < $occurences; $i++) {

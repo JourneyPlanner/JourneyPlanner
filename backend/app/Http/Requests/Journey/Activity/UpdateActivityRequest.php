@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Gate;
 
 class UpdateActivityRequest extends StoreActivityRequest
 {
+    public const EDIT_TYPE_SINGLE = 'single';
+    public const EDIT_TYPE_FOLLOWING = 'following';
+    public const EDIT_TYPE_ALL = 'all';
+
     /**
      * Determine if the user is authorized to make this request.
      */

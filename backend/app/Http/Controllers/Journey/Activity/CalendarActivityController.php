@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Journey\Activity;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Journey\Activity\CalendarActivity\DeleteCalendarActivityRequest;
+use App\Http\Requests\Journey\Activity\UpdateActivityRequest;
 use App\Models\Activity;
 use App\Models\CalendarActivity;
 use App\Models\Journey;
 use DateTime;
+use Illuminate\Support\Facades\DB;
 
 class CalendarActivityController extends Controller
 {
@@ -24,13 +26,13 @@ class CalendarActivityController extends Controller
         $baseActivity = $activity->getBaseActivity();
         $emptyActivities = [];
 
-        if ($validated["edit_type"] === "single") {
+        if ($validated["edit_type"] === UpdateActivityRequest::EDIT_TYPE_SINGLE) {
             $calendarActivity->delete();
             $emptyActivities = $this->generalizeActivityIfNeeded(
                 $activity,
                 $emptyActivities
             );
-        } elseif ($validated["edit_type"] === "following") {
+        } elseif ($validated["edit_type"] === UpdateActivityRequest::EDIT_TYPE_FOLLOWING) {
             $minDate = $calendarActivity->start;
 
             foreach ($baseActivity->children()->get() as $child) {
@@ -104,21 +106,23 @@ class CalendarActivityController extends Controller
         Activity $activity,
         array $emptyActivities = []
     ) {
-        if ($activity->calendarActivities()->count() === 0) {
-            $activity->fill([
-                "repeat_type" => null,
-                "repeat_interval" => null,
-                "repeat_interval_unit" => null,
-                "repeat_on" => null,
-                "repeat_end_date" => null,
-                "repeat_end_occurrences" => null,
-            ]);
-            $activity->parent_id = null;
-            $activity->save();
+        return DB::transaction(function () use ($activity, $emptyActivities) {
+            if ($activity->calendarActivities()->count() === 0) {
+                $activity->fill([
+                    "repeat_type" => null,
+                    "repeat_interval" => null,
+                    "repeat_interval_unit" => null,
+                    "repeat_on" => null,
+                    "repeat_end_date" => null,
+                    "repeat_end_occurrences" => null,
+                ]);
+                $activity->parent_id = null;
+                $activity->save();
 
-            $emptyActivities[] = $activity;
-        }
+                $emptyActivities[] = $activity;
+            }
 
-        return $emptyActivities;
+            return $emptyActivities;
+        });
     }
 }
