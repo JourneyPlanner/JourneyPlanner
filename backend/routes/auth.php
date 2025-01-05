@@ -9,11 +9,10 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::post("/register", [RegisteredUserController::class, "store"])
-    ->middleware("guest")
     ->name("register");
 
 Route::post("/login", [AuthenticatedSessionController::class, "store"])
-    ->middleware("guest")
+    ->middleware("guest", "verified")
     ->name("login");
 
 Route::post("/forgot-password", [PasswordResetLinkController::class, "store"])
@@ -32,7 +31,7 @@ Route::post("/email/verification-notification", [
     EmailVerificationNotificationController::class,
     "store",
 ])
-    ->middleware(["auth", "throttle:6,1"])
+    ->middleware("guest", "throttle:6,1")
     ->name("verification.send");
 
 Route::post("/logout", [AuthenticatedSessionController::class, "destroy"])
