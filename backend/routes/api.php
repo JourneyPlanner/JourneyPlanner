@@ -104,7 +104,8 @@ Route::post("template", [TemplateController::class, "store"])->middleware(
 );
 
 Route::get("template", [TemplateController::class, "index"]);
-
+Route::delete("template/{journey}", [JourneyController::class, "destroy"]);
+Route::update("template/{journey}", [TemplateController::class, "update"]);
 Route::get("template/{journey}", [TemplateController::class, "show"]);
 Route::get("template/{journey}/activity", [ActivityController::class, "index"]);
 Route::get("user/{username}/template", [

@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Journey;
+use App\Models\JourneyUser;
 use App\Models\User;
 
 class JourneyPolicy
@@ -77,7 +78,11 @@ class JourneyPolicy
         return $journey
             ->users()
             ->where("user_id", $user->id)
-            ->wherePivot("role", 1)
+            ->where(function ($query) {
+                $query
+                    ->where("role", JourneyUser::JOURNEY_GUIDE_ROLE_ID)
+                    ->orWhere("role", JourneyUser::TEMPLATE_CREATOR_ROLE_ID);
+            })
             ->exists();
     }
 

@@ -216,8 +216,28 @@ class JourneyController extends Controller
     {
         $validated = $request->validated();
 
+        $journey = self::updateJourney(
+            $journey,
+            $validated,
+            $this->mapboxService
+        );
+
+        return response()->json(
+            [
+                "message" => "Journey updated successfully",
+                "journey" => $journey,
+            ],
+            200
+        );
+    }
+
+    public static function updateJourney(
+        Journey $journey,
+        array $validated,
+        MapboxService $mapboxService
+    ) {
         // Handle destination and Mapbox address fetching
-        $validated = $this->mapboxService->fetchAddressDetails(
+        $validated = $mapboxService->fetchAddressDetails(
             $validated,
             $journey->mapbox_full_address,
             $journey->destination
@@ -235,10 +255,7 @@ class JourneyController extends Controller
             $journey->longitude = null;
             $journey->latitude = null;
             $journey->mapbox_full_address = null;
-            $journey = $this->mapboxService->setGeocodeData(
-                $journey,
-                $validated
-            );
+            $journey = $mapboxService->setGeocodeData($journey, $validated);
         }
 
         if ($journey->isDirty("to")) {
@@ -261,13 +278,7 @@ class JourneyController extends Controller
         // Save journey
         $journey->save();
 
-        return response()->json(
-            [
-                "message" => "Journey updated successfully",
-                "journey" => $journey,
-            ],
-            200
-        );
+        return $journey;
     }
 
     /**

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Journey;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Journey\UpdateTemplateRequest;
 use App\Models\Journey;
 use App\Models\JourneyUser;
 use App\Models\User;
+use App\Services\MapboxService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -202,7 +204,7 @@ class TemplateController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            "journey_id" => "required|uuid",
+            "journey_id" => "required|uuid,exists:journeys,id",
             "name" => "required|string",
             "description" => "string",
         ]);
@@ -236,6 +238,62 @@ class TemplateController extends Controller
             ]);
         $journeyTemplate->save();
 
+        $journeyTemplate = $this->cloneActivities($journey, $journeyTemplate);
+
+        $journeyTemplate->users()->attach(Auth::id(), [
+            "role" => JourneyUser::TEMPLATE_CREATOR_ROLE_ID,
+        ]);
+
+        return response()->json($journeyTemplate);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(
+        MapboxService $mapboxService,
+        UpdateTemplateRequest $request,
+        Journey $journey
+    ) {
+        $validated = $request->validated();
+
+        $template = JourneyController::updateJourney(
+            $journey,
+            $validated,
+            $mapboxService
+        );
+
+        if (!isset($validated["journey_id"])) {
+            return response()->json(
+                [
+                    "message" => "Template updated successfully",
+                    "journey" => $template,
+                ],
+                200
+            );
+        }
+
+        $template->activities()->delete();
+
+        $template = $this->cloneActivities(
+            Journey::findOrFail($validated["journey_id"]),
+            $template
+        );
+
+        return response()->json(
+            [
+                "message" => "Template updated successfully",
+                "journey" => $template,
+            ],
+            200
+        );
+    }
+
+    /**
+     * Clone the activities from the journey to the template.
+     */
+    private function cloneActivities($journey, $journeyTemplate)
+    {
         foreach ($journey->activities()->get() as $activity) {
             $activityTemplate = $activity->replicate(["journey_id"]);
             $activityTemplate->journey_id = $journeyTemplate->id;
@@ -254,26 +312,6 @@ class TemplateController extends Controller
             }
         }
 
-        $journeyTemplate->users()->attach(Auth::id(), [
-            "role" => JourneyUser::TEMPLATE_CREATOR_ROLE_ID,
-        ]);
-
-        return response()->json($journeyTemplate);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Journey $journey)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Journey $journey)
-    {
-        //
+        return $journeyTemplate;
     }
 }
