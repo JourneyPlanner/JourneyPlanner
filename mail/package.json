@@ -2,7 +2,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "maizzle serve",
+    "dev": "maizzle serve --port 4000",
     "build": "maizzle build production"
   },
   "dependencies": {

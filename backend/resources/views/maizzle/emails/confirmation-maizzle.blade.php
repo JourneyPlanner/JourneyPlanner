@@ -41,16 +41,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
   <style>
+    .hover-bg-slate-800:hover {
+      background-color: #1e293b !important
+    }
     @media (max-width: 600px) {
       .sm-p-6 {
         padding: 24px !important
       }
+      .sm-px-4 {
+        padding-left: 16px !important;
+        padding-right: 16px !important
+      }
+      .sm-px-6 {
+        padding-left: 24px !important;
+        padding-right: 24px !important
+      }
     }
   </style>
 </head>
-<body style="margin: 0; width: 100%; background-color: #fcfcfc; padding: 0; font-family: Nunito, sans-serif; color: #292929; -webkit-font-smoothing: antialiased; word-break: break-word">
+<body style="margin: 0; width: 100%; background-color: #f8fafc; padding: 0; -webkit-font-smoothing: antialiased; word-break: break-word">
   <div style="display: none">
-    Verify your email address to continue your journey with JourneyPlanner
+    Transactional email template
     &#8199;&#65279;&#847;
     &#8199;&#65279;&#847;
     &#8199;&#65279;&#847;
@@ -202,59 +213,50 @@
     &#8199;&#65279;&#847;
     &#8199;&#65279;&#847; </div>
   <div role="article" aria-roledescription="email" aria-label lang="en">
-    <div style="background-color: #fcfcfc; font-family: Nunito, sans-serif; color: #292929">
+    <div class="sm-px-4" style="background-color: #f8fafc; font-family: Nunito, sans-serif">
       <table align="center" style="margin: 0 auto" cellpadding="0" cellspacing="0" role="none">
         <tr>
           <td style="width: 552px; max-width: 100%">
+            <div role="separator" style="line-height: 24px">&zwj;</div>
             <table style="width: 100%" cellpadding="0" cellspacing="0" role="none">
               <tr>
-                <td class="sm-p-6" style="padding: 24px 36px">
-                  <a href="https://journeyplanner.io?utm_medium=email&utm_source=confirmation">
-                    <img src="{{asset('images/logo.png')}}" width="240" alt="JourneyPlanner" style="max-width: 100%; vertical-align: middle">
+                <td class="sm-p-6" style="border-radius: 8px; background-color: #fffffe; padding: 24px 36px; border: 1px solid #e2e8f0">
+                  <a href="https://maizzle.com">
+                    <img src="images/logo.png" width="70" alt="Maizzle" style="max-width: 100%; vertical-align: middle">
                   </a>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
-                  <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
-                    <tr>
-                      <td>
-                        <img src="{{asset('images/confirm.png')}}" width="240" alt="Confirm email" style="max-width: 100%; vertical-align: middle">
-                      </td>
-                    </tr>
-                  </table>
-                  <div role="separator" style="line-height: 24px">&zwj;</div>
-                  <h1 style="margin: 0 0 24px; font-size: 36px; font-weight: 700; color: #327597">
-                    Verify your email
+                  <h1 style="margin: 0 0 24px; font-size: 24px; line-height: 32px; font-weight: 600; color: #0f172a">
+                    Hello there!
                   </h1>
                   <p style="margin: 0 0 24px; font-size: 16px; line-height: 24px; color: #475569">
-                    <b>Thank you for signing up for JourneyPlanner!</b><br>
-                    Please confirm your email address by clicking the button to continue your journey with JourneyPlanner.
+                    We're happy to have you on board! Please verify your email address in order to activate your account:
                   </p>
-                  <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
-                    <tr>
-                      <td>
-                        <div>
-                          <a href="{{$verificationUrl}}" style="display: inline-block; text-decoration: none; padding: 16px 24px; font-size: 16px; line-height: 1; border-radius: 10px; color: #292929; background-color: #F8D351">
-                            <!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 31px" hidden>&emsp;</i><![endif]-->
-                            <span style="mso-text-raise: 16px">Verify email</span>
-                            <!--[if mso]><i hidden style="mso-font-width: 150%">&emsp;&#8203;</i><![endif]-->
-                          </a>
-                        </div>
-                      </td>
-                    </tr>
-                  </table>
+                  <div>
+                    <a href="https://maizzle.com" style="display: inline-block; text-decoration: none; padding: 16px 24px; font-size: 16px; line-height: 1; border-radius: 10px; color: #292929; background-color: #020617" class="hover-bg-slate-800">
+                      <!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 31px" hidden>&emsp;</i><![endif]-->
+                      <span style="mso-text-raise: 16px">Verify email</span>
+                      <!--[if mso]><i hidden style="mso-font-width: 150%">&emsp;&#8203;</i><![endif]-->
+                    </a>
+                  </div>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
                   <p style="margin: 0; font-size: 16px; line-height: 24px; color: #475569">
-                    Adventurous wishes,
+                    Thanks,
                     <br>
-                    JourneyPlanner
+                    <span style="font-weight: 600">Maizzle</span>
                   </p>
                   <div role="separator" style="height: 1px; line-height: 1px; background-color: #cbd5e1; margin-top: 24px; margin-bottom: 24px">&zwj;</div>
                   <p class="mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #475569">
-                    If this wasn't you, please ignore this email.
+                    If you're having trouble clicking the "Verify email" button, copy and paste the following URL into your web browser:
+                    <a href="https://maizzle.com/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0" style="color: #1e293b; text-decoration: underline">https://maizzle.com/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0</a>
                   </p>
-                  <p class="mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #475569">
-                    If you're having trouble clicking the "Verify email" button,
-                    copy and paste the following URL into your web browser:
-                    <a href="{{$verificationUrl}}" style="color: #1e293b; text-decoration: underline">{{$verificationUrl}}</a>
+                </td>
+              </tr>
+            </table>
+            <table style="width: 100%" cellpadding="0" cellspacing="0" role="none">
+              <tr>
+                <td class="sm-px-6" style="padding: 24px 36px">
+                  <p style="margin: 0; font-size: 12px; color: #64748b">
+                    &copy; 2025 Maizzle. All rights reserved.
                   </p>
                 </td>
               </tr>
@@ -299,13 +301,13 @@
                     <table align="center" style="margin-left: auto; margin-right: auto; padding-top: 20px" cellpadding="0" cellspacing="0" role="none">
                       <tr>
                         <td>
-                          <a href="https://journeyplanner.io?utm_medium=email&utm_source=confirmation" target="_blank" class="hover-opacity-80" style="text-decoration: none">
+                          <a href="https://journeyplanner.io" target="_blank" class="hover-opacity-80" style="text-decoration: none">
                             <img src="{{asset('images/globe.png')}}" width="40" alt="Website" style="max-width: 100%; vertical-align: middle">
                           </a>
-                          <a href="https://instagram.com/journeyplanner.io?utm_medium=email&utm_source=confirmation" class="hover-opacity-80" target="_blank" style="padding-left: 40px; padding-right: 40px; text-decoration: none">
+                          <a href="https://instagram.com/journeyplanner.io" class="hover-opacity-80" target="_blank" style="padding-left: 40px; padding-right: 40px; text-decoration: none">
                             <img src="{{asset('images/instagram.png')}}" width="40" alt="Instagram" style="max-width: 100%; vertical-align: middle">
                           </a>
-                          <a href="https://www.facebook.com/profile.php?id=61570299440309&utm_medium=email&utm_source=confirmation" class="hover-opacity-80" target="_blank" style="text-decoration: none">
+                          <a href="https://www.facebook.com/profile.php?id=61570299440309" class="hover-opacity-80" target="_blank" style="text-decoration: none">
                             <img src="{{asset('images/facebook.png')}}" width="40" alt="Facebook" style="max-width: 100%; vertical-align: middle">
                           </a>
                         </td>
@@ -324,11 +326,11 @@
                     <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
                       <tr>
                         <td style="color: #FCFCFC">
-                          <a href="https://journeyplanner.io/privacy?utm_medium=email&utm_source=confirmation" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Privacy</a>
+                          <a href="https://journeyplanner.io/privacy" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Privacy</a>
                           |
-                          <a href="https://journeyplanner.io/imprint?utm_medium=email&utm_source=confirmation" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Legal notice</a>
+                          <a href="https://journeyplanner.io/imprint" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Legal notice</a>
                           |
-                          <a href="mailto:contact@journeyplanner.io?utm_medium=email&utm_source=confirmation" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Contact</a>
+                          <a href="mailto:contact@journeyplanner.io" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Contact</a>
                         </td>
                       </tr>
                     </table>

@@ -37,6 +37,9 @@ class EmailConfirmation extends Mailable
     {
         return new Content(
             view: 'maizzle.emails.confirmation',
+            with: [
+                'verificationUrl' => "https://journeyplanner.io/verify-email",
+            ],
         );
     }
 

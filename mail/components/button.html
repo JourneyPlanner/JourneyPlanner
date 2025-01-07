@@ -12,7 +12,7 @@
     'padding: 16px 24px;',
     'font-size: 16px;',
     'line-height: 1;',
-    'border-radius: 4px;',
+    'border-radius: 10px;',
   ]
 
   let hasBgClass = () => props.class && props.class.split(' ').some(c => c.startsWith('bg-'))
@@ -20,13 +20,13 @@
   if (props['bg-color'] && !hasBgClass()) {
     styles.push(`background-color: ${props['bg-color']};`)
   } else {
-    styles.push('background-color: #4338ca;')
+    styles.push('background-color: transparent;')
   }
 
   if (props.color) {
     styles.push(`color: ${props.color};`)
   } else {
-    styles.push('color: #fffffe;')
+    styles.push('color: #292929;')
   }
 
   module.exports = {
