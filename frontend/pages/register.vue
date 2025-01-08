@@ -11,7 +11,7 @@ const client = useSanctumClient();
 const route = useRoute();
 
 const isUserExistsToastVisible = ref<boolean>(false);
-const isConfirmEmailDialogVisible = ref<boolean>(true);
+const isConfirmEmailDialogVisible = ref<boolean>(false);
 const isResendButtonDisabled = ref<boolean>(true);
 const resendEmailTime = ref<number>(60);
 const countdown = ref();
@@ -66,6 +66,7 @@ const onSubmit = handleSubmit((values) => {
 async function registerUser(userData: object) {
     toast.removeGroup("user-exists");
     isUserExistsToastVisible.value = false;
+    console.log(isResendButtonDisabled.value);
 
     toast.add({
         severity: "info",
@@ -151,14 +152,14 @@ function resend() {
             @close="isUserExistsToastVisible = false"
         >
             <template #message="slotProps">
-                <div class="flex gap-x-2">
+                <div class="mr-10 flex gap-x-2">
                     <div>
                         <i class="pi pi-exclamation-triangle text-lg" />
                     </div>
                     <div clas="flex flex-col">
                         <p>{{ slotProps.message.summary }}</p>
                         <button
-                            class="flex items-baseline gap-x-1 text-sm"
+                            class="mt-2 flex items-baseline gap-x-1 text-sm"
                             @click="router.push('/login')"
                         >
                             <i class="pi pi-sign-in text-xs" />

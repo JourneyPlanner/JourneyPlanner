@@ -1,11 +1,3 @@
----
-preheader: Verify your email address to continue your journey with JourneyPlanner
-bodyClass: bg-background text-natural-950 font-nunito
-urlParameters:
-  utm_medium: email
-  utm_source: confirmation
----
-
 <x-main>
   <div class="bg-background text-natural-950 font-nunito">
     <table align="center" class="m-0 mx-auto">
@@ -39,19 +31,19 @@ urlParameters:
 
                 <x-spacer height="24px" />
                 <h1 class="m-0 mb-6 text-4xl text-calypso-600 font-bold">
-                  Verify your email
+                  {{ page.heading }}
                 </h1>
 
                 <p class="m-0 mb-6 text-base/6 text-slate-600">
-                  <b>Thank you for signing up for JourneyPlanner!</b><br />
-                  Please confirm your email address by clicking the button to continue your journey with JourneyPlanner.
+                  <b>{{ page.subheading }}</b><br />
+                  {{ page.text }}
                 </p>
                 <table align="center" class="mx-auto">
                   <tr>
                     <td>
                       <x-button
                         href="@{{$verificationUrl}}"
-                        class="bg-dandelion-300"
+                        class="bg-dandelion-200"
                       >
                         Verify email
                       </x-button>
@@ -69,7 +61,7 @@ urlParameters:
                 <x-divider />
 
                 <p class="m-0 text-xs/5 text-slate-600 mso-break-all">
-                  If this wasn't you, please ignore this email.
+                  {{ page.disclaimer }}
                 </p>
                 <p class="m-0 text-xs/5 text-slate-600 mso-break-all">
                   If you're having trouble clicking the "Verify email" button,

@@ -24,6 +24,7 @@ module.exports = {
           700: "#2B5973",
         },
         dandelion: {
+          200: "#FAE58D",
           300: "#F8D351",
         },
       },

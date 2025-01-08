@@ -48,9 +48,9 @@
     }
   </style>
 </head>
-<body style="margin: 0; width: 100%; background-color: #fcfcfc; padding: 0; font-family: Nunito, sans-serif; color: #292929; -webkit-font-smoothing: antialiased; word-break: break-word">
+<body style="margin: 0; width: 100%; padding: 0; -webkit-font-smoothing: antialiased; word-break: break-word">
   <div style="display: none">
-    Verify your email address to continue your journey with JourneyPlanner
+    Verify your new email address to continue using JourneyPlanner
     &#8199;&#65279;&#847;
     &#8199;&#65279;&#847;
     &#8199;&#65279;&#847;
@@ -222,17 +222,17 @@
                   </table>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
                   <h1 style="margin: 0 0 24px; font-size: 36px; font-weight: 700; color: #327597">
-                    Verify your email
+                    Verify your new email
                   </h1>
                   <p style="margin: 0 0 24px; font-size: 16px; line-height: 24px; color: #475569">
-                    <b>Thank you for signing up for JourneyPlanner!</b><br>
-                    Please confirm your email address by clicking the button to continue your journey with JourneyPlanner.
+                    <b>You&#039;ve updated your email address on JourneyPlanner!</b><br>
+                    Please confirm your new email address by clicking the button below to ensure uninterrupted access to JourneyPlanner.
                   </p>
                   <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
                     <tr>
                       <td>
                         <div>
-                          <a href="{{$verificationUrl}}" style="display: inline-block; text-decoration: none; padding: 16px 24px; font-size: 16px; line-height: 1; border-radius: 10px; color: #292929; background-color: #F8D351">
+                          <a href="{{$verificationUrl}}" style="display: inline-block; text-decoration: none; padding: 16px 24px; font-size: 16px; line-height: 1; border-radius: 10px; color: #292929; background-color: #FAE58D">
                             <!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 31px" hidden>&emsp;</i><![endif]-->
                             <span style="mso-text-raise: 16px">Verify email</span>
                             <!--[if mso]><i hidden style="mso-font-width: 150%">&emsp;&#8203;</i><![endif]-->
@@ -249,7 +249,7 @@
                   </p>
                   <div role="separator" style="height: 1px; line-height: 1px; background-color: #cbd5e1; margin-top: 24px; margin-bottom: 24px">&zwj;</div>
                   <p class="mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #475569">
-                    If this wasn't you, please ignore this email.
+                    If you didn’t request this email address change, please contact our support team or ignore this email.
                   </p>
                   <p class="mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #475569">
                     If you're having trouble clicking the "Verify email" button,
