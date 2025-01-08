@@ -16,6 +16,8 @@ class MediaController extends Controller
      */
     public function index(Journey $journey): JsonResponse
     {
+        Gate::authorize("view", [$journey, false]);
+
         $media = $journey->media->map(function ($media) {
             return [
                 "id" => $media->id,
@@ -40,9 +42,9 @@ class MediaController extends Controller
     /**
      * Display the specified media.
      */
-    public function show(Request $request, Journey $journey, string $media)
+    //public function show(Request $request, Journey $journey, string $media)
+    public function show(Request $request, Journey $journey, Media $media)
     {
-        $media = Media::findOrFail($media);
         if ($request->has("thumbnail")) {
             $thumbnailPath = $media->getThumbnailPath();
             if (file_exists($thumbnailPath)) {
