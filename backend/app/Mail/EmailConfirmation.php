@@ -12,12 +12,14 @@ class EmailConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected $url;
+
     /**
      * Create a new message instance.
      */
     public function __construct($url)
     {
-        //
+        $this->url = $url;
     }
 
     /**
@@ -25,9 +27,7 @@ class EmailConfirmation extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: 'Verify Email Address',
-        );
+        return new Envelope(subject: "Verify Email Address");
     }
 
     /**
@@ -36,10 +36,10 @@ class EmailConfirmation extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'maizzle.emails.mail-address-registration',
+            view: "maizzle.emails.mail-address-registration",
             with: [
-                'verificationUrl' => "https://journeyplanner.io/verify-email",
-            ],
+                "verificationUrl" => $this->url,
+            ]
         );
     }
 
