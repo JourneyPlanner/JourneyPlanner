@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { T, useTranslate } from "@tolgee/vue";
+import { useTranslate } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 
@@ -345,6 +345,7 @@ async function changeEmail() {
         </Sidebar>
         <MailVerifyDialog
             :is-confirm-email-dialog-visible="isVerifyEmailDialogVisible"
+            :email="newEmail"
             @close="isVerifyEmailDialogVisible = false"
         >
             <T key-name="dashboard.user.settings.email.change.verify.text" />

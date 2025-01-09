@@ -7,8 +7,9 @@ const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
 const route = useRoute();
-const isVerifyEmailToastVisible = ref(false);
-const isConfirmEmailDialogVisible = ref(false);
+const isVerifyEmailToastVisible = ref<boolean>(false);
+const isConfirmEmailDialogVisible = ref<boolean>(false);
+const email = ref<string>("");
 
 const title = t.value("form.header.login");
 
@@ -211,6 +212,7 @@ function resend() {
                         <form class="-mt-2 w-5/6" @submit="onSubmit">
                             <FormInput
                                 id="email"
+                                v-model="email"
                                 name="email"
                                 translation-key="form.input.email"
                             />
@@ -258,6 +260,7 @@ function resend() {
             <MailVerifyDialog
                 :is-confirm-email-dialog-visible="isConfirmEmailDialogVisible"
                 :do-resend="true"
+                :email="email"
                 @close="isConfirmEmailDialogVisible = false"
             />
         </div>

@@ -11,6 +11,7 @@ const route = useRoute();
 
 const isUserExistsToastVisible = ref<boolean>(false);
 const isConfirmEmailDialogVisible = ref<boolean>(false);
+const email = ref<string>("");
 
 const title = t.value("form.header.register");
 
@@ -174,6 +175,7 @@ async function registerUser(userData: object) {
                         <form class="w-3/4" @submit="onSubmit">
                             <FormInput
                                 id="email"
+                                v-model="email"
                                 name="email"
                                 autocomplete="email"
                                 translation-key="form.input.email"
@@ -251,6 +253,7 @@ async function registerUser(userData: object) {
         <div id="dialogs">
             <MailVerifyDialog
                 :is-confirm-email-dialog-visible="isConfirmEmailDialogVisible"
+                :email="email"
                 @close="isConfirmEmailDialogVisible = false"
             />
         </div>

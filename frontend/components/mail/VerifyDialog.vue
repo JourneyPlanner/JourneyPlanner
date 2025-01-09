@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useTranslate } from "@tolgee/vue";
 import resendConfirmationMail from "~/utils/resend-confirmation-mail";
 
 const props = defineProps({
     isConfirmEmailDialogVisible: { type: Boolean, required: true },
     doResend: { type: Boolean, required: false, default: false },
+    email: { type: String, required: true },
 });
 
 const emit = defineEmits(["close"]);
@@ -22,6 +24,7 @@ watch(
     },
 );
 
+const { t } = useTranslate();
 const isVisible = ref(props.isConfirmEmailDialogVisible);
 const resendEmailTime = ref<number>(60);
 const countdown = ref();
@@ -51,7 +54,7 @@ function startResendCountdown() {
 
 function resend() {
     isResendButtonDisabled.value = true;
-    resendConfirmationMail();
+    resendConfirmationMail(props.email, t);
     startResendCountdown();
 }
 </script>
