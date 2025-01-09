@@ -2,13 +2,13 @@
 import { T, useTranslate } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import resendConfirmationMail from "~/utils/resend-confirmation-mail";
 
 const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
 const route = useRoute();
 const isVerifyEmailToastVisible = ref(false);
+const isConfirmEmailDialogVisible = ref(false);
 
 const title = t.value("form.header.login");
 
@@ -126,7 +126,7 @@ async function loginUser(userData: User) {
 function resend() {
     isVerifyEmailToastVisible.value = false;
     toast.removeGroup("verify-email");
-    resendConfirmationMail();
+    isConfirmEmailDialogVisible.value = true;
 }
 </script>
 
@@ -253,6 +253,13 @@ function resend() {
             >
                 <SvgBalloonWithPeople class="w-[60%]" />
             </div>
+        </div>
+        <div id="dialogs">
+            <MailResendMailDialog
+                :is-confirm-email-dialog-visible="isConfirmEmailDialogVisible"
+                :do-resend="true"
+                @close="isConfirmEmailDialogVisible = false"
+            />
         </div>
     </div>
 </template>
