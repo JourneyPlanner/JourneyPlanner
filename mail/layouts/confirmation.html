@@ -1,5 +1,5 @@
 <x-main>
-  <div class="bg-background text-natural-950 font-nunito">
+  <div class="bg-background dark:bg-background-dark text-natural-950 dark:text-natural-50 font-nunito">
     <table align="center" class="m-0 mx-auto">
       <tr>
         <td class="w-[552px] max-w-full">
@@ -30,11 +30,11 @@
                 </table>
 
                 <x-spacer height="24px" />
-                <h1 class="m-0 mb-6 text-4xl text-calypso-600 font-bold">
+                <h1 class="m-0 mb-6 text-4xl text-calypso-600 dark:text-calypso-300 font-bold">
                   {{ page.heading }}
                 </h1>
 
-                <p class="m-0 mb-6 text-base/6 text-slate-600">
+                <p class="m-0 mb-6 text-base/6 text-natural-950 dark:text-natural-50">
                   <b>{{ page.subheading }}</b><br />
                   {{ page.text }}
                 </p>
@@ -43,7 +43,7 @@
                     <td>
                       <x-button
                         href="@{{$verificationUrl}}"
-                        class="bg-dandelion-200"
+                        class="bg-dandelion-200 dark:bg-pesto-600 text-natural-950 dark:text-natural-50"
                       >
                         Verify email
                       </x-button>
@@ -52,7 +52,7 @@
                 </table>
                 <x-spacer height="24px" />
 
-                <p class="m-0 text-base/6 text-slate-600">
+                <p class="m-0 text-base/6 text-natural-950 dark:text-natural-50">
                   Adventurous wishes,
                   <br />
                   JourneyPlanner
@@ -60,15 +60,15 @@
 
                 <x-divider />
 
-                <p class="m-0 text-xs/5 text-slate-600 mso-break-all">
+                <p class="m-0 text-xs/5 dark:text-natural-950 text-natural-50 mso-break-all">
                   {{ page.disclaimer }}
                 </p>
-                <p class="m-0 text-xs/5 text-slate-600 mso-break-all">
+                <p class="m-0 text-xs/5 dark:text-natural-950 text-natural-50 mso-break-all">
                   If you're having trouble clicking the "Verify email" button,
                   copy and paste the following URL into your web browser:
                   <a
                     href="@{{$verificationUrl}}"
-                    class="text-slate-800 underline"
+                    class="dark:text-natural-950 text-natural-50 underline"
                     >@{{$verificationUrl}}</a
                   >
                 </p>
