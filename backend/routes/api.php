@@ -78,9 +78,12 @@ Route::post("upload", [UploadController::class, "upload"])->middleware([
     "auth:sanctum",
 ]);
 
-Route::apiResource("journey/{journey}/media", MediaController::class)
-    ->middleware("auth:sanctum")
-    ->only("index", "show");
+Route::get("journey/{journey}/media", [
+    MediaController::class,
+    "index",
+])->middleware(["auth:sanctum"]);
+
+Route::get("journey/{journey}/media/{media}", [MediaController::class, "show"]);
 
 Route::get("journey/{journey}/weather", [
     JourneyController::class,
