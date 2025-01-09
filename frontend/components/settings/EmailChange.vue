@@ -10,6 +10,7 @@ const props = defineProps({
 });
 
 const isVisible = ref(props.visible);
+const isVerifyEmailDialogVisible = ref(false);
 const emit = defineEmits(["close", "changeEmail"]);
 const { t } = useTranslate();
 const toast = useToast();
@@ -75,6 +76,7 @@ async function changeEmail() {
             },
             async onResponse({ response }) {
                 if (response.ok) {
+                    isVerifyEmailDialogVisible.value = true;
                     emit("changeEmail", newEmail);
                     handleReset();
                 }
@@ -180,13 +182,14 @@ async function changeEmail() {
                 </div>
                 <div class="flex items-center pt-4">
                     <div class="flex w-full flex-col items-center">
-                        <div
+                        <label
+                            for="email"
                             class="flex w-2/3 items-start text-text dark:text-natural-50"
                         >
                             <T
                                 key-name="dashboard.user.settings.enter.new.email"
                             />
-                        </div>
+                        </label>
                         <input
                             id="email"
                             v-model="newEmail"
@@ -197,14 +200,15 @@ async function changeEmail() {
                             class="mb-3 flex w-2/3 justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
                             >{{ errors.newEmail }}</span
                         >
-                        <div
+                        <label
                             v-if="props.requiresPassword"
+                            for="passwordEmail"
                             class="mt-2 flex w-2/3 items-start text-text dark:text-natural-50"
                         >
                             <T
                                 key-name="dashboard.user.settings.enter.current.password"
                             />
-                        </div>
+                        </label>
                         <input
                             v-if="props.requiresPassword"
                             id="passwordEmail"
@@ -286,13 +290,14 @@ async function changeEmail() {
                 </div>
                 <div class="flex items-center pl-6 pt-4">
                     <div class="flex w-full flex-col items-center">
-                        <div
+                        <label
+                            for="emailMobile"
                             class="mb-2 mr-10 mt-2 flex w-full items-start text-[0.95rem] text-text dark:text-natural-50"
                         >
                             <T
                                 key-name="dashboard.user.settings.enter.new.email"
                             />
-                        </div>
+                        </label>
                         <input
                             id="emailMobile"
                             v-model="newEmail"
@@ -303,14 +308,15 @@ async function changeEmail() {
                             class="mb-3 mr-10 flex w-full justify-start text-sm text-mahagony-600 dark:text-mahagony-300"
                             >{{ errors.newEmail }}</span
                         >
-                        <div
+                        <label
                             v-if="props.requiresPassword"
+                            for="passwordEmailMobile"
                             class="mb-2 mr-10 mt-1 flex w-full items-start pt-2 text-[0.95rem] text-text dark:text-natural-50"
                         >
                             <T
                                 key-name="dashboard.user.settings.enter.current.password"
                             />
-                        </div>
+                        </label>
                         <input
                             v-if="props.requiresPassword"
                             id="passwordEmailMobile"
@@ -337,5 +343,11 @@ async function changeEmail() {
                 </div>
             </div>
         </Sidebar>
+        <MailVerifyDialog
+            :is-confirm-email-dialog-visible="isVerifyEmailDialogVisible"
+            @close="isVerifyEmailDialogVisible = false"
+        >
+            <T key-name="dashboard.user.settings.email.change.verify.text" />
+        </MailVerifyDialog>
     </div>
 </template>

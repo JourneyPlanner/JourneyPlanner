@@ -249,7 +249,7 @@ async function registerUser(userData: object) {
             </div>
         </div>
         <div id="dialogs">
-            <MailResendMailDialog
+            <MailVerifyDialog
                 :is-confirm-email-dialog-visible="isConfirmEmailDialogVisible"
                 @close="isConfirmEmailDialogVisible = false"
             />

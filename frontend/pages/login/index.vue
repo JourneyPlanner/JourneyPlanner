@@ -255,7 +255,7 @@ function resend() {
             </div>
         </div>
         <div id="dialogs">
-            <MailResendMailDialog
+            <MailVerifyDialog
                 :is-confirm-email-dialog-visible="isConfirmEmailDialogVisible"
                 :do-resend="true"
                 @close="isConfirmEmailDialogVisible = false"

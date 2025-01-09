@@ -105,9 +105,9 @@ function resend() {
         <div
             class="flex flex-col gap-y-4 font-normal text-natural-950 dark:text-natural-50"
         >
-            <p>
+            <slot>
                 <T key-name="form.register.verify.email.text" />
-            </p>
+            </slot>
             <div class="flex justify-center">
                 <button
                     type="button"
@@ -166,7 +166,9 @@ function resend() {
                 class="ml-2 w-11/12 flex-col gap-y-5 pb-5 text-natural-950 dark:text-natural-50"
             >
                 <p>
-                    <T key-name="form.register.verify.email.text" />
+                    <slot>
+                        <T key-name="form.register.verify.email.text" />
+                    </slot>
                 </p>
             </div>
         </div>
