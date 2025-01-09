@@ -131,7 +131,17 @@ interface Event {
 }
 
 function deleteActivity() {
-    if (store.getActivity(activityId.value).repeat_type != null) {
+    const oldActivity = store.getActivity(activityId.value) as Activity;
+    if (!oldActivity) {
+        toast.add({
+            severity: "error",
+            summary: t.value("common.toast.error.heading"),
+            detail: t.value("activity.not.found"),
+            life: 6000,
+        });
+        return;
+    }
+    if (oldActivity.repeat_type != null) {
         isRecurringActivityDeleteVisible.value = true;
         isDeleteCall.value = true;
     } else {
@@ -145,6 +155,11 @@ async function deleteActivityCall(editType: string) {
     };
     if (editType != "all") {
         Object.assign(edit_type, { calendar_activity_id: calendarId.value });
+    } else {
+        const activityToDelete = store.getActivity(
+            activityId.value,
+        ) as Activity;
+        store.updateActivity([activityToDelete], true);
     }
 
     await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
@@ -185,7 +200,8 @@ async function deleteActivityCall(editType: string) {
 }
 
 function removeFromCalendar() {
-    if (store.getActivity(activityId.value).repeat_type != null) {
+    const oldActivity = store.getActivity(activityId.value) as Activity;
+    if (oldActivity.repeat_type != null) {
         isRecurringActivityRemoveVisible.value = true;
         isRemoveCall.value = true;
     } else {
@@ -413,17 +429,11 @@ async function initializeDrop(info: EventObject) {
             time: time,
         };
     }
-
-    if (
-        store.getActivity(activityId.value).repeat_type != null &&
-        !isFromPool.value
-    ) {
+    const oldActivity = store.getActivity(activityId.value) as Activity;
+    if (oldActivity.repeat_type != null && !isFromPool.value) {
         isRecurringActivityEditVisible.value = true;
-    } else if (
-        store.getActivity(activityId.value).repeat_type != null &&
-        isFromPool.value
-    ) {
-        initializeDropCall(store.getActivity(activityId.value).repeat_type);
+    } else if (oldActivity.repeat_type != null && isFromPool.value) {
+        initializeDropCall(oldActivity.repeat_type);
     } else {
         initializeDropCall("all");
     }
@@ -475,11 +485,8 @@ function editDrop(info: EventObject) {
     isEditDrop.value = true;
     activityId.value = info.event._def.extendedProps.activity_id;
     const calenderActivityId = info.event._def.publicId;
-    if (store.getActivity(activityId.value).repeat_type != null) {
-        isRecurringActivityEditVisible.value = true;
-    } else {
-        editDropCall("all");
-    }
+    const oldActivity = store.getActivity(activityId.value) as Activity;
+
     const startTime = info.event._instance.range.start.toISOString();
     const endTime = info.event._instance.range.end.toISOString();
 
@@ -500,6 +507,11 @@ function editDrop(info: EventObject) {
         estimated_duration: newDuration,
         calendar_activity_id: calenderActivityId,
     };
+    if (oldActivity.repeat_type != null) {
+        isRecurringActivityEditVisible.value = true;
+    } else {
+        editDropCall("all");
+    }
 }
 
 async function editDropCall(editType: string) {
@@ -586,8 +598,9 @@ async function removeOldActivities(oldActivities: Activity[]) {
     });
 }
 
-async function addNewActivities(activity: Activity[]) {
+async function addNewActivities(activities: Activity[]) {
     const calApi = fullCalendar.value.getApi();
+    const activity = Array.isArray(activities) ? activities : [activities];
     activity.forEach((activity: Activity) => {
         if (activity.calendar_activities != null) {
             activity.calendar_activities.forEach(
@@ -634,17 +647,17 @@ function call(editType: string) {
 </script>
 <template>
     <div class="flex justify-center md:justify-start">
-        <FormActivityRepeatEditType
+        <JourneyIdComponentsActivityRepeatEditType
             :visible="isRecurringActivityEditVisible"
             @close="isRecurringActivityEditVisible = false"
             @post="call"
         />
-        <FormActivityRepeatEditTypeDelete
+        <JourneyIdComponentsActivityRepeatEditTypeDelete
             :visible="isRecurringActivityDeleteVisible"
             @close="isRecurringActivityDeleteVisible = false"
             @post="call"
         />
-        <FormActivityRepeatEditTypeRemove
+        <JourneyIdComponentsActivityRepeatEditTypeRemove
             :visible="isRecurringActivityRemoveVisible"
             @close="isRecurringActivityRemoveVisible = false"
             @post="call"

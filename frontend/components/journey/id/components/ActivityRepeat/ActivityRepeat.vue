@@ -16,10 +16,10 @@ const props = defineProps({
 const emit = defineEmits(["input", "customInput"]);
 
 const repeatModes = ref([
-    { name: () => t.value("activity.repeat.not"), value: 0 },
-    { name: () => t.value("activity.repeat.daily"), value: 1 },
-    { name: () => t.value("activity.repeat.weekly"), value: 7 },
-    { name: () => t.value("activity.repeat.custom"), value: 2 },
+    { name: t.value("activity.repeat.not"), value: 0 },
+    { name: t.value("activity.repeat.daily"), value: 1 },
+    { name: t.value("activity.repeat.weekly"), value: 7 },
+    { name: t.value("activity.repeat.custom"), value: 2 },
 ]);
 
 const showCustomizeRepeat = ref(false);

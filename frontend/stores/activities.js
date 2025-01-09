@@ -19,7 +19,7 @@ export const useActivityStore = defineStore("activities", () => {
         this.addedActivity = activity;
     }
 
-    function updateActivity(activity) {
+    function updateActivity(activity, shouldDelete = false) {
         oldActivity.value = [];
         activity.forEach((element) => {
             if (
@@ -41,11 +41,14 @@ export const useActivityStore = defineStore("activities", () => {
                 });
             }
         });
-        this.activityData.push(...activity);
-        this.setNewActivity(activity);
+        if (!shouldDelete) {
+            this.activityData.push(...activity);
+            this.setNewActivity(activity);
+        }
     }
 
     function findBaseActivity(activity) {
+        if (!activity) return null;
         let newActivity = activity;
         while (newActivity.parent_id != null) {
             newActivity =

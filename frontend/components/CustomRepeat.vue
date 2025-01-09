@@ -36,7 +36,24 @@ const createCustomRepeat = () => {
             activeDays.value.push(day.day);
         }
     });
-    console.log(activeDays.value);
+    if (
+        (timeModeselected.value.name === t.value("activity.repeat.weeks") ||
+            timeModeselected.value.name === t.value("activity.repeat.week")) &&
+        activeDays.value.length == 0
+    ) {
+        toast.add({
+            severity: "error",
+            summary: t.value("repeat.select.weekday"),
+            detail: t.value("repeat.select.weekday.detail"),
+            life: 3000,
+        });
+        return;
+    } else if (
+        timeModeselected.value.name === t.value("activity.repeat.days") ||
+        timeModeselected.value.name === t.value("activity.repeat.day")
+    ) {
+        activeDays.value = [];
+    }
     emit(
         "createCustomRepeat",
         repeatNumber.value,
@@ -141,7 +158,10 @@ function changePlural() {
             { name: t.value("activity.repeat.day"), value: 1 },
             { name: t.value("activity.repeat.week"), value: 7 },
         ];
-        if (timeModeselected.value.name === t.value("activity.repeat.weeks")) {
+        if (
+            timeModeselected.value.name === t.value("activity.repeat.week") ||
+            timeModeselected.value.name === t.value("activity.repeat.weeks")
+        ) {
             timeMode.value = t.value("activity.repeat.week");
             selectedTimeUnit.value = "weeks";
         } else {
@@ -189,47 +209,66 @@ function changeRepeat() {
         });
         changePlural();
     }
+    changePlural();
 }
 
 function changeOccurrences() {
-    console.log(
-        timeModeselected.value.value *
-            repeatNumber.value *
-            occurrenceCount.value,
-    );
     const activeDays = ref<string[]>([]);
     days.value.forEach((day) => {
         if (day.active) {
             activeDays.value.push(day.day);
         }
     });
-    const totalLength =
-        timeModeselected.value.value *
-        repeatNumber.value *
-        occurrenceCount.value;
     if (
-        (totalLength >= props.daysInJourney &&
+        (timeModeselected.value.name === t.value("activity.repeat.weeks") ||
+            timeModeselected.value.name === t.value("activity.repeat.week")) &&
+        activeDays.value.length == 0
+    ) {
+        toast.add({
+            severity: "error",
+            summary: t.value("repeat.select.weekday"),
+            detail: t.value("repeat.select.weekday.detail"),
+            life: 3000,
+        });
+        occurrenceCount.value--;
+        return;
+    }
+    let maxOccurences;
+    if (
+        timeModeselected.value.name === t.value("activity.repeat.weeks") ||
+        timeModeselected.value.name === t.value("activity.repeat.week")
+    ) {
+        maxOccurences = Math.ceil(
+            (props.daysInJourney * activeDays.value.length) /
+                (timeModeselected.value.value * repeatNumber.value),
+        );
+    } else {
+        maxOccurences = Math.ceil(
+            props.daysInJourney /
+                (timeModeselected.value.value * repeatNumber.value),
+        );
+    }
+    if (
+        (occurrenceCount.value > maxOccurences &&
             (timeModeselected.value.name === t.value("activity.repeat.days") ||
                 timeModeselected.value.name ===
                     t.value("activity.repeat.day"))) ||
-        (totalLength >= props.daysInJourney * activeDays.value.length &&
+        (occurrenceCount.value > maxOccurences &&
             (timeModeselected.value.name === t.value("activity.repeat.weeks") ||
                 timeModeselected.value.name ===
                     t.value("activity.repeat.week")))
     ) {
-        occurrenceCount.value = occurrenceCount.value - 1;
+        occurrenceCount.value--;
         toast.add({
             severity: "error",
             summary: t.value("journey.too.short"),
             detail: t.value("journey.too.short.detail"),
             life: 3000,
         });
-        console.log(timeModeselected.value.name);
         if (
             timeModeselected.value.name === t.value("activity.repeat.weeks") ||
             timeModeselected.value.name === t.value("activity.repeat.week")
         ) {
-            console.log(activeDays.value.length);
             occurrenceCount.value = Math.ceil(
                 (props.daysInJourney * activeDays.value.length) /
                     (timeModeselected.value.value * repeatNumber.value),

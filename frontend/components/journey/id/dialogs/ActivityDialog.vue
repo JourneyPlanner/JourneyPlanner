@@ -94,6 +94,11 @@ const selectedDate = props.calendarActivity
     : ref();
 const timeDisabled = ref(true);
 
+watch([() => props.calendarActivity], ([newPrefill]) => {
+    selectedDate.value = new Date(newPrefill.start);
+    timeDisabled.value = false;
+});
+
 watch(
     () => props.visible,
     (value) => {
@@ -243,8 +248,12 @@ async function onSuccess(values: ActivityForm) {
         } else {
             noSingle.value = false;
         }
-        isRecurringActivityEditVisible.value = true;
-        value.value = values;
+        if (props.propRepeatType != null) {
+            isRecurringActivityEditVisible.value = true;
+            value.value = values;
+        } else {
+            editActivity(values);
+        }
     } else {
         editActivity(values);
     }
@@ -290,56 +299,38 @@ async function editActivity(values: ActivityForm) {
 
     loadingSave.value = true;
 
-    let activity = undefined;
-    if (props.calendarClicked) {
-        activity = {
-            name: values.name,
-            estimated_duration: duration,
-            address: values.address,
-            mapbox_full_address: values.mapbox?.properties?.full_address,
-            mapbox_id: values.mapbox?.properties?.mapbox_id,
-            cost: values.costs,
-            description: values.description,
-            link: values.link,
-            email: values.email,
-            phone: values.phone,
-            opening_hours: values.open,
-            date: date,
-            time: time,
-            repeat_type: repeatType.value,
-            repeat_interval: repeatInterval.value,
-            repeat_interval_unit: repeatIntervalUnit.value,
-            repeat_on: repeatOn.value,
-            repeat_end_date: repeatEndDate.value,
-            repeat_end_occurences: repeatEndOccurences.value,
+    const activity = {
+        name: values.name,
+        estimated_duration: duration,
+        address: values.address,
+        mapbox_full_address: values.mapbox?.properties?.full_address,
+        mapbox_id: values.mapbox?.properties?.mapbox_id,
+        cost: values.costs,
+        description: values.description,
+        link: values.link,
+        email: values.email,
+        phone: values.phone,
+        opening_hours: values.open,
+        date: date,
+        time: time,
+        repeat_type: repeatType.value,
+        repeat_interval: repeatInterval.value,
+        repeat_interval_unit: repeatIntervalUnit.value,
+        repeat_on: repeatOn.value,
+        repeat_end_date: repeatEndDate.value,
+        repeat_end_occurences: repeatEndOccurences.value,
+        edit_type: "all",
+    };
+    if (props.calendarClicked && values.editType != null) {
+        Object.assign(activity, {
             calendar_activity_id: props.calendarActivity.id,
             edit_type: values.editType,
-        };
-    } else {
-        activity = {
-            name: values.name,
-            estimated_duration: duration,
-            address: values.address,
-            mapbox_full_address: values.mapbox?.properties?.full_address,
-            mapbox_id: values.mapbox?.properties?.mapbox_id,
-            cost: values.costs,
-            description: values.description,
-            link: values.link,
-            email: values.email,
-            phone: values.phone,
-            opening_hours: values.open,
-            date: date,
-            time: time,
-            repeat_type: repeatType.value,
-            repeat_interval: repeatInterval.value,
-            repeat_interval_unit: repeatIntervalUnit.value,
-            repeat_on: repeatOn.value,
-            repeat_end_date: repeatEndDate.value,
-            repeat_end_occurences: repeatEndOccurences.value,
-            edit_type: "all",
-        };
+        });
+    } else if (props.calendarClicked) {
+        Object.assign(activity, {
+            calendar_activity_id: props.calendarActivity.id,
+        });
     }
-
     if (updateRef.value) {
         await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
             method: "PATCH",
@@ -403,9 +394,12 @@ async function editActivity(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
+                    const responseData = Array.isArray(response._data)
+                        ? response._data
+                        : [response._data];
                     activityStore.addActivity(response._data);
                     const activites = [] as Activity[];
-                    activites.push(...response._data);
+                    activites.push(...responseData);
                     activityStore.setNewActivity(response._data);
                 }
             },
@@ -482,12 +476,19 @@ function setSelectedDate(date: Date) {
 function changeRepeat(selectedRepeat: string) {
     if (selectedRepeat == t.value("activity.repeat.custom")) {
         repeatType.value = "custom";
-    } else if (selectedRepeat == t.value("activity.repeat.daily")) {
-        repeatType.value = "daily";
-    } else if (selectedRepeat == t.value("activity.repeat.weekly")) {
-        repeatType.value = "weekly";
     } else {
-        repeatType.value = null;
+        if (selectedRepeat == t.value("activity.repeat.daily")) {
+            repeatType.value = "daily";
+        } else if (selectedRepeat == t.value("activity.repeat.weekly")) {
+            repeatType.value = "weekly";
+        } else {
+            repeatType.value = null;
+        }
+        repeatOn.value = undefined;
+        repeatInterval.value = undefined;
+        repeatIntervalUnit.value = undefined;
+        repeatEndDate.value = undefined;
+        repeatEndOccurences.value = undefined;
     }
 }
 
@@ -751,7 +752,7 @@ function changeCustomRepeat(
                                 class="w-full sm:pb-2 sm:pr-16"
                             />
                             <div class="max-sm:hidden sm:pb-2 sm:pr-16">
-                                <FormActivityRepeat
+                                <JourneyIdComponentsActivityRepeat
                                     id="repeatType"
                                     name="repeatType"
                                     class="w-full"
@@ -764,7 +765,7 @@ function changeCustomRepeat(
                             </div>
                         </div>
                     </div>
-                    <FormActivityRepeatEditType
+                    <JourneyIdComponentsActivityRepeatEditType
                         :visible="isRecurringActivityEditVisible"
                         :no-single="noSingle"
                         @close="isRecurringActivityEditVisible = false"
@@ -777,12 +778,12 @@ function changeCustomRepeat(
                         <div
                             class="mb-0 flex cursor-pointer flex-col pr-2 max-sm:col-span-3 max-sm:w-1/2 sm:mb-2 sm:pr-16"
                         >
-                            <FormActivityRepeat
+                            <JourneyIdComponentsActivityRepeat
                                 id="repeatType-mobile"
                                 name="repeatType"
                                 class="w-full sm:collapse"
-                                :journey-start="props.journeyStart"
-                                :journey-end="props.journeyEnd"
+                                :journey-start="from"
+                                :journey-end="to"
                                 :repeat-type="props.propRepeatType"
                                 @input="changeRepeat"
                                 @custom-input="changeCustomRepeat"

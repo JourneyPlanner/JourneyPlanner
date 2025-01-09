@@ -56,7 +56,7 @@ const activityCount = computed(
     () =>
         activities.value.length -
         activities.value.filter(
-            (activity) => activity.calendar_activities.length > 0,
+            (activity) => activity.calendar_activities?.length > 0,
         ).length,
 );
 
@@ -156,8 +156,34 @@ const confirmDelete = (event: Event) => {
  * delete activity
  */
 async function deleteActivity(activity_id: string) {
+    const edit_type = {
+        edit_type: "all",
+    };
+    if (!activity_id) {
+        toast.add({
+            severity: "error",
+            summary: t.value("common.toast.error.heading"),
+            detail: t.value("common.error.invalid_id"),
+            life: 6000,
+        });
+        return;
+    }
+
+    const activityExists = activities.value.some(
+        (activity) => activity.id === activity_id,
+    );
+    if (!activityExists) {
+        toast.add({
+            severity: "error",
+            summary: t.value("common.toast.error.heading"),
+            detail: t.value("common.error.not_found"),
+            life: 6000,
+        });
+        return;
+    }
     await client(`/api/journey/${props.id}/activity/${activity_id}`, {
         method: "delete",
+        body: edit_type,
         async onResponse({ response }) {
             if (response.ok) {
                 toast.add({
@@ -257,7 +283,10 @@ const itemsJourneyGuide = ref([
                         class="cursor-pointer empty:hidden"
                     >
                         <div
-                            v-if="activity.calendar_activities.length <= 0"
+                            v-if="
+                                activity.calendar_activities == undefined ||
+                                activity.calendar_activities.length <= 0
+                            "
                             id="draggable-el"
                             :key="activity.id"
                             class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-calypso-400 bg-light px-2 py-1 text-base font-normal dark:border-calypso-600 dark:bg-dark sm:h-16 sm:text-base lg:rounded-xl"
