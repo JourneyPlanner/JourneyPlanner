@@ -15,7 +15,7 @@ watch(
         if (value === true) {
             if (props.doResend) {
                 resend();
-            } else if (resendEmailTime.value === 60) {
+            } else {
                 startResendCountdown();
             }
         }
@@ -36,6 +36,8 @@ const close = () => {
  * start the countdown for the resend email button
  */
 function startResendCountdown() {
+    resendEmailTime.value = 60;
+    clearInterval(countdown.value);
     countdown.value = setInterval(() => {
         if (resendEmailTime.value > 0) {
             resendEmailTime.value -= 1;

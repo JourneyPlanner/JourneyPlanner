@@ -266,23 +266,24 @@
   </div>
 </body>
 <footer style="background-color: #2B5973; font-family: Nunito, sans-serif; color: #FCFCFC">
-  <table align="center" style="margin: 0 auto; background-color: #2B5973; padding-top: 24px; padding-bottom: 24px; color: #FCFCFC" cellpadding="0" cellspacing="0" role="none">
+  <table align="center" style="margin: 0 auto; background-color: #2B5973; padding-top: 24px; padding-bottom: 24px; font-family: Nunito, sans-serif; color: #FCFCFC" cellpadding="0" cellspacing="0" role="none">
     <tr>
       <td style="width: 552px; max-width: 100%">
         <table style="width: 100%; padding-left: 36px; padding-right: 36px" cellpadding="0" cellspacing="0" role="none">
           <tr>
             <td>
               <span style="font-weight: 600; color: #FCFCFC">JourneyPlanner - Travel planning made easy</span>
-              <p style="color: #FCFCFC">
+              <p style="margin-top: 6px; margin-bottom: 6px; font-size: 14px; color: #FCFCFC">
                 The ultimate platform for effortlessly organizing unforgettable
                 adventures! Design your trip, share your plan and go on a
-                journey of discovery together. Start your journey now.
+                journey of discovery together.
+                <a href="https://journeyplanner.io/journey/new?utm_medium=email&utm_source=confirmation" target="_blank" style="color: #FCFCFC; text-decoration: underline">Start your journey now.</a>
               </p>
             </td>
           </tr>
           <tr style="width: 100%">
             <td style="width: 100%">
-              <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
+              <table align="center" style="margin-left: auto; margin-right: auto; margin-top: 20px" cellpadding="0" cellspacing="0" role="none">
                 <tr>
                   <td>
                     <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
@@ -302,9 +303,13 @@
                           <a href="https://journeyplanner.io?utm_medium=email&utm_source=confirmation" target="_blank" class="hover-opacity-80" style="text-decoration: none">
                             <img src="{{asset('images/globe.png')}}" width="40" alt="Website" style="max-width: 100%; vertical-align: middle">
                           </a>
-                          <a href="https://instagram.com/journeyplanner.io?utm_medium=email&utm_source=confirmation" class="hover-opacity-80" target="_blank" style="padding-left: 40px; padding-right: 40px; text-decoration: none">
+                        </td>
+                        <td style="padding-left: 32px; padding-right: 32px">
+                          <a href="https://instagram.com/journeyplanner.io?utm_medium=email&utm_source=confirmation" class="hover-opacity-80" target="_blank" style="text-decoration: none">
                             <img src="{{asset('images/instagram.png')}}" width="40" alt="Instagram" style="max-width: 100%; vertical-align: middle">
                           </a>
+                        </td>
+                        <td>
                           <a href="https://www.facebook.com/profile.php?id=61570299440309&utm_medium=email&utm_source=confirmation" class="hover-opacity-80" target="_blank" style="text-decoration: none">
                             <img src="{{asset('images/facebook.png')}}" width="40" alt="Facebook" style="max-width: 100%; vertical-align: middle">
                           </a>

@@ -91,6 +91,8 @@ async function registerUser(userData: object) {
                     });
                     isUserExistsToastVisible.value = true;
                 }
+            } else if (response?._data?.message === "CSRF token mismatch.") {
+                location.reload();
             } else {
                 toast.add({
                     severity: "error",
