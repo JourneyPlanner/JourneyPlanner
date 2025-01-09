@@ -19,7 +19,10 @@ class EmailConfirmation extends Mailable
      */
     public function __construct($url)
     {
-        $this->url = $url;
+        $this->url =
+            config("app.frontend_url") .
+            "/verify-email?" .
+            parse_url($url, PHP_URL_QUERY);
     }
 
     /**
