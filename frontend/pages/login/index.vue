@@ -97,7 +97,17 @@ async function loginUser(userData: User) {
             location.reload();
         } else if (
             (error as Error & { response?: { status?: number } }).response
-                ?.status === 409 &&
+                ?.status === 429
+        ) {
+            toast.add({
+                severity: "warn",
+                summary: t.value("common.too.many.requests.heading"),
+                detail: t.value("common.too.many.requests.detail"),
+                life: 3000,
+            });
+        } else if (
+            (error as Error & { response?: { status?: number } }).response
+                ?.status === 401 &&
             (error as Error & { response?: { _data?: { message?: string } } })
                 .response?._data?.message ===
                 "Your email address is not verified."

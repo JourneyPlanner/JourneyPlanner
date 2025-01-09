@@ -46,6 +46,23 @@
         padding: 24px !important
       }
     }
+    @media (prefers-color-scheme: dark) {
+      .dark-bg-background-dark {
+        background-color: #2c2c2c !important
+      }
+      .dark-bg-pesto-600 {
+        background-color: #7B713F !important
+      }
+      .dark-text-calypso-300 {
+        color: #88C4D8 !important
+      }
+      .dark-text-natural-50 {
+        color: #FCFCFC !important
+      }
+      .dark-text-natural-950 {
+        color: #292929 !important
+      }
+    }
   </style>
 </head>
 <body style="margin: 0; width: 100%; padding: 0; -webkit-font-smoothing: antialiased; word-break: break-word">
@@ -202,14 +219,14 @@
     &#8199;&#65279;&#847;
     &#8199;&#65279;&#847; </div>
   <div role="article" aria-roledescription="email" aria-label lang="en">
-    <div style="background-color: #fcfcfc; font-family: Nunito, sans-serif; color: #292929">
+    <div class="dark-bg-background-dark dark-text-natural-50" style="background-color: #fcfcfc; font-family: Nunito, sans-serif; color: #292929">
       <table align="center" style="margin: 0 auto" cellpadding="0" cellspacing="0" role="none">
         <tr>
           <td style="width: 552px; max-width: 100%">
             <table style="width: 100%" cellpadding="0" cellspacing="0" role="none">
               <tr>
                 <td class="sm-p-6" style="padding: 24px 36px">
-                  <a href="https://journeyplanner.io?utm_medium=email&utm_source=update">
+                  <a href="https://journeyplanner.io?utm_medium=email&utm_source=registration">
                     <img src="{{asset('images/logo.png')}}" width="240" alt="JourneyPlanner" style="max-width: 100%; vertical-align: middle">
                   </a>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
@@ -221,10 +238,10 @@
                     </tr>
                   </table>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
-                  <h1 style="margin: 0 0 24px; font-size: 36px; font-weight: 700; color: #327597">
+                  <h1 class="dark-text-calypso-300" style="margin: 0 0 24px; font-size: 36px; font-weight: 700; color: #327597">
                     Verify your email
                   </h1>
-                  <p style="margin: 0 0 24px; font-size: 16px; line-height: 24px; color: #475569">
+                  <p class="dark-text-natural-50" style="margin: 0 0 24px; font-size: 16px; line-height: 24px; color: #292929">
                     <b>Thank you for signing up for JourneyPlanner!</b><br>
                     Please confirm your email address by clicking the button to continue your journey with JourneyPlanner.
                   </p>
@@ -232,7 +249,7 @@
                     <tr>
                       <td>
                         <div>
-                          <a href="{{$verificationUrl}}" style="display: inline-block; text-decoration: none; padding: 16px 24px; font-size: 16px; line-height: 1; border-radius: 10px; color: #292929; background-color: #FAE58D">
+                          <a href="{{$verificationUrl}}" style="display: inline-block; text-decoration: none; padding: 16px 24px; font-size: 16px; line-height: 1; border-radius: 10px; background-color: #FAE58D; color: #292929" class="dark-bg-pesto-600 dark-text-natural-50">
                             <!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 31px" hidden>&emsp;</i><![endif]-->
                             <span style="mso-text-raise: 16px">Verify email</span>
                             <!--[if mso]><i hidden style="mso-font-width: 150%">&emsp;&#8203;</i><![endif]-->
@@ -242,19 +259,19 @@
                     </tr>
                   </table>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
-                  <p style="margin: 0; font-size: 16px; line-height: 24px; color: #475569">
+                  <p class="dark-text-natural-50" style="margin: 0; font-size: 16px; line-height: 24px; color: #292929">
                     Adventurous wishes,
                     <br>
                     JourneyPlanner
                   </p>
                   <div role="separator" style="height: 1px; line-height: 1px; background-color: #cbd5e1; margin-top: 24px; margin-bottom: 24px">&zwj;</div>
-                  <p class="mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #475569">
+                  <p class="dark-text-natural-950 mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #FCFCFC">
                     If this wasnt you, you can ignore this email.
                   </p>
-                  <p class="mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #475569">
+                  <p class="dark-text-natural-950 mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #FCFCFC">
                     If you're having trouble clicking the "Verify email" button,
                     copy and paste the following URL into your web browser:
-                    <a href="{{$verificationUrl}}" style="color: #1e293b; text-decoration: underline">{{$verificationUrl}}</a>
+                    <a href="{{$verificationUrl}}" class="dark-text-natural-950" style="color: #FCFCFC; text-decoration: underline">{{$verificationUrl}}</a>
                   </p>
                 </td>
               </tr>
@@ -277,7 +294,7 @@
                 The ultimate platform for effortlessly organizing unforgettable
                 adventures! Design your trip, share your plan and go on a
                 journey of discovery together.
-                <a href="https://journeyplanner.io/journey/new?utm_medium=email&utm_source=update" target="_blank" style="color: #FCFCFC; text-decoration: underline">Start your journey now.</a>
+                <a href="https://journeyplanner.io/journey/new?utm_medium=email&utm_source=registration" target="_blank" style="color: #FCFCFC; text-decoration: underline">Start your journey now.</a>
               </p>
             </td>
           </tr>
@@ -300,17 +317,17 @@
                     <table align="center" style="margin-left: auto; margin-right: auto; padding-top: 20px" cellpadding="0" cellspacing="0" role="none">
                       <tr>
                         <td>
-                          <a href="https://journeyplanner.io?utm_medium=email&utm_source=update" target="_blank" class="hover-opacity-80" style="text-decoration: none">
+                          <a href="https://journeyplanner.io?utm_medium=email&utm_source=registration" target="_blank" class="hover-opacity-80" style="text-decoration: none">
                             <img src="{{asset('images/globe.png')}}" width="40" alt="Website" style="max-width: 100%; vertical-align: middle">
                           </a>
                         </td>
                         <td style="padding-left: 32px; padding-right: 32px">
-                          <a href="https://instagram.com/journeyplanner.io?utm_medium=email&utm_source=update" class="hover-opacity-80" target="_blank" style="text-decoration: none">
+                          <a href="https://instagram.com/journeyplanner.io?utm_medium=email&utm_source=registration" class="hover-opacity-80" target="_blank" style="text-decoration: none">
                             <img src="{{asset('images/instagram.png')}}" width="40" alt="Instagram" style="max-width: 100%; vertical-align: middle">
                           </a>
                         </td>
                         <td>
-                          <a href="https://www.facebook.com/profile.php?id=61570299440309&utm_medium=email&utm_source=update" class="hover-opacity-80" target="_blank" style="text-decoration: none">
+                          <a href="https://www.facebook.com/profile.php?id=61570299440309&utm_medium=email&utm_source=registration" class="hover-opacity-80" target="_blank" style="text-decoration: none">
                             <img src="{{asset('images/facebook.png')}}" width="40" alt="Facebook" style="max-width: 100%; vertical-align: middle">
                           </a>
                         </td>
@@ -329,11 +346,11 @@
                     <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
                       <tr>
                         <td style="color: #FCFCFC">
-                          <a href="https://journeyplanner.io/privacy?utm_medium=email&utm_source=update" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Privacy</a>
+                          <a href="https://journeyplanner.io/privacy?utm_medium=email&utm_source=registration" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Privacy</a>
                           |
-                          <a href="https://journeyplanner.io/imprint?utm_medium=email&utm_source=update" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Legal notice</a>
+                          <a href="https://journeyplanner.io/imprint?utm_medium=email&utm_source=registration" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Legal notice</a>
                           |
-                          <a href="mailto:contact@journeyplanner.io?utm_medium=email&utm_source=update" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Contact</a>
+                          <a href="mailto:contact@journeyplanner.io?utm_medium=email&utm_source=registration" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Contact</a>
                         </td>
                       </tr>
                     </table>
