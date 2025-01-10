@@ -13,20 +13,16 @@ class VerifyEmailController extends Controller
     /**
      * Mark the authenticated user's email address as verified.
      */
-    public function __invoke(Request $request): JsonResponse
-    {
-        $validated = $request->validate([
-            "user_id" => "required|uuid",
-            "hash" => "required|string",
-        ]);
-        $user = User::find($validated["user_id"]);
+    public function __invoke(
+        Request $request,
+        string $id,
+        string $hash
+    ): JsonResponse {
+        $user = User::find($id);
 
         if (
             !$user ||
-            !hash_equals(
-                sha1($user->getEmailForVerification()),
-                (string) $validated["hash"]
-            )
+            !hash_equals(sha1($user->getEmailForVerification()), (string) $hash)
         ) {
             return response()->json(
                 [
