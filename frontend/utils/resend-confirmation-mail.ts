@@ -1,5 +1,6 @@
 export default async function resendConfirmationMail(
     email: string,
+    user_id: string,
     t: { value: (key: string) => string },
 ): Promise<void> {
     const toast = useToastService();
@@ -17,6 +18,7 @@ export default async function resendConfirmationMail(
             method: "POST",
             body: {
                 email: email,
+                user_id: user_id,
             },
         });
 

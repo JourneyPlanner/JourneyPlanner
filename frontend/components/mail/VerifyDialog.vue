@@ -5,7 +5,8 @@ import resendConfirmationMail from "~/utils/resend-confirmation-mail";
 const props = defineProps({
     isConfirmEmailDialogVisible: { type: Boolean, required: true },
     doResend: { type: Boolean, required: false, default: false },
-    email: { type: String, required: true },
+    email: { type: String, required: false, default: "" },
+    userId: { type: String, required: false, default: "" },
 });
 
 const emit = defineEmits(["close"]);
@@ -54,7 +55,7 @@ function startResendCountdown() {
 
 function resend() {
     isResendButtonDisabled.value = true;
-    resendConfirmationMail(props.email, t);
+    resendConfirmationMail(props.email, props.userId, t);
     startResendCountdown();
 }
 </script>
