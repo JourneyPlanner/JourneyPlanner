@@ -106,4 +106,22 @@ class Activity extends Model
         "estimated_duration" => "datetime:H:i:s",
         "repeat_end_date" => "datetime",
     ];
+
+    /**
+     * Mutator for setting the repeat_on attribute.
+     */
+    public function setRepeatOnAttribute($value)
+    {
+        $this->attributes["repeat_on"] = is_array($value)
+            ? implode(",", $value)
+            : $value;
+    }
+
+    /**
+     * Accessor for getting the repeat_on attribute as an array.
+     */
+    public function getRepeatOnAttribute($value)
+    {
+        return explode(",", $value);
+    }
 }

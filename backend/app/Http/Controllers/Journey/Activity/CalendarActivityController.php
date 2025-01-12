@@ -26,13 +26,18 @@ class CalendarActivityController extends Controller
         $baseActivity = $activity->getBaseActivity();
         $emptyActivities = [];
 
-        if ($validated["edit_type"] === UpdateActivityRequest::EDIT_TYPE_SINGLE) {
+        if (
+            $validated["edit_type"] === UpdateActivityRequest::EDIT_TYPE_SINGLE
+        ) {
             $calendarActivity->delete();
             $emptyActivities = $this->generalizeActivityIfNeeded(
                 $activity,
                 $emptyActivities
             );
-        } elseif ($validated["edit_type"] === UpdateActivityRequest::EDIT_TYPE_FOLLOWING) {
+        } elseif (
+            $validated["edit_type"] ===
+            UpdateActivityRequest::EDIT_TYPE_FOLLOWING
+        ) {
             $minDate = $calendarActivity->start;
 
             foreach ($baseActivity->children()->get() as $child) {
