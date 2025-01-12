@@ -247,6 +247,7 @@ class JourneyController extends Controller
                     ->activities()
                     ->whereNotNull("repeat_type")
                     ->where("parent_id", null)
+                    ->whereHas("calendarActivities")
                     ->get()
                 as $activity
             ) {
