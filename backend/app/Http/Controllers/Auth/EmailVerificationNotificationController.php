@@ -15,9 +15,12 @@ class EmailVerificationNotificationController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            "email" => "required|email",
+            "email" => "required_without:user_id|nullable|email",
+            "user_id" => "required_without:email|nullable|uuid",
         ]);
-        $user = User::where("email", $validated["email"])->first();
+        $user = $validated["user_id"]
+            ? User::find($validated["user_id"])
+            : User::where("email", $validated["email"])->first();
 
         if ($user && !$user->hasVerifiedEmail()) {
             $user->sendEmailVerificationNotification();
