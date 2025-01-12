@@ -59,9 +59,6 @@
       .dark-text-natural-50 {
         color: #FCFCFC !important
       }
-      .dark-text-natural-950 {
-        color: #292929 !important
-      }
     }
   </style>
 </head>
@@ -265,13 +262,13 @@
                     JourneyPlanner
                   </p>
                   <div role="separator" style="height: 1px; line-height: 1px; background-color: #cbd5e1; margin-top: 24px; margin-bottom: 24px">&zwj;</div>
-                  <p class="dark-text-natural-950 mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #FCFCFC">
+                  <p class="dark-text-natural-50 mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #292929">
                     If you didn’t request this email address change, please contact our support team or ignore this email.
                   </p>
-                  <p class="dark-text-natural-950 mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #FCFCFC">
+                  <p class="dark-text-natural-50 mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #292929">
                     If you're having trouble clicking the "Verify email" button,
                     copy and paste the following URL into your web browser:
-                    <a href="{{$verificationUrl}}" class="dark-text-natural-950" style="color: #FCFCFC; text-decoration: underline">{{$verificationUrl}}</a>
+                    <a href="{{$verificationUrl}}" class="dark-text-natural-50" style="color: #292929; text-decoration: underline">{{$verificationUrl}}</a>
                   </p>
                 </td>
               </tr>

@@ -72,6 +72,11 @@ function resend() {
 
 <template>
     <div class="mt-32 flex flex-col items-center justify-center">
+        <div class="absolute left-4 top-4 z-50">
+            <NuxtLink to="/" class="z-50">
+                <SvgLogoHorizontalBlue class="w-44 lg:w-52" />
+            </NuxtLink>
+        </div>
         <SvgLogin class="w-72" />
         <ProgressSpinner v-if="loading" class="mt-2" />
         <div
