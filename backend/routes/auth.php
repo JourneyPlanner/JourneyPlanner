@@ -33,7 +33,7 @@ Route::post("/email/verify/{id}/{hash}", [
 
 Route::post("/email/resend", [
     EmailVerificationNotificationController::class,
-    "store",
+    "resend",
 ])
     ->middleware("throttle:6,1")
     ->name("verification.send");
@@ -47,7 +47,7 @@ Route::post("/email/update/verify/{token}", [
 
 Route::post("/email/update/resend", [
     EmailVerificationNotificationController::class,
-    "storePending",
+    "resendPending",
 ])
     ->middleware(["web", "throttle:6,1"])
     ->name("verification.update.send");
