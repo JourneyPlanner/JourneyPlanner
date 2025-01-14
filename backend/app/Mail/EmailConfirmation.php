@@ -23,9 +23,9 @@ class EmailConfirmation extends Mailable
         $this->url =
             config("app.frontend_url") .
             "/verify-email?user_id=" .
-            $path[1] .
-            "&hash=" .
             $path[2] .
+            "&hash=" .
+            $path[3] .
             "&" .
             parse_url($url, PHP_URL_QUERY);
     }
