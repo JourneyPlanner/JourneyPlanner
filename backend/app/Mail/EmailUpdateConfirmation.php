@@ -27,7 +27,7 @@ class EmailUpdateConfirmation extends Mailable
         $this->url =
             config("app.frontend_url") .
             "/verify-email?token=" .
-            $path[1] .
+            $path[3] .
             "&" .
             parse_url($backendUrl, PHP_URL_QUERY);
     }
