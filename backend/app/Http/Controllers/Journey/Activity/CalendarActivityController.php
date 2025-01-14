@@ -84,11 +84,10 @@ class CalendarActivityController extends Controller
         DateTime $minDate,
         $emptyActivities
     ) {
-        foreach ($activity->calendarActivities()->get() as $calendarActivity) {
-            if ($calendarActivity->start >= $minDate) {
-                $calendarActivity->delete();
-            }
-        }
+        $activity
+            ->calendarActivities()
+            ->where("start", ">", $minDate)
+            ->delete();
 
         return $this->generalizeActivityIfNeeded($activity, $emptyActivities);
     }
