@@ -3,12 +3,13 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class EmailConfirmation extends Mailable
+class EmailUpdateConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -16,18 +17,19 @@ class EmailConfirmation extends Mailable
 
     /**
      * Create a new message instance.
+     *
+     * @return void
      */
-    public function __construct($url)
+    public function __construct(Model $pendingUserEmail)
     {
-        $path = explode("/", trim(parse_url($url, PHP_URL_PATH), "/"));
+        $backendUrl = $pendingUserEmail->verificationUrl();
+        $path = explode("/", trim(parse_url($backendUrl, PHP_URL_PATH), "/"));
         $this->url =
             config("app.frontend_url") .
-            "/verify-email?user_id=" .
+            "/verify-email?token=" .
             $path[1] .
-            "&hash=" .
-            $path[2] .
             "&" .
-            parse_url($url, PHP_URL_QUERY);
+            parse_url($backendUrl, PHP_URL_QUERY);
     }
 
     /**
@@ -44,7 +46,7 @@ class EmailConfirmation extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: "maizzle.emails.mail-address-registration",
+            view: "maizzle.emails.mail-address-update",
             with: [
                 "verificationUrl" => $this->url,
             ]

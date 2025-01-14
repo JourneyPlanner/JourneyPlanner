@@ -15,6 +15,7 @@
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.10",
         "pbmedia/laravel-ffmpeg": "^8.6",
+        "protonemedia/laravel-verify-new-email": "^1.11",
         "serdud/socialite-google-one-tap": "^2.1",
         "socialiteproviders/microsoft": "^4.5"
     },
