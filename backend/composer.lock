@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35c7ebf8948ada4c48e51dfbfa3aac13",
+    "content-hash": "aff0fe5209f1b38d2936a8fe77edfd00",
     "packages": [
         {
             "name": "brick/math",
@@ -3470,6 +3470,70 @@
                 }
             ],
             "time": "2024-12-14T21:12:59+00:00"
+        },
+        {
+            "name": "protonemedia/laravel-verify-new-email",
+            "version": "v1.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/protonemedia/laravel-verify-new-email.git",
+                "reference": "26654e976be435975cb4da6604fa42cca999f229"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/protonemedia/laravel-verify-new-email/zipball/26654e976be435975cb4da6604fa42cca999f229",
+                "reference": "26654e976be435975cb4da6604fa42cca999f229",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^10.0|^11.0",
+                "php": "^8.2|^8.3|^8.4"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0|^9.0",
+                "phpunit/phpunit": "^10.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ProtoneMedia\\LaravelVerifyNewEmail\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ProtoneMedia\\LaravelVerifyNewEmail\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pascal Baljet",
+                    "email": "pascal@protone.media",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Package to handle email address updates and verification",
+            "homepage": "https://github.com/protonemedia/laravel-verify-new-email",
+            "keywords": [
+                "laravel-verify-new-email",
+                "protonemedia"
+            ],
+            "support": {
+                "issues": "https://github.com/protonemedia/laravel-verify-new-email/issues",
+                "source": "https://github.com/protonemedia/laravel-verify-new-email/tree/v1.11.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/pascalbaljet",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-11-20T10:49:06+00:00"
         },
         {
             "name": "psr/cache",
@@ -9866,12 +9930,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

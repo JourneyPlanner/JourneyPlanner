@@ -24,16 +24,33 @@ Route::post("/reset-password", [NewPasswordController::class, "store"])
     ->middleware("guest")
     ->name("password.store");
 
-Route::post("/verify-email/{id}/{hash}", VerifyEmailController::class)
+Route::post("/email/verify/{id}/{hash}", [
+    VerifyEmailController::class,
+    "verify",
+])
     ->middleware(["signed", "throttle:6,1"])
     ->name("verification.verify");
 
-Route::post("/email/verification-notification", [
+Route::post("/email/resend", [
     EmailVerificationNotificationController::class,
     "store",
 ])
     ->middleware("throttle:6,1")
     ->name("verification.send");
+
+Route::post("/email/update/verify/{token}", [
+    VerifyEmailController::class,
+    "verifyPending",
+])
+    ->middleware(["web", "signed"])
+    ->name("verification.update.verify");
+
+Route::post("/email/update/resend", [
+    EmailVerificationNotificationController::class,
+    "storePending",
+])
+    ->middleware(["web", "throttle:6,1"])
+    ->name("verification.update.send");
 
 Route::post("/logout", [AuthenticatedSessionController::class, "destroy"])
     ->middleware("auth")
