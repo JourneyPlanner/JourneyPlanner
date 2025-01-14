@@ -416,7 +416,7 @@ function blur(e: Event) {
                                 @click="
                                     emailNeedsVerification
                                         ? (isEmailUpdateInfoDialogVisible = true)
-                                        : console.log('test')
+                                        : null
                                 "
                             >
                                 {{ currEmail }}
@@ -800,16 +800,30 @@ function blur(e: Event) {
                             <T key-name="dashboard.user.settings.user.email" />
                         </div>
                         <div
-                            class="w-full overflow-hidden overflow-ellipsis text-sm text-text dark:text-natural-300"
+                            class="w-full overflow-hidden overflow-ellipsis text-sm"
                         >
                             <T
                                 key-name="dashboard.user.settings.user.email.description"
                             />
-                            <b
-                                class="overflow-hidden overflow-ellipsis text-text dark:text-natural-50"
+                            <span
+                                class="flex flex-row items-center gap-x-0.5 overflow-hidden overflow-ellipsis whitespace-nowrap font-bold"
+                                :class="
+                                    emailNeedsVerification === true
+                                        ? 'cursor-pointer text-mahagony-600 dark:text-mahagony-300'
+                                        : 'text-text dark:text-natural-300'
+                                "
+                                @click="
+                                    emailNeedsVerification
+                                        ? (isEmailUpdateInfoDialogVisible = true)
+                                        : null
+                                "
                             >
+                                <i
+                                    v-if="emailNeedsVerification"
+                                    class="pi pi-info-circle"
+                                />
                                 {{ currEmail }}
-                            </b>
+                            </span>
                         </div>
                     </div>
                     <div class="flex w-[45%] items-center justify-end">

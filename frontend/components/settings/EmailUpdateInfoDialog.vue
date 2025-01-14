@@ -124,7 +124,7 @@ const close = () => {
                     <span class="pi pi-angle-down text-2xl" />
                 </button>
                 <div class="font-nunito text-3xl font-semibold">
-                    <T key-name="dashboard.user.settings.email.info.heading" />
+                    <T key-name="form.register.verify.email.header.short" />
                 </div>
             </template>
             <div class="flex items-center justify-center">
