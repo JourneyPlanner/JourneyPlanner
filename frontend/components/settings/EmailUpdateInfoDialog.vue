@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { useTranslate } from "@tolgee/vue";
-import resendConfirmationMail from "~/utils/resend-confirmation-mail";
-
 const props = defineProps({
-    isConfirmEmailDialogVisible: { type: Boolean, required: true },
+    isEmailUpdateInfoDialogVisible: { type: Boolean, required: true },
     doResend: { type: Boolean, required: false, default: false },
     email: { type: String, required: false, default: "" },
     userId: { type: String, required: false, default: "" },
@@ -12,70 +9,20 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 
+const isVisible = ref<boolean>(props.isEmailUpdateInfoDialogVisible);
+const isVerifyEmailDialogVisible = ref<boolean>(false);
+
 watch(
-    () => props.isConfirmEmailDialogVisible,
+    () => props.isEmailUpdateInfoDialogVisible,
     (value) => {
         isVisible.value = value;
-        if (value === true) {
-            if (props.doResend) {
-                resend();
-            } else {
-                startResendCountdown();
-            }
-        }
     },
 );
-
-const { t } = useTranslate();
-const isVisible = ref(props.isConfirmEmailDialogVisible);
-const resendEmailTime = ref<number>(60);
-const countdown = ref();
-const isResendButtonDisabled = ref<boolean>(true);
 
 const close = () => {
     isVisible.value = false;
     emit("close");
 };
-
-watch(
-    () => props.isConfirmEmailDialogVisible,
-    (newVal) => {
-        if (newVal) {
-            startResendCountdown();
-        } else if (countdown.value) {
-            clearTimeout(countdown.value);
-            countdown.value = null;
-        }
-    },
-);
-
-/**
- * start the countdown for the resend email button
- */
-function startResendCountdown() {
-    resendEmailTime.value = 60;
-    clearInterval(countdown.value);
-    countdown.value = setInterval(() => {
-        if (resendEmailTime.value > 0) {
-            resendEmailTime.value -= 1;
-        } else {
-            resendEmailTime.value = 60;
-            isResendButtonDisabled.value = false;
-            clearInterval(countdown.value);
-        }
-    }, 1000);
-}
-
-function resend() {
-    isResendButtonDisabled.value = true;
-    resendConfirmationMail(
-        props.email,
-        props.userId,
-        t,
-        props.isUpdating ? "/email/update/resend" : "/email/resend",
-    );
-    startResendCountdown();
-}
 </script>
 
 <template>
@@ -128,21 +75,17 @@ function resend() {
             <div
                 class="flex flex-col gap-y-4 font-normal text-natural-950 dark:text-natural-50"
             >
-                <slot>
-                    <T key-name="form.register.verify.email.text" />
-                </slot>
+                <T key-name="dashboard.user.settings.email.info.text" />
                 <div class="flex justify-center">
                     <button
                         type="button"
-                        :disabled="isResendButtonDisabled"
                         class="mb-2 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-5 py-1 font-nunito text-lg hover:bg-dandelion-200 disabled:cursor-not-allowed disabled:border-dandelion-200 disabled:text-natural-500 disabled:hover:bg-natural-50 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 disabled:dark:hover:bg-natural-800"
-                        @click="resend()"
+                        @click="
+                            isVerifyEmailDialogVisible = true;
+                            close();
+                        "
                     >
                         <T key-name="form.register.button.email.resend" />
-                        <span v-if="isResendButtonDisabled">
-                            <T key-name="common.in" />
-                            {{ resendEmailTime }}
-                        </span>
                     </button>
                 </div>
             </div>
@@ -181,7 +124,7 @@ function resend() {
                     <span class="pi pi-angle-down text-2xl" />
                 </button>
                 <div class="font-nunito text-3xl font-semibold">
-                    <T key-name="form.register.verify.email.header.short" />
+                    <T key-name="dashboard.user.settings.email.info.heading" />
                 </div>
             </template>
             <div class="flex items-center justify-center">
@@ -190,7 +133,9 @@ function resend() {
                 >
                     <p>
                         <slot>
-                            <T key-name="form.register.verify.email.text" />
+                            <T
+                                key-name="dashboard.user.settings.email.info.text"
+                            />
                         </slot>
                     </p>
                 </div>
@@ -198,17 +143,24 @@ function resend() {
             <div class="flex justify-center">
                 <button
                     type="button"
-                    :disabled="isResendButtonDisabled"
                     class="mb-2 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-5 py-1 font-nunito text-lg hover:bg-dandelion-200 disabled:cursor-not-allowed disabled:border-dandelion-200 disabled:text-natural-500 disabled:hover:bg-natural-50 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600 disabled:dark:hover:bg-natural-800"
-                    @click="resend()"
+                    @click="
+                        isVerifyEmailDialogVisible = true;
+                        close();
+                    "
                 >
                     <T key-name="form.register.button.email.resend" />
-                    <span v-if="isResendButtonDisabled">
-                        <T key-name="common.in" />
-                        {{ resendEmailTime }}
-                    </span>
                 </button>
             </div>
         </Sidebar>
+        <MailVerifyDialog
+            :is-confirm-email-dialog-visible="isVerifyEmailDialogVisible"
+            :email="email"
+            :is-updating="true"
+            :do-resend="true"
+            @close="isVerifyEmailDialogVisible = false"
+        >
+            <T key-name="dashboard.user.settings.email.change.verify.text" />
+        </MailVerifyDialog>
     </div>
 </template>

@@ -2,6 +2,7 @@ export default async function resendConfirmationMail(
     email: string,
     user_id: string,
     t: { value: (key: string) => string },
+    route: string = "/email/resend",
 ): Promise<void> {
     const toast = useToastService();
     const client = useSanctumClient();
@@ -14,7 +15,7 @@ export default async function resendConfirmationMail(
             life: 3000,
         });
 
-        const response = await client("/email/verification-notification", {
+        const response = await client(route, {
             method: "POST",
             body: {
                 email: email,

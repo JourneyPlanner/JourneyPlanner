@@ -9,12 +9,14 @@ const props = defineProps({
     requiresPassword: { type: Boolean, required: true },
 });
 
-const isVisible = ref(props.visible);
-const isVerifyEmailDialogVisible = ref(false);
 const emit = defineEmits(["close", "changeEmail"]);
 const { t } = useTranslate();
 const toast = useToast();
 const client = useSanctumClient();
+
+const isVisible = ref(props.visible);
+const isVerifyEmailDialogVisible = ref(false);
+const isChangeEmailButtonDisabled = ref(false);
 
 const validationSchema = props.requiresPassword
     ? yup.object({
@@ -68,6 +70,7 @@ async function changeEmail() {
             life: 6000,
         });
     } else {
+        isChangeEmailButtonDisabled.value = true;
         await client(`/api/user/change-email`, {
             method: "PUT",
             body: {
@@ -119,6 +122,7 @@ async function changeEmail() {
                 }
             },
         });
+        isChangeEmailButtonDisabled.value = false;
     }
 }
 </script>
@@ -227,7 +231,8 @@ async function changeEmail() {
                 </div>
                 <div class="flex w-full justify-center pb-4 pt-6">
                     <button
-                        class="w-44 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-base font-medium hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                        :disabled="isChangeEmailButtonDisabled"
+                        class="w-44 rounded-md border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-base font-medium hover:bg-dandelion-200 disabled:cursor-not-allowed disabled:border-dandelion-200 disabled:text-natural-500 disabled:hover:bg-natural-50 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 disabled:dark:hover:bg-natural-800"
                         @click="onSubmit"
                     >
                         <T key-name="dashboard.user.settings.change.email" />
@@ -346,6 +351,7 @@ async function changeEmail() {
         <MailVerifyDialog
             :is-confirm-email-dialog-visible="isVerifyEmailDialogVisible"
             :email="newEmail"
+            :is-updating="true"
             @close="isVerifyEmailDialogVisible = false"
         >
             <T key-name="dashboard.user.settings.email.change.verify.text" />

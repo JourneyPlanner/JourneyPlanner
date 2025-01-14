@@ -15,6 +15,7 @@ const route = useRoute();
 const loading = ref(true);
 const isConfirmEmailDialogVisible = ref<boolean>(false);
 const user_id = ref<string>(route.query.user_id as string);
+const isUpdating = ref<boolean>(false);
 
 /*
  * Verify email address by calling the API
@@ -23,7 +24,30 @@ async function verifyEmail() {
     const query = route.query;
     try {
         if (query.expires && query.hash && query.signature && query.user_id) {
-            await client(`/verify-email/${query.user_id}/${query.hash}`, {
+            isUpdating.value = false;
+            await client(`/email/verify/${query.user_id}/${query.hash}`, {
+                method: "POST",
+                params: {
+                    expires: query.expires,
+                    signature: query.signature,
+                },
+                async onResponse({ response }) {
+                    if (response.ok) {
+                        toast.add({
+                            severity: "success",
+                            summary: t.value("email.verify.success.heading"),
+                            detail: t.value("email.verify.success.detail"),
+                            life: 6000,
+                        });
+                        navigateTo("/dashboard");
+                    } else {
+                        throw new Error();
+                    }
+                },
+            });
+        } else if (query.token && query.expires && query.signature) {
+            isUpdating.value = true;
+            await client(`/email/update/verify/${query.token}`, {
                 method: "POST",
                 params: {
                     expires: query.expires,
@@ -102,6 +126,7 @@ function resend() {
             <MailVerifyDialog
                 :is-confirm-email-dialog-visible="isConfirmEmailDialogVisible"
                 :do-resend="true"
+                :is-updating="isUpdating"
                 :user-id="user_id"
                 @close="isConfirmEmailDialogVisible = false"
             />

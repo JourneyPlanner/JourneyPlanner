@@ -8,6 +8,11 @@ const props = defineProps({
     propUsername: { type: String, required: true },
     propDisplayname: { type: String, required: true },
     propEmail: { type: String, required: true },
+    propEmailNeedsVerification: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
 });
 const emit = defineEmits(["close"]);
 
@@ -19,6 +24,7 @@ const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 const tolgee = useTolgee(["language"]);
 const { logout } = useSanctumAuth();
 const isEmailChangeDialogVisible = ref(false);
+const isEmailUpdateInfoDialogVisible = ref(false);
 const isPasswordChangeDialogVisible = ref(false);
 const isDeleteAccountDialogVisible = ref(false);
 const isUsernameChangeDialogVisible = ref(false);
@@ -34,6 +40,8 @@ const colorMode = useColorMode();
 const currUsername = ref(props.propUsername);
 const currDisplayname = ref(props.propDisplayname);
 const currEmail = ref(props.propEmail);
+const updatedEmail = ref("");
+const emailNeedsVerification = ref(props.propEmailNeedsVerification);
 
 const { errors, handleSubmit, defineField } = useForm({
     validationSchema: yup.object({
@@ -243,12 +251,13 @@ const languages = ref([
  * @param newEmail the new email
  */
 async function changeEmail(newEmail: Ref) {
-    currEmail.value = newEmail.value;
+    updatedEmail.value = newEmail.value;
+    emailNeedsVerification.value = true;
     isEmailChangeDialogVisible.value = false;
     toast.add({
         severity: "success",
-        summary: t.value("change.email.toast.success.heading"),
-        detail: t.value("change.email.toast.success.detail"),
+        summary: t.value("email.resending.success.toast.summary"),
+        detail: t.value("email.resending.success.toast.detail"),
         life: 3000,
     });
 }
@@ -398,8 +407,23 @@ function blur(e: Event) {
                             <T
                                 key-name="dashboard.user.settings.user.email.description"
                             />
-                            <span class="font-semibold">
+                            <span
+                                class="flex flex-row items-center gap-x-1 font-semibold"
+                                :class="{
+                                    'cursor-pointer text-mahagony-600 dark:text-mahagony-300':
+                                        emailNeedsVerification,
+                                }"
+                                @click="
+                                    emailNeedsVerification
+                                        ? (isEmailUpdateInfoDialogVisible = true)
+                                        : console.log('test')
+                                "
+                            >
                                 {{ currEmail }}
+                                <i
+                                    v-if="emailNeedsVerification"
+                                    class="pi pi-info-circle"
+                                />
                             </span>
                         </div>
                     </div>
@@ -1035,5 +1059,13 @@ function blur(e: Event) {
                 </div>
             </div>
         </Sidebar>
+        <SettingsEmailUpdateInfoDialog
+            :is-email-update-info-dialog-visible="
+                isEmailUpdateInfoDialogVisible
+            "
+            :email="updatedEmail"
+            :is-updating="true"
+            @close="isEmailUpdateInfoDialogVisible = false"
+        />
     </div>
 </template>
