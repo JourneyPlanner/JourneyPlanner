@@ -562,8 +562,6 @@ const { data: currUser } = await useAsyncData(
 );
 
 user.value = currUser.value;
-//TODO need backend api response to have this data
-user.value.email_needs_verification = false;
 
 /**
  * Searches for journeys based on the searchValue

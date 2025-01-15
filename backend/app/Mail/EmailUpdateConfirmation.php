@@ -29,7 +29,9 @@ class EmailUpdateConfirmation extends Mailable
             "/verify-email?token=" .
             $path[3] .
             "&" .
-            parse_url($backendUrl, PHP_URL_QUERY);
+            parse_url($backendUrl, PHP_URL_QUERY) .
+            "&user_id=" .
+            $pendingUserEmail->user_id;
     }
 
     /**
