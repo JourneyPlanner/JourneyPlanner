@@ -12,20 +12,6 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 
-watch(
-    () => props.isConfirmEmailDialogVisible,
-    (value) => {
-        isVisible.value = value;
-        if (value === true) {
-            if (props.doResend) {
-                resend();
-            } else {
-                startResendCountdown();
-            }
-        }
-    },
-);
-
 const { t } = useTranslate();
 const isVisible = ref(props.isConfirmEmailDialogVisible);
 const resendEmailTime = ref<number>(60);
@@ -40,8 +26,12 @@ const close = () => {
 watch(
     () => props.isConfirmEmailDialogVisible,
     (newVal) => {
-        if (newVal) {
-            startResendCountdown();
+        if (newVal === true) {
+            if (props.doResend) {
+                resend();
+            } else {
+                startResendCountdown();
+            }
         } else if (countdown.value) {
             clearTimeout(countdown.value);
             countdown.value = null;
