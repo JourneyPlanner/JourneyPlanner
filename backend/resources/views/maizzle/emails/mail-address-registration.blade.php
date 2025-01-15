@@ -279,19 +279,19 @@
     </div>
   </div>
 </body>
-<footer style="background-color: #2B5973; font-family: Nunito, sans-serif; color: #FCFCFC">
-  <table align="center" style="margin: 0 auto; background-color: #2B5973; padding-top: 24px; padding-bottom: 24px; font-family: Nunito, sans-serif; color: #FCFCFC" cellpadding="0" cellspacing="0" role="none">
+<footer class="dark-bg-calypso-300" style="background-color: #2B5973; font-family: Nunito, sans-serif; color: #FCFCFC">
+  <table align="center" class="dark-bg-calypso-300 dark-text-natural-950" style="margin: 0 auto; background-color: #2B5973; padding-top: 24px; padding-bottom: 24px; font-family: Nunito, sans-serif; color: #FCFCFC" cellpadding="0" cellspacing="0" role="none">
     <tr>
       <td style="width: 552px; max-width: 100%">
         <table style="width: 100%; padding-left: 36px; padding-right: 36px" cellpadding="0" cellspacing="0" role="none">
           <tr>
             <td>
-              <span style="font-weight: 600; color: #FCFCFC">JourneyPlanner - Travel planning made easy</span>
-              <p style="margin-top: 6px; margin-bottom: 6px; font-size: 14px; color: #FCFCFC">
+              <span class="dark-text-natural-950" style="font-size: 14px; font-weight: 600; color: #FCFCFC">JourneyPlanner - Travel planning made easy</span>
+              <p class="dark-text-natural-950" style="margin-top: 6px; margin-bottom: 6px; font-size: 14px; color: #FCFCFC">
                 The ultimate platform for effortlessly organizing unforgettable
                 adventures! Design your trip, share your plan and go on a
                 journey of discovery together.
-                <a href="https://journeyplanner.io/journey/new?utm_medium=email&utm_source=registration" target="_blank" style="color: #FCFCFC; text-decoration: underline">Start your journey now.</a>
+                <a href="https://journeyplanner.io/journey/new?utm_medium=email&utm_source=registration" target="_blank" class="dark-text-natural-950" style="color: #FCFCFC; text-decoration: underline">Start your journey now.</a>
               </p>
             </td>
           </tr>
@@ -314,18 +314,21 @@
                     <table align="center" style="margin-left: auto; margin-right: auto; padding-top: 20px" cellpadding="0" cellspacing="0" role="none">
                       <tr>
                         <td>
-                          <a href="https://journeyplanner.io?utm_medium=email&utm_source=registration" target="_blank" class="hover-opacity-80 dark-text-natural-950" style="color: #FCFCFC; text-decoration: none">
-                            <img src="{{asset('images/globe.png')}}" width="40" alt="Website" style="max-width: 100%; vertical-align: middle">
+                          <a href="https://journeyplanner.io?utm_medium=email&utm_source=registration" target="_blank" rel="noopener noreferrer" class="hover-opacity-80 dark-text-natural-950" style="color: #FCFCFC; text-decoration: none">
+                            <img src="{{asset('images/globe.png')}}" width="40" alt="Website" data-theme="light" class="dark-hidden" style="max-width: 100%; vertical-align: middle">
+                            <img src="{{asset('images/globe-dark.png')}}" width="40" alt="Website" data-theme="dark" class="dark-block" style="max-width: 100%; vertical-align: middle; display: none">
                           </a>
                         </td>
                         <td style="padding-left: 32px; padding-right: 32px">
-                          <a href="https://instagram.com/journeyplanner.io?utm_medium=email&utm_source=registration" class="hover-opacity-80 dark-text-natural-950" target="_blank" style="color: #FCFCFC; text-decoration: none">
-                            <img src="{{asset('images/instagram.png')}}" width="40" alt="Instagram" style="max-width: 100%; vertical-align: middle">
+                          <a href="https://instagram.com/journeyplanner.io?utm_medium=email&utm_source=registration" class="hover-opacity-80 dark-text-natural-950" target="_blank" rel="noopener noreferrer" style="color: #FCFCFC; text-decoration: none">
+                            <img src="{{asset('images/instagram.png')}}" width="40" alt="Instagram" data-theme="light" class="dark-hidden" style="max-width: 100%; vertical-align: middle">
+                            <img src="{{asset('images/instagram-dark.png')}}" width="40" alt="Instagram" data-theme="dark" class="dark-block" style="max-width: 100%; vertical-align: middle; display: none">
                           </a>
                         </td>
                         <td>
-                          <a href="https://www.facebook.com/profile.php?id=61570299440309&utm_medium=email&utm_source=registration" class="hover-opacity-80 dark-text-natural-950" target="_blank" style="color: #FCFCFC; text-decoration: none">
-                            <img src="{{asset('images/facebook.png')}}" width="40" alt="Facebook" style="max-width: 100%; vertical-align: middle">
+                          <a href="https://www.facebook.com/profile.php?id=61570299440309&utm_medium=email&utm_source=registration" class="hover-opacity-80 dark-text-natural-950" target="_blank" rel="noopener noreferrer" style="color: #FCFCFC; text-decoration: none">
+                            <img src="{{asset('images/facebook.png')}}" width="40" alt="Facebook" data-theme="light" class="dark-hidden" style="max-width: 100%; vertical-align: middle">
+                            <img src="{{asset('images/facebook-dark.png')}}" width="40" alt="Facebook" data-theme="dark" class="dark-block" style="max-width: 100%; vertical-align: middle; display: none">
                           </a>
                         </td>
                       </tr>
@@ -343,11 +346,11 @@
                     <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
                       <tr>
                         <td class="dark-text-natural-950" style="color: #FCFCFC">
-                          <a href="https://journeyplanner.io/privacy?utm_medium=email&utm_source=registration" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Privacy</a>
+                          <a href="https://journeyplanner.io/privacy?utm_medium=email&utm_source=registration" class="dark-text-natural-950 hover-opacity-80" target="_blank" rel="noopener noreferrer" style="color: #FCFCFC; text-decoration: none">Privacy</a>
                           |
-                          <a href="https://journeyplanner.io/imprint?utm_medium=email&utm_source=registration" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Legal notice</a>
+                          <a href="https://journeyplanner.io/imprint?utm_medium=email&utm_source=registration" class="dark-text-natural-950 hover-opacity-80" target="_blank" rel="noopener noreferrer" style="color: #FCFCFC; text-decoration: none">Legal notice</a>
                           |
-                          <a href="mailto:contact@journeyplanner.io?utm_medium=email&utm_source=registration" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Contact</a>
+                          <a href="mailto:contact@journeyplanner.io?utm_medium=email&utm_source=registration" class="dark-text-natural-950 hover-opacity-80" target="_blank" rel="noopener noreferrer" style="color: #FCFCFC; text-decoration: none">Contact</a>
                         </td>
                       </tr>
                     </table>

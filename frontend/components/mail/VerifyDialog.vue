@@ -26,6 +26,7 @@ const close = () => {
 watch(
     () => props.isConfirmEmailDialogVisible,
     (newVal) => {
+        isVisible.value = newVal;
         if (newVal === true) {
             if (props.doResend) {
                 resend();
@@ -38,6 +39,13 @@ watch(
         }
     },
 );
+
+onUnmounted(() => {
+    if (countdown.value) {
+        clearTimeout(countdown.value);
+        countdown.value = null;
+    }
+});
 
 /**
  * start the countdown for the resend email button
