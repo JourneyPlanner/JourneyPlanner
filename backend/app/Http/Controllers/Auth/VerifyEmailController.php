@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use ProtoneMedia\LaravelVerifyNewEmail\Http\InvalidVerificationLinkException;
 
 class VerifyEmailController extends Controller
 {
@@ -52,11 +53,8 @@ class VerifyEmailController extends Controller
         $user = app(config("verify-new-email.model"))
             ->whereToken($token)
             ->firstOr(["*"], function () {
-                return response()->json(
-                    [
-                        "message" => "Invalid verification URL.",
-                    ],
-                    400
+                throw new InvalidVerificationLinkException(
+                    __("The verification link is not valid anymore.")
                 );
             })
             ->tap(function ($pendingUserEmail) {
