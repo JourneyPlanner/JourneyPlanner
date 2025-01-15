@@ -33,12 +33,14 @@ watch(
 const close = () => {
     emit("close");
     editOption.value = "single";
+    singleVisible.value = false;
 };
 
 const post = () => {
     emit("close");
     emit("post", editOption.value);
     editOption.value = "single";
+    singleVisible.value = false;
 };
 </script>
 <template>
@@ -79,7 +81,7 @@ const post = () => {
             <div class="flex w-[90%] items-center">
                 <div class="h-0.5 w-5 bg-calypso-400" />
                 <div
-                    class="flex-grow-5 mx-3 text-3xl text-text dark:text-natural-50"
+                    class="flex-grow-5 mx-3 text-2xl text-text dark:text-natural-50"
                 >
                     <T key-name="activity.repeat.edit" />
                 </div>
@@ -158,7 +160,7 @@ const post = () => {
             <div class="mt-auto flex w-full justify-center">
                 <div class="ml-auto flex justify-center">
                     <button
-                        class="flex w-20 items-center justify-center rounded-md bg-natural-50 px-2 text-base font-semibold text-text hover:underline dark:bg-background-dark dark:text-natural-50"
+                        class="flex w-20 items-center justify-center rounded-md bg-natural-50 px-2 pr-16 text-base font-semibold text-text hover:underline dark:bg-background-dark dark:text-natural-50"
                         @click="close"
                     >
                         <T key-name="common.button.cancel" />

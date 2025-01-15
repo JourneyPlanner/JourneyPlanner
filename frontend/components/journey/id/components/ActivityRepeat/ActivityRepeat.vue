@@ -11,6 +11,11 @@ const props = defineProps({
     journeyStart: { type: Date, required: true },
     journeyEnd: { type: Date, required: true },
     repeatType: { type: String, required: true },
+    repeatIntervalPrefill: { type: Number, default: 1 },
+    repeatOnPrefill: { type: Array, default: () => [] },
+    repeatEndOccurencesPrefill: { type: Number, default: 1 },
+    repeatIntervalUnitPrefill: { type: String, default: "" },
+    repeatEndDatePrefill: { type: String, default: "" },
 });
 
 const emit = defineEmits(["input", "customInput"]);
@@ -180,6 +185,11 @@ const getItemClass = (option: RepeatType) => {
             :start-date="props.journeyStart"
             :end-date="props.journeyEnd"
             :days-in-journey="daysInJourney"
+            :repeat-end-date="props.repeatEndDatePrefill"
+            :repeat-end-occurences="props.repeatEndOccurencesPrefill"
+            :repeat-interval="props.repeatIntervalPrefill"
+            :repeat-interval-unit="props.repeatIntervalUnitPrefill"
+            :repeat-on="props.repeatOnPrefill"
             @close="showCustomizeRepeat = false"
             @cancel="
                 showCustomizeRepeat = false;

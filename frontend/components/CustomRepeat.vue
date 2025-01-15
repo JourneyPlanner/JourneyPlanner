@@ -1,35 +1,139 @@
 <script setup lang="ts">
 import { T, useTranslate } from "@tolgee/vue";
-import { format } from "date-fns";
+import { add, format } from "date-fns";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     daysInJourney: { type: Number, required: true },
+    repeatInterval: { type: Number, default: 1 },
+    repeatOn: { type: Array, default: () => [] },
+    repeatEndOccurences: { type: Number, default: 1 },
+    repeatIntervalUnit: { type: String, default: "" },
+    repeatEndDate: { type: String, default: "" },
 });
 
 const toast = useToast();
 const isVisible = ref(props.visible);
 const emit = defineEmits(["close", "cancel", "createCustomRepeat"]);
 const { t } = useTranslate();
-const repeatNumber = ref(1);
-const timeModeselected = ref({
-    name: t.value("activity.repeat.days"),
-    value: 1,
-});
+const repeatNumber = ref(props.repeatInterval);
+const timeModeselected = ref();
+const days = ref([
+    {
+        label: t.value("activity.repeat.monday.short"),
+        active: false,
+        day: "Mon",
+    },
+    {
+        label: t.value("activity.repeat.tuesday.short"),
+        active: false,
+        day: "Tue",
+    },
+    {
+        label: t.value("activity.repeat.wednesday.short"),
+        active: false,
+        day: "Wed",
+    },
+    {
+        label: t.value("activity.repeat.thursday.short"),
+        active: false,
+        day: "Thu",
+    },
+    {
+        label: t.value("activity.repeat.friday.short"),
+        active: false,
+        day: "Fri",
+    },
+    {
+        label: t.value("activity.repeat.saturday.short"),
+        active: false,
+        day: "Sat",
+    },
+    {
+        label: t.value("activity.repeat.sunday.short"),
+        active: false,
+        day: "Sun",
+    },
+]);
+if (props.repeatIntervalUnit == "weeks") {
+    timeModeselected.value = {
+        name: t.value("activity.repeat.week"),
+        value: 7,
+    };
+    days.value.forEach((element) => {
+        if (props.repeatOn.includes(element.day)) {
+            element.active = true;
+        }
+    });
+} else {
+    timeModeselected.value = {
+        name: t.value("activity.repeat.day"),
+        value: 1,
+    };
+}
+
 const selectedTimeUnit = ref("days");
 const endingDate = ref();
+if (props.repeatEndDate != "") {
+    endingDate.value = new Date(props.repeatEndDate);
+}
 const timeMode = ref(t.value("activity.repeat.day"));
 const endOption = ref("date");
-const occurrenceCount = ref(1);
-
+const occurrenceCount = ref(props.repeatEndOccurences);
 const timeModes = ref([
     { name: t.value("activity.repeat.day"), value: 1 },
     { name: t.value("activity.repeat.week"), value: 7 },
 ]);
 
+watch(
+    () => props.repeatEndDate,
+    (value) => {
+        endingDate.value = new Date(value);
+    },
+);
+
+watch(
+    () => props.repeatIntervalUnit,
+    (value) => {
+        if (value == "weeks") {
+            timeModeselected.value = {
+                name: t.value("activity.repeat.week"),
+                value: 7,
+            };
+            days.value.forEach((element) => {
+                if (props.repeatOn.includes(element.day)) {
+                    element.active = true;
+                }
+            });
+        } else {
+            timeModeselected.value = {
+                name: t.value("activity.repeat.day"),
+                value: 1,
+            };
+        }
+    },
+);
+
+watch(
+    () => props.repeatEndOccurences,
+    (value) => {
+        occurrenceCount.value = value;
+    },
+);
+
+watch(
+    () => props.repeatInterval,
+    (value) => {
+        repeatNumber.value = value;
+    },
+);
+
 const createCustomRepeat = () => {
+    endingDate.value = add(endingDate.value, {
+        minutes: endingDate.value.getTimezoneOffset() * -1,
+    });
     const activeDays = ref<string[]>([]);
     days.value.forEach((day) => {
         if (day.active) {
@@ -75,44 +179,6 @@ watch(
 const cancel = () => {
     emit("cancel");
 };
-
-const days = ref([
-    {
-        label: t.value("activity.repeat.monday.short"),
-        active: false,
-        day: "Mon",
-    },
-    {
-        label: t.value("activity.repeat.tuesday.short"),
-        active: false,
-        day: "Tue",
-    },
-    {
-        label: t.value("activity.repeat.wednesday.short"),
-        active: false,
-        day: "Wed",
-    },
-    {
-        label: t.value("activity.repeat.thursday.short"),
-        active: false,
-        day: "Thu",
-    },
-    {
-        label: t.value("activity.repeat.friday.short"),
-        active: false,
-        day: "Fri",
-    },
-    {
-        label: t.value("activity.repeat.saturday.short"),
-        active: false,
-        day: "Sat",
-    },
-    {
-        label: t.value("activity.repeat.sunday.short"),
-        active: false,
-        day: "Sun",
-    },
-]);
 
 function changePlural() {
     if (repeatNumber.value > 1) {
@@ -339,12 +405,12 @@ function changeOccurrences() {
                     <InputNumber
                         v-model="repeatNumber"
                         input-id="stacked-buttons"
-                        input-class="w-6 focus:outline-none focus:ring-1 bg-background dark:bg-natural-900"
+                        input-class="w-6 focus:outline-none bg-background dark:bg-natural-900"
                         increment-button-class="flex flex-col items-end w-6"
                         decrement-button-class="flex flex-col items-end w-6"
                         show-buttons
                         :min="1"
-                        class="ml-4 h-8 w-10 rounded-md border border-natural-300 bg-background pl-2 focus:outline-none focus:ring-1 dark:border-natural-700 dark:bg-natural-800"
+                        class="ml-4 h-8 w-10 rounded-md border border-natural-300 bg-background pl-2 dark:border-natural-700 dark:bg-natural-800"
                         :pt="{
                             root: {
                                 class: 'w-12 dark:bg-natural-900',
@@ -437,8 +503,8 @@ function changeOccurrences() {
                                 'text-gray-600': true,
                                 'text-natural-400': endOption !== 'date',
                             }"
-                            >On</label
-                        >
+                            ><T key-name="activity.repeat.custom.on"
+                        /></label>
                         <Calendar
                             v-model="endingDate"
                             :min-date="props.startDate"
@@ -446,7 +512,7 @@ function changeOccurrences() {
                             :disabled="endOption !== 'date'"
                             :placeholder="format(props.endDate, 'dd/MM/yyyy')"
                             panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
-                            input-class="dark:border-natural-700 border-natural-300 block rounded-sm w-28 text-center text-md text-text dark:text-natural-50 disabled:text-natural-400 dark:disabled:text-natural-400 font-medium bg-natural-50 dark:bg-natural-900 border-2 focus:outline-none focus:ring-0"
+                            input-class=" font-nunito rounded-md dark:border-natural-700 border-natural-300 block w-28 text-center text-md text-text dark:text-natural-50 disabled:text-natural-400 dark:disabled:text-natural-400 font-medium bg-natural-50 dark:bg-natural-900 border-2 focus:outline-none focus:ring-0"
                             class="rounded-lg border placeholder-text"
                             date-format="dd/mm/yy"
                             :pt="{

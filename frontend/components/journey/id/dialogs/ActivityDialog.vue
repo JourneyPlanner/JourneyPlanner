@@ -35,8 +35,12 @@ const props = defineProps({
     journeyStart: { type: Date, required: true },
     journeyEnd: { type: Date, required: true },
     propRepeatType: { type: String, default: " " },
+    repeatIntervalPrefill: { type: Number, default: 1 },
+    repeatOnPrefill: { type: Array, default: () => [] },
+    repeatEndOccurencesPrefill: { type: Number, default: 1 },
+    repeatIntervalUnitPrefill: { type: String, default: "" },
+    repeatEndDatePrefill: { type: String, default: "" },
 });
-
 const noSingle = ref(false);
 const onlyShowRef = ref(props.onlyShow);
 const updateRef = ref(props.update);
@@ -318,7 +322,7 @@ async function editActivity(values: ActivityForm) {
         repeat_interval_unit: repeatIntervalUnit.value,
         repeat_on: repeatOn.value,
         repeat_end_date: repeatEndDate.value,
-        repeat_end_occurences: repeatEndOccurences.value,
+        repeat_end_occurrences: repeatEndOccurences.value,
         edit_type: "all",
     };
     if (props.calendarClicked && values.editType != null) {
@@ -501,6 +505,8 @@ function changeCustomRepeat(
     repeat_end_occurences: number | null,
 ) {
     changeRepeat(selectedRepeat);
+    repeatEndDate.value = undefined;
+    repeatEndOccurences.value = undefined;
     repeatInterval.value = repeat_interval;
     repeatIntervalUnit.value = repeat_interval_unit;
     repeatOn.value = repeat_on.length == 0 ? null : repeat_on;
@@ -759,6 +765,19 @@ function changeCustomRepeat(
                                     :journey-start="from"
                                     :journey-end="to"
                                     :repeat-type="props.propRepeatType"
+                                    :repeat-end-date="
+                                        props.repeatEndDatePrefill
+                                    "
+                                    :repeat-end-occurences="
+                                        props.repeatEndOccurencesPrefill
+                                    "
+                                    :repeat-interval="
+                                        props.repeatIntervalPrefill
+                                    "
+                                    :repeat-interval-unit="
+                                        props.repeatIntervalUnitPrefill
+                                    "
+                                    :repeat-on="props.repeatOnPrefill"
                                     @input="changeRepeat"
                                     @custom-input="changeCustomRepeat"
                                 />
@@ -785,6 +804,15 @@ function changeCustomRepeat(
                                 :journey-start="from"
                                 :journey-end="to"
                                 :repeat-type="props.propRepeatType"
+                                :repeat-end-date="props.repeatEndDatePrefill"
+                                :repeat-end-occurences="
+                                    props.repeatEndOccurencesPrefill
+                                "
+                                :repeat-interval="props.repeatIntervalPrefill"
+                                :repeat-interval-unit="
+                                    props.repeatIntervalUnitPrefill
+                                "
+                                :repeat-on="props.repeatOnPrefill"
                                 @input="changeRepeat"
                                 @custom-input="changeCustomRepeat"
                             />

@@ -76,6 +76,11 @@ const props = defineProps({
 const activity = ref();
 const activityId = ref("");
 const repeatType = ref();
+const repeatInterval = ref(1);
+const repeatIntervalUnit = ref("");
+const repeatOn = ref([""]);
+const repeatEndDate = ref("");
+const repeatEndOccurences = ref(1);
 const calendarId = ref("");
 const isRecurringActivityEditVisible = ref(false);
 const isRecurringActivityDeleteVisible = ref(false);
@@ -574,6 +579,16 @@ function showData(info: EventObject) {
             phone.value = activity.phone;
             updated_at.value = activity.updated_at;
             isActivityInfoVisible.value = true;
+            if (activity.repeat_type == "custom") {
+                repeatInterval.value = activity.repeat_interval;
+                repeatIntervalUnit.value = activity.repeat_interval_unit;
+                repeatOn.value = activity.repeat_on;
+                if (activity.repeat_end_date) {
+                    repeatEndDate.value = activity.repeat_end_date;
+                } else if (activity.repeat_end_occurrences) {
+                    repeatEndOccurences.value = activity.repeat_end_occurrences;
+                }
+            }
             calendarActivity.value = activities.value[
                 activities.value.indexOf(activity)
             ].calendar_activities.filter(
@@ -705,6 +720,11 @@ function call(editType: string) {
                 :calendar-clicked="calendarClicked"
                 :journey-start="journeyStartDate"
                 :journey-end="journeyEndDate"
+                :repeat-end-date="repeatEndDate"
+                :repeat-end-occurences="repeatEndOccurences"
+                :repeat-interval="repeatInterval"
+                :repeat-interval-unit="repeatIntervalUnit"
+                :repeat-on="repeatOn"
                 @close="isActivityInfoVisible = false"
                 @delete-activity="deleteActivity"
                 @remove-from-calendar="removeFromCalendar"
