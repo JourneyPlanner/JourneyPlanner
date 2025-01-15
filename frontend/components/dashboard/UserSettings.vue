@@ -8,10 +8,10 @@ const props = defineProps({
     propUsername: { type: String, required: true },
     propDisplayname: { type: String, required: true },
     propEmail: { type: String, required: true },
-    propEmailNeedsVerification: {
-        type: Boolean,
+    propNewEmailNeedingVerification: {
+        type: String,
         required: false,
-        default: false,
+        default: "",
     },
 });
 const emit = defineEmits(["close"]);
@@ -40,8 +40,10 @@ const colorMode = useColorMode();
 const currUsername = ref(props.propUsername);
 const currDisplayname = ref(props.propDisplayname);
 const currEmail = ref(props.propEmail);
-const updatedEmail = ref("");
-const emailNeedsVerification = ref(props.propEmailNeedsVerification);
+const updatedEmail = ref(props.propNewEmailNeedingVerification);
+const emailNeedsVerification = ref(
+    props.propNewEmailNeedingVerification ? true : false,
+);
 
 const { errors, handleSubmit, defineField } = useForm({
     validationSchema: yup.object({

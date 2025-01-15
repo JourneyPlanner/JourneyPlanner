@@ -303,7 +303,7 @@
                     <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
                       <tr>
                         <td>
-                          <span style="font-weight: 800; color: #FCFCFC">Get to know us more</span>
+                          <span class="dark-text-natural-950" style="font-weight: 800; color: #FCFCFC">Get to know us more</span>
                         </td>
                       </tr>
                     </table>
@@ -314,17 +314,17 @@
                     <table align="center" style="margin-left: auto; margin-right: auto; padding-top: 20px" cellpadding="0" cellspacing="0" role="none">
                       <tr>
                         <td>
-                          <a href="https://journeyplanner.io?utm_medium=email&utm_source=update" target="_blank" class="hover-opacity-80" style="text-decoration: none">
+                          <a href="https://journeyplanner.io?utm_medium=email&utm_source=update" target="_blank" class="hover-opacity-80 dark-text-natural-950" style="color: #FCFCFC; text-decoration: none">
                             <img src="{{asset('images/globe.png')}}" width="40" alt="Website" style="max-width: 100%; vertical-align: middle">
                           </a>
                         </td>
                         <td style="padding-left: 32px; padding-right: 32px">
-                          <a href="https://instagram.com/journeyplanner.io?utm_medium=email&utm_source=update" class="hover-opacity-80" target="_blank" style="text-decoration: none">
+                          <a href="https://instagram.com/journeyplanner.io?utm_medium=email&utm_source=update" class="hover-opacity-80 dark-text-natural-950" target="_blank" style="color: #FCFCFC; text-decoration: none">
                             <img src="{{asset('images/instagram.png')}}" width="40" alt="Instagram" style="max-width: 100%; vertical-align: middle">
                           </a>
                         </td>
                         <td>
-                          <a href="https://www.facebook.com/profile.php?id=61570299440309&utm_medium=email&utm_source=update" class="hover-opacity-80" target="_blank" style="text-decoration: none">
+                          <a href="https://www.facebook.com/profile.php?id=61570299440309&utm_medium=email&utm_source=update" class="hover-opacity-80 dark-text-natural-950" target="_blank" style="color: #FCFCFC; text-decoration: none">
                             <img src="{{asset('images/facebook.png')}}" width="40" alt="Facebook" style="max-width: 100%; vertical-align: middle">
                           </a>
                         </td>
@@ -342,12 +342,12 @@
                   <td style="width: 100%">
                     <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
                       <tr>
-                        <td style="color: #FCFCFC">
-                          <a href="https://journeyplanner.io/privacy?utm_medium=email&utm_source=update" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Privacy</a>
+                        <td class="dark-text-natural-950" style="color: #FCFCFC">
+                          <a href="https://journeyplanner.io/privacy?utm_medium=email&utm_source=update" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Privacy</a>
                           |
-                          <a href="https://journeyplanner.io/imprint?utm_medium=email&utm_source=update" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Legal notice</a>
+                          <a href="https://journeyplanner.io/imprint?utm_medium=email&utm_source=update" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Legal notice</a>
                           |
-                          <a href="mailto:contact@journeyplanner.io?utm_medium=email&utm_source=update" class="hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Contact</a>
+                          <a href="mailto:contact@journeyplanner.io?utm_medium=email&utm_source=update" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Contact</a>
                         </td>
                       </tr>
                     </table>

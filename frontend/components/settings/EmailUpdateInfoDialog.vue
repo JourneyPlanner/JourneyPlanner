@@ -75,7 +75,10 @@ const close = () => {
             <div
                 class="flex flex-col gap-y-4 font-normal text-natural-950 dark:text-natural-50"
             >
-                <T key-name="dashboard.user.settings.email.info.text" />
+                <T
+                    key-name="dashboard.user.settings.email.info.text"
+                    :params="{ email: email }"
+                />
                 <div class="flex justify-center">
                     <button
                         type="button"
@@ -132,11 +135,10 @@ const close = () => {
                     class="ml-2 w-11/12 flex-col gap-y-5 pb-5 text-natural-950 dark:text-natural-50"
                 >
                     <p>
-                        <slot>
-                            <T
-                                key-name="dashboard.user.settings.email.info.text"
-                            />
-                        </slot>
+                        <T
+                            key-name="dashboard.user.settings.email.info.text"
+                            :params="{ email: email }"
+                        />
                     </p>
                 </div>
             </div>
