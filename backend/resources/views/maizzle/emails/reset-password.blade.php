@@ -47,6 +47,12 @@
       }
     }
     @media (prefers-color-scheme: dark) {
+      .dark-block {
+        display: block !important
+      }
+      .dark-hidden {
+        display: none !important
+      }
       .dark-bg-background-dark {
         background-color: #2c2c2c !important
       }
@@ -64,7 +70,7 @@
 </head>
 <body style="margin: 0; width: 100%; padding: 0; -webkit-font-smoothing: antialiased; word-break: break-word">
   <div style="display: none">
-    Verify your new email address to continue using JourneyPlanner
+    Reset password request
     &#8199;&#65279;&#847;
     &#8199;&#65279;&#847;
     &#8199;&#65279;&#847;
@@ -223,24 +229,24 @@
             <table style="width: 100%" cellpadding="0" cellspacing="0" role="none">
               <tr>
                 <td class="sm-p-6" style="padding: 24px 36px">
-                  <a href="https://journeyplanner.io?utm_medium=email&utm_source=update">
+                  <a href="https://journeyplanner.io?utm_medium=email&utm_source=reset-password">
                     <img src="{{asset('images/logo.png')}}" width="240" alt="JourneyPlanner" style="max-width: 100%; vertical-align: middle">
                   </a>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
                   <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
                     <tr>
-                      <td>
-                        <img src="{{asset('images/confirm.png')}}" width="240" alt="Confirm email" style="max-width: 100%; vertical-align: middle">
+                      <td> <img src="{{asset('images/reset-password.png')}}" width="240" alt="Reset password" data-theme="light" class="dark-hidden" style="max-width: 100%; vertical-align: middle">
+                        <img src="{{asset('images/reset-password-dark.png')}}" width="240" alt="Reset password" data-theme="dark" class="dark-block" style="max-width: 100%; vertical-align: middle; display: none">
                       </td>
                     </tr>
                   </table>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
                   <h1 class="dark-text-calypso-300" style="margin: 0 0 24px; font-size: 36px; font-weight: 700; color: #327597">
-                    Verify your new email
+                    Reset Password
                   </h1>
                   <p class="dark-text-natural-50" style="margin: 0 0 24px; font-size: 16px; line-height: 24px; color: #292929">
-                    <b>You&#039;ve updated your email address on JourneyPlanner!</b><br>
-                    Please confirm your new email address by clicking the button below to ensure uninterrupted access to JourneyPlanner.
+                    <b>Need to reset your password?</b><br>
+                    Please click the button below and follow the instructions to reset your password.
                   </p>
                   <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
                     <tr>
@@ -263,7 +269,7 @@
                   </p>
                   <div role="separator" style="height: 1px; line-height: 1px; background-color: #cbd5e1; margin-top: 24px; margin-bottom: 24px">&zwj;</div>
                   <p class="dark-text-natural-50 mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #292929">
-                    If you didn&#039;t request this email address change, please contact our support team or ignore this email.
+                    If this wasn&#039;t you, you can ignore this email. Your password will not be reset.
                   </p>
                   <p class="dark-text-natural-50 mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #292929">
                     If you're having trouble clicking the "Verify email" button,
@@ -291,7 +297,7 @@
                 The ultimate platform for effortlessly organizing unforgettable
                 adventures! Design your trip, share your plan and go on a
                 journey of discovery together.
-                <a href="https://journeyplanner.io/journey/new?utm_medium=email&utm_source=update" target="_blank" style="color: #FCFCFC; text-decoration: underline">Start your journey now.</a>
+                <a href="https://journeyplanner.io/journey/new?utm_medium=email&utm_source=reset-password" target="_blank" style="color: #FCFCFC; text-decoration: underline">Start your journey now.</a>
               </p>
             </td>
           </tr>
@@ -314,17 +320,17 @@
                     <table align="center" style="margin-left: auto; margin-right: auto; padding-top: 20px" cellpadding="0" cellspacing="0" role="none">
                       <tr>
                         <td>
-                          <a href="https://journeyplanner.io?utm_medium=email&utm_source=update" target="_blank" class="hover-opacity-80 dark-text-natural-950" style="color: #FCFCFC; text-decoration: none">
+                          <a href="https://journeyplanner.io?utm_medium=email&utm_source=reset-password" target="_blank" class="hover-opacity-80 dark-text-natural-950" style="color: #FCFCFC; text-decoration: none">
                             <img src="{{asset('images/globe.png')}}" width="40" alt="Website" style="max-width: 100%; vertical-align: middle">
                           </a>
                         </td>
                         <td style="padding-left: 32px; padding-right: 32px">
-                          <a href="https://instagram.com/journeyplanner.io?utm_medium=email&utm_source=update" class="hover-opacity-80 dark-text-natural-950" target="_blank" style="color: #FCFCFC; text-decoration: none">
+                          <a href="https://instagram.com/journeyplanner.io?utm_medium=email&utm_source=reset-password" class="hover-opacity-80 dark-text-natural-950" target="_blank" style="color: #FCFCFC; text-decoration: none">
                             <img src="{{asset('images/instagram.png')}}" width="40" alt="Instagram" style="max-width: 100%; vertical-align: middle">
                           </a>
                         </td>
                         <td>
-                          <a href="https://www.facebook.com/profile.php?id=61570299440309&utm_medium=email&utm_source=update" class="hover-opacity-80 dark-text-natural-950" target="_blank" style="color: #FCFCFC; text-decoration: none">
+                          <a href="https://www.facebook.com/profile.php?id=61570299440309&utm_medium=email&utm_source=reset-password" class="hover-opacity-80 dark-text-natural-950" target="_blank" style="color: #FCFCFC; text-decoration: none">
                             <img src="{{asset('images/facebook.png')}}" width="40" alt="Facebook" style="max-width: 100%; vertical-align: middle">
                           </a>
                         </td>
@@ -343,11 +349,11 @@
                     <table align="center" style="margin-left: auto; margin-right: auto" cellpadding="0" cellspacing="0" role="none">
                       <tr>
                         <td class="dark-text-natural-950" style="color: #FCFCFC">
-                          <a href="https://journeyplanner.io/privacy?utm_medium=email&utm_source=update" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Privacy</a>
+                          <a href="https://journeyplanner.io/privacy?utm_medium=email&utm_source=reset-password" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Privacy</a>
                           |
-                          <a href="https://journeyplanner.io/imprint?utm_medium=email&utm_source=update" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Legal notice</a>
+                          <a href="https://journeyplanner.io/imprint?utm_medium=email&utm_source=reset-password" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Legal notice</a>
                           |
-                          <a href="mailto:contact@journeyplanner.io?utm_medium=email&utm_source=update" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Contact</a>
+                          <a href="mailto:contact@journeyplanner.io?utm_medium=email&utm_source=reset-password" class="dark-text-natural-950 hover-opacity-80" target="_blank" style="color: #FCFCFC; text-decoration: none">Contact</a>
                         </td>
                       </tr>
                     </table>
