@@ -64,6 +64,15 @@ class TemplateController extends Controller
     }
 
     /**
+     * Get all templates by the current user.
+     *
+     */
+    public function currentUserTemplatesIndex()
+    {
+        return $this->getTemplates(Auth::user()->username);
+    }
+
+    /**
      * Get templates based on the provided filters.
      */
     private function getTemplates(string $username = null)
@@ -95,6 +104,7 @@ class TemplateController extends Controller
             "template_destination_input" => "nullable|string",
             "template_destination_name" => "nullable|string",
             "template_creator" => "nullable|string",
+            "journey_id" => "nullable|uuid,exists:journeys,id",
         ]);
 
         // Get the validated values or use the default values
@@ -110,6 +120,7 @@ class TemplateController extends Controller
         $destination = $validated["template_destination_input"] ?? null;
         $destinationName = $validated["template_destination_name"] ?? null;
         $creator = $validated["template_creator"] ?? null;
+        $journey_id = $validated["journey_id"] ?? null;
 
         // Select all templates that match the search criteria
         $templates = Journey::where("is_template", true)
@@ -186,6 +197,9 @@ class TemplateController extends Controller
                     });
                 }
             )
+            ->when($journey_id, function ($query) use ($journey_id) {
+                $query->where("created_from", $journey_id);
+            })
             ->with([
                 "users" => function ($query) {
                     $query->select("id", "username", "display_name");

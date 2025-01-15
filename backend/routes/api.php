@@ -112,6 +112,10 @@ Route::get("user/{username}/template", [
     TemplateController::class,
     "userTemplatesIndex",
 ]);
+Route::get("/me/template", [
+    TemplateController::class,
+    "myTemplates",
+])->middleware("auth:sanctum");
 
 Route::get("project", [ProjectController::class, "getProjectData"]);
 
