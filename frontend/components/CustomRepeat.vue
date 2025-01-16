@@ -249,35 +249,50 @@ const getItemClass = (option: RepeatType) => {
 };
 
 function changeRepeat() {
-    if (props.daysInJourney <= 1) {
-        timeModeselected.value = timeModeselected.value = {
-            name: t.value("activity.repeat.day"),
-            value: 1,
-        };
-        toast.add({
-            severity: "error",
-            summary: t.value("journey.too.short"),
-            detail: t.value("journey.too.short.detail"),
-            life: 3000,
-        });
-        changePlural();
-    } else if (
-        timeModeselected.value.name === t.value("activity.repeat.weeks") &&
-        timeModeselected.value.value * repeatNumber.value >= props.daysInJourney
+    if (
+        timeModeselected.value.value * repeatNumber.value <=
+        props.daysInJourney
     ) {
-        timeModeselected.value = timeModeselected.value = {
-            name: t.value("activity.repeat.days"),
-            value: 1,
-        };
+        if (props.daysInJourney <= 1) {
+            timeModeselected.value = timeModeselected.value = {
+                name: t.value("activity.repeat.day"),
+                value: 1,
+            };
+            toast.add({
+                severity: "error",
+                summary: t.value("journey.too.short"),
+                detail: t.value("journey.too.short.detail"),
+                life: 3000,
+            });
+            changePlural();
+        } else if (
+            timeModeselected.value.name === t.value("activity.repeat.weeks") &&
+            timeModeselected.value.value * repeatNumber.value >=
+                props.daysInJourney
+        ) {
+            timeModeselected.value = timeModeselected.value = {
+                name: t.value("activity.repeat.days"),
+                value: 1,
+            };
+            toast.add({
+                severity: "error",
+                summary: t.value("journey.too.short"),
+                detail: t.value("journey.too.short.detail"),
+                life: 3000,
+            });
+            changePlural();
+        }
+        changePlural();
+    } else {
         toast.add({
             severity: "error",
             summary: t.value("journey.too.short"),
             detail: t.value("journey.too.short.detail"),
             life: 3000,
         });
+        timeModeselected.value.name = t.value("activity.repeat.day");
         changePlural();
     }
-    changePlural();
 }
 
 function changeOccurrences() {
@@ -394,7 +409,7 @@ function changeOccurrences() {
                     </div>
                     <div class="h-0.5 flex-grow bg-calypso-600" />
                     <button
-                        class="focus-ring-1 z-30 flex h-10 w-10 items-center justify-center self-center text-natural-500 hover:text-text focus:outline-none dark:text-natural-400 dark:hover:text-natural-50"
+                        class="focus-ring-1 z-30 flex h-10 w-10 items-center justify-end self-center text-natural-500 hover:text-text focus:outline-none dark:text-natural-400 dark:hover:text-natural-50"
                         @click="cancel"
                     >
                         <span class="pi pi-times text-2xl" />
@@ -434,10 +449,10 @@ function changeOccurrences() {
                         class="w-[30%] rounded-md"
                         :pt="{
                             root: {
-                                class: 'ml-4 font-nunito text-text text-base bg-natural-50 border border-natural-300 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-8 flex items-center',
+                                class: 'cursor-pointer ml-4 font-nunito text-text text-base bg-natural-50 border border-natural-300 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-8 flex items-center',
                             },
                             input: {
-                                class: 'text-text dark:text-natural-50 ml-2 font-medium',
+                                class: 'text-text dark:text-natural-50 ml-2 font-medium cursor-pointer',
                             },
                             wrapper: {
                                 class: 'bg-natural-50 dark:bg-natural-900 border border-natural-200 text-text dark:text-natural-50 rounded-md',
