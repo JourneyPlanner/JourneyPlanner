@@ -52,7 +52,7 @@
                         href="@{{$verificationUrl}}"
                         class="bg-dandelion-200 dark:bg-pesto-600 text-natural-950 dark:text-natural-50"
                       >
-                        Verify email
+                        {{ page.buttontext || "Verify email" }}
                       </x-button>
                     </td>
                   </tr>
@@ -77,7 +77,7 @@
                 <p
                   class="m-0 text-xs/5 text-natural-950 dark:text-natural-50 mso-break-all"
                 >
-                  If you're having trouble clicking the "Verify email" button,
+                  If you're having trouble clicking the "{{ page.buttontext || "Verify email" }}" button,
                   copy and paste the following URL into your web browser:
                   <a
                     href="@{{$verificationUrl}}"

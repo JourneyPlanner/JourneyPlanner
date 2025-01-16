@@ -254,7 +254,7 @@
                         <div>
                           <a href="{{$verificationUrl}}" style="display: inline-block; text-decoration: none; padding: 16px 24px; font-size: 16px; line-height: 1; border-radius: 10px; background-color: #FAE58D; color: #292929" class="dark-bg-pesto-600 dark-text-natural-50">
                             <!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 31px" hidden>&emsp;</i><![endif]-->
-                            <span style="mso-text-raise: 16px">Verify email</span>
+                            <span style="mso-text-raise: 16px">Reset password</span>
                             <!--[if mso]><i hidden style="mso-font-width: 150%">&emsp;&#8203;</i><![endif]-->
                           </a>
                         </div>
@@ -272,7 +272,7 @@
                     If this wasn&#039;t you, you can ignore this email. Your password will not be reset.
                   </p>
                   <p class="dark-text-natural-50 mso-break-all" style="margin: 0; font-size: 12px; line-height: 20px; color: #292929">
-                    If you're having trouble clicking the "Verify email" button,
+                    If you're having trouble clicking the "Reset password" button,
                     copy and paste the following URL into your web browser:
                     <a href="{{$verificationUrl}}" class="dark-text-natural-50" style="color: #292929; text-decoration: underline">{{$verificationUrl}}</a>
                   </p>
