@@ -40,6 +40,7 @@ const isQRCodeVisible = ref(false);
 const uploadResult = ref();
 const upload = ref();
 const calendar = ref();
+const clearCalendar = ref(false);
 
 onMounted(() => {
     if (route.query.username) {
@@ -218,12 +219,23 @@ function calculateDays(from: string, to: string) {
     }
 }
 
-function journeyEdited(journey: Journey) {
+async function journeyEdited(journey: Journey) {
+    clearCalendar.value = false;
     journeyStore.setJourney(journey);
     useHead({
         title: `${journey.name} | JourneyPlanner`,
     });
     calculateDays(journey.from, journey.to);
+
+    await client(`/api/journey/${journeyId}/activity`, {
+        async onResponse({ response }) {
+            if (response.ok) {
+                activityStore.setActivities(response._data.activities);
+                activityDataLoaded.value = true;
+                clearCalendar.value = true;
+            }
+        },
+    });
 }
 
 const handleUpload = (result: string) => {
@@ -380,6 +392,7 @@ function scrollToTarget(target: string) {
                 :during-journey="duringJourney"
                 :journey-startdate="journeyData.from"
                 :journey-enddate="journeyData.to"
+                :clear="clearCalendar"
             />
         </div>
         <JourneyIdActivityMap v-if="activityDataLoaded" />

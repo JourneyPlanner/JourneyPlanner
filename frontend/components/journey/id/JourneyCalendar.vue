@@ -72,6 +72,10 @@ const props = defineProps({
         type: Boolean,
         required: true,
     },
+    clear: {
+        type: Boolean,
+        default: false,
+    },
 });
 const activity = ref();
 const activityId = ref("");
@@ -343,6 +347,17 @@ watch(addedActivity, () => {
     addNewActivities(addedActivity.value);
 });
 
+watch(
+    () => props.clear,
+    (value) => {
+        if (value) {
+            const calApi = fullCalendar.value.getApi();
+            calApi.removeAllEvents();
+            addActivities();
+        }
+    },
+);
+
 watch(oldActivity, () => {
     removeOldActivities(oldActivity.value);
 });
@@ -353,57 +368,50 @@ watch(journeyStore, () => {
 });
 
 onMounted(() => {
-    const calApi = fullCalendar.value.getApi();
     watch(
         store.activityData,
         () => {
             if (!alreadyAdded.value) {
-                document.getElementsByClassName(
-                    "fc-showAllHours-button",
-                )[0].innerHTML = "6:00 - 24:00";
-                const activityData = store.activityData as Activity[];
-                activityData.forEach((activity: Activity) => {
-                    if (activity.calendar_activities != null) {
-                        activity.calendar_activities.forEach(
-                            (calendar_activity: CalendarActivity) => {
-                                const newEnd = add(
-                                    new UTCDate(calendar_activity.start),
-                                    {
-                                        hours: parseInt(
-                                            activity.estimated_duration.split(
-                                                ":",
-                                            )[0],
-                                        ),
-                                        minutes: parseInt(
-                                            activity.estimated_duration.split(
-                                                ":",
-                                            )[1],
-                                        ),
-                                    },
-                                ).toISOString();
-                                calendar_activity.end = newEnd;
-                                calendar_activity.title = activity.name;
-                                if (
-                                    calendar_activity.start.split(" ")[1] <=
-                                    "06:00:00"
-                                ) {
-                                    calApi.setOption("slotMinTime", "00:00:00");
-                                    document.getElementsByClassName(
-                                        "fc-showAllHours-button",
-                                    )[0].innerHTML = "0:00 - 24:00";
-                                }
-                                calApi.addEvent(calendar_activity);
-                            },
-                        );
-                    }
-                });
-                calApi.gotoDate(props.journeyStartdate);
-                alreadyAdded.value = true;
+                addActivities();
             }
         },
         { immediate: true },
     );
 });
+
+function addActivities() {
+    const calApi = fullCalendar.value.getApi();
+    document.getElementsByClassName("fc-showAllHours-button")[0].innerHTML =
+        "6:00 - 24:00";
+    const activityData = store.activityData as Activity[];
+    activityData.forEach((activity: Activity) => {
+        if (activity.calendar_activities != null) {
+            activity.calendar_activities.forEach(
+                (calendar_activity: CalendarActivity) => {
+                    const newEnd = add(new UTCDate(calendar_activity.start), {
+                        hours: parseInt(
+                            activity.estimated_duration.split(":")[0],
+                        ),
+                        minutes: parseInt(
+                            activity.estimated_duration.split(":")[1],
+                        ),
+                    }).toISOString();
+                    calendar_activity.end = newEnd;
+                    calendar_activity.title = activity.name;
+                    if (calendar_activity.start.split(" ")[1] <= "06:00:00") {
+                        calApi.setOption("slotMinTime", "00:00:00");
+                        document.getElementsByClassName(
+                            "fc-showAllHours-button",
+                        )[0].innerHTML = "0:00 - 24:00";
+                    }
+                    calApi.addEvent(calendar_activity);
+                },
+            );
+        }
+    });
+    calApi.gotoDate(props.journeyStartdate);
+    alreadyAdded.value = true;
+}
 
 /**
  * when activity is dragged into calendar or manually added this funciton will save it to the database

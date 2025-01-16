@@ -252,7 +252,7 @@ async function onSuccess(values: ActivityForm) {
         } else {
             noSingle.value = false;
         }
-        if (props.propRepeatType != null) {
+        if (props.propRepeatType != " ") {
             isRecurringActivityEditVisible.value = true;
             value.value = values;
         } else {
