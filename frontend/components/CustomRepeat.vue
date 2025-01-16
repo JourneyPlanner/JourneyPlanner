@@ -358,7 +358,7 @@ function changeOccurrences() {
             block-scroll
             :auto-z-index="true"
             :draggable="false"
-            class="z-50 flex w-1/3 flex-col text-nowrap rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-1/4"
+            class="z-50 flex w-1/3 flex-col text-nowrap rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-[32rem]"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',

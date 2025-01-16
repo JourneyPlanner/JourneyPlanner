@@ -127,7 +127,7 @@ const getItemClass = (option: RepeatType) => {
                 class="w-full"
                 :pt="{
                     root: {
-                        class: 'flex overflow-ellipsis overflow-hidden text-nowrap font-nunito block rounded-lg px-2.5 pb-1 pt-1 text-text dark:text-natural-50 font-normal border-2 border-calypso-600 focus:outline-none focus:ring-1 bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 disabled:bg-natural-100 disabled:dark:bg-natural-800',
+                        class: 'flex overflow-ellipsis overflow-hidden text-nowrap font-nunito block rounded-lg px-2.5 pb-1 pt-1 text-text dark:text-natural-50 font-normal border-2 border-calypso-300 dark:border-calypso-600 focus:outline-none focus:ring-1 bg-natural-50 dark:bg-natural-800 text-text dark:text-natural-50 disabled:bg-natural-100 disabled:dark:bg-natural-800',
                     },
                     input: {
                         class: 'text-text dark:text-natural-50 rounded-md w-[90%]',

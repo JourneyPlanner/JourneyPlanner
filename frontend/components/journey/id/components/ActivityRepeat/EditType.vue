@@ -50,7 +50,7 @@ const post = () => {
         block-scroll
         :auto-z-index="true"
         :draggable="false"
-        class="z-50 flex w-1/2 flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-1/4 2xl:w-1/5"
+        class="z-50 flex w-1/2 flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-[28rem] 2xl:w-[28rem]"
         :pt="{
             root: {
                 class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -157,7 +157,7 @@ const post = () => {
                     <T key-name="activity.recurring.event.all"
                 /></label>
             </div>
-            <div class="mt-auto flex w-full justify-center">
+            <div class="mt-3 flex w-full justify-center">
                 <div class="ml-auto flex justify-center">
                     <button
                         class="flex w-20 items-center justify-center rounded-md bg-natural-50 px-2 pr-16 text-base font-semibold text-text hover:underline dark:bg-background-dark dark:text-natural-50"
@@ -167,7 +167,7 @@ const post = () => {
                     </button>
                 </div>
                 <button
-                    class="mt-auto flex items-center justify-center rounded-md border-[3px] border-dandelion-300 bg-natural-50 px-8 py-0.5 text-center text-base font-semibold hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
+                    class="mt-auto flex h-9 items-center justify-center rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-8 py-0.5 text-center text-base font-semibold hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
                     @click="post"
                 >
                     <T key-name="common.edit" />
