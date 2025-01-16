@@ -129,8 +129,8 @@ class ActivityController extends Controller
                     ($validated["repeat_interval"] ?? 0) ||
                 ($activity->repeat_interval_unit ?? "") !=
                     ($validated["repeat_interval_unit"] ?? "") ||
-                ($activity->repeat_on ?? []) !=
-                    ($validated["repeat_on"] ?? []) ||
+                ($activity->repeat_on ?? [""]) !=
+                    ($validated["repeat_on"] ?? [""]) ||
                 ($activity->repeat_end_date ?? "") !=
                     ($validated["repeat_end_date"] ?? "") ||
                 ($activity->repeat_end_occurrences ?? 0) !=

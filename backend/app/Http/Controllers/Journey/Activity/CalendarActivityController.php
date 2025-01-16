@@ -112,7 +112,7 @@ class CalendarActivityController extends Controller
     ) {
         return DB::transaction(function () use ($activity, $emptyActivities) {
             if ($activity->calendarActivities()->count() === 0) {
-                $activity = Activity::resetRepeat($activity);
+                $activity = ActivityController::resetRepeat($activity);
                 $activity->parent_id = null;
                 $activity->save();
 
