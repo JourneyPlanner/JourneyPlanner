@@ -35,7 +35,6 @@ Route::middleware(["auth:sanctum"])->get("/me", function (Request $request) {
         "created_at" => $user->created_at,
         "updated_at" => $user->updated_at,
     ]);
-    return $request->user();
 });
 
 Route::middleware(["auth:sanctum"])->get("/me/requiresPassword", function (
