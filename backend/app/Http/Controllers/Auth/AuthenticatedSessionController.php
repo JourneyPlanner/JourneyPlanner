@@ -9,14 +9,25 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Http\JsonResponse;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): Response
+    public function store(LoginRequest $request): Response|JsonResponse
     {
+        $user = User::where("email", $request->email)->first();
+        if ($user && !$user->hasVerifiedEmail()) {
+            return response()->json(
+                [
+                    "message" => "Your email address is not verified.",
+                ],
+                401
+            );
+        }
+
         $request->authenticate();
 
         $request->session()->regenerate();

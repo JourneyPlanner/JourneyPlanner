@@ -183,13 +183,14 @@ async function changePassword() {
                     v-if="requiresPassword"
                     class="flex flex-col items-center justify-center pt-5"
                 >
-                    <div
+                    <label
+                        for="password"
                         class="flex w-4/6 justify-start text-text dark:text-natural-50"
                     >
                         <T
                             key-name="dashboard.user.settings.enter.current.password"
                         />
-                    </div>
+                    </label>
                     <input
                         id="password"
                         v-model="password"
@@ -203,13 +204,14 @@ async function changePassword() {
                     >
                 </div>
                 <div class="flex flex-col items-center justify-center pt-5">
-                    <div
+                    <label
+                        for="newPassword"
                         class="flex w-4/6 justify-start text-text dark:text-natural-50"
                     >
                         <T
                             key-name="dashboard.user.settings.enter.new.password"
                         />
-                    </div>
+                    </label>
                     <input
                         id="newPassword"
                         v-model="newPassword"
@@ -223,11 +225,14 @@ async function changePassword() {
                     >
                 </div>
                 <div class="flex flex-col items-center justify-center pt-5">
-                    <div class="flex w-4/6 justify-start dark:text-natural-50">
+                    <label
+                        for="newPasswordConfirmation"
+                        class="flex w-4/6 justify-start dark:text-natural-50"
+                    >
                         <T
                             key-name="dashboard.user.settings.confirm.new.password"
                         />
-                    </div>
+                    </label>
                     <input
                         id="newPasswordConfirmation"
                         v-model="newPasswordConfirmation"
@@ -299,14 +304,15 @@ async function changePassword() {
                 </div>
                 <div class="flex items-center pl-6 pt-4">
                     <div class="flex w-full flex-col items-center">
-                        <div
+                        <label
                             v-if="requiresPassword"
+                            for="passwordMobile"
                             class="mb-1 mr-10 flex w-full items-start text-[0.95rem] text-text dark:text-natural-50"
                         >
                             <T
                                 key-name="dashboard.user.settings.enter.current.password"
                             />
-                        </div>
+                        </label>
                         <input
                             v-if="requiresPassword"
                             id="passwordMobile"
@@ -320,14 +326,15 @@ async function changePassword() {
                             class="mr-10 flex w-full justify-start pt-0.5 text-sm text-mahagony-600 dark:text-mahagony-300"
                             >{{ errors.password }}</span
                         >
-                        <div
+                        <label
+                            for="newPasswordMobile"
                             class="mb-1 mr-10 flex w-full items-start pt-2 text-[0.95rem] text-text dark:text-natural-50"
                             :class="requiresPassword ? 'mt-2' : 'mt-0'"
                         >
                             <T
                                 key-name="dashboard.user.settings.enter.new.password"
                             />
-                        </div>
+                        </label>
                         <input
                             id="newPasswordMobile"
                             v-model="newPassword"
@@ -339,13 +346,14 @@ async function changePassword() {
                             class="mr-10 flex w-full justify-start pt-0.5 text-sm text-mahagony-600 dark:text-mahagony-300"
                             >{{ errors.newPassword }}</span
                         >
-                        <div
+                        <label
+                            for="newPasswordConfirmationMobile"
                             class="mb-1 mr-10 mt-2 flex w-full items-start pt-2 text-[0.95rem] text-text dark:text-natural-50"
                         >
                             <T
                                 key-name="dashboard.user.settings.confirm.new.password"
                             />
-                        </div>
+                        </label>
                         <input
                             id="newPasswordConfirmationMobile"
                             v-model="newPasswordConfirmation"

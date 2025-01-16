@@ -56,7 +56,7 @@ class UserController extends Controller
      */
     public function changePassword(Request $request): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             "password" => "string|nullable",
             "new_password" => [
                 "required",
@@ -66,13 +66,13 @@ class UserController extends Controller
         ]);
 
         $user = $request->user();
-        $password = $request->password ?? "";
+        $password = $validated["password"] ?? "";
 
         if ($user->password && !Hash::check($password, $user->password)) {
             return response()->json(["message" => "Invalid password"], 401);
         }
 
-        $user->password = Hash::make($request->new_password);
+        $user->password = Hash::make($validated["new_password"]);
         $user->save();
 
         return response()->json(["message" => "Password changed"]);
@@ -83,20 +83,19 @@ class UserController extends Controller
      */
     public function changeEmail(Request $request): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             "password" => "string|nullable",
             "email" => "required|email|unique:users",
         ]);
 
         $user = $request->user();
-        $password = $request->password ?? "";
+        $password = $validated["password"] ?? "";
 
         if ($user->password && !Hash::check($password, $user->password)) {
             return response()->json(["message" => "Invalid password"], 401);
         }
 
-        $user->email = $request->email;
-        $user->save();
+        $user->newEmail($validated["email"]);
 
         return response()->json(["message" => "Email changed"]);
     }
@@ -106,12 +105,12 @@ class UserController extends Controller
      */
     public function changeDisplayName(Request $request): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             "display_name" => "required|string|max:255",
         ]);
 
         $user = $request->user();
-        $user->display_name = trim($request->display_name);
+        $user->display_name = trim($validated["display_name"]);
         $user->save();
 
         return response()->json([
@@ -125,13 +124,13 @@ class UserController extends Controller
      */
     public function changeUsername(Request $request): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             "username" =>
                 "required|string|alpha_dash|lowercase|max:255|unique:users",
         ]);
 
         $user = $request->user();
-        $user->username = $request->username;
+        $user->username = $validated["username"];
         $user->save();
 
         return response()->json([
@@ -145,12 +144,12 @@ class UserController extends Controller
      */
     public function deleteAccount(Request $request): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             "password" => "string|nullable",
         ]);
 
         $user = $request->user();
-        $password = $request->password ?? "";
+        $password = $validated["password"] ?? "";
 
         if ($user->password && !Hash::check($password, $user->password)) {
             return response()->json(["message" => "Invalid password"], 401);

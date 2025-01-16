@@ -5,8 +5,13 @@ import * as yup from "yup";
 
 const { t } = useTranslate();
 const toast = useToast();
+const router = useRouter();
 const client = useSanctumClient();
 const route = useRoute();
+
+const isUserExistsToastVisible = ref<boolean>(false);
+const isConfirmEmailDialogVisible = ref<boolean>(false);
+const email = ref<string>("");
 
 const title = t.value("form.header.register");
 
@@ -56,6 +61,9 @@ const onSubmit = handleSubmit((values) => {
  * @param {object} userData
  */
 async function registerUser(userData: object) {
+    toast.removeGroup("user-exists");
+    isUserExistsToastVisible.value = false;
+
     toast.add({
         severity: "info",
         summary: t.value("common.toast.info.heading"),
@@ -68,20 +76,24 @@ async function registerUser(userData: object) {
         body: userData,
         async onResponse({ response }) {
             if (response.ok) {
-                toast.add({
-                    severity: "success",
-                    summary: t.value("common.toast.success.heading"),
-                    detail: t.value("form.registration.toast.success"),
-                    life: 3000,
-                });
-                await navigateTo("/dashboard");
+                isConfirmEmailDialogVisible.value = true;
             } else if (response.status === 422) {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("form.registration.toast.error"),
-                    life: 6000,
-                });
+                if (!isUserExistsToastVisible.value) {
+                    toast.removeAllGroups();
+                    toast.add({
+                        severity: "warn",
+                        summary: t.value(
+                            "form.register.error.toast.user.exists.summary",
+                        ),
+                        detail: t.value(
+                            "form.register.error.toast.user.exists.detail",
+                        ),
+                        group: "user-exists",
+                    });
+                    isUserExistsToastVisible.value = true;
+                }
+            } else if (response?._data?.message === "CSRF token mismatch.") {
+                location.reload();
             } else {
                 toast.add({
                     severity: "error",
@@ -105,6 +117,34 @@ async function registerUser(userData: object) {
 
 <template>
     <div>
+        <Toast
+            group="user-exists"
+            class="w-3/4 font-nunito sm:w-auto"
+            :pt="{ root: 'font-nunito' }"
+            @close="isUserExistsToastVisible = false"
+        >
+            <template #message="slotProps">
+                <div class="mr-10 flex gap-x-2">
+                    <div>
+                        <i class="pi pi-exclamation-triangle text-lg" />
+                    </div>
+                    <div clas="flex flex-col">
+                        <p>{{ slotProps.message.summary }}</p>
+                        <button
+                            class="mt-2 flex items-baseline gap-x-1 text-sm"
+                            @click="router.push('/login')"
+                        >
+                            <i class="pi pi-sign-in text-xs" />
+                            <span class="underline">
+                                <T
+                                    key-name="form.register.error.toast.user.exists.hint.login.instead"
+                                />
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </Toast>
         <div class="absolute left-4 top-4">
             <NuxtLink to="/">
                 <SvgLogoHorizontalBlue class="w-44 lg:w-52" />
@@ -135,6 +175,7 @@ async function registerUser(userData: object) {
                         <form class="w-3/4" @submit="onSubmit">
                             <FormInput
                                 id="email"
+                                v-model="email"
                                 name="email"
                                 autocomplete="email"
                                 translation-key="form.input.email"
@@ -208,6 +249,13 @@ async function registerUser(userData: object) {
                     />
                 </div>
             </div>
+        </div>
+        <div id="dialogs">
+            <MailVerifyDialog
+                :is-confirm-email-dialog-visible="isConfirmEmailDialogVisible"
+                :email="email"
+                @close="isConfirmEmailDialogVisible = false"
+            />
         </div>
     </div>
 </template>

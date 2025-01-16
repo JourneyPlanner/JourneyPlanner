@@ -7,6 +7,9 @@ const { t } = useTranslate();
 const toast = useToast();
 const { login } = useSanctumAuth();
 const route = useRoute();
+const isVerifyEmailToastVisible = ref<boolean>(false);
+const isConfirmEmailDialogVisible = ref<boolean>(false);
+const email = ref<string>("");
 
 const title = t.value("form.header.login");
 
@@ -56,6 +59,8 @@ async function loginUser(userData: User) {
         password: userData.password,
         email: userData.email,
     };
+    toast.removeGroup("verify-email");
+    isVerifyEmailToastVisible.value = false;
 
     toast.add({
         severity: "info",
@@ -90,20 +95,85 @@ async function loginUser(userData: User) {
                 .response?._data?.message == "CSRF token mismatch."
         ) {
             location.reload();
+        } else if (
+            (error as Error & { response?: { status?: number } }).response
+                ?.status === 429
+        ) {
+            toast.add({
+                severity: "warn",
+                summary: t.value("common.too.many.requests.heading"),
+                detail: t.value("common.too.many.requests.detail"),
+                life: 3000,
+            });
+        } else if (
+            (error as Error & { response?: { status?: number } }).response
+                ?.status === 401 &&
+            (error as Error & { response?: { _data?: { message?: string } } })
+                .response?._data?.message ===
+                "Your email address is not verified."
+        ) {
+            if (!isVerifyEmailToastVisible.value) {
+                toast.add({
+                    severity: "warn",
+                    summary: t.value("form.register.verify.email.header"),
+                    detail: t.value(
+                        "form.login.toast.error.email_not_verified",
+                    ),
+                    group: "verify-email",
+                });
+                isVerifyEmailToastVisible.value = true;
+            }
+        } else {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 3000,
+            });
         }
-        toast.add({
-            severity: "error",
-            summary: t.value("common.toast.error.heading"),
-            detail: t.value("common.error.unknown"),
-            life: 3000,
-        });
-        throw error;
     }
+}
+
+function resend() {
+    isVerifyEmailToastVisible.value = false;
+    toast.removeGroup("verify-email");
+    isConfirmEmailDialogVisible.value = true;
 }
 </script>
 
 <template>
     <div>
+        <Toast
+            group="verify-email"
+            class="w-3/4 font-nunito sm:w-auto"
+            :pt="{ root: 'font-nunito' }"
+            @close="isVerifyEmailToastVisible = false"
+        >
+            <template #message="slotProps">
+                <div class="flex gap-x-2">
+                    <div>
+                        <i class="pi pi-exclamation-triangle text-lg" />
+                    </div>
+                    <div clas="flex flex-col">
+                        <p>{{ slotProps.message.summary }}</p>
+                        <p class="mt-2 text-sm text-text dark:text-natural-50">
+                            {{ slotProps.message.detail }}
+                        </p>
+                        <button
+                            class="flex items-baseline gap-x-1 text-sm"
+                            @click="resend()"
+                        >
+                            <i class="pi pi-envelope text-xs" />
+                            <span class="underline">
+                                <T
+                                    key-name="form.register.button.email.resend"
+                                />
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </Toast>
         <div class="absolute left-4 top-4 z-50">
             <NuxtLink to="/" class="z-50">
                 <SvgLogoHorizontalBlue class="w-44 lg:w-52" />
@@ -152,6 +222,7 @@ async function loginUser(userData: User) {
                         <form class="-mt-2 w-5/6" @submit="onSubmit">
                             <FormInput
                                 id="email"
+                                v-model="email"
                                 name="email"
                                 translation-key="form.input.email"
                             />
@@ -194,6 +265,14 @@ async function loginUser(userData: User) {
             >
                 <SvgBalloonWithPeople class="w-[60%]" />
             </div>
+        </div>
+        <div id="dialogs">
+            <MailVerifyDialog
+                :is-confirm-email-dialog-visible="isConfirmEmailDialogVisible"
+                :do-resend="true"
+                :email="email"
+                @close="isConfirmEmailDialogVisible = false"
+            />
         </div>
     </div>
 </template>

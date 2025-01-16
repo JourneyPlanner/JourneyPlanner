@@ -12,13 +12,19 @@ const props = defineProps({
     prefill: { type: String, default: "" },
 });
 
-const { value, errorMessage } = useField(() => props.name);
+const { value, errorMessage } = useField(() => props.name, undefined, {
+    syncVModel: true,
+});
 
 if (props.prefill) {
     value.value = props.prefill;
 }
 
-defineEmits(["input", "changeInput"]);
+const emit = defineEmits(["input", "changeInput", "update:modelValue"]);
+
+watch(value, (newValue) => {
+    emit("update:modelValue", newValue);
+});
 </script>
 
 <template>
