@@ -126,15 +126,15 @@ class ActivityController extends Controller
             array_key_exists("repeat_type", $validated) &&
             (($activity->repeat_type ?? "") != $validated["repeat_type"] ||
                 ($activity->repeat_interval ?? 0) !=
-                    ($validated["repeat_interval"] ?? 0) ||
+                ($validated["repeat_interval"] ?? 0) ||
                 ($activity->repeat_interval_unit ?? "") !=
-                    ($validated["repeat_interval_unit"] ?? "") ||
+                ($validated["repeat_interval_unit"] ?? "") ||
                 ($activity->repeat_on ?? [""]) !=
-                    ($validated["repeat_on"] ?? [""]) ||
+                ($validated["repeat_on"] ?? [""]) ||
                 ($activity->repeat_end_date ?? "") !=
-                    ($validated["repeat_end_date"] ?? "") ||
+                ($validated["repeat_end_date"] ?? "") ||
                 ($activity->repeat_end_occurrences ?? 0) !=
-                    ($validated["repeat_end_occurrences"] ?? 0));
+                ($validated["repeat_end_occurrences"] ?? 0));
 
         $timeDifference = null;
         // Create the calendar activity if the date is provided and the activity is not repeated and has no calendar activities
@@ -327,8 +327,8 @@ class ActivityController extends Controller
                     $this->mapboxService
                 );
 
-                if ($timeDifference || $repeatedChanged) {
-                    foreach ($baseActivity->children() as $childActivity) {
+                if ($repeatedChanged) {
+                    foreach ($baseActivity->children()->get() as $childActivity) {
                         $activities[] = static::updateActivitiesAfter(
                             $childActivity,
                             $baseActivity,
@@ -340,45 +340,44 @@ class ActivityController extends Controller
                         )->load("calendarActivities");
                     }
 
-                    if ($repeatedChanged) {
-                        $mappings = static::calculateDateToActivityMappings(
-                            $editedActivity
+                    $mappings = static::calculateDateToActivityMappings(
+                        $editedActivity
+                    );
+
+                    if ($editedActivity->repeat_type != null) {
+                        static::deleteAllCalendarActivitiesAfterBaseActivity(
+                            $baseActivity,
+                            $editedCalendarActivity->start,
+                            false,
+                            false
                         );
 
-                        if ($editedActivity->repeat_type != null) {
-                            static::deleteAllCalendarActivitiesAfterBaseActivity(
+                        static::handleRepeatingActivity(
+                            $journey,
+                            $editedActivity,
+                            $editedCalendarActivity,
+                            $mappings
+                        );
+                    } else {
+                        array_push(
+                            $activities,
+                            ...static::deleteAllCalendarActivitiesAfterBaseActivity(
                                 $baseActivity,
                                 $editedCalendarActivity->start,
                                 false,
                                 false
-                            );
+                            )
+                        );
 
-                            static::handleRepeatingActivity(
-                                $journey,
-                                $editedActivity,
-                                $editedCalendarActivity,
-                                $mappings
-                            );
-                        } else {
-                            array_push(
-                                $activities,
-                                ...static::deleteAllCalendarActivitiesAfterBaseActivity(
-                                    $baseActivity,
-                                    $editedCalendarActivity->start,
-                                    false,
-                                    false
-                                )
-                            );
-
-                            $generalizeBaseActivityInsteadOfDeleting = true;
-                        }
-
-                        $editedActivity->parent_id = null;
-                        $editedActivity->save();
+                        $generalizeBaseActivityInsteadOfDeleting = true;
                     }
+
+                    $editedActivity->parent_id = null;
+                    $editedActivity->save();
+
                     $activities[] = $editedActivity->load("calendarActivities");
                 } else {
-                    foreach ($baseActivity->children() as $childActivity) {
+                    foreach ($baseActivity->children()->get() as $childActivity) {
                         static::updateActivitiesAfter(
                             $childActivity,
                             $baseActivity,
@@ -542,7 +541,7 @@ class ActivityController extends Controller
             if (
                 $childFirstCalendarActivity &&
                 $childFirstCalendarActivity->start <
-                    $firstCalendarActivity->start
+                $firstCalendarActivity->start
             ) {
                 $firstCalendarActivity = $childFirstCalendarActivity;
             }
@@ -593,18 +592,14 @@ class ActivityController extends Controller
             $baseActivity->calendarActivities()->get()
             as $calendarActivity
         ) {
-            $dateToActivityMappings[
-                $calendarActivity->start->format("Y-m-d")
-            ] = $baseActivity;
+            $dateToActivityMappings[$calendarActivity->start->format("Y-m-d")] = $baseActivity;
         }
         foreach ($baseActivity->children()->get() as $childActivity) {
             foreach (
                 $childActivity->calendarActivities()->get()
                 as $calendarActivity
             ) {
-                $dateToActivityMappings[
-                    $calendarActivity->start->format("Y-m-d")
-                ] = $childActivity;
+                $dateToActivityMappings[$calendarActivity->start->format("Y-m-d")] = $childActivity;
             }
         }
 
@@ -734,7 +729,7 @@ class ActivityController extends Controller
             $occurences =
                 $activity->repeat_end_occurrences ??
                 (($calendarActivityStart->diff($repeatEndDate)->d + 1) / 7) *
-                    count($repeatOn);
+                count($repeatOn);
             $shiftInterval = new DateInterval("P1D");
             while ($occurences > 1) {
                 $calendarActivityStart->add($shiftInterval);
@@ -771,7 +766,7 @@ class ActivityController extends Controller
             $occurences =
                 $activity->repeat_end_occurrences ??
                 ($calendarActivityStart->diff($repeatEndDate)->d + 1) /
-                    $repeatEveryDays;
+                $repeatEveryDays;
             $shiftInterval = new DateInterval("P" . $repeatEveryDays . "D");
 
             for ($i = 1; $i < $occurences; $i++) {
@@ -859,18 +854,30 @@ class ActivityController extends Controller
             }
         }
 
-        foreach ($baseActivity->children()->get() as $childActivity) {
-            foreach ($baseActivity->children()->get() as $siblingActivity) {
+        $children = $baseActivity->children()->get();
+        $processed = [];
+        foreach ($children as $childActivity) {
+            if (in_array($childActivity->id, $processed)) {
+                continue;
+            }
+
+            foreach ($children as $siblingActivity) {
                 if (
-                    $childActivity->hasSameAttributesAs($siblingActivity) &&
-                    $childActivity->id != $siblingActivity->id
+                    $childActivity->id != $siblingActivity->id &&
+                    $childActivity->hasSameAttributesAs($siblingActivity)
                 ) {
+                    // Update sibling's calendar activities to reference the current child
                     $siblingActivity
                         ->calendarActivities()
                         ->update(["activity_id" => $childActivity->id]);
+
+                    // Mark sibling as processed and delete it
+                    $processed[] = $siblingActivity->id;
                     $siblingActivity->delete();
                 }
             }
+
+            $processed[] = $childActivity->id;
         }
     }
 
