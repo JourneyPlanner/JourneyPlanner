@@ -573,6 +573,8 @@ function showData(info: EventObject) {
             address.value = activity.address;
             if (activity.repeat_type) {
                 repeatType.value = activity.repeat_type;
+            } else {
+                repeatType.value = " ";
             }
 
             cost.value = activity.cost;

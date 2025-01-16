@@ -243,6 +243,7 @@ const { handleSubmit } = useForm<ActivityForm>({
 
 const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 async function onSuccess(values: ActivityForm) {
+    console.log(props.propRepeatType);
     if (props.calendarClicked) {
         if (
             props.propRepeatType != repeatType.value &&
@@ -485,7 +486,7 @@ function changeRepeat(selectedRepeat: string) {
         } else if (selectedRepeat == t.value("activity.repeat.weekly")) {
             repeatType.value = "weekly";
         } else {
-            repeatType.value = null;
+            repeatType.value = " ";
         }
         repeatOn.value = undefined;
         repeatInterval.value = undefined;
