@@ -34,7 +34,7 @@ watch(
                 startResendCountdown();
             }
         } else if (countdown.value) {
-            clearTimeout(countdown.value);
+            clearInterval(countdown.value);
             countdown.value = null;
         }
     },
@@ -42,7 +42,7 @@ watch(
 
 onUnmounted(() => {
     if (countdown.value) {
-        clearTimeout(countdown.value);
+        clearInterval(countdown.value);
         countdown.value = null;
     }
 });
