@@ -188,7 +188,7 @@ async function registerUser(userData: object) {
                                 translation-key="form.input.display.name"
                             />
 
-                            <FormPassword
+                            <FormPasswordInput
                                 id="password"
                                 name="password"
                                 :feedback="true"
@@ -196,7 +196,7 @@ async function registerUser(userData: object) {
                                 translation-key="form.input.password"
                             />
                             <div class="mt-0.5">
-                                <FormPassword
+                                <FormPasswordInput
                                     id="password_confirmation"
                                     name="password_confirmation"
                                     :feedback="false"

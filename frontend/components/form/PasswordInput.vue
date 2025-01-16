@@ -26,6 +26,7 @@ const props = defineProps({
     feedback: Boolean,
     feedbackStyle: Boolean,
     translationKey: { type: String, required: true },
+    showResetButton: { type: Boolean, default: false },
 });
 
 const { value, errorMessage } = useField<string>(() => props.name);
@@ -90,7 +91,7 @@ const { value, errorMessage } = useField<string>(() => props.name);
         </Password>
         <div
             class="text-left"
-            :class="errorMessage ? '-mb-1.5 mt-0.5 block' : 'hidden'"
+            :class="errorMessage ? '-mb-1.5 block' : 'hidden'"
         >
             <span
                 class="ml-0.5 text-left text-xs text-mahagony-600 dark:font-medium dark:text-mahagony-300"
@@ -117,5 +118,13 @@ const { value, errorMessage } = useField<string>(() => props.name);
         >
             <T :key-name="translationKey" />
         </label>
+        <div
+            v-if="showResetButton"
+            class="ml-3 mt-0.5 w-full text-left text-sm hover:underline"
+        >
+            <NuxtLink class="cursor-pointer" to="/forgot-password">
+                <T key-name="password.forgot.login.link" />
+            </NuxtLink>
+        </div>
     </div>
 </template>

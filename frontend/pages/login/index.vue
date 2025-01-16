@@ -34,7 +34,10 @@ const { handleSubmit } = useForm({
             .string()
             .email(t.value("form.input.email.error"))
             .required(t.value("form.input.required")),
-        password: yup.string().required(t.value("form.input.required")),
+        password: yup
+            .string()
+            .min(8, t.value("form.input.password.error"))
+            .required(t.value("form.input.required")),
     }),
 });
 
@@ -227,9 +230,10 @@ function resend() {
                                 translation-key="form.input.email"
                             />
 
-                            <FormPassword
+                            <FormPasswordInput
                                 id="password"
                                 name="password"
+                                :show-reset-button="true"
                                 :feedback-style="true"
                                 translation-key="form.input.password"
                             />
