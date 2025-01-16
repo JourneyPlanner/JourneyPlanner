@@ -131,9 +131,11 @@ watch(
 );
 
 const createCustomRepeat = () => {
-    endingDate.value = add(endingDate.value, {
-        minutes: endingDate.value.getTimezoneOffset() * -1,
-    });
+    if (endingDate.value) {
+        endingDate.value = add(endingDate.value, {
+            minutes: endingDate.value.getTimezoneOffset() * -1,
+        });
+    }
     const activeDays = ref<string[]>([]);
     days.value.forEach((day) => {
         if (day.active) {

@@ -463,7 +463,6 @@ const close = () => {
     }
 
     onlyShowRef.value = true;
-    selectedDate.value = null;
     timeDisabled.value = true;
     loadingSave.value = false;
     activeIndex.value = 0;
