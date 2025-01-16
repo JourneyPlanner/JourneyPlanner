@@ -388,7 +388,7 @@ function changeOccurrences() {
                 <div class="flex w-full items-center">
                     <div class="h-0.5 w-5 bg-calypso-600" />
                     <div
-                        class="flex-grow-5 mx-3 pl-1 text-2xl text-text dark:text-natural-50"
+                        class="flex-grow-5 mx-1 pl-1 text-2xl text-text dark:text-natural-50"
                     >
                         <T key-name="activity.repeat.custom.dialog" />
                     </div>
@@ -431,7 +431,7 @@ function changeOccurrences() {
                         :placeholder="timeMode"
                         :focus-on-hover="false"
                         :unstyled="true"
-                        class="w-[30%] rounded-sm"
+                        class="w-[30%] rounded-md"
                         :pt="{
                             root: {
                                 class: 'ml-4 font-nunito text-text text-base bg-natural-50 border border-natural-300 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-8 flex items-center',
@@ -440,7 +440,7 @@ function changeOccurrences() {
                                 class: 'text-text dark:text-natural-50 ml-2 font-medium',
                             },
                             wrapper: {
-                                class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50',
+                                class: 'bg-natural-50 dark:bg-natural-900 border border-natural-200 text-text dark:text-natural-50 rounded-md',
                             },
                             trigger: {
                                 class: 'text-text dark:text-natural-50 ml-auto mr-2',
@@ -487,7 +487,7 @@ function changeOccurrences() {
                         </button>
                     </div>
                 </div>
-                <div class="space-y-4 pt-4">
+                <div class="space-y-3 pt-4">
                     <div class="text-xl">
                         <T key-name="activity.repeat.ends" />
                     </div>
@@ -497,7 +497,7 @@ function changeOccurrences() {
                             v-model="endOption"
                             type="radio"
                             value="date"
-                            class="form-radio text-blue-600"
+                            class="form-radio h-4 w-4 rounded-full border-calypso-600 bg-calypso-600"
                         />
                         <label
                             for="endDate"
@@ -505,8 +505,10 @@ function changeOccurrences() {
                                 'text-gray-600': true,
                                 'text-natural-400': endOption !== 'date',
                             }"
-                            ><T key-name="activity.repeat.custom.on"
-                        /></label>
+                        >
+                            <div class="text-lg">
+                                <T key-name="activity.repeat.custom.on" /></div
+                        ></label>
                         <Calendar
                             v-model="endingDate"
                             :min-date="props.startDate"
@@ -514,7 +516,7 @@ function changeOccurrences() {
                             :disabled="endOption !== 'date'"
                             :placeholder="format(props.endDate, 'dd/MM/yyyy')"
                             panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
-                            input-class=" font-nunito rounded-md dark:border-natural-700 border-natural-300 block w-28 text-center text-md text-text dark:text-natural-50 disabled:text-natural-400 dark:disabled:text-natural-400 font-medium bg-natural-50 dark:bg-natural-900 border-2 focus:outline-none focus:ring-0"
+                            input-class=" font-nunito rounded-md dark:border-natural-700 border-natural-200 block w-28 h-8 text-center text-md text-text dark:text-natural-50 disabled:text-natural-400 dark:disabled:text-natural-400 font-medium bg-natural-50 dark:bg-natural-900 border-2 focus:outline-none focus:ring-0"
                             class="rounded-lg border placeholder-text"
                             date-format="dd/mm/yy"
                             :pt="{
@@ -534,13 +536,13 @@ function changeOccurrences() {
                         />
                     </div>
 
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-3">
                         <input
                             id="occurrences"
                             v-model="endOption"
                             type="radio"
                             value="occurrences"
-                            class="form-radio text-blue-600"
+                            class="form-radio h-4 w-4 rounded-full border-calypso-600 bg-calypso-600"
                         />
 
                         <InputNumber
@@ -568,17 +570,18 @@ function changeOccurrences() {
                         <span
                             :class="{
                                 'text-gray-600': true,
+                                'text-lg': true,
                                 'text-natural-400': endOption !== 'occurrences',
                             }"
                             >{{ t("activity.repeat.occurrences") }}</span
                         >
                     </div>
                 </div>
-                <div class="-mb-4 mt-6 flex w-full">
+                <div class="-mb-2 mt-6 flex w-full">
                     <Button
                         type="button"
                         :label="t('common.button.cancel')"
-                        class="mt-auto h-7 w-32 rounded-md border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                        class="mt-auto h-9 w-32 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-mahagony-500030"
                         :pt="{
                             root: { class: 'flex items-center justify-center' },
                             label: {
@@ -596,7 +599,7 @@ function changeOccurrences() {
                                 class: 'display-block flex-none font-bold font-nunito',
                             },
                         }"
-                        class="ml-auto flex h-7 w-32 flex-row justify-center self-end rounded-md border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
+                        class="ml-auto flex h-9 w-32 flex-row justify-center self-end rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
                         @click="createCustomRepeat"
                     />
                 </div>
