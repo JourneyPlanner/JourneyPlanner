@@ -193,6 +193,12 @@ class ActivityController extends Controller
         $baseActivity = $activity->getBaseActivity();
         $activities = [];
         if ($validated["edit_type"] == UpdateActivityRequest::EDIT_TYPE_ALL) {
+            $repeatTypeChanged =
+                array_key_exists("repeat_type", $validated) &&
+                ($activity->repeat_type ?? "") != $validated["repeat_type"];
+            if ($repeatTypeChanged) {
+                $activity = static::resetRepeat($activity);
+            }
             $activity->fill($validated);
 
             // Reset geocode data if the address has changed
@@ -209,6 +215,9 @@ class ActivityController extends Controller
 
             // Update the remaining activities
             if ($baseActivity->id !== $activity->id) {
+                if ($repeatTypeChanged) {
+                    $activity = static::resetRepeat($activity);
+                }
                 $baseActivity->update($changes);
                 static::addTimeDifferenceIfNeeded(
                     $baseActivity,
@@ -218,6 +227,9 @@ class ActivityController extends Controller
             foreach ($baseActivity->children()->get() as $child) {
                 if ($child->id === $activity->id) {
                     continue;
+                }
+                if ($repeatTypeChanged) {
+                    $activity = static::resetRepeat($activity);
                 }
                 $child->update($changes);
                 static::addTimeDifferenceIfNeeded($child, $timeDifference);
@@ -282,6 +294,7 @@ class ActivityController extends Controller
                     $this->mapboxService
                 );
                 if ($repeatedChanged) {
+                    $subActivity = static::resetRepeat($subActivity);
                     $subActivity->parent_id = null;
                     $subActivity->save();
                 } else {
@@ -303,7 +316,7 @@ class ActivityController extends Controller
                     $activities[] = $subActivity->load("calendarActivities");
                 }
             } else {
-                // Update the current activitiy, get changes and then apply changes to all activities after this one
+                // Update the current activity, get changes and then apply changes to all activities after this one
                 $editedActivity = static::updateActivitiesAfter(
                     $activity,
                     $baseActivity,
@@ -456,6 +469,22 @@ class ActivityController extends Controller
             ->get();
         $activities[] = $baseActivity->load("calendarActivities");
         return response()->json($activities, 200);
+    }
+
+    /**
+     * Reset all repeat options of an activity.
+     */
+    public static function resetRepeat(Activity $activity)
+    {
+        $activity->fill([
+            "repeat_type" => null,
+            "repeat_interval" => null,
+            "repeat_interval_unit" => null,
+            "repeat_on" => null,
+            "repeat_end_date" => null,
+            "repeat_end_occurrences" => null,
+        ]);
+        return $activity;
     }
 
     /**
@@ -889,6 +918,12 @@ class ActivityController extends Controller
         $calendarActivities = $activity->calendarActivities()->get();
         $subActivity = $activity->replicate();
         $subActivity->save();
+        $repeatTypeChanged =
+            array_key_exists("repeat_type", $changes) &&
+            ($activity->repeat_type ?? "") != $changes["repeat_type"];
+        if ($repeatTypeChanged) {
+            $subActivity = static::resetRepeat($subActivity);
+        }
         $subActivity->fill($changes);
         $subActivity->parent_id = $baseActivity->id;
 
