@@ -86,7 +86,7 @@ class CalendarActivityController extends Controller
     ) {
         $activity
             ->calendarActivities()
-            ->where("start", ">", $minDate)
+            ->where("start", ">=", $minDate)
             ->delete();
 
         return $this->generalizeActivityIfNeeded($activity, $emptyActivities);

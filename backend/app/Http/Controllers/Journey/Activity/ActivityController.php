@@ -126,15 +126,15 @@ class ActivityController extends Controller
             array_key_exists("repeat_type", $validated) &&
             (($activity->repeat_type ?? "") != $validated["repeat_type"] ||
                 ($activity->repeat_interval ?? 0) !=
-                ($validated["repeat_interval"] ?? 0) ||
+                    ($validated["repeat_interval"] ?? 0) ||
                 ($activity->repeat_interval_unit ?? "") !=
-                ($validated["repeat_interval_unit"] ?? "") ||
+                    ($validated["repeat_interval_unit"] ?? "") ||
                 ($activity->repeat_on ?? [""]) !=
-                ($validated["repeat_on"] ?? [""]) ||
+                    ($validated["repeat_on"] ?? [""]) ||
                 ($activity->repeat_end_date ?? "") !=
-                ($validated["repeat_end_date"] ?? "") ||
+                    ($validated["repeat_end_date"] ?? "") ||
                 ($activity->repeat_end_occurrences ?? 0) !=
-                ($validated["repeat_end_occurrences"] ?? 0));
+                    ($validated["repeat_end_occurrences"] ?? 0));
 
         $timeDifference = null;
         // Create the calendar activity if the date is provided and the activity is not repeated and has no calendar activities
@@ -296,11 +296,10 @@ class ActivityController extends Controller
                 if ($repeatedChanged) {
                     $subActivity = static::resetRepeat($subActivity);
                     $subActivity->parent_id = null;
-                    $subActivity->save();
                 } else {
                     $subActivity->parent_id = $baseActivity->id;
-                    $subActivity->save();
                 }
+                $subActivity->save();
 
                 $editedCalendarActivity->activity_id = $subActivity->id;
                 $editedCalendarActivity->save();
@@ -328,7 +327,10 @@ class ActivityController extends Controller
                 );
 
                 if ($repeatedChanged) {
-                    foreach ($baseActivity->children()->get() as $childActivity) {
+                    foreach (
+                        $baseActivity->children()->get()
+                        as $childActivity
+                    ) {
                         $activities[] = static::updateActivitiesAfter(
                             $childActivity,
                             $baseActivity,
@@ -377,7 +379,10 @@ class ActivityController extends Controller
 
                     $activities[] = $editedActivity->load("calendarActivities");
                 } else {
-                    foreach ($baseActivity->children()->get() as $childActivity) {
+                    foreach (
+                        $baseActivity->children()->get()
+                        as $childActivity
+                    ) {
                         static::updateActivitiesAfter(
                             $childActivity,
                             $baseActivity,
@@ -541,7 +546,7 @@ class ActivityController extends Controller
             if (
                 $childFirstCalendarActivity &&
                 $childFirstCalendarActivity->start <
-                $firstCalendarActivity->start
+                    $firstCalendarActivity->start
             ) {
                 $firstCalendarActivity = $childFirstCalendarActivity;
             }
@@ -592,14 +597,18 @@ class ActivityController extends Controller
             $baseActivity->calendarActivities()->get()
             as $calendarActivity
         ) {
-            $dateToActivityMappings[$calendarActivity->start->format("Y-m-d")] = $baseActivity;
+            $dateToActivityMappings[
+                $calendarActivity->start->format("Y-m-d")
+            ] = $baseActivity;
         }
         foreach ($baseActivity->children()->get() as $childActivity) {
             foreach (
                 $childActivity->calendarActivities()->get()
                 as $calendarActivity
             ) {
-                $dateToActivityMappings[$calendarActivity->start->format("Y-m-d")] = $childActivity;
+                $dateToActivityMappings[
+                    $calendarActivity->start->format("Y-m-d")
+                ] = $childActivity;
             }
         }
 
@@ -728,8 +737,11 @@ class ActivityController extends Controller
             $repeatOn = $activity->repeat_on ?? [];
             $occurences =
                 $activity->repeat_end_occurrences ??
-                (($calendarActivityStart->diff($repeatEndDate)->d + 1) / 7) *
-                count($repeatOn);
+                (($calendarActivityStart->diffAsDateInterval($repeatEndDate)
+                    ->days +
+                    1) /
+                    7) *
+                    count($repeatOn);
             $shiftInterval = new DateInterval("P1D");
             while ($occurences > 1) {
                 $calendarActivityStart->add($shiftInterval);
@@ -765,8 +777,10 @@ class ActivityController extends Controller
                 ($activity->repeat_type == "weekly" ? 7 : 1);
             $occurences =
                 $activity->repeat_end_occurrences ??
-                ($calendarActivityStart->diff($repeatEndDate)->d + 1) /
-                $repeatEveryDays;
+                ($calendarActivityStart->diffAsDateInterval($repeatEndDate)
+                    ->days +
+                    1) /
+                    $repeatEveryDays;
             $shiftInterval = new DateInterval("P" . $repeatEveryDays . "D");
 
             for ($i = 1; $i < $occurences; $i++) {
