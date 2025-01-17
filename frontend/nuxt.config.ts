@@ -97,7 +97,6 @@ export default defineNuxtConfig({
                 "InputIcon",
                 "InputNumber",
                 "IconField",
-                "InputNumber",
                 "ProgressSpinner",
                 "DataTable",
                 "Column",
