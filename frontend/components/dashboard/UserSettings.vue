@@ -8,6 +8,11 @@ const props = defineProps({
     propUsername: { type: String, required: true },
     propDisplayname: { type: String, required: true },
     propEmail: { type: String, required: true },
+    propNewEmailNeedingVerification: {
+        type: String,
+        required: false,
+        default: "",
+    },
 });
 const emit = defineEmits(["close"]);
 
@@ -19,6 +24,7 @@ const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 const tolgee = useTolgee(["language"]);
 const { logout } = useSanctumAuth();
 const isEmailChangeDialogVisible = ref(false);
+const isEmailUpdateInfoDialogVisible = ref(false);
 const isPasswordChangeDialogVisible = ref(false);
 const isDeleteAccountDialogVisible = ref(false);
 const isUsernameChangeDialogVisible = ref(false);
@@ -34,6 +40,10 @@ const colorMode = useColorMode();
 const currUsername = ref(props.propUsername);
 const currDisplayname = ref(props.propDisplayname);
 const currEmail = ref(props.propEmail);
+const updatedEmail = ref(props.propNewEmailNeedingVerification);
+const emailNeedsVerification = ref(
+    props.propNewEmailNeedingVerification ? true : false,
+);
 
 const { errors, handleSubmit, defineField } = useForm({
     validationSchema: yup.object({
@@ -243,12 +253,13 @@ const languages = ref([
  * @param newEmail the new email
  */
 async function changeEmail(newEmail: Ref) {
-    currEmail.value = newEmail.value;
+    updatedEmail.value = newEmail.value;
+    emailNeedsVerification.value = true;
     isEmailChangeDialogVisible.value = false;
     toast.add({
         severity: "success",
-        summary: t.value("change.email.toast.success.heading"),
-        detail: t.value("change.email.toast.success.detail"),
+        summary: t.value("email.resending.success.toast.summary"),
+        detail: t.value("email.resending.success.toast.detail"),
         life: 3000,
     });
 }
@@ -398,8 +409,23 @@ function blur(e: Event) {
                             <T
                                 key-name="dashboard.user.settings.user.email.description"
                             />
-                            <span class="font-semibold">
+                            <span
+                                class="flex flex-row items-center gap-x-1 font-semibold"
+                                :class="{
+                                    'cursor-pointer text-mahagony-600 dark:text-mahagony-300':
+                                        emailNeedsVerification,
+                                }"
+                                @click="
+                                    emailNeedsVerification
+                                        ? (isEmailUpdateInfoDialogVisible = true)
+                                        : null
+                                "
+                            >
                                 {{ currEmail }}
+                                <i
+                                    v-if="emailNeedsVerification"
+                                    class="pi pi-info-circle"
+                                />
                             </span>
                         </div>
                     </div>
@@ -776,16 +802,30 @@ function blur(e: Event) {
                             <T key-name="dashboard.user.settings.user.email" />
                         </div>
                         <div
-                            class="w-full overflow-hidden overflow-ellipsis text-sm text-text dark:text-natural-300"
+                            class="w-full overflow-hidden overflow-ellipsis text-sm"
                         >
                             <T
                                 key-name="dashboard.user.settings.user.email.description"
                             />
-                            <b
-                                class="overflow-hidden overflow-ellipsis text-text dark:text-natural-50"
+                            <span
+                                class="flex flex-row items-center gap-x-0.5 overflow-hidden overflow-ellipsis whitespace-nowrap font-bold"
+                                :class="
+                                    emailNeedsVerification === true
+                                        ? 'cursor-pointer text-mahagony-600 dark:text-mahagony-300'
+                                        : 'text-text dark:text-natural-300'
+                                "
+                                @click="
+                                    emailNeedsVerification
+                                        ? (isEmailUpdateInfoDialogVisible = true)
+                                        : null
+                                "
                             >
+                                <i
+                                    v-if="emailNeedsVerification"
+                                    class="pi pi-info-circle"
+                                />
                                 {{ currEmail }}
-                            </b>
+                            </span>
                         </div>
                     </div>
                     <div class="flex w-[45%] items-center justify-end">
@@ -1035,5 +1075,13 @@ function blur(e: Event) {
                 </div>
             </div>
         </Sidebar>
+        <SettingsEmailUpdateInfoDialog
+            :is-email-update-info-dialog-visible="
+                isEmailUpdateInfoDialogVisible
+            "
+            :email="updatedEmail"
+            :is-updating="true"
+            @close="isEmailUpdateInfoDialogVisible = false"
+        />
     </div>
 </template>

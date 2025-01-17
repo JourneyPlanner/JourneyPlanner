@@ -25,7 +25,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(["auth:sanctum"])->get("/me", function (Request $request) {
-    return $request->user();
+    $user = $request->user();
+    return response()->json([
+        "id" => $user->id,
+        "email" => $user->email,
+        "username" => $user->username,
+        "display_name" => $user->display_name,
+        "email_needs_verification" => $user->getPendingEmail(),
+        "created_at" => $user->created_at,
+        "updated_at" => $user->updated_at,
+    ]);
 });
 
 Route::middleware(["auth:sanctum"])->get("/me/requiresPassword", function (
@@ -78,9 +87,12 @@ Route::post("upload", [UploadController::class, "upload"])->middleware([
     "auth:sanctum",
 ]);
 
-Route::apiResource("journey/{journey}/media", MediaController::class)
-    ->middleware("auth:sanctum")
-    ->only("index", "show");
+Route::get("journey/{journey}/media", [
+    MediaController::class,
+    "index",
+])->middleware(["auth:sanctum"]);
+
+Route::get("journey/{journey}/media/{media}", [MediaController::class, "show"]);
 
 Route::get("journey/{journey}/weather", [
     JourneyController::class,

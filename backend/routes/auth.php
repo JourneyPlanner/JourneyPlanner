@@ -8,9 +8,9 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-Route::post("/register", [RegisteredUserController::class, "store"])
-    ->middleware("guest")
-    ->name("register");
+Route::post("/register", [RegisteredUserController::class, "store"])->name(
+    "register"
+);
 
 Route::post("/login", [AuthenticatedSessionController::class, "store"])
     ->middleware("guest")
@@ -24,16 +24,33 @@ Route::post("/reset-password", [NewPasswordController::class, "store"])
     ->middleware("guest")
     ->name("password.store");
 
-Route::get("/verify-email/{id}/{hash}", VerifyEmailController::class)
-    ->middleware(["auth", "signed", "throttle:6,1"])
+Route::post("/email/verify/{id}/{hash}", [
+    VerifyEmailController::class,
+    "verify",
+])
+    ->middleware(["signed", "throttle:6,1"])
     ->name("verification.verify");
 
-Route::post("/email/verification-notification", [
+Route::post("/email/resend", [
     EmailVerificationNotificationController::class,
-    "store",
+    "resend",
 ])
-    ->middleware(["auth", "throttle:6,1"])
+    ->middleware("throttle:6,1")
     ->name("verification.send");
+
+Route::post("/email/update/verify/{token}", [
+    VerifyEmailController::class,
+    "verifyPending",
+])
+    ->middleware(["web", "signed"])
+    ->name("verification.update.verify");
+
+Route::post("/email/update/resend", [
+    EmailVerificationNotificationController::class,
+    "resendPending",
+])
+    ->middleware(["web", "throttle:6,1"])
+    ->name("verification.update.send");
 
 Route::post("/logout", [AuthenticatedSessionController::class, "destroy"])
     ->middleware("auth")

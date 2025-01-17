@@ -1437,6 +1437,9 @@ function editJourney(journey: Journey, id: string) {
                 :prop-username="user.username"
                 :prop-displayname="user.display_name"
                 :prop-email="user.email"
+                :prop-new-email-needing-verification="
+                    user.email_needs_verification
+                "
                 @close="isUserSettingsVisible = false"
             />
             <ConfirmDialog

@@ -129,7 +129,8 @@ async function deleteAccount() {
                     <b class="text-text dark:text-natural-50">
                         <T
                             key-name="dashboard.user.settings.delete.account.description.part2"
-                    /></b>
+                        />
+                    </b>
                     <T
                         key-name="dashboard.user.settings.delete.account.description.part3"
                     />
@@ -144,11 +145,12 @@ async function deleteAccount() {
                         v-if="requiresPassword"
                         class="flex w-full flex-col items-center"
                     >
-                        <div
+                        <label
+                            for="passwordDelete"
                             class="flex w-2/3 items-start text-text dark:text-natural-50"
                         >
                             <T key-name="common.enter.password" />
-                        </div>
+                        </label>
                         <input
                             id="passwordDelete"
                             v-model="password"
@@ -229,8 +231,8 @@ async function deleteAccount() {
                         key-name="dashboard.user.settings.delete.account.confirm.part1"
                     />
                     <b class="text-natural-700 dark:text-natural-50">
-                        <T key-name="dashboard.user.settings.delete.little"
-                    /></b>
+                        <T key-name="dashboard.user.settings.delete.little" />
+                    </b>
                     <T
                         key-name="dashboard.user.settings.delete.account.confirm.part2"
                     />
@@ -305,7 +307,8 @@ async function deleteAccount() {
                     <b class="text-text dark:text-natural-50">
                         <T
                             key-name="dashboard.user.settings.delete.account.description.part2"
-                    /></b>
+                        />
+                    </b>
                     <T
                         key-name="dashboard.user.settings.delete.account.description.part3"
                     />
@@ -320,13 +323,14 @@ async function deleteAccount() {
                     class="flex items-center pl-6 pt-4"
                 >
                     <div class="flex w-full flex-col items-center">
-                        <div
-                            class="</div> mb-2 mr-12 mt-2 flex w-full items-start dark:text-natural-50"
+                        <label
+                            for="passwordDeleteMobile"
+                            class="mb-2 mr-12 mt-2 flex w-full items-start dark:text-natural-50"
                         >
                             <T
                                 key-name="dashboard.user.settings.enter.current.password"
                             />
-                        </div>
+                        </label>
                         <input
                             id="passwordDeleteMobile"
                             v-model="password"
@@ -407,8 +411,8 @@ async function deleteAccount() {
                         key-name="dashboard.user.settings.delete.account.confirm.part1"
                     />
                     <b class="text-natural-700 dark:text-natural-50">
-                        <T key-name="dashboard.user.settings.delete.little"
-                    /></b>
+                        <T key-name="dashboard.user.settings.delete.little" />
+                    </b>
                     <T
                         key-name="dashboard.user.settings.delete.account.confirm.part2"
                     />

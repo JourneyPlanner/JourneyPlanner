@@ -3,35 +3,73 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
+use App\Models\User;
 use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use ProtoneMedia\LaravelVerifyNewEmail\Http\InvalidVerificationLinkException;
 
 class VerifyEmailController extends Controller
 {
     /**
      * Mark the authenticated user's email address as verified.
      */
-    public function __invoke(
-        EmailVerificationRequest $request
-    ): RedirectResponse {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(
-                config("app.frontend_url") .
-                    RouteServiceProvider::HOME .
-                    "?verified=1"
+    public function verify(
+        Request $request,
+        string $id,
+        string $hash
+    ): JsonResponse {
+        $user = User::find($id);
+
+        if (
+            !$user ||
+            !hash_equals(sha1($user->getEmailForVerification()), (string) $hash)
+        ) {
+            return response()->json(
+                [
+                    "message" => "Invalid verification URL.",
+                ],
+                400
             );
         }
 
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
+        if (!$user->hasVerifiedEmail()) {
+            if ($user->markEmailAsVerified()) {
+                event(new Verified($user));
+            }
         }
 
-        return redirect()->intended(
-            config("app.frontend_url") .
-                RouteServiceProvider::HOME .
-                "?verified=1"
-        );
+        return response()->json([
+            "message" => "Your email address has been verified.",
+        ]);
+    }
+
+    /**
+     * Mark the user's new email address as verified.
+     */
+    public function verifyPending(Request $request, string $token): JsonResponse
+    {
+        $user = app(config("verify-new-email.model"))
+            ->whereToken($token)
+            ->firstOr(["*"], function () {
+                throw new InvalidVerificationLinkException(
+                    __("The verification link is not valid anymore.")
+                );
+            })
+            ->tap(function ($pendingUserEmail) {
+                $pendingUserEmail->activate();
+            })->user;
+
+        if (config("verify-new-email.login_after_verification")) {
+            Auth::guard()->login(
+                $user,
+                config("verify-new-email.login_remember")
+            );
+        }
+
+        return response()->json([
+            "message" => "Your email address has been verified.",
+        ]);
     }
 }
