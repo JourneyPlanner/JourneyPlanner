@@ -95,6 +95,11 @@ declare global {
         role: number;
     }
 
+    interface RepeatType {
+        name: string;
+        value: number;
+    }
+
     interface Activity {
         address: string;
         mapbox_full_address: string;
@@ -114,6 +119,12 @@ declare global {
         opening_hours: string;
         phone: string;
         updated_at: string;
+        repeat_type: string;
+        repeat_end_occurrences: number;
+        repeat_on: Array;
+        repeat_interval_unit: string;
+        repeat_interval: number;
+        repeat_end_date: string;
     }
 
     interface CalendarActivity {

@@ -32,11 +32,26 @@ const props = defineProps({
     calendarClicked: { type: Boolean, default: false },
     create: { type: Boolean, default: false },
     createAddress: { type: Boolean, default: false },
+    journeyStart: { type: Date, required: true },
+    journeyEnd: { type: Date, required: true },
+    propRepeatType: { type: String, default: " " },
+    repeatIntervalPrefill: { type: Number, default: 1 },
+    repeatOnPrefill: { type: Array, default: () => [] },
+    repeatEndOccurencesPrefill: { type: Number, default: 1 },
+    repeatIntervalUnitPrefill: { type: String, default: "" },
+    repeatEndDatePrefill: { type: String, default: "" },
 });
-
+const noSingle = ref(false);
 const onlyShowRef = ref(props.onlyShow);
 const updateRef = ref(props.update);
 const calendarClickedRef = ref(props.calendarClicked);
+const repeatType = ref();
+const repeatInterval = ref();
+const repeatIntervalUnit = ref();
+const repeatOn = ref();
+const repeatEndDate = ref();
+const repeatEndOccurences = ref();
+const value = ref();
 
 watch(
     () => props.onlyShow,
@@ -68,6 +83,7 @@ const emit = defineEmits([
 ]);
 
 const isVisible = ref(props.visible);
+const isRecurringActivityEditVisible = ref(false);
 const loadingSave = ref(false);
 const activeIndex = ref(0);
 const confirm = useConfirm();
@@ -77,8 +93,15 @@ const activityStore = useActivityStore();
 const to = new Date(store.getToDate());
 const from = new Date(store.getFromDate());
 
-const selectedDate = ref();
+const selectedDate = props.calendarActivity
+    ? ref(props.calendarActivity.start)
+    : ref();
 const timeDisabled = ref(true);
+
+watch([() => props.calendarActivity], ([newPrefill]) => {
+    selectedDate.value = new Date(newPrefill.start);
+    timeDisabled.value = false;
+});
 
 watch(
     () => props.visible,
@@ -100,6 +123,8 @@ interface ActivityForm {
     open: string;
     date: Date;
     time: string;
+    repeatType: RepeatType;
+    editType: string;
 }
 
 type ActivityFormErrors = Partial<Record<keyof ActivityForm, string>>;
@@ -176,12 +201,40 @@ const validationSchema = yup.object({
     open: yup.string().nullable(),
     date: yup.string().nullable(),
     time: yup.string().nullable(),
+    repeatType: yup.object().nullable(),
     dateAndTime: yup.bool().when(["time", "date"], {
         is: (time: Date, date: Date) => (!date && !time) || (!!date && !!time),
         then: () => yup.bool().nullable(),
         otherwise: () =>
             yup.bool().required(t.value("form.input.activity.custom.error")),
     }),
+    RepeatAndDate: yup
+        .bool()
+        .test(
+            "RepeatAndDate",
+            t.value("form.input.activity.custom.error"),
+            function () {
+                const { repeatType, time, date } = this.parent;
+                if (
+                    !repeatType ||
+                    repeatType.name === t.value("activity.repeat.not")
+                ) {
+                    return true;
+                }
+                if (!!repeatType && !!date && !!time) {
+                    return true;
+                }
+                if (!time || !date) {
+                    return this.createError({
+                        path: "dateAndTime",
+                        message: t.value(
+                            "form.input.activity.repeat.custom.error",
+                        ),
+                    });
+                }
+                return false;
+            },
+        ),
 });
 
 const { handleSubmit } = useForm<ActivityForm>({
@@ -190,6 +243,34 @@ const { handleSubmit } = useForm<ActivityForm>({
 
 const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 async function onSuccess(values: ActivityForm) {
+    if (props.calendarClicked) {
+        if (
+            props.propRepeatType != repeatType.value &&
+            repeatType.value != null
+        ) {
+            noSingle.value = true;
+        } else {
+            noSingle.value = false;
+        }
+        if (props.propRepeatType != " ") {
+            isRecurringActivityEditVisible.value = true;
+            value.value = values;
+        } else {
+            editActivity(values);
+        }
+    } else {
+        editActivity(values);
+    }
+}
+
+function call(editOption: string) {
+    isRecurringActivityEditVisible.value = false;
+    value.value.editType = editOption;
+    editActivity(value.value);
+}
+
+async function editActivity(values: ActivityForm) {
+    noSingle.value = false;
     const durationDate = new Date(values.duration);
     const duration = `${String(durationDate.getHours()).padStart(2, "0")}:${String(durationDate.getMinutes()).padStart(2, "0")}:00`;
 
@@ -222,39 +303,38 @@ async function onSuccess(values: ActivityForm) {
 
     loadingSave.value = true;
 
-    let activity = undefined;
-    if (props.calendarClicked) {
-        activity = {
-            name: values.name,
-            estimated_duration: duration,
-            address: values.address,
-            mapbox_full_address: values.mapbox?.properties?.full_address,
-            mapbox_id: values.mapbox?.properties?.mapbox_id,
-            cost: values.costs,
-            description: values.description,
-            link: values.link,
-            email: values.email,
-            phone: values.phone,
-            opening_hours: values.open,
-        };
-    } else {
-        activity = {
-            name: values.name,
-            estimated_duration: duration,
-            address: values.address,
-            mapbox_full_address: values.mapbox?.properties?.full_address,
-            mapbox_id: values.mapbox?.properties?.mapbox_id,
-            cost: values.costs,
-            description: values.description,
-            link: values.link,
-            email: values.email,
-            phone: values.phone,
-            opening_hours: values.open,
-            date: date,
-            time: time,
-        };
+    const activity = {
+        name: values.name,
+        estimated_duration: duration,
+        address: values.address,
+        mapbox_full_address: values.mapbox?.properties?.full_address,
+        mapbox_id: values.mapbox?.properties?.mapbox_id,
+        cost: values.costs,
+        description: values.description,
+        link: values.link,
+        email: values.email,
+        phone: values.phone,
+        opening_hours: values.open,
+        date: date,
+        time: time,
+        repeat_type: repeatType.value,
+        repeat_interval: repeatInterval.value,
+        repeat_interval_unit: repeatIntervalUnit.value,
+        repeat_on: repeatOn.value,
+        repeat_end_date: repeatEndDate.value,
+        repeat_end_occurrences: repeatEndOccurences.value,
+        edit_type: "all",
+    };
+    if (props.calendarClicked && values.editType != null) {
+        Object.assign(activity, {
+            calendar_activity_id: props.calendarActivity.id,
+            edit_type: values.editType,
+        });
+    } else if (props.calendarClicked) {
+        Object.assign(activity, {
+            calendar_activity_id: props.calendarActivity.id,
+        });
     }
-
     if (updateRef.value) {
         await client(`/api/journey/${props.id}/activity/${props.activityId}`, {
             method: "PATCH",
@@ -273,13 +353,10 @@ async function onSuccess(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
-                    activityStore.updateActivity(
-                        response._data,
-                        props.activityId,
-                    );
-                    activityStore.setNewActivity(response._data);
+                    activityStore.updateActivity(response._data);
                     if (props.calendarActivity) {
                         emit("editCalendarActivity", activity.name);
+                        emit("calendarMoved", start, end);
                     }
                 }
             },
@@ -303,26 +380,6 @@ async function onSuccess(values: ActivityForm) {
                 loadingSave.value = false;
             },
         });
-
-        if (props.calendarClicked && start && end) {
-            const calendarActivity = props.calendarActivity;
-            calendarActivity.start = start;
-            calendarActivity.end = end;
-            await client(
-                `/api/journey/${props.id}/activity/${props.activityId}/calendarActivity/${props.calendarActivity.id}`,
-                {
-                    method: "PATCH",
-                    body: calendarActivity,
-                    async onResponse({ response }) {
-                        if (response.ok) {
-                            close();
-                            loadingSave.value = false;
-                            emit("calendarMoved", start, end);
-                        }
-                    },
-                },
-            );
-        }
     } else {
         await client(`/api/journey/${props.id}/activity`, {
             method: "POST",
@@ -341,7 +398,12 @@ async function onSuccess(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
+                    const responseData = Array.isArray(response._data)
+                        ? response._data
+                        : [response._data];
                     activityStore.addActivity(response._data);
+                    const activites = [] as Activity[];
+                    activites.push(...responseData);
                     activityStore.setNewActivity(response._data);
                 }
             },
@@ -380,7 +442,7 @@ async function onSuccess(values: ActivityForm) {
 function onInvalidSubmit({ errors }: { errors: ActivityFormErrors }) {
     if (errors.link) {
         activeIndex.value = 1;
-    } else if (errors.date || errors.time) {
+    } else if (errors.date || errors.time || errors.repeatType) {
         activeIndex.value = 2;
     } else {
         activeIndex.value = 0;
@@ -401,7 +463,6 @@ const close = () => {
     }
 
     onlyShowRef.value = true;
-    selectedDate.value = null;
     timeDisabled.value = true;
     loadingSave.value = false;
     activeIndex.value = 0;
@@ -412,6 +473,46 @@ function setSelectedDate(date: Date) {
     if (date instanceof Date) {
         timeDisabled.value = false;
         selectedDate.value = date;
+    }
+}
+
+function changeRepeat(selectedRepeat: string) {
+    if (selectedRepeat == t.value("activity.repeat.custom")) {
+        repeatType.value = "custom";
+    } else {
+        if (selectedRepeat == t.value("activity.repeat.daily")) {
+            repeatType.value = "daily";
+        } else if (selectedRepeat == t.value("activity.repeat.weekly")) {
+            repeatType.value = "weekly";
+        } else {
+            repeatType.value = " ";
+        }
+        repeatOn.value = undefined;
+        repeatInterval.value = undefined;
+        repeatIntervalUnit.value = undefined;
+        repeatEndDate.value = undefined;
+        repeatEndOccurences.value = undefined;
+    }
+}
+
+function changeCustomRepeat(
+    selectedRepeat: string,
+    repeat_interval: number,
+    repeat_interval_unit: string,
+    repeat_on: string[],
+    repeat_end_date: Date | null,
+    repeat_end_occurences: number | null,
+) {
+    changeRepeat(selectedRepeat);
+    repeatEndDate.value = undefined;
+    repeatEndOccurences.value = undefined;
+    repeatInterval.value = repeat_interval;
+    repeatIntervalUnit.value = repeat_interval_unit;
+    repeatOn.value = repeat_on.length == 0 ? null : repeat_on;
+    if (repeat_end_date) {
+        repeatEndDate.value = repeat_end_date;
+    } else {
+        repeatEndOccurences.value = repeat_end_occurences;
     }
 }
 </script>
@@ -646,7 +747,73 @@ function setSelectedDate(date: Date) {
                                 name="time"
                                 translation-key="form.input.activity.time"
                                 :disabled="timeDisabled"
-                                class="w-full sm:pr-16"
+                                :value="
+                                    props.calendarActivity
+                                        ? props.calendarActivity.start.split(
+                                              'T',
+                                          )[1]
+                                        : null
+                                "
+                                class="w-full sm:pb-2 sm:pr-16"
+                            />
+                            <div class="max-sm:hidden sm:pb-2 sm:pr-16">
+                                <JourneyIdComponentsActivityRepeat
+                                    id="repeatType"
+                                    name="repeatType"
+                                    class="w-full"
+                                    :journey-start="from"
+                                    :journey-end="to"
+                                    :repeat-type="props.propRepeatType"
+                                    :repeat-end-date="
+                                        props.repeatEndDatePrefill
+                                    "
+                                    :repeat-end-occurences="
+                                        props.repeatEndOccurencesPrefill
+                                    "
+                                    :repeat-interval="
+                                        props.repeatIntervalPrefill
+                                    "
+                                    :repeat-interval-unit="
+                                        props.repeatIntervalUnitPrefill
+                                    "
+                                    :repeat-on="props.repeatOnPrefill"
+                                    @input="changeRepeat"
+                                    @custom-input="changeCustomRepeat"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <JourneyIdComponentsActivityRepeatEditType
+                        :visible="isRecurringActivityEditVisible"
+                        :no-single="noSingle"
+                        @close="isRecurringActivityEditVisible = false"
+                        @post="call"
+                    />
+                    <div
+                        class="max-sm:flex max-sm:w-full max-sm:flex-row max-sm:gap-x-2 sm:hidden"
+                    >
+                        <div class="max-sm:w-1/2" />
+                        <div
+                            class="mb-0 flex cursor-pointer flex-col pr-2 max-sm:col-span-3 max-sm:w-1/2 sm:mb-2 sm:pr-16"
+                        >
+                            <JourneyIdComponentsActivityRepeat
+                                id="repeatType-mobile"
+                                name="repeatType"
+                                class="w-full sm:collapse"
+                                :journey-start="from"
+                                :journey-end="to"
+                                :repeat-type="props.propRepeatType"
+                                :repeat-end-date="props.repeatEndDatePrefill"
+                                :repeat-end-occurences="
+                                    props.repeatEndOccurencesPrefill
+                                "
+                                :repeat-interval="props.repeatIntervalPrefill"
+                                :repeat-interval-unit="
+                                    props.repeatIntervalUnitPrefill
+                                "
+                                :repeat-on="props.repeatOnPrefill"
+                                @input="changeRepeat"
+                                @custom-input="changeCustomRepeat"
                             />
                         </div>
                     </div>

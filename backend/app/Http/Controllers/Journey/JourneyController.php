@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Journey;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Journey\Activity\ActivityController;
 use App\Models\Journey;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Journey\StoreJourneyRequest;
@@ -238,6 +239,23 @@ class JourneyController extends Controller
                 $journey,
                 $validated
             );
+        }
+
+        if ($journey->isDirty("to")) {
+            foreach (
+                $journey
+                    ->activities()
+                    ->whereNotNull("repeat_type")
+                    ->where("parent_id", null)
+                    ->whereHas("calendarActivities")
+                    ->get()
+                as $activity
+            ) {
+                ActivityController::handleRepetitionCriteraUpdate(
+                    $journey,
+                    $activity
+                );
+            }
         }
 
         // Save journey

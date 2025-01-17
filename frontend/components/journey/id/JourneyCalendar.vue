@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UTCDate } from "@date-fns/utc";
 import type { CalendarOptions } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -32,13 +33,19 @@ if (
 }
 
 const fullCalendar = ref();
+const isEditDrop = ref(false);
+const isInitializeDrop = ref(false);
+const isRemoveCall = ref(false);
+const isDeleteCall = ref(false);
 const store = useActivityStore();
+const journeyStore = useJourneyStore();
 const isActivityInfoVisible = ref(false);
 const activities = computed(() => store.activityData as Activity[]);
 const client = useSanctumClient();
 const alreadyAdded = ref(false);
 const { t } = useTranslate();
 const { addedActivity } = storeToRefs(store);
+const { oldActivity } = storeToRefs(store);
 const toast = useToast();
 const props = defineProps({
     id: {
@@ -65,9 +72,23 @@ const props = defineProps({
         type: Boolean,
         required: true,
     },
+    clear: {
+        type: Boolean,
+        default: false,
+    },
 });
+const activity = ref();
 const activityId = ref("");
+const repeatType = ref();
+const repeatInterval = ref(1);
+const repeatIntervalUnit = ref("");
+const repeatOn = ref([""]);
+const repeatEndDate = ref("");
+const repeatEndOccurences = ref(1);
 const calendarId = ref("");
+const isRecurringActivityEditVisible = ref(false);
+const isRecurringActivityDeleteVisible = ref(false);
+const isRecurringActivityRemoveVisible = ref(false);
 const calendarActivity = ref();
 const onlyShow = ref(true);
 const update = ref(false);
@@ -88,6 +109,9 @@ const opening_hours = ref("");
 const phone = ref("");
 const updated_at = ref("");
 const tolgee = useTolgee(["language"]);
+
+const journeyStartDate = new Date(props.journeyStartdate);
+const journeyEndDate = new Date(props.journeyEnddate);
 
 interface EventObject {
     event: Event;
@@ -115,9 +139,41 @@ interface Event {
     remove: () => void;
 }
 
-async function deleteActivity() {
+function deleteActivity() {
+    const oldActivity = store.getActivity(activityId.value) as Activity;
+    if (!oldActivity) {
+        toast.add({
+            severity: "error",
+            summary: t.value("common.toast.error.heading"),
+            detail: t.value("activity.not.found"),
+            life: 6000,
+        });
+        return;
+    }
+    if (oldActivity.repeat_type != null) {
+        isRecurringActivityDeleteVisible.value = true;
+        isDeleteCall.value = true;
+    } else {
+        deleteActivityCall("all");
+    }
+}
+
+async function deleteActivityCall(editType: string) {
+    const edit_type = {
+        edit_type: editType,
+    };
+    if (editType != "all") {
+        Object.assign(edit_type, { calendar_activity_id: calendarId.value });
+    } else {
+        const activityToDelete = store.getActivity(
+            activityId.value,
+        ) as Activity;
+        store.updateActivity([activityToDelete], true);
+    }
+
     await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
         method: "delete",
+        body: edit_type,
         async onResponse({ response }) {
             if (response.ok) {
                 toast.add({
@@ -130,23 +186,7 @@ async function deleteActivity() {
                     ),
                     life: 6000,
                 });
-                activities.value
-                    .filter((activity) => activity.id === activityId.value)
-                    .forEach((activity: Activity) => {
-                        activity.calendar_activities.forEach(
-                            (calendar_activity: CalendarActivity) => {
-                                fullCalendar.value
-                                    .getApi()
-                                    .getEventById(calendar_activity.id)
-                                    .remove();
-                            },
-                        );
-                        activities.value.splice(
-                            activities.value.indexOf(activity),
-                            1,
-                        );
-                        store.setActivities(activities.value);
-                    });
+                store.updateActivity(response._data);
             }
         },
         async onRequestError() {
@@ -168,12 +208,26 @@ async function deleteActivity() {
     });
 }
 
-async function removeFromCalendar() {
-    const calApi = fullCalendar.value.getApi();
+function removeFromCalendar() {
+    const oldActivity = store.getActivity(activityId.value) as Activity;
+    if (oldActivity.repeat_type != null) {
+        isRecurringActivityRemoveVisible.value = true;
+        isRemoveCall.value = true;
+    } else {
+        removeFromCalendarCall("all");
+    }
+}
+
+async function removeFromCalendarCall(editType: string) {
+    const edit_type = {
+        edit_type: editType,
+    };
+
     await client(
         `/api/journey/${props.id}/activity/${activityId.value}/calendarActivity/${calendarId.value}`,
         {
             method: "delete",
+            body: edit_type,
             async onResponse({ response }) {
                 if (response.ok) {
                     toast.add({
@@ -182,30 +236,7 @@ async function removeFromCalendar() {
                         detail: t.value("calendar.remove.success.detail"),
                         life: 6000,
                     });
-                    calApi.getEventById(calendarId.value).remove();
-                    activities.value
-                        .filter((activity) => activity.id === activityId.value)
-                        .forEach((activity: Activity) => {
-                            activity.calendar_activities
-                                .filter(
-                                    (calendar_activity) =>
-                                        calendar_activity.id ===
-                                        calendarId.value,
-                                )
-                                .forEach(
-                                    (calendar_activity: CalendarActivity) => {
-                                        activities.value[
-                                            activities.value.indexOf(activity)
-                                        ].calendar_activities.splice(
-                                            activity.calendar_activities.indexOf(
-                                                calendar_activity,
-                                            ),
-                                            1,
-                                        );
-                                        store.setActivities(activities.value);
-                                    },
-                                );
-                        });
+                    store.updateActivity(response._data);
                 }
             },
             async onRequestError() {
@@ -295,7 +326,7 @@ const calendarOptions = reactive({
     eventTextColor: text,
     slotDuration: "00:30:00",
     allDaySlot: false,
-    timeZone: "local",
+    timeZone: "UTC",
     droppable: true,
     initialDate: start,
     firstDay: 1,
@@ -313,62 +344,74 @@ const calendarOptions = reactive({
 }) as unknown as CalendarOptions;
 
 watch(addedActivity, () => {
-    const addedActivity = store.addedActivity as Activity;
-    activityId.value = addedActivity.id;
-    editCalendarActivity(addedActivity.name);
+    addNewActivities(addedActivity.value);
+});
+
+watch(
+    () => props.clear,
+    (value) => {
+        if (value) {
+            const calApi = fullCalendar.value.getApi();
+            calApi.removeAllEvents();
+            addActivities();
+        }
+    },
+);
+
+watch(oldActivity, () => {
+    removeOldActivities(oldActivity.value);
+});
+
+watch(journeyStore, () => {
+    const calApi = fullCalendar.value.getApi();
+    calApi.gotoDate(journeyStore.getFromDate());
 });
 
 onMounted(() => {
-    const calApi = fullCalendar.value.getApi();
     watch(
         store.activityData,
         () => {
             if (!alreadyAdded.value) {
-                document.getElementsByClassName(
-                    "fc-showAllHours-button",
-                )[0].innerHTML = "6:00 - 24:00";
-                const activityData = store.activityData as Activity[];
-                activityData.forEach((activity: Activity) => {
-                    if (activity.calendar_activities != null) {
-                        activity.calendar_activities.forEach(
-                            (calendar_activity: CalendarActivity) => {
-                                const newEnd = add(
-                                    new Date(calendar_activity.start),
-                                    {
-                                        hours: parseInt(
-                                            activity.estimated_duration.split(
-                                                ":",
-                                            )[0],
-                                        ),
-                                        minutes: parseInt(
-                                            activity.estimated_duration.split(
-                                                ":",
-                                            )[1],
-                                        ),
-                                    },
-                                ).toISOString();
-                                calendar_activity.end = newEnd;
-                                calendar_activity.title = activity.name;
-                                if (
-                                    calendar_activity.start.split(" ")[1] <=
-                                    "06:00:00"
-                                ) {
-                                    calApi.setOption("slotMinTime", "00:00:00");
-                                    document.getElementsByClassName(
-                                        "fc-showAllHours-button",
-                                    )[0].innerHTML = "0:00 - 24:00";
-                                }
-                                calApi.addEvent(calendar_activity);
-                            },
-                        );
-                    }
-                });
-                alreadyAdded.value = true;
+                addActivities();
             }
         },
         { immediate: true },
     );
 });
+
+function addActivities() {
+    const calApi = fullCalendar.value.getApi();
+    document.getElementsByClassName("fc-showAllHours-button")[0].innerHTML =
+        "6:00 - 24:00";
+    const activityData = store.activityData as Activity[];
+    activityData.forEach((activity: Activity) => {
+        if (activity.calendar_activities != null) {
+            activity.calendar_activities.forEach(
+                (calendar_activity: CalendarActivity) => {
+                    const newEnd = add(new UTCDate(calendar_activity.start), {
+                        hours: parseInt(
+                            activity.estimated_duration.split(":")[0],
+                        ),
+                        minutes: parseInt(
+                            activity.estimated_duration.split(":")[1],
+                        ),
+                    }).toISOString();
+                    calendar_activity.end = newEnd;
+                    calendar_activity.title = activity.name;
+                    if (calendar_activity.start.split(" ")[1] <= "06:00:00") {
+                        calApi.setOption("slotMinTime", "00:00:00");
+                        document.getElementsByClassName(
+                            "fc-showAllHours-button",
+                        )[0].innerHTML = "0:00 - 24:00";
+                    }
+                    calApi.addEvent(calendar_activity);
+                },
+            );
+        }
+    });
+    calApi.gotoDate(props.journeyStartdate);
+    alreadyAdded.value = true;
+}
 
 /**
  * when activity is dragged into calendar or manually added this funciton will save it to the database
@@ -376,86 +419,89 @@ onMounted(() => {
  */
 async function initializeDrop(info: EventObject) {
     const calApi = fullCalendar.value.getApi();
-    if (info.event._def.extendedProps.defId === undefined) {
-        editDrop(info);
-        return;
-    }
-
-    const activityId = info.event._def.extendedProps.defId;
+    isInitializeDrop.value = true;
+    let calenderActivityId;
+    const isFromPool = ref(false);
     const startTime = info.event._instance.range.start.toISOString();
-    const endTime = info.event._instance.range.end.toISOString();
-    const activity = {
-        start: startTime.substring(0, startTime.length - 2),
-        end: endTime.substring(0, endTime.length - 2),
-    };
+    const date = startTime.split("T")[0];
+    let time = startTime.split("T")[1];
+    time = time.substring(0, time.length - 8);
+    if ((activityId.value = info.event._def.extendedProps.activity_id)) {
+        activityId.value = info.event._def.extendedProps.activity_id;
+        calenderActivityId = info.event._def.publicId;
+        activity.value = {
+            calendar_activity_id: calenderActivityId,
+            date: date,
+            time: time,
+        };
+    } else {
+        isFromPool.value = true;
+        activityId.value = info.event._def.extendedProps.defId;
+        activity.value = {
+            date: date,
+            time: time,
+        };
+    }
+    const oldActivity = store.getActivity(activityId.value) as Activity;
+    if (oldActivity.repeat_type != null && !isFromPool.value) {
+        isRecurringActivityEditVisible.value = true;
+    } else if (oldActivity.repeat_type != null && isFromPool.value) {
+        initializeDropCall(oldActivity.repeat_type);
+    } else {
+        initializeDropCall("all");
+    }
+    calApi.getEventById(info.event._def.publicId).remove();
+}
 
-    await client(
-        `/api/journey/${props.id}/activity/${activityId}/calendarActivity/`,
-        {
-            method: "POST",
-            body: activity,
-            async onResponse({ response }) {
-                if (response.ok) {
-                    toast.add({
-                        severity: "success",
-                        summary: t.value("calendar.add.toast.success.heading"),
-                        detail: t.value("calendar.add.toast.success.detail"),
-                        life: 6000,
-                    });
-                    activities.value
-                        .filter(
-                            (activity) =>
-                                activity.id == response._data.activity_id,
-                        )
-                        .forEach((activity: Activity) => {
-                            response._data.title = activity.name;
-                            calApi.addEvent(response._data);
-                        });
-                    activities.value
-                        .filter((activity) => activity.id === activityId)
-                        .forEach((activity: Activity) => {
-                            activities.value[
-                                activities.value.indexOf(activity)
-                            ].calendar_activities.push(response._data);
-                        });
-                    store.setActivities(activities.value);
-                }
-            },
-            async onRequestError() {
+async function initializeDropCall(editType: string) {
+    isRecurringActivityEditVisible.value = false;
+    Object.assign(activity.value, { edit_type: editType });
+    isInitializeDrop.value = false;
+    await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
+        method: "PATCH",
+        body: activity.value,
+        async onResponse({ response }) {
+            if (response.ok) {
                 toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
+                    severity: "success",
+                    summary: t.value("calendar.add.toast.success.heading"),
+                    detail: t.value("calendar.add.toast.success.detail"),
                     life: 6000,
                 });
-            },
-            async onResponseError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-            },
+                store.updateActivity(response._data);
+            }
         },
-    );
-    info.event.remove();
+        async onRequestError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
 }
 
 /**
  * when event is resized this function will update the activity in the database
  * @param info -- the event object with data about the activity
  */
-async function editDrop(info: EventObject) {
-    const activityId = info.event._def.extendedProps.activity_id;
-    const id = ref(info.event._def.publicId);
+function editDrop(info: EventObject) {
+    isEditDrop.value = true;
+    activityId.value = info.event._def.extendedProps.activity_id;
+    const calenderActivityId = info.event._def.publicId;
+    const oldActivity = store.getActivity(activityId.value) as Activity;
+
     const startTime = info.event._instance.range.start.toISOString();
     const endTime = info.event._instance.range.end.toISOString();
-
-    const activity = {
-        start: startTime.substring(0, startTime.length - 2),
-        end: endTime.substring(0, endTime.length - 2),
-    };
 
     const duration = differenceInMinutes(
         new Date(endTime).getTime(),
@@ -470,65 +516,42 @@ async function editDrop(info: EventObject) {
         minutes.toString().padStart(2, "0") +
         ":00";
 
-    await client(
-        `/api/journey/${props.id}/activity/${activityId}/calendarActivity/${id.value}`,
-        {
-            method: "PATCH",
-            body: activity,
-            async onResponse({ response }) {
-                if (response.ok) {
-                    toast.add({
-                        severity: "success",
-                        summary: t.value(
-                            "form.input.activity.edit.toast.success.heading",
-                        ),
-                        detail: t.value(
-                            "form.input.activity.edit.toast.success.detail",
-                        ),
-                        life: 6000,
-                    });
-                }
-            },
-            async onRequestError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-            },
-            async onResponseError() {
-                toast.add({
-                    severity: "error",
-                    summary: t.value("common.toast.error.heading"),
-                    detail: t.value("common.error.unknown"),
-                    life: 6000,
-                });
-            },
-        },
-    );
-
-    const activities = store.activityData as Activity[];
-    let newActivity;
-    activities
-        .filter(
-            (activity) =>
-                activity.id === activityId &&
-                activity.estimated_duration !== newDuration,
-        )
-        .forEach((activity: Activity) => {
-            activities[activities.indexOf(activity)].estimated_duration =
-                newDuration;
-            newActivity = activities[activities.indexOf(activity)];
-        });
-    if (newActivity !== undefined) {
-        await client(`/api/journey/${props.id}/activity/${activityId}`, {
-            method: "PATCH",
-            body: newActivity,
-        });
+    activity.value = {
+        estimated_duration: newDuration,
+        calendar_activity_id: calenderActivityId,
+    };
+    if (oldActivity.repeat_type != null) {
+        isRecurringActivityEditVisible.value = true;
+    } else {
+        editDropCall("all");
     }
 }
 
+async function editDropCall(editType: string) {
+    isEditDrop.value = false;
+    isRecurringActivityEditVisible.value = false;
+    Object.assign(activity.value, { edit_type: editType });
+    await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
+        method: "PATCH",
+        body: activity.value,
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value(
+                        "form.input.activity.edit.toast.success.heading",
+                    ),
+                    detail: t.value(
+                        "form.input.activity.edit.toast.success.detail",
+                    ),
+                    life: 6000,
+                });
+                close();
+                store.updateActivity(response._data);
+            }
+        },
+    });
+}
 /**
  * set the data of the activity in the dialog
  * @param info -- the event object with data about the activity
@@ -548,6 +571,12 @@ function showData(info: EventObject) {
                 onlyShow.value = true;
             }
             address.value = activity.address;
+            if (activity.repeat_type) {
+                repeatType.value = activity.repeat_type;
+            } else {
+                repeatType.value = " ";
+            }
+
             cost.value = activity.cost;
             created_at.value = activity.created_at;
             description.value = activity.description;
@@ -563,6 +592,16 @@ function showData(info: EventObject) {
             phone.value = activity.phone;
             updated_at.value = activity.updated_at;
             isActivityInfoVisible.value = true;
+            if (activity.repeat_type == "custom") {
+                repeatInterval.value = activity.repeat_interval;
+                repeatIntervalUnit.value = activity.repeat_interval_unit;
+                repeatOn.value = activity.repeat_on;
+                if (activity.repeat_end_date) {
+                    repeatEndDate.value = activity.repeat_end_date;
+                } else if (activity.repeat_end_occurrences) {
+                    repeatEndOccurences.value = activity.repeat_end_occurrences;
+                }
+            }
             calendarActivity.value = activities.value[
                 activities.value.indexOf(activity)
             ].calendar_activities.filter(
@@ -572,56 +611,85 @@ function showData(info: EventObject) {
         });
 }
 
-/**
- * when activity was edited in the dialog this function will update the activity in the calendar
- * @param name -- the name of the activity
- */
-async function editCalendarActivity(name: string) {
+async function removeOldActivities(oldActivities: Activity[]) {
     const calApi = fullCalendar.value.getApi();
-    activities.value
-        .filter((activity) => activity.id === activityId.value)
-        .forEach((activity: Activity) => {
+    oldActivities.forEach((activity: Activity) => {
+        if (activity.calendar_activities != null) {
             activity.calendar_activities.forEach(
                 (calendar_activity: CalendarActivity) => {
                     if (calApi.getEventById(calendar_activity.id) !== null) {
-                        calApi
-                            .getEventById(calendar_activity.id)
-                            .setProp("title", name);
-                        const newEnd = add(new Date(calendar_activity.start), {
-                            hours: parseInt(
-                                activity.estimated_duration.split(":")[0],
-                            ),
-                            minutes: parseInt(
-                                activity.estimated_duration.split(":")[1],
-                            ),
-                        }).toISOString();
-                        calApi
-                            .getEventById(calendar_activity.id)
-                            .setEnd(newEnd);
-                    } else {
-                        calApi.addEvent(calendar_activity);
-                        calApi
-                            .getEventById(calendar_activity.id)
-                            .setProp("title", name);
+                        calApi.getEventById(calendar_activity.id).remove();
                     }
                 },
             );
-        });
+        }
+    });
 }
 
-/**
- * when activity was already in the calendar and then moved manually via the dialog this function will update the location of the activity in the calendar
- * @param start -- the start date of the activity
- * @param end -- the end date of the activity
- */
-function moveActivity(start: Date, end: Date) {
+async function addNewActivities(activities: Activity[]) {
     const calApi = fullCalendar.value.getApi();
-    calApi.getEventById(calendarId.value).setStart(start);
-    calApi.getEventById(calendarId.value).setEnd(end);
+    const activity = Array.isArray(activities) ? activities : [activities];
+    activity.forEach((activity: Activity) => {
+        if (activity.calendar_activities != null) {
+            activity.calendar_activities.forEach(
+                (calendar_activity: CalendarActivity) => {
+                    if (calApi.getEventById(calendar_activity.id) !== null) {
+                        calApi.getEventById(calendar_activity.id).remove();
+                    }
+                    const newEnd = add(new UTCDate(calendar_activity.start), {
+                        hours: parseInt(
+                            activity.estimated_duration.split(":")[0],
+                        ),
+                        minutes: parseInt(
+                            activity.estimated_duration.split(":")[1],
+                        ),
+                    }).toISOString();
+                    calendar_activity.end = newEnd;
+                    calendar_activity.title = activity.name;
+                    if (calendar_activity.start.split(" ")[1] <= "06:00:00") {
+                        calApi.setOption("slotMinTime", "00:00:00");
+                        document.getElementsByClassName(
+                            "fc-showAllHours-button",
+                        )[0].innerHTML = "0:00 - 0:00";
+                    }
+                    calApi.addEvent(calendar_activity);
+                },
+            );
+        }
+    });
+}
+
+function call(editType: string) {
+    if (isEditDrop.value) {
+        editDropCall(editType);
+    } else if (isInitializeDrop.value) {
+        initializeDropCall(editType);
+    } else if (isRemoveCall.value) {
+        removeFromCalendarCall(editType);
+        isRemoveCall.value = false;
+    } else if (isDeleteCall.value) {
+        deleteActivityCall(editType);
+        isDeleteCall.value = false;
+    }
 }
 </script>
 <template>
     <div class="flex justify-center md:justify-start">
+        <JourneyIdComponentsActivityRepeatEditType
+            :visible="isRecurringActivityEditVisible"
+            @close="isRecurringActivityEditVisible = false"
+            @post="call"
+        />
+        <JourneyIdComponentsActivityRepeatEditTypeDelete
+            :visible="isRecurringActivityDeleteVisible"
+            @close="isRecurringActivityDeleteVisible = false"
+            @post="call"
+        />
+        <JourneyIdComponentsActivityRepeatEditTypeRemove
+            :visible="isRecurringActivityRemoveVisible"
+            @close="isRecurringActivityRemoveVisible = false"
+            @post="call"
+        />
         <div
             class="flex w-[90%] flex-col items-end sm:w-5/6 md:ml-[10%] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
         >
@@ -661,12 +729,18 @@ function moveActivity(start: Date, end: Date) {
                 :phone="phone"
                 :updated-at="updated_at"
                 :update="update"
+                :prop-repeat-type="repeatType"
                 :calendar-clicked="calendarClicked"
+                :journey-start="journeyStartDate"
+                :journey-end="journeyEndDate"
+                :repeat-end-date="repeatEndDate"
+                :repeat-end-occurences="repeatEndOccurences"
+                :repeat-interval="repeatInterval"
+                :repeat-interval-unit="repeatIntervalUnit"
+                :repeat-on="repeatOn"
                 @close="isActivityInfoVisible = false"
                 @delete-activity="deleteActivity"
                 @remove-from-calendar="removeFromCalendar"
-                @edit-calendar-activity="editCalendarActivity"
-                @calendar-moved="moveActivity"
             />
         </div>
     </div>

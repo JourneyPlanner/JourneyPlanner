@@ -8,6 +8,8 @@ const props = defineProps({
         type: Object as PropType<User>,
         required: true,
     },
+    journeyStart: { type: Date, default: new Date() },
+    journeyEnd: { type: Date, default: new Date() },
 });
 
 const emit = defineEmits(["close"]);
@@ -76,6 +78,8 @@ function close() {
                 currUser?.id === 'TEMPLATE'
             "
             :id="journeyStore.getID()"
+            :journey-start="props.journeyStart"
+            :journey-end="props.journeyEnd"
             :in-template="currUser?.id === 'TEMPLATE'"
             @open-new-activity-dialog="isDialogVisible = true"
         />
@@ -84,6 +88,8 @@ function close() {
             :id="journeyStore.getID()"
             :visible="isDialogVisible"
             :only-show="false"
+            :journey-start="props.journeyStart"
+            :journey-end="props.journeyEnd"
             :create="true"
             :create-address="true"
             @close="close"

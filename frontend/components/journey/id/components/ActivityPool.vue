@@ -18,6 +18,8 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    journeyStart: { type: Date, required: true },
+    journeyEnd: { type: Date, required: true },
     inTemplate: {
         type: Boolean,
         required: false,
@@ -54,7 +56,7 @@ const activityCount = computed(
     () =>
         activities.value.length -
         activities.value.filter(
-            (activity) => activity.calendar_activities.length > 0,
+            (activity) => activity.calendar_activities?.length > 0,
         ).length,
 );
 
@@ -145,7 +147,7 @@ const confirmDelete = (event: Event) => {
                 detail: t.value("journey.delete.detail"),
                 life: 3000,
             });
-            deleteActivity();
+            deleteActivity(activityId.value);
         },
     });
 };
@@ -153,9 +155,35 @@ const confirmDelete = (event: Event) => {
 /*
  * delete activity
  */
-async function deleteActivity() {
-    await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
+async function deleteActivity(activity_id: string) {
+    const edit_type = {
+        edit_type: "all",
+    };
+    if (!activity_id) {
+        toast.add({
+            severity: "error",
+            summary: t.value("common.toast.error.heading"),
+            detail: t.value("common.error.invalid_id"),
+            life: 6000,
+        });
+        return;
+    }
+
+    const activityExists = activities.value.some(
+        (activity) => activity.id === activity_id,
+    );
+    if (!activityExists) {
+        toast.add({
+            severity: "error",
+            summary: t.value("common.toast.error.heading"),
+            detail: t.value("common.error.not_found"),
+            life: 6000,
+        });
+        return;
+    }
+    await client(`/api/journey/${props.id}/activity/${activity_id}`, {
         method: "delete",
+        body: edit_type,
         async onResponse({ response }) {
             if (response.ok) {
                 toast.add({
@@ -169,7 +197,7 @@ async function deleteActivity() {
                     life: 6000,
                 });
                 activities.value
-                    .filter((activity) => activity.id === activityId.value)
+                    .filter((activity) => activity.id === activity_id)
                     .forEach(async (activity: Activity) => {
                         activities.value.splice(
                             activities.value.indexOf(activity),
@@ -255,7 +283,10 @@ const itemsJourneyGuide = ref([
                         class="cursor-pointer empty:hidden"
                     >
                         <div
-                            v-if="activity.calendar_activities.length <= 0"
+                            v-if="
+                                activity.calendar_activities == undefined ||
+                                activity.calendar_activities.length <= 0
+                            "
                             id="draggable-el"
                             :key="activity.id"
                             class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-calypso-400 bg-light px-2 py-1 text-base font-normal dark:border-calypso-600 dark:bg-dark sm:h-16 sm:text-base lg:rounded-xl"
@@ -363,6 +394,8 @@ const itemsJourneyGuide = ref([
             :phone="phone"
             :updated-at="updated_at"
             :update="update"
+            :journey-start="props.journeyStart"
+            :journey-end="props.journeyEnd"
             @close="isActivityInfoVisible = false"
             @delete-activity="deleteActivity"
         />
