@@ -392,7 +392,7 @@ function changeOccurrences() {
                     class: 'justify-end items-center w-fit pl-5 collapse',
                 },
                 closeButtonIcon: {
-                    class: 'collapse',
+                    class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10 ',
                 },
                 mask: {
                     class: 'max-sm:collapse',
@@ -408,12 +408,6 @@ function changeOccurrences() {
                         <T key-name="activity.repeat.custom.dialog" />
                     </div>
                     <div class="h-0.5 flex-grow bg-calypso-600" />
-                    <button
-                        class="focus-ring-1 z-30 flex h-10 w-10 items-center justify-end self-center text-natural-500 hover:text-text focus:outline-none dark:text-natural-400 dark:hover:text-natural-50"
-                        @click="cancel"
-                    >
-                        <span class="pi pi-times text-2xl" />
-                    </button>
                 </div>
             </template>
             <form class="text-text dark:text-natural-50">
@@ -522,8 +516,9 @@ function changeOccurrences() {
                             }"
                         >
                             <div class="text-lg">
-                                <T key-name="activity.repeat.custom.on" /></div
-                        ></label>
+                                <T key-name="activity.repeat.custom.on" />
+                            </div>
+                        </label>
                         <Calendar
                             v-model="endingDate"
                             :min-date="props.startDate"
@@ -686,7 +681,7 @@ function changeOccurrences() {
                         :placeholder="timeMode"
                         :focus-on-hover="false"
                         :unstyled="true"
-                        class="w-[30%] rounded-sm"
+                        class="w-[30%] rounded-md"
                         :pt="{
                             root: {
                                 class: 'ml-4 font-nunito text-text text-base bg-natural-50 border border-natural-300 dark:border-natural-700 dark:bg-natural-900 dark:text-natural-50 z-10 hover:bg-natural-200 h-8 flex items-center',
@@ -752,8 +747,9 @@ function changeOccurrences() {
                                 'text-gray-600': true,
                                 'text-natural-400': endOption !== 'date',
                             }"
-                            >On</label
                         >
+                            <T key-name="activity.repeat.custom.on" />
+                        </label>
                         <Calendar
                             v-model="endingDate"
                             :min-date="props.startDate"
@@ -761,7 +757,7 @@ function changeOccurrences() {
                             :disabled="endOption !== 'date'"
                             :placeholder="format(props.endDate, 'dd/MM/yyyy')"
                             panel-class="bg-natural-50 dark:bg-natural-900 dark:text-natural-50"
-                            input-class="dark:border-natural-700 border-natural-300 block rounded-sm w-28 text-center text-md text-text dark:text-natural-50 disabled:text-natural-400 dark:disabled:text-natural-400 font-medium bg-natural-50 dark:bg-natural-900 border-2 focus:outline-none focus:ring-0"
+                            input-class=" font-nunito rounded-md dark:border-natural-700 border-natural-200 block w-28 h-8 text-center text-md text-text dark:text-natural-50 disabled:text-natural-400 dark:disabled:text-natural-400 font-medium bg-natural-50 dark:bg-natural-900 border-2 focus:outline-none focus:ring-0"
                             class="rounded-lg border placeholder-text"
                             date-format="dd/mm/yy"
                             :pt="{
@@ -774,7 +770,6 @@ function changeOccurrences() {
                                     class: 'text-text dark:text-natural-50 flex gap-1 font-nunito',
                                 },
                                 dayLabel: { class: 'text-calypso-400' },
-
                                 datepickerMask: {
                                     class: 'text-text bg-natural-900',
                                 },
@@ -834,7 +829,8 @@ function changeOccurrences() {
                         class="ml-auto flex h-7 w-full flex-row justify-center self-end rounded-md border-2 border-dandelion-300 bg-natural-50 py-4 text-center text-text hover:bg-dandelion-200 dark:bg-background-dark dark:text-natural-50 dark:hover:bg-pesto-600"
                         @click="createCustomRepeat"
                     />
-                </div></form
-        ></Sidebar>
+                </div>
+            </form>
+        </Sidebar>
     </div>
 </template>

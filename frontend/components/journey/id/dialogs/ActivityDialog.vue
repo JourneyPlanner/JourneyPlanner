@@ -243,7 +243,6 @@ const { handleSubmit } = useForm<ActivityForm>({
 
 const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 async function onSuccess(values: ActivityForm) {
-    console.log(props.propRepeatType);
     if (props.calendarClicked) {
         if (
             props.propRepeatType != repeatType.value &&
