@@ -27,6 +27,11 @@
 </template>
 
 <style>
+.p-toast {
+    z-index: 9999;
+    /* Ensure it's above other elements without affecting scroll */
+}
+
 :root {
     --p-focus-ring-color: #327597;
 }

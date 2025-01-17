@@ -208,7 +208,9 @@ async function resend() {
                             <T key-name="password.reset.button" />
                         </legend>
                         <form class="w-3/4" @submit="onSubmit">
-                            <p class="my-2 text-left text-sm">
+                            <p
+                                class="mb-4 mt-2 text-left text-sm text-text dark:text-natural-50"
+                            >
                                 <T key-name="password.reset.text" />
                             </p>
                             <FormPasswordInput

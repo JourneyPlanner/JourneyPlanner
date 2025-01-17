@@ -128,7 +128,9 @@ async function sendPasswordResetEmail(email: string) {
                             <T key-name="password.forgot.title" />
                         </legend>
                         <form class="-mt-2 w-5/6" @submit="onSubmit">
-                            <p class="my-2 text-left text-sm">
+                            <p
+                                class="my-2 text-left text-sm text-text dark:text-natural-50"
+                            >
                                 <T key-name="password.forgot.text" />
                             </p>
                             <FormInput
