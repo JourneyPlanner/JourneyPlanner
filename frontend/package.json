@@ -25,7 +25,7 @@
         "@fullcalendar/timegrid": "^6.1.15",
         "@fullcalendar/vue3": "^6.1.15",
         "@mapbox/mapbox-gl-geocoder": "^5.0.3",
-        "@mapbox/search-js-web": "^1.0.0-beta.24",
+        "@mapbox/search-js-web": "^1.0.0-beta.25",
         "@nuxt/eslint": "^0.7.4",
         "@nuxt/image": "^1.8.1",
         "@pinia/nuxt": "^0.9.0",
