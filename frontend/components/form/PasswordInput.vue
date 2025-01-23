@@ -120,7 +120,7 @@ const { value, errorMessage } = useField<string>(() => props.name);
         </label>
         <div
             v-if="showResetButton"
-            class="ml-3 mt-0.5 w-full text-left text-sm hover:underline"
+            class="ml-3 mt-0.5 w-full text-left text-sm text-text hover:underline dark:text-natural-50"
         >
             <NuxtLink class="cursor-pointer" to="/forgot-password">
                 <T key-name="password.forgot.login.link" />

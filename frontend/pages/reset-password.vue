@@ -12,6 +12,10 @@ useHead({
     title: `${t.value("password.reset.title")} | JourneyPlanner`,
 });
 
+definePageMeta({
+    middleware: ["sanctum:guest"],
+});
+
 const route = useRoute();
 const loading = ref(true);
 const isSendNewLinkToastVisible = ref(false);
