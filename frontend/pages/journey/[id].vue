@@ -66,6 +66,12 @@ if (error.value?.statusCode === 404) {
         statusMessage: "Journey not found",
         fatal: true,
     });
+} else if (error.value?.statusCode === 403) {
+    throw createError({
+        statusCode: 403,
+        statusMessage: "You can't access this journey.",
+        fatal: true,
+    });
 }
 
 if (isAuthenticated.value) {
