@@ -354,11 +354,7 @@ async function changeEmail() {
             :is-updating="true"
             @close="isVerifyEmailDialogVisible = false"
         >
-            <template name="text">
-                <T
-                    key-name="dashboard.user.settings.email.change.verify.text"
-                />
-            </template>
+            <T key-name="dashboard.user.settings.email.change.verify.text" />
         </MailVerifyDialog>
     </div>
 </template>
