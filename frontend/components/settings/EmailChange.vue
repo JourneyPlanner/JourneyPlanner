@@ -17,6 +17,7 @@ const client = useSanctumClient();
 const isVisible = ref(props.visible);
 const isVerifyEmailDialogVisible = ref(false);
 const isChangeEmailButtonDisabled = ref(false);
+const email = ref("");
 
 const validationSchema = props.requiresPassword
     ? yup.object({
@@ -79,9 +80,11 @@ async function changeEmail() {
             },
             async onResponse({ response }) {
                 if (response.ok) {
+                    email.value = newEmail.value;
                     isVerifyEmailDialogVisible.value = true;
                     emit("changeEmail", newEmail);
                     handleReset();
+                    isChangeEmailButtonDisabled.value = false;
                 }
             },
             async onResponseError({ response }) {
@@ -120,9 +123,9 @@ async function changeEmail() {
                         life: 6000,
                     });
                 }
+                isChangeEmailButtonDisabled.value = false;
             },
         });
-        isChangeEmailButtonDisabled.value = false;
     }
 }
 </script>
@@ -349,8 +352,9 @@ async function changeEmail() {
             </div>
         </Sidebar>
         <MailVerifyDialog
+            v-if="isVerifyEmailDialogVisible"
             :is-confirm-email-dialog-visible="isVerifyEmailDialogVisible"
-            :email="newEmail"
+            :email="email"
             :is-updating="true"
             @close="isVerifyEmailDialogVisible = false"
         >
