@@ -8,6 +8,7 @@
     "license": "All rights reserved",
     "require": {
         "php": "^8.2",
+        "dedoc/scramble": "^0.11.33",
         "google/apiclient-services": "^0.391.0",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.37",
