@@ -30,14 +30,14 @@ async function clear(target) {
                         >
                             {{ error.statusCode }}
                         </h1>
-                        <h2
-                            class="mt-3 max-h-40 min-h-12 overflow-y-scroll break-all pr-4 text-3xl font-semibold max-md:text-center md:mt-5 md:text-4xl"
+                        <div
+                            class="mt-3 max-h-32 overflow-y-scroll break-words pb-1 pr-4 text-3xl font-semibold max-md:text-center md:mt-5 md:text-4xl"
                         >
-                            <span v-if="error.data === 'isTolgeeKey'">
+                            <h2 v-if="error.data === 'isTolgeeKey'">
                                 <T :key-name="error.message" />
-                            </span>
-                            <span v-else>{{ error.message }}</span>
-                        </h2>
+                            </h2>
+                            <h2 v-else>{{ error.message }}</h2>
+                        </div>
                         <p class="mt-3 text-base md:mt-5 md:text-lg">
                             <T key-name="error.information" />
                         </p>
