@@ -14,7 +14,7 @@ class UpdateTemplateRequest extends UpdateJourneyRequest
     public function rules(): array
     {
         $rules = parent::rules();
-        $rules["journey_id"] = "nullable|uuid,exists:journeys,id";
+        $rules["journey_id"] = "nullable|uuid|exists:journeys,id";
         return $rules;
     }
 }

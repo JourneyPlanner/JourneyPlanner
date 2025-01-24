@@ -218,7 +218,7 @@ class TemplateController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            "journey_id" => "required|uuid,exists:journeys,id",
+            "journey_id" => "required|uuid|exists:journeys,id",
             "name" => "required|string",
             "description" => "string",
         ]);
