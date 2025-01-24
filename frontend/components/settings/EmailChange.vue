@@ -7,6 +7,7 @@ const props = defineProps({
     visible: { type: Boolean, required: true },
     currEmail: { type: String, required: true },
     requiresPassword: { type: Boolean, required: true },
+    userId: { type: String, required: true },
 });
 
 const emit = defineEmits(["close", "changeEmail"]);
@@ -17,7 +18,8 @@ const client = useSanctumClient();
 const isVisible = ref(props.visible);
 const isVerifyEmailDialogVisible = ref(false);
 const isChangeEmailButtonDisabled = ref(false);
-const email = ref("");
+const userId = ref(props.userId);
+console.log(userId);
 
 const validationSchema = props.requiresPassword
     ? yup.object({
@@ -80,7 +82,6 @@ async function changeEmail() {
             },
             async onResponse({ response }) {
                 if (response.ok) {
-                    email.value = newEmail.value;
                     isVerifyEmailDialogVisible.value = true;
                     emit("changeEmail", newEmail);
                     handleReset();
@@ -354,8 +355,8 @@ async function changeEmail() {
         <MailVerifyDialog
             v-if="isVerifyEmailDialogVisible"
             :is-confirm-email-dialog-visible="isVerifyEmailDialogVisible"
-            :email="email"
             :is-updating="true"
+            :user-id="userId"
             @close="isVerifyEmailDialogVisible = false"
         >
             <T key-name="dashboard.user.settings.email.change.verify.text" />

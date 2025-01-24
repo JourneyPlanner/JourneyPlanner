@@ -1440,6 +1440,7 @@ function editJourney(journey: Journey, id: string) {
                 :prop-new-email-needing-verification="
                     user.email_needs_verification
                 "
+                :prop-id="user.id"
                 @close="isUserSettingsVisible = false"
             />
             <ConfirmDialog
