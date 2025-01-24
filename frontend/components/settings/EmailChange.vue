@@ -19,7 +19,6 @@ const isVisible = ref(props.visible);
 const isVerifyEmailDialogVisible = ref(false);
 const isChangeEmailButtonDisabled = ref(false);
 const userId = ref(props.userId);
-console.log(userId);
 
 const validationSchema = props.requiresPassword
     ? yup.object({
