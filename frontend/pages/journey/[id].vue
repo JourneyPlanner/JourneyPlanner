@@ -319,6 +319,7 @@ function scrollToTarget(target: string) {
         <JourneyIdMenuSidebar
             :is-menu-sidebar-visible="isMenuSidebarVisible"
             :curr-user="currUser! || {}"
+            :journey-id="String(journeyId)"
             @leave-journey="confirmLeave"
             @journey-edited="journeyEdited"
             @close="isMenuSidebarVisible = false"

@@ -811,6 +811,11 @@ function emitScroll(target: string) {
                     </div>
                     <div v-else class="max-lg:hidden">
                         <i
+                            v-if="currUser?.id === 'TEMPLATE_EDIT'"
+                            class="pi pi-cloud-upload mt-6 text-7xl text-calypso-300"
+                        />
+                        <i
+                            v-else
                             class="pi pi-objects-column mt-6 text-7xl text-calypso-300"
                         />
                     </div>
@@ -838,6 +843,16 @@ function emitScroll(target: string) {
                         >
                             <T key-name="journey.countdown.until" />
                         </p>
+                        <div v-else-if="currUser?.id === 'TEMPLATE_EDIT'">
+                            <h5
+                                class="mt-4 font-semibold text-text dark:text-natural-50 max-sm:hidden md:text-xl"
+                            >
+                                <T key-name="template.update" />
+                            </h5>
+                            <p class="p-2 text-sm max-xs:hidden sm:text-base">
+                                <T key-name="template.update.description" />
+                            </p>
+                        </div>
                         <div v-else>
                             <h5
                                 class="mt-4 font-semibold text-text dark:text-natural-50 max-sm:hidden md:text-xl"
@@ -875,6 +890,13 @@ function emitScroll(target: string) {
                             @click="toggleActivityDialog"
                         >
                             <T key-name="journey.button.create.activity" />
+                        </button>
+                        <button
+                            v-else-if="currUser?.id === 'TEMPLATE_EDIT'"
+                            class="my-4 ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:mt-4 md:text-base"
+                            @click="toggleActivityDialog"
+                        >
+                            <T key-name="template.update" />
                         </button>
                         <NuxtLink
                             v-else

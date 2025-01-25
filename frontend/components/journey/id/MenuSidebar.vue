@@ -10,6 +10,10 @@ const props = defineProps({
         type: Object as PropType<User>,
         required: true,
     },
+    journeyId: {
+        type: String,
+        required: true,
+    },
 });
 
 const emit = defineEmits([

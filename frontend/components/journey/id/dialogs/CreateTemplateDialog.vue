@@ -5,6 +5,7 @@ import * as yup from "yup";
 
 const props = defineProps({
     isCreateTemplateVisible: { type: Boolean, required: true },
+    updateTemplate: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["closeTemplateDialog"]);
@@ -157,7 +158,13 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                 <h3
                     class="text-nowrap text-2xl font-medium text-text dark:text-natural-50"
                 >
-                    <T key-name="journey.template.create" />
+                    <T
+                        :key-name="
+                            props.updateTemplate
+                                ? 'journey.template.update'
+                                : 'journey.template.create'
+                        "
+                    />
                 </h3>
                 <span
                     class="h-0.5 w-full bg-calypso-300 dark:bg-calypso-600 md:mr-2"
@@ -169,10 +176,12 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
             >
                 <div class="mb-5 flex flex-col">
                     <p
+                        v-if="!props.updateTemplate"
                         class="col-span-full col-start-1 row-span-1 -mt-1 mb-5 text-sm text-natural-600 dark:text-natural-200 md:text-base"
                     >
                         <T key-name="journey.template.create.description" />
                     </p>
+                    <div v-else class="mt-6"></div>
                     <div
                         class="mb-1 grid grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20 xl:gap-x-0"
                     >
@@ -241,7 +250,11 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                     />
                     <Button
                         type="submit"
-                        :label="t('common.button.create')"
+                        :label="
+                            props.updateTemplate
+                                ? t('common.button.update')
+                                : t('common.button.create')
+                        "
                         :loading="savingTemplate"
                         icon="pi pi-check"
                         :pt="{

@@ -19,6 +19,17 @@ const { data, error } = await useAsyncData("user", () =>
     client(`/api/user/${username.value}`),
 );
 
+const { data: userData } = await useAsyncData("currentUSer", () =>
+    client(`/api/me/`),
+);
+
+console.log(userData.value.username);
+console.log(data.value.username);
+console.log(data.value.username == userData.value.username);
+
+const isCurrentUser = data.value.username == userData.value.username;
+console.log(isCurrentUser);
+
 if (error.value) {
     if (error.value.statusCode === 404) {
         throw createError({
@@ -283,6 +294,7 @@ const openTemplateDialog = (template: Template) => {
                         class="hidden md:block"
                         :template="template"
                         :displayed-in-profile="true"
+                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
                     />
                     <TemplateCardSmall
@@ -291,6 +303,7 @@ const openTemplateDialog = (template: Template) => {
                         class="md:hidden"
                         :template="template"
                         :displayed-in-profile="true"
+                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
                     />
                     <div
@@ -317,6 +330,7 @@ const openTemplateDialog = (template: Template) => {
                         :key="template.id"
                         class="hidden md:block"
                         :template="template"
+                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
                     />
                     <TemplateCardSmall
@@ -325,6 +339,7 @@ const openTemplateDialog = (template: Template) => {
                         class="md:hidden"
                         :template="template"
                         :displayed-in-profile="true"
+                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
                     />
                 </div>
