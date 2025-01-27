@@ -29,7 +29,7 @@
         "@nuxt/eslint": "^0.7.5",
         "@nuxt/image": "^1.9.0",
         "@pinia/nuxt": "^0.9.0",
-        "@studiometa/vue-mapbox-gl": "^2.6.0",
+        "@studiometa/vue-mapbox-gl": "^2.7.0",
         "@tolgee/vue": "^6.0.1",
         "@uppy/core": "^3.11.2",
         "@uppy/dashboard": "^3.9.1",
