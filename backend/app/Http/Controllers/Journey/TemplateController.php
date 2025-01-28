@@ -104,7 +104,7 @@ class TemplateController extends Controller
             "template_destination_input" => "nullable|string",
             "template_destination_name" => "nullable|string",
             "template_creator" => "nullable|string",
-            "journey_id" => "nullable|uuid,exists:journeys,id",
+            "journey_id" => "nullable|uuid|exists:journeys,id",
         ]);
 
         // Get the validated values or use the default values
@@ -289,10 +289,10 @@ class TemplateController extends Controller
 
         $template->activities()->delete();
 
-        $template = $this->cloneActivities(
-            Journey::findOrFail($validated["journey_id"]),
-            $template
-        );
+        $journey = Journey::findOrFail($validated["journey_id"]);
+        Gate::authorize("update", [$journey, false]);
+
+        $template = $this->cloneActivities($journey, $template);
 
         return response()->json(
             [
