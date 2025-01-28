@@ -22,13 +22,7 @@ const { data, error } = await useAsyncData("user", () =>
 const { data: userData } = await useAsyncData("currentUSer", () =>
     client(`/api/me/`),
 );
-
-console.log(userData.value.username);
-console.log(data.value.username);
-console.log(data.value.username == userData.value.username);
-
 const isCurrentUser = data.value.username == userData.value.username;
-console.log(isCurrentUser);
 
 if (error.value) {
     if (error.value.statusCode === 404) {
@@ -227,6 +221,13 @@ const openTemplateDialog = (template: Template) => {
     openedTemplate.value = template;
     isTemplatePopupVisible.value = true;
 };
+
+function removeTemplate(id: string) {
+    templates.value.splice(
+        templates.value.findIndex((template) => template.id === id),
+        1,
+    );
+}
 </script>
 
 <template>
@@ -296,6 +297,7 @@ const openTemplateDialog = (template: Template) => {
                         :displayed-in-profile="true"
                         :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
+                        @template-deleted="removeTemplate"
                     />
                     <TemplateCardSmall
                         v-for="template in firstFourTemplates"
@@ -305,16 +307,17 @@ const openTemplateDialog = (template: Template) => {
                         :displayed-in-profile="true"
                         :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
+                        @template-deleted="removeTemplate"
                     />
                     <div
                         v-if="firstEightTemplates.length === 0"
-                        class="col-span-full hidden md:block"
+                        class="col-span-full hidden text-text dark:text-natural-50 md:block"
                     >
                         <T key-name="template.none" />
                     </div>
                     <div
                         v-if="firstFourTemplates.length === 0"
-                        class="col-span-full md:hidden"
+                        class="col-span-full text-text dark:text-natural-50 md:hidden"
                     >
                         <T key-name="template.none" />
                     </div>
@@ -332,6 +335,7 @@ const openTemplateDialog = (template: Template) => {
                         :template="template"
                         :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
+                        @template-deleted="removeTemplate"
                     />
                     <TemplateCardSmall
                         v-for="template in remainingTemplatesMobile"
@@ -341,6 +345,7 @@ const openTemplateDialog = (template: Template) => {
                         :displayed-in-profile="true"
                         :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
+                        @template-deleted="removeTemplate"
                     />
                 </div>
                 <div ref="loader" class="col-span-full">
@@ -402,6 +407,27 @@ const openTemplateDialog = (template: Template) => {
                     isTemplatePopupVisible = false;
                     openedTemplate = undefined;
                 "
+            />
+            <ConfirmDialog
+                :draggable="false"
+                group="username"
+                :pt="{
+                    header: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    content: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    footer: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
+                    },
+                    closeButton: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
+                    },
+                    closeButtonIcon: {
+                        class: 'h-5 w-5',
+                    },
+                }"
             />
         </div>
     </div>

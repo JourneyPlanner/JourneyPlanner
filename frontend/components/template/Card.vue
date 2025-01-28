@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
 import type { MenuItemCommandEvent } from "primevue/menuitem";
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
 
 const props = defineProps({
     template: {
@@ -17,9 +19,9 @@ const props = defineProps({
     },
 });
 
-defineEmits(["openTemplate"]);
-
 const { t } = useTranslate();
+const toast = useToast();
+const client = useSanctumClient();
 
 const isProfileDialogVisible = ref(false);
 const router = useRouter();
@@ -30,8 +32,9 @@ const menu = ref();
 const toggle = (event: Event) => {
     menu.value.toggle(event);
 };
+const emit = defineEmits(["templateDeleted", "templateEdited", "openTemplate"]);
 
-const itemsJourneyGuide = ref([
+const templateItems = ref([
     {
         label: t.value("dashboard.options.header"),
         items: [
@@ -59,17 +62,51 @@ const itemsJourneyGuide = ref([
 const confirmDelete = (event: Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
-        group: "dashboard",
+        group: "username",
         header: t.value("dashboard.delete.header"),
-        message: t.value("dashboard.delete.confirm"),
+        message: t.value("template.delete.confirm"),
         icon: "pi pi-exclamation-triangle",
         rejectClass: "hover:underline dark:text-natural-200",
         acceptClass:
             "text-mahagony-500 dark:text-mahagony-400 hover:underline font-bold",
         rejectLabel: t.value("common.button.cancel"),
-        acceptLabel: t.value("common.delete"),
+        acceptLabel: t.value("template.delete"),
+        accept: () => {
+            toast.add({
+                severity: "info",
+                summary: t.value("common.toast.info.heading"),
+                detail: t.value("delete.template.toast.message"),
+                life: 3000,
+            });
+            deleteTemplate(props.template.id);
+        },
     });
 };
+
+async function deleteTemplate(id: string) {
+    await client(`/api/journey/${id}`, {
+        method: "DELETE",
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("delete.template.toast.success.heading"),
+                    detail: t.value("delete.template.toast.success"),
+                    life: 6000,
+                });
+                emit("templateDeleted", id);
+            }
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
 </script>
 
 <template>
@@ -83,7 +120,7 @@ const confirmDelete = (event: Event) => {
         <Menu
             id="overlay_menu"
             ref="menu"
-            :model="itemsJourneyGuide"
+            :model="templateItems"
             class="bg-natural-50 dark:bg-natural-800"
             :popup="true"
             :pt="{

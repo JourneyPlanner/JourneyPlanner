@@ -12,7 +12,6 @@ const activityDataLoaded = ref(false);
 
 const backTolgeeKey = ref("template.back.to.templates");
 const backRoute = ref("/dashboard?tab=templates");
-const createJourneyFromTemplate = `/journey/new/template/${templateID}`;
 
 onMounted(() => {
     const lastRoute = router.options.history.state.back as string;
@@ -88,12 +87,6 @@ useHead({
                     <T :key-name="backTolgeeKey" />
                 </span>
             </NuxtLink>
-            <NuxtLink
-                :to="createJourneyFromTemplate"
-                class="ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:text-base"
-            >
-                <T key-name="template.use" />
-            </NuxtLink>
         </div>
         <JourneyIdTicketSection
             :daysto-end="-1"
@@ -133,7 +126,7 @@ useHead({
         <div ref="calendar">
             <JourneyIdJourneyCalendar
                 :id="templateID.toString()"
-                :current-user-role="0"
+                :current-user-role="1"
                 :journey-ended="false"
                 :during-journey="false"
                 :journey-startdate="journeyStore.getFromDate()"
@@ -141,13 +134,26 @@ useHead({
             />
         </div>
         <JourneyIdActivityMap v-if="activityDataLoaded" />
-        <div class="my-5 flex justify-center">
-            <NuxtLink
-                :to="createJourneyFromTemplate"
-                class="ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:text-base"
-            >
-                <T key-name="template.use" />
-            </NuxtLink>
-        </div>
+        <ConfirmDialog
+            :draggable="false"
+            group="journey"
+            :pt="{
+                header: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+                content: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                },
+                footer: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
+                },
+                closeButton: {
+                    class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
+                },
+                closeButtonIcon: {
+                    class: 'h-5 w-5',
+                },
+            }"
+        />
     </div>
 </template>

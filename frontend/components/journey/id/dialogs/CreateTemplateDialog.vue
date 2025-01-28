@@ -6,9 +6,10 @@ import * as yup from "yup";
 const props = defineProps({
     isCreateTemplateVisible: { type: Boolean, required: true },
     updateTemplate: { type: Boolean, default: false },
+    templateID: { type: String, default: "" },
 });
 
-const emit = defineEmits(["closeTemplateDialog"]);
+const emit = defineEmits(["closeTemplateDialog", "createdTemplate"]);
 
 const journey = useJourneyStore();
 const { t } = useTranslate();
@@ -67,59 +68,100 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
         name: values.name,
         description: values.description,
     };
-
-    await client(`/api/template/`, {
-        method: "POST",
-        body: template,
-        async onResponse({ response }) {
-            if (response.ok) {
-                toast.add({
-                    severity: "success",
-                    summary: t.value(
-                        "form.template.create.toast.success.heading",
-                    ),
-                    detail: t.value(
-                        "form.template.create.toast.success.detail",
-                    ),
-                    life: 3000,
-                });
-                close();
-                savingTemplate.value = false;
-            }
-        },
-        async onRequestError() {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value("common.error.unknown"),
-                life: 6000,
-            });
-            savingTemplate.value = false;
-        },
-        async onResponseError({ response }) {
-            if (response.status === 409) {
-                toast.add({
-                    severity: "error",
-                    summary: t.value(
-                        "form.template.create.toast.error.duplicate.heading",
-                    ),
-                    detail: t.value(
-                        "form.template.create.toast.error.duplicate.detail",
-                    ),
-                    life: 6000,
-                });
-                close();
-            } else {
+    if (props.updateTemplate) {
+        await client(`/api/template/${props.templateID}`, {
+            method: "PUT",
+            body: template,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value(
+                            "form.template.update.toast.success.heading",
+                        ),
+                        detail: t.value(
+                            "form.template.update.toast.success.detail",
+                        ),
+                        life: 3000,
+                    });
+                    close();
+                    savingTemplate.value = false;
+                }
+            },
+            async onRequestError() {
                 toast.add({
                     severity: "error",
                     summary: t.value("common.toast.error.heading"),
                     detail: t.value("common.error.unknown"),
                     life: 6000,
                 });
-            }
-            savingTemplate.value = false;
-        },
-    });
+                savingTemplate.value = false;
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                savingTemplate.value = false;
+            },
+        });
+    } else {
+        await client(`/api/template/`, {
+            method: "POST",
+            body: template,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value(
+                            "form.template.create.toast.success.heading",
+                        ),
+                        detail: t.value(
+                            "form.template.create.toast.success.detail",
+                        ),
+                        life: 3000,
+                    });
+                    emit("createdTemplate", response._data);
+                    close();
+                    savingTemplate.value = false;
+                }
+            },
+            async onRequestError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                savingTemplate.value = false;
+            },
+            async onResponseError({ response }) {
+                if (response.status === 409) {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value(
+                            "form.template.create.toast.error.duplicate.heading",
+                        ),
+                        detail: t.value(
+                            "form.template.create.toast.error.duplicate.detail",
+                        ),
+                        life: 6000,
+                    });
+                    close();
+                } else {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("common.error.unknown"),
+                        life: 6000,
+                    });
+                }
+                savingTemplate.value = false;
+            },
+        });
+    }
 });
 </script>
 
@@ -181,7 +223,12 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                     >
                         <T key-name="journey.template.create.description" />
                     </p>
-                    <div v-else class="mt-6"></div>
+                    <div
+                        v-else
+                        class="col-span-full col-start-1 row-span-1 -mt-1 mb-5 text-sm text-natural-600 dark:text-natural-200 md:text-base"
+                    >
+                        <T key-name="template.update.detail" />
+                    </div>
                     <div
                         class="mb-1 grid grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20 xl:gap-x-0"
                     >
