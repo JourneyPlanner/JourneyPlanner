@@ -9,6 +9,7 @@ use App\Models\Activity;
 use App\Models\CalendarActivity;
 use App\Models\Journey;
 use DateTime;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class CalendarActivityController extends Controller
@@ -18,10 +19,10 @@ class CalendarActivityController extends Controller
      */
     public function destroy(
         DeleteCalendarActivityRequest $request,
-        Journey $journey,
+        Journey $journey, // This parameter is needed for authorization, do not remove it.
         Activity $activity,
         CalendarActivity $calendarActivity
-    ) {
+    ): JsonResponse {
         $validated = $request->validated();
         $baseActivity = $activity->getBaseActivity();
         $emptyActivities = [];
@@ -73,6 +74,10 @@ class CalendarActivityController extends Controller
             ->get();
         $activities[] = $baseActivity->load("calendarActivities");
         $activities = $activities->merge($emptyActivities);
+        /**
+         * The remaining activities of the base activity with their calendar activities.
+         * @var Activity[]
+         */
         return response()->json($activities, 200);
     }
 

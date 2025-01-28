@@ -12,6 +12,7 @@ use App\Models\JourneyUser;
 use App\Services\MapboxService;
 use App\Services\WeatherService;
 use DateInterval;
+use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -41,7 +42,7 @@ class JourneyController extends Controller
     /**
      * Display all journeys of the authenticated user.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         Gate::authorize("viewAny", [Journey::class, false]);
 
@@ -64,6 +65,9 @@ class JourneyController extends Controller
                 "role",
             ]);
 
+        /**
+         * @var Journey[]
+         */
         return response()->json($journeys);
     }
 
@@ -192,6 +196,9 @@ class JourneyController extends Controller
         return response()->json(
             [
                 "message" => "Journey created successfully",
+                /**
+                 * @var Journey
+                 */
                 "journey" => $journey,
             ],
             201
@@ -264,6 +271,9 @@ class JourneyController extends Controller
         return response()->json(
             [
                 "message" => "Journey updated successfully",
+                /**
+                 * @var Journey
+                 */
                 "journey" => $journey,
             ],
             200
@@ -303,12 +313,15 @@ class JourneyController extends Controller
     /**
      * Get the weather data for the specified journey.
      */
-    public function getWeather(Journey $journey)
+    public function getWeather(Journey $journey): JsonResponse
     {
         Gate::authorize("view", [$journey, true]);
 
         $weatherDataResponse = $this->weatherService->getWeatherData($journey);
 
+        /**
+         * @var array{'current': array{'temperature': float, 'weather_code': int}, 'forecast': array{0: array{'date': string, 'temperature_max': float, 'temperature_min': float, 'weather_code': int}, 1: array{'date': string, 'temperature_max': float, 'temperature_min': float, 'weather_code': int}, 2: array{'date': string, 'temperature_max': float, 'temperature_min': float, 'weather_code': int}}}
+         */
         return response()->json($weatherDataResponse);
     }
 }

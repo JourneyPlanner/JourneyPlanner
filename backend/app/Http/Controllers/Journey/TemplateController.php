@@ -41,6 +41,7 @@ class TemplateController extends Controller
 
     /**
      * Show the requested template.
+     * @param Journey $journey The template ID.
      */
     public function show(Journey $journey)
     {
@@ -50,6 +51,9 @@ class TemplateController extends Controller
         // Load the template creator
         $journey->load("users:id,display_name,username");
 
+        /**
+         * @var Journey
+         */
         return response()->json($journey);
     }
 
@@ -258,6 +262,9 @@ class TemplateController extends Controller
             "role" => JourneyUser::TEMPLATE_CREATOR_ROLE_ID,
         ]);
 
+        /**
+         * @var Journey
+         */
         return response()->json($journeyTemplate);
     }
 

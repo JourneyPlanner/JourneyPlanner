@@ -48,6 +48,9 @@ class UserController extends Controller
             "created_at",
         ]);
 
+        /**
+         * @var array{username: string, display_name: string, created_at: \Carbon\Carbon}
+         */
         return response()->json($user);
     }
 

@@ -36,13 +36,20 @@ class MediaController extends Controller
             ];
         });
 
+        /**
+         * The media of the journey.
+         * 
+         * "media_index" is an integer for the position of the media (0-based).
+         * @var array{"media_index": array{user_id: int, user_display_name: string, user_username: string, name: string, link: string, type: string}}
+         */
         return response()->json($media);
     }
 
     /**
      * Display the specified media.
+     * 
+     * Returns the media file or thumbnail file in case the request has the "thumbnail" parameter.
      */
-    //public function show(Request $request, Journey $journey, string $media)
     public function show(Request $request, Journey $journey, Media $media)
     {
         if ($request->has("thumbnail")) {

@@ -32,15 +32,19 @@ class ActivityController extends Controller
     }
 
     /**
-     * Get all activities of the specified journey.
+     * Get all activities of the specified journey/template.
      */
-    public function index(Journey $journey)
+    public function index(Journey $journey): JsonResponse
     {
         Gate::authorize("viewAny", [Activity::class, $journey, true]);
 
         $activities = $journey->activities()->with("calendarActivities")->get();
 
         return response()->json([
+            /**
+             * The activities of the journey.
+             * @var Activity[]
+             */
             "activities" => $activities,
             "count" => $activities->count(),
         ]);
@@ -96,23 +100,25 @@ class ActivityController extends Controller
     /**
      * Display the specified activity.
      */
-    public function show(Journey $journey, Activity $activity)
+    public function show(Journey $journey, Activity $activity): JsonResponse
     {
         Gate::authorize("view", [$activity, $journey, true]);
 
+        /**
+         * The activity with the specified ID and its calendar activities.
+         * @var Activity
+         */
         return response()->json($activity->load("calendarActivities"));
     }
 
     /**
      * Update the specified activity in storage.
-     *
-     * Do not remove the journey parameter, it is required for authorization.
      */
     public function update(
         UpdateActivityRequest $request,
-        Journey $journey,
+        Journey $journey, // Do not remove the journey parameter, it is required for authorization.
         Activity $activity
-    ) {
+    ): JsonResponse {
         // Validate the request
         $validated = $request->validated();
         $generalizeBaseActivityInsteadOfDeleting = false;
@@ -425,6 +431,12 @@ class ActivityController extends Controller
             ...$baseActivity->children()->with("calendarActivities")->get()
         );
         $activities[] = $baseActivity->load("calendarActivities");
+
+        /**
+         * All edited activities.
+         *
+         * @var Activity[]
+         */
         return response()->json($activities, 200);
     }
 
@@ -435,7 +447,7 @@ class ActivityController extends Controller
         DeleteActivityRequest $request,
         Journey $journey,
         Activity $activity
-    ) {
+    ): JsonResponse {
         Gate::authorize("delete", [$activity, $journey, true]);
         $validated = $request->validated();
         $baseActivity = $activity->getBaseActivity();
@@ -444,6 +456,11 @@ class ActivityController extends Controller
             $baseActivity->children()->delete();
             $baseActivity->delete();
 
+            /**
+             * The remaining activities of the journey after the deletion.
+             *
+             * @var array
+             */
             return response()->json([], 200);
         }
 
@@ -473,6 +490,11 @@ class ActivityController extends Controller
             ->with("calendarActivities")
             ->get();
         $activities[] = $baseActivity->load("calendarActivities");
+        /**
+         * The remaining activities of the base activity after the deletion.
+         *
+         * @var Activity[]
+         */
         return response()->json($activities, 200);
     }
 

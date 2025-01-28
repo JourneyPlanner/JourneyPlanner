@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 
 class JourneyUserController extends Controller
 {
@@ -21,6 +22,10 @@ class JourneyUserController extends Controller
         Gate::authorize("view", [$journey, false]);
 
         // return the users of the journey in json format
+
+        /**
+         * @var User[]
+         */
         return response()->json(
             $journey->users()->get(["id", "display_name", "username", "role"])
         );
@@ -37,6 +42,9 @@ class JourneyUserController extends Controller
             return response()->json(
                 [
                     "message" => "You are already a member of this journey",
+                    /**
+                     * The id of the journey.
+                     */
                     "journey" => $journey->id,
                 ],
                 200
@@ -60,6 +68,9 @@ class JourneyUserController extends Controller
         return response()->json(
             [
                 "message" => "You have successfully joined the journey",
+                /**
+                 * The id of the journey.
+                 */
                 "journey" => $journey->id,
             ],
             201
@@ -76,6 +87,9 @@ class JourneyUserController extends Controller
             ->where("user_id", Auth::id())
             ->firstOrFail(["user_id", "role"]);
 
+        /**
+         * @var JourneyUser
+         */
         return response()->json($journeyUser);
     }
 
@@ -109,6 +123,9 @@ class JourneyUserController extends Controller
         return response()->json(
             [
                 "message" => "User role updated successfully",
+                /**
+                 * @var JourneyUser
+                 */
                 "user" => $journeyUser,
             ],
             200
@@ -126,7 +143,7 @@ class JourneyUserController extends Controller
             return response()->json(
                 [
                     "message" =>
-                        "Journey and journey user removed successfully",
+                    "Journey and journey user removed successfully",
                 ],
                 200
             );
@@ -135,20 +152,20 @@ class JourneyUserController extends Controller
         // Prevent the user from leaving if they are the only guide
         if (
             $journey
-                ->users()
-                ->wherePivot("user_id", Auth::id())
-                ->wherePivot("role", 1)
-                ->exists() &&
+            ->users()
+            ->wherePivot("user_id", Auth::id())
+            ->wherePivot("role", 1)
+            ->exists() &&
             $journey
-                ->users()
-                ->wherePivot("role", JourneyUser::JOURNEY_GUIDE_ROLE_ID)
-                ->count() === 1 &&
+            ->users()
+            ->wherePivot("role", JourneyUser::JOURNEY_GUIDE_ROLE_ID)
+            ->count() === 1 &&
             $journey->users()->count() !== 1
         ) {
             return response()->json(
                 [
                     "message" =>
-                        "You cannot leave the journey if you are the only guide",
+                    "You cannot leave the journey if you are the only guide",
                 ],
                 403
             );
@@ -163,7 +180,7 @@ class JourneyUserController extends Controller
             return response()->json(
                 [
                     "message" =>
-                        "Journey and journey user removed successfully",
+                    "Journey and journey user removed successfully",
                 ],
                 200
             );
