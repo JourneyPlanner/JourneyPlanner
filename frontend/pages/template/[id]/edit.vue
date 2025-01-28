@@ -5,7 +5,6 @@ const router = useRouter();
 const activityStore = useActivityStore();
 const journeyStore = useJourneyStore();
 const client = useSanctumClient();
-const { isAuthenticated } = useSanctumAuth();
 
 const templateID = route.params.id;
 const activityDataLoaded = ref(false);
@@ -15,23 +14,8 @@ const backRoute = ref("/dashboard?tab=templates");
 
 onMounted(() => {
     const lastRoute = router.options.history.state.back as string;
-
-    if (
-        lastRoute.startsWith("/dashboard?tab=templates") &&
-        isAuthenticated.value
-    ) {
-        backTolgeeKey.value = "template.back.to.templates";
-        backRoute.value = lastRoute;
-    } else if (lastRoute.startsWith("/journey/new") && isAuthenticated.value) {
-        backTolgeeKey.value = "template.back.to.new.journey";
-        backRoute.value = lastRoute;
-    } else if (!isAuthenticated.value) {
-        backTolgeeKey.value = "template.back.to.new.journey";
-        backRoute.value = "/journey/new";
-    } else {
-        backTolgeeKey.value = "common.back";
-        backRoute.value = lastRoute;
-    }
+    backTolgeeKey.value = "common.back";
+    backRoute.value = lastRoute;
 });
 
 const { data, error } = await useAsyncData("journey", () =>
@@ -41,7 +25,8 @@ const { data, error } = await useAsyncData("journey", () =>
 if (error.value?.statusCode === 404) {
     throw createError({
         statusCode: 404,
-        statusMessage: "Template not found",
+        data: "isTolgeeKey",
+        statusMessage: "error.template.notfound",
         fatal: true,
     });
 }

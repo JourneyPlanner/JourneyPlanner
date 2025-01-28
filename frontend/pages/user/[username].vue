@@ -223,10 +223,12 @@ const openTemplateDialog = (template: Template) => {
 };
 
 function removeTemplate(id: string) {
-    templates.value.splice(
-        templates.value.findIndex((template) => template.id === id),
-        1,
-    );
+    if (!id) return;
+    const index = templates.value.findIndex((template) => template.id === id);
+    if (index === -1) {
+        return;
+    }
+    templates.value.splice(index, 1);
 }
 </script>
 

@@ -7,9 +7,13 @@ const props = defineProps({
     isCreateTemplateVisible: { type: Boolean, required: true },
     updateTemplate: { type: Boolean, default: false },
     templateID: { type: String, default: "" },
+    templateName: { type: String, default: "" },
+    templateDescripton: { type: String, default: "" },
 });
 
 const emit = defineEmits(["closeTemplateDialog", "createdTemplate"]);
+
+console.log(props.templateName);
 
 const journey = useJourneyStore();
 const { t } = useTranslate();
@@ -17,13 +21,14 @@ const toast = useToast();
 const client = useSanctumClient();
 
 const savingTemplate = ref(false);
-const templateName = ref("");
+const templateName = ref(props.templateName);
 const isVisible = ref();
 
 watch(
     () => props.isCreateTemplateVisible,
     (value) => {
         isVisible.value = value;
+        templateName.value = props.templateName;
     },
 );
 
@@ -230,11 +235,11 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                         <T key-name="template.update.detail" />
                     </div>
                     <div
-                        class="mb-1 grid grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20 xl:gap-x-0"
+                        class="mb-1 grid w-full grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20 xl:gap-x-0"
                     >
                         <label
                             for="template-name"
-                            class="text-md col-start-1 row-start-1 text-nowrap font-medium md:text-lg"
+                            class="text-md col-span-3 col-start-1 row-start-1 text-nowrap font-medium md:text-lg"
                         >
                             <T key-name="form.input.template.name" />
                         </label>
@@ -243,10 +248,10 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                             v-model="templateName"
                             name="name"
                             :validate-on-input="true"
-                            class="col-span-full col-start-3 row-start-1 block w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2"
+                            class="col-span-full row-start-1 block rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-3"
                         />
                         <div
-                            class="col-start-3 row-start-2 -mt-3 xs:col-start-4 sm:col-start-2"
+                            class="col-start-3 row-start-2 -mt-3 xs:col-start-4 sm:col-start-3"
                         >
                             <ErrorMessage
                                 name="name"
@@ -269,7 +274,11 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                             as="textarea"
                             name="description"
                             :placeholder="
-                                t('form.input.template.description.placeholder')
+                                props.templateDescripton != ''
+                                    ? props.templateDescripton
+                                    : t(
+                                          'form.input.template.description.placeholder',
+                                      )
                             "
                             class="md:placeholder:text-md col-span-full row-span-5 block h-full w-full resize-none rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-sm placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 sm:row-span-4 md:placeholder:text-base"
                         />

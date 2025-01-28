@@ -15,7 +15,7 @@ const props = defineProps({
         required: true,
     },
     template: {
-        type: Object,
+        type: Object as () => Template,
         default: undefined,
     },
 });
@@ -26,6 +26,8 @@ const emit = defineEmits([
     "close",
     "open-unlock-dialog",
 ]);
+
+console.log(props.template);
 
 const journeyStore = useJourneyStore();
 const { t } = useTranslate();
@@ -70,8 +72,9 @@ function closeTemplateDialog() {
     updateTemplate.value = false;
 }
 
-function changeToUpdate(template: object) {
+function changeToUpdate(template: Template) {
     currentTemplate.value = template;
+    console.log(currentTemplate.value.name);
 }
 </script>
 
@@ -328,6 +331,8 @@ function changeToUpdate(template: object) {
             :is-create-template-visible="isCreateTemplateVisible"
             :update-template="updateTemplate"
             :template-i-d="currentTemplate?.id"
+            :template-name="currentTemplate?.name"
+            :template-descripton="currentTemplate?.description"
             @created-template="changeToUpdate"
             @close-template-dialog="closeTemplateDialog()"
         />
