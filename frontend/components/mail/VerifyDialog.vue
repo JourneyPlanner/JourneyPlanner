@@ -38,6 +38,7 @@ watch(
             countdown.value = null;
         }
     },
+    { immediate: true },
 );
 
 onUnmounted(() => {

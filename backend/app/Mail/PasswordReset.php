@@ -19,9 +19,10 @@ class PasswordReset extends Mailable
      */
     public function __construct($notifiable, $token)
     {
+        $email = urlencode($notifiable->getEmailForPasswordReset());
         $this->url =
             config("app.frontend_url") .
-            "/reset-password?token=$token&email={$notifiable->getEmailForPasswordReset()}";
+            "/reset-password?token=$token&email=$email";
     }
 
     /**
