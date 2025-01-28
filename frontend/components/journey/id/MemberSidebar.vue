@@ -90,6 +90,23 @@ async function changeRole(userid: string, selectedRole: number) {
     });
 }
 
+async function kick(userid: string) {
+    await client(`/api/journey/${props.journeyID}/user/${userid}`, {
+        method: "DELETE",
+        async onResponse() {
+            console.log(Response);
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
+
 function close() {
     emit("close");
 }
@@ -216,6 +233,7 @@ function openUnlockDialog() {
                             :edit="isEditEnabled"
                             :current-id="currUser.id"
                             @change-role="changeRole"
+                            @kick="kick"
                         />
                     </div>
                     <div
