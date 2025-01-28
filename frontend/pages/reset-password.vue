@@ -149,7 +149,7 @@ async function resend() {
                     </div>
                     <div clas="flex flex-col">
                         <p>{{ slotProps.message.summary }}</p>
-                        <p class="mt-2 text-sm text-text dark:text-natural-50">
+                        <p class="mt-2 text-sm text-text">
                             {{ slotProps.message.detail }}
                         </p>
                         <button
