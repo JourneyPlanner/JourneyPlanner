@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Scalar Domain
@@ -12,7 +11,7 @@ return [
     | application. Otherwise, this value will serve as the subdomain.
     |
     */
-    'domain' => null,
+    "domain" => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -24,7 +23,7 @@ return [
     | affect the paths of its internal API that aren't exposed to users.
     |
     */
-    'path' => '/reference',
+    "path" => "/reference",
 
     /*
     |--------------------------------------------------------------------------
@@ -36,7 +35,7 @@ return [
     | the existing middleware. Or, you can simply stick with this list.
     |
     */
-    'middleware' => ['web'],
+    "middleware" => ["web"],
 
     /*
     |--------------------------------------------------------------------------
@@ -48,7 +47,7 @@ return [
     | Scalar Galaxy package. You can change this to use a custom OpenAPI file.
     |
     */
-    'url' => '/docs/openapi.yaml',
+    "url" => "/docs/openapi.yaml",
 
     /*
     |--------------------------------------------------------------------------
@@ -60,7 +59,7 @@ return [
     | package. You can change this if you want to use a different CDN.
     |
     */
-    'cdn' => 'https://cdn.jsdelivr.net/npm/@scalar/api-reference',
+    "cdn" => "https://cdn.jsdelivr.net/npm/@scalar/api-reference",
 
     /*
     |--------------------------------------------------------------------------
@@ -72,15 +71,15 @@ return [
     | of the API documentation.
     |
     */
-    'configuration' => [
+    "configuration" => [
         /** A string to use one of the color presets */
-        'theme' =>
-        // 'alternate',
-        // 'bluePlanet',
-        // 'deepSpace',
-        // 'default',
-        // 'kepler',
-        'laravel',
+        "theme" =>
+            // 'alternate',
+            // 'bluePlanet',
+            // 'deepSpace',
+            // 'default',
+            // 'kepler',
+            "laravel",
         // 'mars',
         // 'moon',
         // 'purple',
@@ -88,65 +87,63 @@ return [
         // 'solarized',
         // 'none',
         /** The layout to use for the references */
-        'layout' => 'modern',
+        "layout" => "modern",
         /** URL to a request proxy for the API client */
-        'proxy' => 'https://proxy.journeyplanner.io',
+        "proxy" => "https://proxy.journeyplanner.io",
         /** Whether to show the sidebar */
-        'showSidebar' => true,
+        "showSidebar" => true,
         /**
          * Whether to show models in the sidebar, search, and content.
          */
-        'hideModels' => false,
+        "hideModels" => false,
         /**
          * Whether to show the “Download OpenAPI Document” button
          */
-        'hideDownloadButton' => false,
+        "hideDownloadButton" => false,
         /**
          * Whether to show the “Test Request” button
          */
-        'hideTestRequestButton' => false,
+        "hideTestRequestButton" => false,
         /**
          * Whether to show the sidebar search bar
          */
-        'hideSearch' => false,
+        "hideSearch" => false,
         /** Whether dark mode is on or off initially (light mode) */
-        'darkMode' => false,
+        "darkMode" => false,
         /** forceDarkModeState makes it always this state no matter what*/
         //'forceDarkModeState' => 'dark',
         /** Whether to show the dark mode toggle */
-        'hideDarkModeToggle' => false,
+        "hideDarkModeToggle" => false,
         /** Key used with CTRL/CMD to open the search modal (defaults to 'k' e.g. CMD+k) */
-        'searchHotKey' => 'k',
+        "searchHotKey" => "k",
         /**
          * If used, passed data will be added to the HTML header
          *
          * @see https://unhead.unjs.io/usage/composables/use-seo-meta
          */
-        'metaData' => [
-            'title' => config('app.name').' API Reference',
+        "metaData" => [
+            "title" => config("app.name") . " API Reference",
         ],
         /**
          * Path to a favicon image
          *
          * @example '/favicon.svg'
          */
-        'favicon' => '',
+        "favicon" => "",
         /**
          * List of httpsnippet clients to hide from the clients menu
          * By default hides Unirest, pass `[]` to show all clients
          */
-        'hiddenClients' => [
-
-        ],
+        "hiddenClients" => [],
         /** Determine the HTTP client that’s selected by default */
-        'defaultHttpClient' => [
-            'targetId' => 'shell',
-            'clientKey' => 'curl',
+        "defaultHttpClient" => [
+            "targetId" => "shell",
+            "clientKey" => "curl",
         ],
         /** Custom CSS to be added to the page */
-        'customCss' => '',
+        "customCss" => "",
         /** Prefill authentication */
-        'authentication' => [
+        "authentication" => [
             // TODO
         ],
         /**
@@ -154,11 +151,11 @@ return [
          * On the client we can grab the window.location.origin but on the server we need
          * to use this prop.
          */
-        'baseServerURL' => '',
+        "baseServerURL" => "",
         /**
          * List of servers to override the openapi spec servers
          */
-        'servers' => null,
+        "servers" => null,
         // 'servers' => [
         //     [
         //         'url' => 'https://api.scalar.com',
@@ -168,11 +165,10 @@ return [
         /**
          * We’re using Inter and JetBrains Mono as the default fonts. If you want to use your own fonts, set this to false.
          */
-        'withDefaultFonts' => true,
+        "withDefaultFonts" => true,
         /**
          * By default we only open the relevant tag based on the url, however if you want all the tags open by default then set this configuration option :)
          */
-        'defaultOpenAllTags' => false,
+        "defaultOpenAllTags" => false,
     ],
-
 ];
