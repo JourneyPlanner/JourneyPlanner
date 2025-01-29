@@ -28,6 +28,7 @@ class UpdateTemplateRequest extends UpdateJourneyRequest
             }
         }
         $rules["journey_id"] = "nullable|uuid|exists:journeys,id";
+        $rules["description"] = "nullablestring";
         return $rules;
     }
 }

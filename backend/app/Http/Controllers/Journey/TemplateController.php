@@ -277,22 +277,14 @@ class TemplateController extends Controller
             $mapboxService
         );
 
-        if (!isset($validated["journey_id"])) {
-            return response()->json(
-                [
-                    "message" => "Template updated successfully",
-                    "journey" => $template,
-                ],
-                200
-            );
+        if (isset($validated["journey_id"])) {
+            $template->activities()->delete();
+
+            $journey = Journey::findOrFail($validated["journey_id"]);
+            Gate::authorize("update", [$journey, false]);
+
+            $template = $this->cloneActivities($journey, $template);
         }
-
-        $template->activities()->delete();
-
-        $journey = Journey::findOrFail($validated["journey_id"]);
-        Gate::authorize("update", [$journey, false]);
-
-        $template = $this->cloneActivities($journey, $template);
 
         return response()->json(
             [
