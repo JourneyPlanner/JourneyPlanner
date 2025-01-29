@@ -6,6 +6,7 @@ const { t } = useTranslate();
 const router = useRouter();
 const client = useSanctumClient();
 const toast = useToast();
+const templateStore = useTemplateStore();
 
 const username = ref(route.params.username);
 const displayname = ref("");
@@ -229,6 +230,7 @@ function removeTemplate(id: string) {
         return;
     }
     templates.value.splice(index, 1);
+    templateStore.changeUpdate(true);
 }
 </script>
 

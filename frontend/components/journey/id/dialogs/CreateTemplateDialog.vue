@@ -13,8 +13,6 @@ const props = defineProps({
 
 const emit = defineEmits(["closeTemplateDialog", "createdTemplate"]);
 
-console.log(props.templateName);
-
 const journey = useJourneyStore();
 const { t } = useTranslate();
 const toast = useToast();

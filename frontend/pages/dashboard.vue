@@ -13,6 +13,7 @@ const router = useRouter();
 const route = useRoute();
 const journeysStore = useJourneysStore();
 const templateFilterstore = useTemplateFilterStore();
+const templateStore = useTemplateStore();
 const client = useSanctumClient();
 const toast = useToast();
 const nuxtApp = useNuxtApp();
@@ -86,6 +87,10 @@ if (route.query.tab === "templates") {
 }
 
 onMounted(() => {
+    if (templateStore.updateTemplates) {
+        refreshTemplates();
+        templateStore.changeUpdate(false);
+    }
     watch(
         tabIndex,
         async () => {
