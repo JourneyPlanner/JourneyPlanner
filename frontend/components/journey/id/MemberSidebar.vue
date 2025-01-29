@@ -90,7 +90,12 @@ async function changeRole(userid: string, selectedRole: number) {
     });
 }
 
+/*
+ * Kick specified user out of the journey
+ * @param userid - the id of the user
+ */
 async function kick(userid: string) {
+    if (!userid) return;
     await client(`/api/journey/${props.journeyID}/user/${userid}`, {
         method: "DELETE",
         async onResponse({ response }) {
@@ -102,17 +107,13 @@ async function kick(userid: string) {
                     life: 6000,
                 });
 
-                if (!userid) return;
-
-                const index = users.value.findIndex(
-                    (user) => user.id === userid,
+                const { data } = await useAsyncData<User[]>("users", () =>
+                    client(`/api/journey/${props.journeyID}/user`),
                 );
-                if (index === -1) {
-                    console.warn(`Template with id ${userid} not found`);
-                    return;
-                }
 
-                users.value.splice(index, 1);
+                if (data.value !== null) {
+                    users.value = data.value;
+                }
             }
         },
         async onResponseError() {
