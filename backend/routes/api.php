@@ -116,6 +116,10 @@ Route::post("template/{journey}/rate", [
     TemplateRatingController::class,
     "rate",
 ])->middleware("auth:sanctum");
+Route::get("template/{journey}/rate", [
+    TemplateRatingController::class,
+    "show",
+])->middleware("auth:sanctum");
 
 Route::get("project", [ProjectController::class, "getProjectData"]);
 
