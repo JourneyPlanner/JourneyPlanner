@@ -176,4 +176,23 @@ class JourneyUserController extends Controller
             200
         );
     }
+
+    public function destroy(Journey $journey, string $user)
+    {
+        if (Auth::id() === $user) {
+            return $this->leave($journey);
+        }
+
+        Gate::authorize("update", [$journey, false]);
+        JourneyUser::where("journey_id", $journey->id)
+            ->where("user_id", $user)
+            ->delete();
+
+        return response()->json(
+            [
+                "message" => "Journey user removed successfully",
+            ],
+            200
+        );
+    }
 }
