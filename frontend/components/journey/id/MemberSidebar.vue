@@ -93,8 +93,27 @@ async function changeRole(userid: string, selectedRole: number) {
 async function kick(userid: string) {
     await client(`/api/journey/${props.journeyID}/user/${userid}`, {
         method: "DELETE",
-        async onResponse() {
-            console.log(Response);
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("journey.kick.toast.success"),
+                    detail: t.value("journey.kick.toast.success.detail"),
+                    life: 6000,
+                });
+
+                if (!userid) return;
+
+                const index = users.value.findIndex(
+                    (user) => user.id === userid,
+                );
+                if (index === -1) {
+                    console.warn(`Template with id ${userid} not found`);
+                    return;
+                }
+
+                users.value.splice(index, 1);
+            }
         },
         async onResponseError() {
             toast.add({
