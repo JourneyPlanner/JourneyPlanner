@@ -20,7 +20,7 @@ const { data, error } = await useAsyncData("user", () =>
     client(`/api/user/${username.value}`),
 );
 
-const { data: userData } = await useAsyncData("currentUSer", () =>
+const { data: userData } = await useAsyncData("currentUser", () =>
     client(`/api/me/`),
 );
 const isCurrentUser = data.value.username == userData.value.username;

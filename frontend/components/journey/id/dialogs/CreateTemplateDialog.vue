@@ -32,12 +32,14 @@ watch(
     (value) => {
         isVisible.value = value;
         templateName.value = props.templateName;
+        templateDescription.value = props.templateDescription;
     },
 );
 
 const close = () => {
     savingTemplate.value = false;
     templateName.value = "";
+    templateDescription.value = "";
     emit("closeTemplateDialog");
 };
 
@@ -184,7 +186,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
             :draggable="false"
             close-on-escape
             dismissable-mask
-            class="z-50 mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-1/3"
+            class="z-50 mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-1/2 xl:w-1/3"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -252,10 +254,10 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                             v-model="templateName"
                             name="name"
                             :validate-on-input="true"
-                            class="col-span-full row-start-1 block rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-3"
+                            class="col-span-full row-start-1 block rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2 lg:col-start-3"
                         />
                         <div
-                            class="col-start-3 row-start-2 -mt-3 xs:col-start-4 sm:col-start-3"
+                            class="col-start-3 row-start-2 -mt-3 xs:col-start-4 sm:col-start-2 lg:col-start-3"
                         >
                             <ErrorMessage
                                 name="name"

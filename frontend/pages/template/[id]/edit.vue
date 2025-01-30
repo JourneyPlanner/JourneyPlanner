@@ -15,11 +15,9 @@ const backRoute = ref("/dashboard?tab=templates");
 const isCreateTemplateVisible = ref(false);
 const updateTemplate = ref(false);
 
-onMounted(() => {
-    const lastRoute = router.options.history.state.back as string;
-    backTolgeeKey.value = "common.back";
-    backRoute.value = lastRoute;
-});
+const lastRoute = router.options.history.state.back as string;
+backTolgeeKey.value = "common.back";
+backRoute.value = lastRoute;
 
 const { data, error } = await useAsyncData("journey", () =>
     client(`/api/template/${templateID}`),
@@ -140,6 +138,14 @@ function change(template: Template) {
             />
         </div>
         <JourneyIdActivityMap v-if="activityDataLoaded" />
+        <div class="my-5 flex justify-center">
+            <button
+                class="ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:text-base"
+                @click="isCreateTemplateVisible = true"
+            >
+                <T key-name="template.change.details" />
+            </button>
+        </div>
         <ConfirmDialog
             :draggable="false"
             group="journey"
