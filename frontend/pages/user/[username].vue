@@ -414,6 +414,8 @@ function removeTemplate(id: string) {
             />
             <ConfirmDialog
                 :draggable="false"
+                close-on-escape
+                dismissable-mask
                 group="username"
                 :pt="{
                     header: {

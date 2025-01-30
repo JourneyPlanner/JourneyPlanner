@@ -88,7 +88,8 @@ if (route.query.tab === "templates") {
 
 onMounted(() => {
     if (templateStore.updateTemplates) {
-        refreshTemplates();
+        templates.value = [];
+        refresh();
         templateStore.changeUpdate(false);
     }
     watch(

@@ -8,7 +8,7 @@ const props = defineProps({
     updateTemplate: { type: Boolean, default: false },
     templateID: { type: String, default: "" },
     templateName: { type: String, default: "" },
-    templateDescripton: { type: String, default: "" },
+    templateDescription: { type: String, default: "" },
 });
 
 const emit = defineEmits([
@@ -24,7 +24,7 @@ const client = useSanctumClient();
 
 const savingTemplate = ref(false);
 const templateName = ref(props.templateName);
-const templateDescription = ref(props.templateDescripton);
+const templateDescription = ref(props.templateDescription);
 const isVisible = ref();
 
 watch(
@@ -92,7 +92,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                         ),
                         life: 3000,
                     });
-                    emit("updatedTemplate", response._data);
+                    emit("updatedTemplate", response._data.journey);
                     close();
                     savingTemplate.value = false;
                 }
