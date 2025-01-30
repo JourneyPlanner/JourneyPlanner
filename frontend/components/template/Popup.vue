@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { T, useTranslate } from "@tolgee/vue";
 import { format, parse } from "date-fns";
 
 const props = defineProps({
@@ -23,10 +24,16 @@ const props = defineProps({
 const emit = defineEmits(["close", "opened-preview"]);
 
 const client = useSanctumClient();
+const { t } = useTranslate();
+const toast = useToast();
 
 const isVisible = ref(false);
 const activityCount = ref(null);
 const activities = ref();
+const numRating = ref(0);
+const rating = ref(3);
+const avgRating = ref(1);
+const isRatingVisible = ref(false);
 
 watch(
     () => props.isTemplateDialogVisible,
@@ -46,11 +53,59 @@ watch(
     { immediate: true },
 );
 
+await client(`/api/template/${props.template.id}/rate`, {
+    async onResponse({ response }) {
+        if (response.ok) {
+            console.log(props.template);
+            console.log(response);
+            numRating.value = response._data.total_ratings;
+            avgRating.value = response._data.average_rating;
+        }
+    },
+});
+
 const close = (): void => {
     activities.value = [];
     activityCount.value = null;
     emit("close");
 };
+
+async function changeRating() {
+    const userRating = {
+        rating: rating.value,
+    };
+    await client(`/api/template/${props.template.id}/rate`, {
+        method: "POST",
+        body: userRating,
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value(
+                        "form.template.create.toast.success.heading",
+                    ),
+                    detail: t.value(
+                        "form.template.create.toast.success.detail",
+                    ),
+                    life: 3000,
+                });
+            }
+        },
+        async onRequestError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
+
+function removeRating() {
+    rating.value = 0;
+    changeRating();
+}
 </script>
 
 <template>
@@ -106,10 +161,10 @@ const close = (): void => {
                 id="template-content"
                 class="mx-4 -mb-2 mt-2 h-full xs:mx-8 sm:mx-12 md:mx-8"
             >
-                <div id="details" class="flex h-32 gap-x-4">
+                <div id="details" class="flex h-40 gap-x-4">
                     <div
                         id="facts"
-                        class="flex w-1/2 flex-col gap-y-3 text-text dark:text-natural-50"
+                        class="mb-4 flex w-1/2 flex-col gap-y-3 text-text dark:text-natural-50"
                     >
                         <div
                             id="destination"
@@ -172,6 +227,78 @@ const close = (): void => {
                                     "
                                 />
                             </span>
+                        </div>
+                        <div
+                            id="rating"
+                            class="flex flex-row items-center gap-x-1"
+                        >
+                            <i
+                                class="pi pi-star mr-2 text-xl text-calypso-600 dark:text-calypso-400"
+                            />
+
+                            <span
+                                class="flex flex-row items-center gap-x-1 truncate text-xl"
+                            >
+                                <Skeleton
+                                    v-if="activityCount === null"
+                                    width="1rem"
+                                    height="1.25rem"
+                                    class="dark:bg-natural-600"
+                                />
+                                <span v-else>
+                                    {{ avgRating }}
+                                </span>
+                                <T
+                                    :key-name="
+                                        avgRating === 1
+                                            ? 'template.rating.star'
+                                            : 'template.rating.stars'
+                                    "
+                                />
+                                ({{ numRating }})
+                                <button
+                                    @click="isRatingVisible = !isRatingVisible"
+                                >
+                                    <i
+                                        class="pi mr-2 text-xl text-text"
+                                        :class="
+                                            isRatingVisible
+                                                ? 'pi-angle-up'
+                                                : 'pi-angle-down'
+                                        "
+                                    />
+                                </button>
+                            </span>
+                        </div>
+                        <div
+                            class="-mt-2 ml-1 flex flex-row items-center gap-x-1"
+                        >
+                            <Rating
+                                v-if="isRatingVisible"
+                                v-model="rating"
+                                :pt="{
+                                    cancelItem: {
+                                        class: 'hidden',
+                                    },
+                                }"
+                                @change="changeRating"
+                            >
+                                <template #onicon>
+                                    <i
+                                        class="pi pi-star-fill -ml-1 mr-2 text-xl text-calypso-600 dark:text-calypso-400"
+                                    />
+                                </template>
+                                <template #officon>
+                                    <i
+                                        class="pi pi-star -ml-1 mr-2 text-xl text-calypso-600 dark:text-calypso-400"
+                                    />
+                                </template>
+                            </Rating>
+                            <i
+                                v-if="isRatingVisible"
+                                class="pi pi-times -ml-1 text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                @click="removeRating"
+                            />
                         </div>
                     </div>
                     <div
