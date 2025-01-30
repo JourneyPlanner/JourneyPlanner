@@ -30,6 +30,8 @@ class Journey extends Model
         "description",
         "is_template",
         "created_from",
+        "average_rating",
+        "total_ratings",
     ];
 
     /**
