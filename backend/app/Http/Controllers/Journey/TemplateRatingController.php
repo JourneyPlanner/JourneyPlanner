@@ -19,7 +19,7 @@ class TemplateRatingController extends Controller
             "rating" => "required|integer|min:0|max:5",
         ]);
 
-        if (!$journey->isTemplate) {
+        if (!$journey->is_template) {
             abort(403, "Journeys cannot be rated.");
         }
 
@@ -45,10 +45,13 @@ class TemplateRatingController extends Controller
             }
         }
 
+        $template = $templateRating
+            ->template()
+            ->first(["average_rating", "total_ratings"]);
+
         return response()->json([
-            "average_rating" => $templateRating
-                ->template()
-                ->get("average_rating"),
+            "average_rating" => $template->average_rating ?? 0,
+            "total_ratings" => $template->total_ratings ?? 0,
         ]);
     }
 
@@ -58,10 +61,8 @@ class TemplateRatingController extends Controller
     public function show(Journey $journey)
     {
         return response()->json([
-            "rating" =>
-                TemplateRating::where("template_id", $journey->id)
-                    ->where("user_id", Auth::id())
-                    ->first()->rating ?? 0,
+            "average_rating" => $journey->average_rating ?? 0,
+            "total_ratings" => $journey->total_ratings ?? 0,
         ]);
     }
 }
