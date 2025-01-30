@@ -59,7 +59,7 @@ class TemplateRatingController extends Controller
     {
         return response()->json([
             "rating" =>
-                TemplateRating::where("journey_id", $journey->id)
+                TemplateRating::where("template_id", $journey->id)
                     ->where("user_id", Auth::id())
                     ->first()->rating ?? 0,
         ]);
