@@ -24,6 +24,7 @@ const client = useSanctumClient();
 
 const savingTemplate = ref(false);
 const templateName = ref(props.templateName);
+const templateDescription = ref(props.templateDescripton);
 const isVisible = ref();
 
 watch(
@@ -273,15 +274,12 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                         </label>
                         <Field
                             id="template-description"
+                            v-model="templateDescription"
                             type="text"
                             as="textarea"
                             name="description"
                             :placeholder="
-                                props.templateDescripton != ''
-                                    ? props.templateDescripton
-                                    : t(
-                                          'form.input.template.description.placeholder',
-                                      )
+                                t('form.input.template.description.placeholder')
                             "
                             class="md:placeholder:text-md col-span-full row-span-5 block h-full w-full resize-none rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-sm placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 sm:row-span-4 md:placeholder:text-base"
                         />
