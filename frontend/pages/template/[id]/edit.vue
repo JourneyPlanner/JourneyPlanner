@@ -12,6 +12,9 @@ const activityDataLoaded = ref(false);
 const backTolgeeKey = ref("template.back.to.templates");
 const backRoute = ref("/dashboard?tab=templates");
 
+const isCreateTemplateVisible = ref(false);
+const updateTemplate = ref(false);
+
 onMounted(() => {
     const lastRoute = router.options.history.state.back as string;
     backTolgeeKey.value = "common.back";
@@ -53,6 +56,18 @@ const title = templateData.value.name;
 useHead({
     title: `${title} | Template | JourneyPlanner`,
 });
+
+function closeTemplateDialog() {
+    isCreateTemplateVisible.value = false;
+    updateTemplate.value = false;
+}
+
+function change(template: Template) {
+    journeyStore.setJourney(template);
+    useHead({
+        title: `${template.name} | JourneyPlanner`,
+    });
+}
 </script>
 
 <template>
@@ -72,6 +87,12 @@ useHead({
                     <T :key-name="backTolgeeKey" />
                 </span>
             </NuxtLink>
+            <button
+                class="ml-5 mr-4 text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 md:text-base"
+                @click="isCreateTemplateVisible = true"
+            >
+                <T key-name="template.change.details" />
+            </button>
         </div>
         <JourneyIdTicketSection
             :daysto-end="-1"
@@ -139,6 +160,15 @@ useHead({
                     class: 'h-5 w-5',
                 },
             }"
+        />
+        <JourneyIdDialogsCreateTemplateDialog
+            :is-create-template-visible="isCreateTemplateVisible"
+            :update-template="true"
+            :template-i-d="templateID.toString()"
+            :template-name="data?.name"
+            :template-descripton="data?.description"
+            @updated-template="change"
+            @close-template-dialog="closeTemplateDialog()"
         />
     </div>
 </template>

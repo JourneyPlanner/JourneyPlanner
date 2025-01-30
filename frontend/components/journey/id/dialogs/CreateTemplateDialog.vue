@@ -11,7 +11,11 @@ const props = defineProps({
     templateDescripton: { type: String, default: "" },
 });
 
-const emit = defineEmits(["closeTemplateDialog", "createdTemplate"]);
+const emit = defineEmits([
+    "closeTemplateDialog",
+    "createdTemplate",
+    "updatedTemplate",
+]);
 
 const journey = useJourneyStore();
 const { t } = useTranslate();
@@ -87,6 +91,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                         ),
                         life: 3000,
                     });
+                    emit("updatedTemplate", response._data);
                     close();
                     savingTemplate.value = false;
                 }
