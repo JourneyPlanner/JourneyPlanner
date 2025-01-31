@@ -5,19 +5,13 @@ const router = useRouter();
 const activityStore = useActivityStore();
 const journeyStore = useJourneyStore();
 const client = useSanctumClient();
+const user = useSanctumUser<User>();
 
 const templateID = route.params.id;
 const activityDataLoaded = ref(false);
 
-const backTolgeeKey = ref("template.back.to.templates");
-const backRoute = ref("");
-
 const isCreateTemplateVisible = ref(false);
 const updateTemplate = ref(false);
-
-const lastRoute = router.options.history.state.back as string;
-backTolgeeKey.value = "common.back";
-backRoute.value = lastRoute;
 
 const { data, error } = await useAsyncData("journey", () =>
     client(`/api/template/${templateID}`),
@@ -63,7 +57,7 @@ function closeTemplateDialog() {
 function changeTemplateDetails(template: Template) {
     journeyStore.setJourney(template);
     useHead({
-        title: `${template.name} | JourneyPlanner`,
+        title: `${template.name} | Template | JourneyPlanner`,
     });
 }
 </script>
@@ -75,14 +69,17 @@ function changeTemplateDetails(template: Template) {
             class="mt-5 flex w-full items-center justify-between font-semibold md:mt-3"
         >
             <NuxtLink
-                :to="backRoute"
+                :to="
+                    '/user/' + user?.username ||
+                    (router.options.history.state.back as string)
+                "
                 class="group flex items-center sm:ml-1 md:ml-2"
             >
                 <i class="pi pi-angle-left text-2xl" />
                 <span
                     class="ml-1.5 mt-0.5 text-xl group-hover:underline md:text-2xl"
                 >
-                    <T :key-name="backTolgeeKey" />
+                    <T key-name="common.back" />
                 </span>
             </NuxtLink>
             <button
@@ -171,8 +168,8 @@ function changeTemplateDetails(template: Template) {
             :is-create-template-visible="isCreateTemplateVisible"
             :update-template="true"
             :template-i-d="templateID.toString()"
-            :template-name="data?.name"
-            :template-descripton="data?.description"
+            :template-name="journeyStore.getName()"
+            :template-description="journeyStore.getDescription()"
             @updated-template="changeTemplateDetails"
             @close-template-dialog="closeTemplateDialog()"
         />

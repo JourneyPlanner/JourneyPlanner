@@ -31,8 +31,6 @@ watch(
     () => props.isCreateTemplateVisible,
     (value) => {
         isVisible.value = value;
-        console.log(props.templateName);
-        console.log(props.templateDescription);
         templateName.value = props.templateName;
         templateDescription.value = props.templateDescription;
     },
@@ -236,14 +234,14 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                     >
                         <T key-name="journey.template.create.description" />
                     </p>
-                    <div
+                    <p
                         v-else
                         class="col-span-full col-start-1 row-span-1 -mt-1 mb-5 text-sm text-natural-600 dark:text-natural-200 md:text-base"
                     >
                         <T key-name="template.update.detail" />
-                    </div>
+                    </p>
                     <div
-                        class="mb-1 grid w-full grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20 xl:gap-x-0"
+                        class="mb-1 grid w-full grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20 xl:grid-cols-6 xl:gap-x-0"
                     >
                         <label
                             for="template-name"
@@ -256,7 +254,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                             v-model="templateName"
                             name="name"
                             :validate-on-input="true"
-                            class="col-span-full row-start-1 block rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2 lg:col-start-3"
+                            class="col-span-full row-start-1 block rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2 xl:col-start-3"
                         />
                         <div
                             class="col-start-3 row-start-2 -mt-3 xs:col-start-4 sm:col-start-2 lg:col-start-3"
