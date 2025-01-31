@@ -56,13 +56,15 @@ class TemplateRatingController extends Controller
     }
 
     /**
-     * Get a single rating.
+     * Get a single rating for the currently logged in user.
      */
     public function show(Journey $journey)
     {
+        $templateRating = TemplateRating::where("user_id", Auth::id())
+            ->where("journey_id", $journey->id)
+            ->first();
         return response()->json([
-            "average_rating" => $journey->average_rating ?? 0,
-            "total_ratings" => $journey->total_ratings ?? 0,
+            "rating" => $templateRating ? $templateRating->rating : 0,
         ]);
     }
 }
