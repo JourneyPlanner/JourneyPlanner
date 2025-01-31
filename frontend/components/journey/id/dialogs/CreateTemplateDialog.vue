@@ -4,11 +4,11 @@ import { ErrorMessage, Field } from "vee-validate";
 import * as yup from "yup";
 
 const props = defineProps({
+    templateName: { type: String, default: "" },
+    templateDescription: { type: String, default: "" },
     isCreateTemplateVisible: { type: Boolean, required: true },
     updateTemplate: { type: Boolean, default: false },
     templateID: { type: String, default: "" },
-    templateName: { type: String, default: "" },
-    templateDescription: { type: String, default: "" },
 });
 
 const emit = defineEmits([
@@ -31,6 +31,8 @@ watch(
     () => props.isCreateTemplateVisible,
     (value) => {
         isVisible.value = value;
+        console.log(props.templateName);
+        console.log(props.templateDescription);
         templateName.value = props.templateName;
         templateDescription.value = props.templateDescription;
     },

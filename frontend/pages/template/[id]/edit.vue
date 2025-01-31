@@ -10,7 +10,7 @@ const templateID = route.params.id;
 const activityDataLoaded = ref(false);
 
 const backTolgeeKey = ref("template.back.to.templates");
-const backRoute = ref("/dashboard?tab=templates");
+const backRoute = ref("");
 
 const isCreateTemplateVisible = ref(false);
 const updateTemplate = ref(false);
@@ -60,7 +60,7 @@ function closeTemplateDialog() {
     updateTemplate.value = false;
 }
 
-function change(template: Template) {
+function changeTemplateDetails(template: Template) {
     journeyStore.setJourney(template);
     useHead({
         title: `${template.name} | JourneyPlanner`,
@@ -173,7 +173,7 @@ function change(template: Template) {
             :template-i-d="templateID.toString()"
             :template-name="data?.name"
             :template-descripton="data?.description"
-            @updated-template="change"
+            @updated-template="changeTemplateDetails"
             @close-template-dialog="closeTemplateDialog()"
         />
     </div>

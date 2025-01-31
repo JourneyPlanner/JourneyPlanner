@@ -74,7 +74,9 @@ function closeTemplateDialog() {
 
 function changeToUpdate(template: Template) {
     currentTemplate.value = template;
+    console.log(currentTemplate.value);
     console.log(currentTemplate.value.name);
+    console.log(currentTemplate.value.description);
 }
 </script>
 
@@ -326,14 +328,16 @@ function changeToUpdate(template: Template) {
             @close-edit-journey-dialog="isJourneyEditMenuVisible = false"
             @journey-edited="journeyEdited"
         />
+        {{ console.log(currentTemplate?.description) }}
         <JourneyIdDialogsCreateTemplateDialog
             v-if="currUser?.role === 1"
             :is-create-template-visible="isCreateTemplateVisible"
             :update-template="updateTemplate"
             :template-i-d="currentTemplate?.id"
             :template-name="currentTemplate?.name"
-            :template-descripton="currentTemplate?.description"
+            :template-description="currentTemplate?.description"
             @created-template="changeToUpdate"
+            @updated-template="changeToUpdate"
             @close-template-dialog="closeTemplateDialog()"
         />
     </div>
