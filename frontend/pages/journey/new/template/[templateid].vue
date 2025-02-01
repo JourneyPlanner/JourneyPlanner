@@ -14,7 +14,7 @@ const { isAuthenticated } = useSanctumAuth();
 const toast = useToast();
 const store = useJourneysStore();
 
-const templateID = route.params.id;
+const templateID = route.params.templateid;
 const namePrefill = (route.query.name as string) || "";
 let datePrefill = (route.query.date as string[]) || null;
 
@@ -284,7 +284,7 @@ function changeDuration(range: Date[]) {
                     <form class="px-1 lg:px-5" @submit="validateData">
                         <div class="relative mb-4">
                             <Field
-                                id="journeyName"
+                                id="journey-name"
                                 v-model="name"
                                 type="text"
                                 name="journeyName"
@@ -293,7 +293,7 @@ function changeDuration(range: Date[]) {
                             />
                             <label
                                 for="journey-name"
-                                class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-natural-400 transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-natural-600 peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-calypso-600 dark:peer-placeholder-shown:text-natural-200"
+                                class="absolute left-0 ml-1.5 mt-1 -translate-y-0.5 px-1 text-xs text-natural-400 transition-transform duration-100 ease-linear peer-placeholder-shown:translate-y-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-natural-600 peer-focus:ml-1.5 peer-focus:-translate-y-0.5 peer-focus:px-1 peer-focus:text-xs peer-focus:text-calypso-600 dark:peer-placeholder-shown:text-natural-200 dark:peer-focus:text-calypso-600"
                             >
                                 <T key-name="form.input.journey.name" />
                             </label>
