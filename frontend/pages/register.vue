@@ -52,15 +52,31 @@ const { handleSubmit } = useForm({
 });
 
 const onSubmit = handleSubmit((values) => {
-    registerUser(values);
+    registerUser(
+        values.email,
+        values.display_name,
+        values.password,
+        values.password_confirmation,
+        values.terms,
+    );
 });
 
 /**
  * use the sanctum client to register a user
  * shows toast messages if success/error
- * @param {object} userData
+ * @param email email of the user
+ * @param display_name display name of the user
+ * @param password password of the user
+ * @param password_confirmation password confirmation of the user
+ * @param terms terms of service agreement
  */
-async function registerUser(userData: object) {
+async function registerUser(
+    email: string,
+    display_name: string,
+    password: string,
+    password_confirmation: string,
+    terms: boolean,
+) {
     toast.removeGroup("user-exists");
     isUserExistsToastVisible.value = false;
 
@@ -73,11 +89,20 @@ async function registerUser(userData: object) {
 
     await client("/register", {
         method: "POST",
-        body: userData,
+        body: {
+            email: email.toLowerCase(),
+            display_name: display_name,
+            password: password,
+            password_confirmation: password_confirmation,
+            terms: terms,
+        },
         async onResponse({ response }) {
             if (response.ok) {
                 isConfirmEmailDialogVisible.value = true;
-            } else if (response.status === 422) {
+            } else if (
+                response.status === 422 &&
+                response?._data?.message === "The email has already been taken."
+            ) {
                 if (!isUserExistsToastVisible.value) {
                     toast.removeAllGroups();
                     toast.add({

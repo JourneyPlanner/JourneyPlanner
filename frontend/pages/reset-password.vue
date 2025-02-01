@@ -12,6 +12,10 @@ useHead({
     title: `${t.value("password.reset.title")} | JourneyPlanner`,
 });
 
+definePageMeta({
+    middleware: ["sanctum:guest"],
+});
+
 const route = useRoute();
 const loading = ref(true);
 const isSendNewLinkToastVisible = ref(false);
@@ -145,7 +149,7 @@ async function resend() {
                     </div>
                     <div clas="flex flex-col">
                         <p>{{ slotProps.message.summary }}</p>
-                        <p class="mt-2 text-sm text-text dark:text-natural-50">
+                        <p class="mt-2 text-sm text-text">
                             {{ slotProps.message.detail }}
                         </p>
                         <button

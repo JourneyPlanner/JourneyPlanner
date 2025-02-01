@@ -15,6 +15,10 @@ useHead({
     title: `${title} | JourneyPlanner`,
 });
 
+definePageMeta({
+    middleware: ["sanctum:guest"],
+});
+
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
         email: yup

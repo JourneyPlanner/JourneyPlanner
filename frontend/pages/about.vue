@@ -489,7 +489,7 @@ const changeColorMode = () => {
                         <T key-name="about.sponsors.headline" />
                     </h3>
                     <div
-                        class="flex flex-col items-center justify-center gap-9 md:flex-row lg:gap-16"
+                        class="mb-6 flex flex-col items-center justify-center gap-9 md:flex-row lg:gap-16"
                     >
                         <NuxtLink to="https://www.mapbox.com/" target="_blank">
                             <SvgAboutMapbox class="h-12" />
@@ -499,6 +499,36 @@ const changeColorMode = () => {
                             target="_blank"
                         >
                             <SvgAboutLightgallery class="h-10" />
+                        </NuxtLink>
+                    </div>
+                    <div
+                        class="flex flex-col items-center justify-center gap-9 md:flex-row lg:gap-16"
+                    >
+                        <NuxtLink
+                            to="https://www.scrumplicity.app/"
+                            target="_blank"
+                        >
+                            <NuxtImg
+                                src="/sponsors/ScrumpliCity.svg"
+                                class="h-8 dark:hidden"
+                            />
+                            <NuxtImg
+                                src="/sponsors/ScrumpliCity_Dark.svg"
+                                class="hidden h-8 dark:block"
+                            />
+                        </NuxtLink>
+                        <NuxtLink
+                            to="https://www.linguexplorer.com/"
+                            target="_blank"
+                        >
+                            <NuxtImg
+                                src="/sponsors/lingu-explorer.png"
+                                class="h-8 dark:hidden"
+                            />
+                            <NuxtImg
+                                src="/sponsors/lingu-explorer-dark.png"
+                                class="hidden h-8 dark:block"
+                            />
                         </NuxtLink>
                     </div>
                     <div
