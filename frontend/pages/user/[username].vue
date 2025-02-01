@@ -7,6 +7,7 @@ const router = useRouter();
 const client = useSanctumClient();
 const toast = useToast();
 const templateStore = useTemplateStore();
+const user = useSanctumUser<User>();
 
 const username = ref(route.params.username);
 const displayname = ref("");
@@ -20,10 +21,7 @@ const { data, error } = await useAsyncData("user", () =>
     client(`/api/user/${username.value}`),
 );
 
-const { data: userData } = await useAsyncData("currentUser", () =>
-    client(`/api/me/`),
-);
-const isCurrentUser = data.value.username == userData.value.username;
+const isCurrentUser = data.value.username == user.value?.username;
 
 if (error.value) {
     if (error.value.statusCode === 404) {
@@ -357,7 +355,9 @@ function removeTemplate(id: string) {
                         <div class="flex justify-center">
                             <ProgressSpinner class="w-10" />
                         </div>
-                        <div class="flex justify-center italic">
+                        <div
+                            class="flex justify-center italic text-text dark:text-natural-50"
+                        >
                             <T key-name="dashboard.templates.loading" />
                         </div>
                     </div>
