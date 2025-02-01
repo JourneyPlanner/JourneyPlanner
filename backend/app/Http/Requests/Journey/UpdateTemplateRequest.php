@@ -3,10 +3,20 @@
 namespace App\Http\Requests\Journey;
 
 use App\Http\Requests\Journey\UpdateJourneyRequest;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class UpdateTemplateRequest extends UpdateJourneyRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): Response
+    {
+        return Gate::authorize("journeyTemplate", $this->journey);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
