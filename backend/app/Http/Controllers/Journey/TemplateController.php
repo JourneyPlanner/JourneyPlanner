@@ -220,7 +220,7 @@ class TemplateController extends Controller
         $validated = $request->validate([
             "journey_id" => "required|uuid|exists:journeys,id",
             "name" => "required|string",
-            "description" => "string",
+            "description" => "nullable|string",
         ]);
         $journey = Journey::findOrFail($validated["journey_id"]);
         Gate::authorize("update", [$journey, false]);
