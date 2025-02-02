@@ -40,10 +40,12 @@ class JourneyPolicy
     public function update(
         ?User $user,
         Journey $journey,
-        bool $allowGuests
+        bool $allowGuests,
+        bool $forceTemplate = false
     ): bool {
-        return ($allowGuests && $this->guestJourney($journey)) ||
-            ($user && $this->journeyGuide($user, $journey));
+        return (($allowGuests && $this->guestJourney($journey)) ||
+            ($user && $this->journeyGuide($user, $journey))) &&
+            ($forceTemplate ? $this->journeyTemplate($user, $journey) : true);
     }
 
     /**

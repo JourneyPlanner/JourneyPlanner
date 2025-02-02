@@ -7,9 +7,9 @@ use App\Http\Requests\Journey\UpdateTemplateRequest;
 use App\Models\Journey;
 use App\Models\JourneyUser;
 use App\Models\User;
-use App\Services\MapboxService;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -18,6 +18,22 @@ class TemplateController extends Controller
 {
     private $columns;
     private int $perPage = 20;
+
+    /**
+     * The columns to exclude when cloning a journey for creating/updating a template.
+     */
+    private static array $columnsToExcludeFromClone = [
+        "id",
+        "created_at",
+        "updated_at",
+        "name",
+        "description",
+        "invite",
+        "is_template",
+        "created_from",
+        "average_rating",
+        "total_ratings",
+    ];
 
     public function __construct()
     {
@@ -236,13 +252,7 @@ class TemplateController extends Controller
         }
 
         $journeyTemplate = $journey
-            ->replicate([
-                "name",
-                "description",
-                "invite",
-                "is_template",
-                "created_from",
-            ])
+            ->replicate(static::$columnsToExcludeFromClone)
             ->fill([
                 "name" => $validated["name"],
                 "invite" => "",
@@ -264,27 +274,26 @@ class TemplateController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(
-        MapboxService $mapboxService,
-        UpdateTemplateRequest $request,
-        Journey $journey
-    ) {
+    public function update(UpdateTemplateRequest $request, Journey $journey)
+    {
         $validated = $request->validated();
-
-        $template = JourneyController::updateJourney(
-            $journey,
-            $validated,
-            $mapboxService
-        );
+        $template = $journey;
 
         if (isset($validated["journey_id"])) {
-            $template->activities()->delete();
-
             $journey = Journey::findOrFail($validated["journey_id"]);
             Gate::authorize("update", [$journey, false]);
 
+            $template->fill(
+                Arr::except(
+                    $journey->toArray(),
+                    static::$columnsToExcludeFromClone
+                )
+            );
+
+            $template->activities()->delete();
             $template = $this->cloneActivities($journey, $template);
         }
+        $template->update($validated);
 
         return response()->json(
             [

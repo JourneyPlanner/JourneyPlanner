@@ -14,7 +14,7 @@ class UpdateTemplateRequest extends UpdateJourneyRequest
      */
     public function authorize(): Response
     {
-        return Gate::authorize("journeyTemplate", $this->journey);
+        return Gate::authorize("update", [$this->journey, false, true]);
     }
 
     /**
