@@ -111,7 +111,7 @@ const roleType = computed(() => {
             @click="isConfirmVisible = true"
         >
             <i
-                class="pi pi-user-minus cursor-pointer text-lg text-mahagony-300 hover:text-mahagony-400"
+                class="pi pi-user-minus mr-1 cursor-pointer text-lg text-mahagony-400 hover:text-mahagony-500 dark:text-mahagony-300 dark:hover:text-mahagony-400"
             />
         </span>
     </form>

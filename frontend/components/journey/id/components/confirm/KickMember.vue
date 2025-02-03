@@ -29,7 +29,7 @@ const kick = () => {
             modal
             :auto-z-index="true"
             :draggable="false"
-            class="z-50 flex w-2/3 flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-1/2 2xl:w-1/4"
+            class="z-50 flex w-2/3 flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:rounded-xl lg:w-1/2 2xl:w-2/6"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -89,7 +89,7 @@ const kick = () => {
                         <T key-name="common.button.cancel" />
                     </button>
                     <button
-                        class="ml-1 mr-6 mt-auto w-[70%] text-nowrap rounded-md border-[3px] border-mahagony-500 bg-natural-50 px-2 py-1 pl-2 text-base font-semibold text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                        class="ml-1 mr-6 mt-auto w-[70%] text-nowrap rounded-lg border-[2.5px] border-mahagony-500 bg-natural-50 px-2 py-1 pl-2 text-base font-semibold text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                         @click="kick"
                     >
                         <T key-name="journey.kick.member" />
