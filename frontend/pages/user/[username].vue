@@ -8,6 +8,7 @@ const client = useSanctumClient();
 const toast = useToast();
 const templateStore = useTemplateStore();
 const user = useSanctumUser<User>();
+const { isAuthenticated } = useSanctumAuth();
 
 const username = ref(route.params.username);
 const displayname = ref("");
@@ -45,10 +46,6 @@ if (error.value) {
     });
 }
 
-definePageMeta({
-    middleware: ["sanctum:auth"],
-});
-
 const showMore = ref(false);
 const toggleText = ref(t.value("profile.showMore") + username.value);
 const toggleTextShort = ref(t.value("profile.showMore.short"));
@@ -66,8 +63,9 @@ const loader = ref<HTMLElement | undefined>();
 onMounted(async () => {
     const lastRoute = router.options.history.state.back as string;
     if (
-        lastRoute &&
-        allowedRoutes.some((route) => lastRoute.startsWith(route))
+        (lastRoute &&
+            allowedRoutes.some((route) => lastRoute.startsWith(route))) ||
+        !isAuthenticated.value
     ) {
         isCloseIcon.value = true;
     } else if (route?.query?.journey) {
@@ -204,6 +202,15 @@ const toggle = () => {
 
 const navigateBack = () => {
     const lastRoute = router.options.history.state.back as string;
+
+    if (!isAuthenticated) {
+        if (lastRoute) {
+            router.push(lastRoute);
+        } else {
+            router.push("/journey/new");
+        }
+    }
+
     if (
         lastRoute &&
         allowedRoutes.some((route) => lastRoute.startsWith(route))

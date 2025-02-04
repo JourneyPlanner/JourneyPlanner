@@ -17,21 +17,27 @@ const createJourneyFromTemplate = `/journey/new/template/${templateID}`;
 onMounted(() => {
     const lastRoute = router.options.history.state.back as string;
 
-    if (
-        lastRoute.startsWith("/dashboard?tab=templates") &&
-        isAuthenticated.value
-    ) {
-        backTolgeeKey.value = "template.back.to.templates";
-        backRoute.value = lastRoute;
-    } else if (lastRoute.startsWith("/journey/new") && isAuthenticated.value) {
-        backTolgeeKey.value = "template.back.to.new.journey";
-        backRoute.value = lastRoute;
-    } else if (!isAuthenticated.value) {
-        backTolgeeKey.value = "template.back.to.new.journey";
-        backRoute.value = "/journey/new";
+    if (lastRoute) {
+        if (isAuthenticated.value) {
+            if (lastRoute.startsWith("/dashboard?tab=templates")) {
+                backTolgeeKey.value = "template.back.to.templates";
+                backRoute.value = lastRoute;
+            } else if (lastRoute.startsWith("/journey/new")) {
+                backTolgeeKey.value = "template.back.to.new.journey";
+                backRoute.value = lastRoute;
+            }
+        } else {
+            backTolgeeKey.value = "common.back";
+            backRoute.value = lastRoute;
+        }
     } else {
-        backTolgeeKey.value = "common.back";
-        backRoute.value = lastRoute;
+        if (isAuthenticated.value) {
+            backTolgeeKey.value = "template.back.to.templates";
+            backRoute.value = "/dashboard?tab=templates";
+        } else {
+            backTolgeeKey.value = "template.back.to.new.journey";
+            backRoute.value = "/journey/new";
+        }
     }
 });
 
@@ -42,7 +48,8 @@ const { data, error } = await useAsyncData("journey", () =>
 if (error.value?.statusCode === 404) {
     throw createError({
         statusCode: 404,
-        statusMessage: "Template not found",
+        data: "isTolgeeKey",
+        message: "template.notfound.summary",
         fatal: true,
     });
 }
@@ -55,7 +62,7 @@ await client(`/api/template/${templateID}/activity`, {
         } else {
             throw createError({
                 statusCode: response.status,
-                statusMessage: response.statusText,
+                message: response.statusText,
                 fatal: true,
             });
         }

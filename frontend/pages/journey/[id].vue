@@ -64,7 +64,8 @@ if (error.value?.statusCode === 404) {
     }
     throw createError({
         statusCode: 404,
-        statusMessage: "Journey not found",
+        message: "error.journey.notfound",
+        data: "isTolgeeKey",
         fatal: true,
     });
 }

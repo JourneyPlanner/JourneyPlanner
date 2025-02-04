@@ -13,7 +13,11 @@ const activityDataLoaded = ref(false);
 const isCreateTemplateVisible = ref(false);
 const updateTemplate = ref(false);
 
-const { data, error } = await useAsyncData("journey", () =>
+definePageMeta({
+    middleware: ["sanctum:auth"],
+});
+
+const { data, error } = await useAsyncData("edit-template", () =>
     client(`/api/template/${templateID}`),
 );
 
@@ -21,7 +25,14 @@ if (error.value?.statusCode === 404) {
     throw createError({
         statusCode: 404,
         data: "isTolgeeKey",
-        statusMessage: "error.template.notfound",
+        message: "error.template.notfound",
+        fatal: true,
+    });
+} else if (data.value?.users[0].id !== user?.value?.id) {
+    throw createError({
+        statusCode: 403,
+        data: "isTolgeeKey",
+        message: "error.template.notowner",
         fatal: true,
     });
 }
@@ -34,7 +45,7 @@ await client(`/api/template/${templateID}/activity`, {
         } else {
             throw createError({
                 statusCode: response.status,
-                statusMessage: response.statusText,
+                message: response.statusText,
                 fatal: true,
             });
         }
