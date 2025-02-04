@@ -22,7 +22,7 @@ const { data, error } = await useAsyncData("user", () =>
     client(`/api/user/${username.value}`),
 );
 
-const isCurrentUser = data.value.username == user.value?.username;
+const isCurrentUser = data.value?.username == user.value?.username;
 
 if (error.value) {
     if (error.value.statusCode === 404) {
@@ -203,7 +203,7 @@ const toggle = () => {
 const navigateBack = () => {
     const lastRoute = router.options.history.state.back as string;
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated.value) {
         if (lastRoute) {
             router.push(lastRoute);
         } else {
