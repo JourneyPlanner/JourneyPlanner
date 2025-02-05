@@ -64,8 +64,15 @@ if (error.value?.statusCode === 404) {
     }
     throw createError({
         statusCode: 404,
-        message: "error.journey.notfound",
         data: "isTolgeeKey",
+        statusMessage: "error.journey.notfound",
+        fatal: true,
+    });
+} else if (error.value?.statusCode === 403) {
+    throw createError({
+        statusCode: 403,
+        data: "isTolgeeKey",
+        statusMessage: "error.journey.access",
         fatal: true,
     });
 }

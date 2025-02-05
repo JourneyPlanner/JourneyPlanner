@@ -32,7 +32,6 @@ currentJourneys.value = journeysStore.journeys;
 const searchValueJourneys = ref<string>("");
 
 //user settings
-const user = ref();
 const isUserSettingsVisible = ref<boolean>(false);
 
 //templates
@@ -557,7 +556,7 @@ journeys.value = data.value;
 currentJourneys.value = data.value;
 journeysStore.setJourneys(data.value);
 
-const { data: currUser } = await useAsyncData(
+const { data: user, refresh: refreshUser } = await useAsyncData(
     "currUserDashboard",
     () => client(`/api/me`),
     {
@@ -566,8 +565,6 @@ const { data: currUser } = await useAsyncData(
         },
     },
 );
-
-user.value = currUser.value;
 
 /**
  * Searches for journeys based on the searchValueJourneys
@@ -1455,7 +1452,11 @@ function editJourney(journey: Journey, id: string) {
                 :prop-new-email-needing-verification="
                     user.email_needs_verification
                 "
-                @close="isUserSettingsVisible = false"
+                :prop-id="user.id"
+                @close="
+                    isUserSettingsVisible = false;
+                    refreshUser();
+                "
             />
             <ConfirmDialog
                 :draggable="false"

@@ -5,6 +5,7 @@ const props = defineProps({
     email: { type: String, required: false, default: "" },
     userId: { type: String, required: false, default: "" },
     isUpdating: { type: Boolean, required: false, default: false },
+    id: { type: String, required: false, default: "" },
 });
 
 const emit = defineEmits(["close"]);
@@ -158,6 +159,7 @@ const close = () => {
         <MailVerifyDialog
             :is-confirm-email-dialog-visible="isVerifyEmailDialogVisible"
             :email="email"
+            :user-id="userId"
             :is-updating="true"
             :do-resend="true"
             @close="isVerifyEmailDialogVisible = false"

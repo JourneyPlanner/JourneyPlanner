@@ -13,6 +13,7 @@ const props = defineProps({
         required: false,
         default: "",
     },
+    propId: { type: String, required: true },
 });
 const emit = defineEmits(["close"]);
 
@@ -842,6 +843,7 @@ function blur(e: Event) {
                         <SettingsEmailChange
                             :visible="isEmailChangeDialogVisible"
                             :curr-email="currEmail"
+                            :user-id="propId"
                             :requires-password="
                                 requiresPassword.requiresPassword
                             "
@@ -1076,6 +1078,7 @@ function blur(e: Event) {
             </div>
         </Sidebar>
         <SettingsEmailUpdateInfoDialog
+            :id="propId"
             :is-email-update-info-dialog-visible="
                 isEmailUpdateInfoDialogVisible
             "
