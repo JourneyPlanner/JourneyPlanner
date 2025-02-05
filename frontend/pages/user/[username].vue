@@ -220,7 +220,7 @@ const openTemplateDialog = (template: Template) => {
 
 <template>
     <div>
-        <div class="px-1 font-nunito md:px-3">
+        <div class="px-1 font-nunito text-text dark:text-natural-50 md:px-3">
             <div id="header" class="mt-5 flex flex-col">
                 <div class="flex flex-row items-center">
                     <div class="flex flex-row items-center">
