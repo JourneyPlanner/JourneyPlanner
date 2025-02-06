@@ -42,8 +42,8 @@ function changeRole(selectedRole: number) {
 }
 
 const kick = () => {
-    emit("kick", props.id);
     isConfirmVisible.value = false;
+    emit("kick", props.id);
 };
 
 const roleType = computed(() => {

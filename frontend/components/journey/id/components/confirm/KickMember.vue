@@ -54,6 +54,7 @@ const kick = () => {
                     class: 'max-sm:collapse',
                 },
             }"
+            @hide="close"
         >
             <template #header>
                 <div class="flex w-[90%] items-center">
@@ -119,7 +120,7 @@ const kick = () => {
                 },
                 footer: { class: 'h-0' },
                 closeButton: {
-                    class: 'justify-start w-full h-full items-center collapse',
+                    class: 'justify-start w-full h-full items-center collapse hidden',
                 },
                 mask: {
                     class: 'sm:collapse bg-natural-50',
@@ -131,7 +132,7 @@ const kick = () => {
                     <span class="pi pi-angle-down text-2xl" />
                 </button>
                 <div
-                    class="font-nunito text-3xl font-semibold text-text dark:text-natural-50"
+                    class="w-full font-nunito text-3xl font-semibold text-text dark:text-natural-50"
                 >
                     <T key-name="journey.kick.member" />
                 </div>
