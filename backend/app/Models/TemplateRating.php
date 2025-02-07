@@ -50,8 +50,19 @@ class TemplateRating extends Model
             $this->template_id
         )->count();
 
+        $globalAverage = TemplateRating::avg("rating");
+        $weight = max(5, Journey::avg("total_ratings")); // Confidence value (weight constant)
+
+        if ($count > 0) {
+            $bayesianAverage =
+                ($average * $count + $weight * $globalAverage) /
+                ($count + $weight);
+        } else {
+            $bayesianAverage = $globalAverage; // If no ratings, default to global average
+        }
+
         $template->update([
-            "average_rating" => $average,
+            "average_rating" => $bayesianAverage,
             "total_ratings" => $count,
         ]);
     }

@@ -27,7 +27,7 @@ return new class extends Migration {
         });
 
         Schema::table("journeys", function (Blueprint $table) {
-            $table->float("average_rating")->nullable();
+            $table->float("average_rating")->default(0);
             $table->unsignedInteger("total_ratings")->default(0);
         });
     }
