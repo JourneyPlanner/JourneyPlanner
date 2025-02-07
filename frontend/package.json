@@ -68,7 +68,7 @@
         "eslint": "^9.19.0",
         "husky": "^9.1.5",
         "lint-staged": "^15.4.3",
-        "mapbox-gl": "^3.9.3",
+        "mapbox-gl": "^3.9.4",
         "nuxt-auth-sanctum": "^0.5.4",
         "nuxt-primevue": "^3.0.0",
         "prettier": "^3.4.2",
