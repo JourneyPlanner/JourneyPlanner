@@ -97,7 +97,8 @@ class TemplateController extends Controller
     {
         // Validate the request
         $validated = request()->validate([
-            "sort_by" => "nullable|string|in:id,name,destination,length",
+            "sort_by" =>
+                "nullable|string|in:id,name,destination,length,average_rating",
             "order" => "nullable|string|in:asc,desc",
             "per_page" => "nullable|integer|min:1|max:100",
             "template_name" => "nullable|string",
