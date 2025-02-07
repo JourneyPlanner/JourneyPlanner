@@ -29,6 +29,7 @@ const emit = defineEmits([
     "close",
     "open-qrcode",
     "open-unlock-dialog",
+    "kick",
 ]);
 
 const toast = useToast();
@@ -44,6 +45,13 @@ watch(
     () => props.isMemberSidebarVisible,
     (value) => {
         isVisible.value = value;
+    },
+);
+
+watch(
+    () => props.users,
+    (value) => {
+        users.value = value;
     },
 );
 
@@ -107,13 +115,7 @@ async function kick(userid: string) {
                     life: 6000,
                 });
 
-                const { data } = await useAsyncData<User[]>("users", () =>
-                    client(`/api/journey/${props.journeyID}/user`),
-                );
-
-                if (data.value !== null) {
-                    users.value = data.value;
-                }
+                emit("kick");
             }
         },
         async onResponseError() {
@@ -197,7 +199,7 @@ function openUnlockDialog() {
                         <input
                             class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
                             disabled
-                            :value="props.invite"
+                            :value="invite"
                         />
                         <div class="flex w-1/5 justify-end">
                             <button
