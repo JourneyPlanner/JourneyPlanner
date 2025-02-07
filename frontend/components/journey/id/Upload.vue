@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTolgee } from "@tolgee/vue";
 import Uppy from "@uppy/core";
+import type { Locale, UploadResult } from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
 import German from "@uppy/locales/lib/de_DE";
@@ -15,15 +16,19 @@ const emit = defineEmits(["uploaded"]);
 const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 
-let upload_token = localStorage.getItem("JP_upload_token");
+interface ExtendedUploadResult extends UploadResult {
+    uploadID: string;
+}
+
+let upload_token = localStorage.getItem("upload_token");
 
 if (!upload_token && isAuthenticated.value) {
     const { token } = await client("/api/user/tokens/upload");
-    localStorage.setItem("JP_upload_token", token || "");
+    localStorage.setItem("upload_token", token || "");
     upload_token = token;
 }
 
-let locale = English;
+let locale: Locale = English;
 
 if (tolgee.value.getLanguage() == "de") {
     locale = German;
@@ -45,7 +50,7 @@ const uppy = new Uppy({
         removeFingerprintOnSuccess: true,
     })
     .on("complete", (response) => {
-        emit("uploaded", response.uploadID);
+        emit("uploaded", (response as ExtendedUploadResult).uploadID);
     });
 </script>
 
