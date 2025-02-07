@@ -235,7 +235,6 @@ async function logoutUser() {
         detail: t.value("being.logged.out.toast.info"),
         life: 6000,
     });
-    localStorage.removeItem("JP_upload_token");
     await logout();
 }
 
