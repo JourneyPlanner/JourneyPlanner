@@ -67,7 +67,7 @@ async function deleteAccount() {
             }
         },
     });
-    localStorage.removeItem("upload_token");
+    localStorage.removeItem("JP_upload_token");
     await refreshIdentity();
     await navigateTo("/");
 }
