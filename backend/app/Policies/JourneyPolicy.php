@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Journey;
+use App\Models\JourneyUser;
 use App\Models\User;
 
 class JourneyPolicy
@@ -39,10 +40,12 @@ class JourneyPolicy
     public function update(
         ?User $user,
         Journey $journey,
-        bool $allowGuests
+        bool $allowGuests,
+        bool $forceTemplate = false
     ): bool {
-        return ($allowGuests && $this->guestJourney($journey)) ||
-            ($user && $this->journeyGuide($user, $journey));
+        return (($allowGuests && $this->guestJourney($journey)) ||
+            ($user && $this->journeyGuide($user, $journey))) &&
+            ($forceTemplate ? $this->journeyTemplate($user, $journey) : true);
     }
 
     /**
@@ -77,7 +80,11 @@ class JourneyPolicy
         return $journey
             ->users()
             ->where("user_id", $user->id)
-            ->wherePivot("role", 1)
+            ->where(function ($query) {
+                $query
+                    ->where("role", JourneyUser::JOURNEY_GUIDE_ROLE_ID)
+                    ->orWhere("role", JourneyUser::TEMPLATE_CREATOR_ROLE_ID);
+            })
             ->exists();
     }
 

@@ -13,6 +13,7 @@ const router = useRouter();
 const route = useRoute();
 const journeysStore = useJourneysStore();
 const templateFilterstore = useTemplateFilterStore();
+const templateStore = useTemplateStore();
 const client = useSanctumClient();
 const toast = useToast();
 const nuxtApp = useNuxtApp();
@@ -20,7 +21,6 @@ const colorMode = useColorMode();
 
 const searchInput = ref();
 const searchInputMobile = ref();
-const searchValue = ref<string>("");
 const tabIndex = ref<number>(0);
 const menu = ref();
 const items = ref();
@@ -29,6 +29,7 @@ const items = ref();
 const journeys = ref<Journey[]>([]);
 const currentJourneys = ref<Journey[]>([]);
 currentJourneys.value = journeysStore.journeys;
+const searchValueJourneys = ref<string>("");
 
 //user settings
 const isUserSettingsVisible = ref<boolean>(false);
@@ -63,6 +64,7 @@ const filters = reactive({
     templateCreator: templateFilterstore.getFilter("templateCreator"),
     cursor: templateFilterstore.getFilter("cursor"),
     nextCursor: templateFilterstore.getFilter("nextCursor"),
+    search: templateFilterstore.getFilter("search"),
 });
 
 const borderColor = ref();
@@ -85,6 +87,11 @@ if (route.query.tab === "templates") {
 }
 
 onMounted(() => {
+    if (templateStore.updateTemplates) {
+        templates.value = [];
+        refresh();
+        templateStore.changeUpdate(false);
+    }
     watch(
         tabIndex,
         async () => {
@@ -368,7 +375,7 @@ const {
             params: {
                 sort_by: filters.sortby,
                 order: filters.sortorder,
-                template_name: searchValue.value,
+                template_name: filters.search,
                 template_journey_length_min:
                     filters.templateJourneyLengthMinMax[0],
                 template_journey_length_max:
@@ -489,7 +496,6 @@ const isFiltered = computed(() => {
  */
 function clearFilters() {
     Object.assign(filters, templateFilterstore.resetFilters());
-    searchValue.value = "";
     refreshTemplates();
 }
 
@@ -561,17 +567,19 @@ const { data: user, refresh: refreshUser } = await useAsyncData(
 );
 
 /**
- * Searches for journeys based on the searchValue
+ * Searches for journeys based on the searchValueJourneys
  * sets the currentJourneys to the results
  */
 async function searchJourneys() {
     const data: Journey[] = journeys.value;
     const results: Journey[] = data.filter((obj: Journey) => {
         return (
-            obj.name.toLowerCase().includes(searchValue.value.toLowerCase()) ||
+            obj.name
+                .toLowerCase()
+                .includes(searchValueJourneys.value.toLowerCase()) ||
             obj.destination
                 .toLowerCase()
-                .includes(searchValue.value.toLowerCase())
+                .includes(searchValueJourneys.value.toLowerCase())
         );
     });
     currentJourneys.value = results;
@@ -697,7 +705,7 @@ function editJourney(journey: Journey, id: string) {
                         <div id="search" class="relative">
                             <input
                                 ref="searchInputMobile"
-                                v-model="searchValue"
+                                v-model="searchValueJourneys"
                                 type="text"
                                 data-test="search-journeys-input-mobile"
                                 class="w-40 rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200 xs:w-44 sm:w-72 lg:w-72"
@@ -831,7 +839,7 @@ function editJourney(journey: Journey, id: string) {
                         <div id="search" class="relative">
                             <input
                                 ref="searchInputMobile"
-                                v-model="searchValue"
+                                v-model="filters.search"
                                 type="text"
                                 data-test="search-templates-input-mobile"
                                 class="w-40 rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200 xs:w-[50vw] sm:w-72 lg:w-72"
@@ -1120,17 +1128,24 @@ function editJourney(journey: Journey, id: string) {
                         class="relative mr-2.5"
                     >
                         <input
+                            v-if="tabIndex === 0"
                             ref="searchInput"
-                            v-model="searchValue"
+                            v-model="searchValueJourneys"
                             type="text"
                             data-test="search-input"
-                            class="rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:placeholder-natural-200"
+                            class="rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 text-text placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:placeholder-natural-200"
                             :placeholder="t('dashboard.search')"
-                            @input="
-                                tabIndex === 0
-                                    ? searchJourneys()
-                                    : searchTemplate()
-                            "
+                            @input="searchJourneys()"
+                        />
+                        <input
+                            v-else
+                            ref="searchInput"
+                            v-model="filters.search"
+                            type="text"
+                            data-test="search-input"
+                            class="rounded-3xl border border-natural-200 bg-natural-50 px-3 py-1.5 text-text placeholder-natural-400 focus:border-dandelion-300 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:placeholder-natural-200"
+                            :placeholder="t('dashboard.search')"
+                            @input="searchTemplate()"
                         />
                         <button @click="searchInput.focus()">
                             <SvgSearchIcon

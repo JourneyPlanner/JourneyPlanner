@@ -1,5 +1,10 @@
 <script setup lang="ts">
-defineProps({
+import { useTranslate } from "@tolgee/vue";
+import type { MenuItemCommandEvent } from "primevue/menuitem";
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
+
+const props = defineProps({
     template: {
         type: Object as PropType<Template>,
         required: true,
@@ -8,11 +13,100 @@ defineProps({
         type: Boolean,
         default: false,
     },
+    isCurrentUser: {
+        type: Boolean,
+        default: false,
+    },
 });
 
-defineEmits(["openTemplate"]);
+const { t } = useTranslate();
+const toast = useToast();
+const client = useSanctumClient();
 
 const isProfileDialogVisible = ref(false);
+const router = useRouter();
+
+const confirm = useConfirm();
+const isCreateTemplateVisible = ref(false);
+const menu = ref();
+const toggle = (event: Event) => {
+    menu.value.toggle(event);
+};
+const emit = defineEmits(["templateDeleted", "templateEdited", "openTemplate"]);
+
+const templateItems = ref([
+    {
+        label: t.value("dashboard.options.header"),
+        items: [
+            {
+                label: t.value("dashboard.options.edit"),
+                icon: "pi pi-pencil",
+                className: "text-natural-50",
+                command: () => {
+                    router.push({
+                        path: `/template/${props.template.id}/edit`,
+                    });
+                },
+            },
+            {
+                label: t.value("dashboard.options.delete"),
+                icon: "pi pi-trash",
+                command: ($event: MenuItemCommandEvent) => {
+                    confirmDelete($event.originalEvent);
+                },
+            },
+        ],
+    },
+]);
+
+const confirmDelete = (event: Event) => {
+    confirm.require({
+        target: event.currentTarget as HTMLElement,
+        group: "username",
+        header: t.value("dashboard.delete.header"),
+        message: t.value("template.delete.confirm"),
+        icon: "pi pi-exclamation-triangle",
+        rejectClass: "hover:underline dark:text-natural-200",
+        acceptClass:
+            "text-mahagony-500 dark:text-mahagony-400 hover:underline font-bold",
+        rejectLabel: t.value("common.button.cancel"),
+        acceptLabel: t.value("template.delete"),
+        accept: () => {
+            toast.add({
+                severity: "info",
+                summary: t.value("common.toast.info.heading"),
+                detail: t.value("delete.template.toast.message"),
+                life: 3000,
+            });
+            deleteTemplate(props.template.id);
+        },
+    });
+};
+
+async function deleteTemplate(id: string) {
+    await client(`/api/journey/${id}`, {
+        method: "DELETE",
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("delete.template.toast.success.heading"),
+                    detail: t.value("delete.template.toast.success"),
+                    life: 6000,
+                });
+                emit("templateDeleted", id);
+            }
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
 </script>
 
 <template>
@@ -26,15 +120,54 @@ const isProfileDialogVisible = ref(false);
         <div
             class="my-1 ml-1 border-l-2 border-calypso-600 pl-1 dark:border-calypso-400"
         >
-            <h3
-                v-tooltip.top="{
-                    value: template.name,
-                    pt: { root: 'font-nunito' },
+            <Menu
+                id="overlay_menu"
+                ref="menu"
+                :model="templateItems"
+                class="bg-natural-50 dark:bg-natural-800"
+                :popup="true"
+                :pt="{
+                    root: {
+                        class: 'font-nunito bg-natural-50 dark:bg-natural-800',
+                    },
+                    menuitem: {
+                        class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
+                    },
+                    content: {
+                        class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-100 dark:hover:bg-pesto-600 rounded-md text-text dark:text-natural-50',
+                    },
+                    submenuHeader: {
+                        class: 'text-natural-500 dark:text-natural-100 bg-natural-50 dark:bg-natural-800',
+                    },
+                    label: { class: 'text-text dark:text-natural-50' },
+                    icon: { class: 'text-text dark:text-natural-50' },
                 }"
-                class="truncate text-base font-medium"
-            >
-                {{ template.name }}
-            </h3>
+            />
+            <div class="flex">
+                <h3
+                    v-tooltip.top="{
+                        value: template.name,
+                        pt: { root: 'font-nunito' },
+                    }"
+                    class="w-full truncate text-xl font-medium"
+                >
+                    <div
+                        class="block overflow-hidden overflow-ellipsis text-nowrap"
+                        :class="!isCurrentUser ? 'w-full' : 'w-11/12'"
+                    >
+                        {{ template.name }}
+                    </div>
+                </h3>
+                <Button
+                    v-if="isCurrentUser"
+                    type="button"
+                    icon="pi pi-ellipsis-v"
+                    aria-haspopup="true"
+                    aria-controls="overlay_menu"
+                    class="ml-auto justify-end"
+                    @click.stop="toggle"
+                />
+            </div>
             <h4
                 v-tooltip.top="{
                     value: template.users[0].username,
@@ -92,6 +225,11 @@ const isProfileDialogVisible = ref(false);
                 :username="template.users[0].username"
                 :displayname="template.users[0].display_name"
                 @close="isProfileDialogVisible = false"
+            />
+            <JourneyIdDialogsCreateTemplateDialog
+                :is-create-template-visible="isCreateTemplateVisible"
+                :update-template="true"
+                @close-template-dialog="isCreateTemplateVisible = false"
             />
         </div>
     </div>

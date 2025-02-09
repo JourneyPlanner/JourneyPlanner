@@ -41,6 +41,7 @@ const uploadResult = ref();
 const upload = ref();
 const calendar = ref();
 const clearCalendar = ref(false);
+const template = ref();
 
 onMounted(() => {
     if (route.query.username) {
@@ -86,6 +87,16 @@ await client(`/api/journey/${journeyId}/activity`, {
         if (response.ok) {
             activityStore.setActivities(response._data.activities);
             activityDataLoaded.value = true;
+        }
+    },
+});
+
+await client(`/api/me/template?journey_id=${journeyId}`, {
+    async onResponse({ response }) {
+        if (response.ok) {
+            if (response._data.data) {
+                template.value = response._data.data[0];
+            }
         }
     },
 });
@@ -327,6 +338,8 @@ function scrollToTarget(target: string) {
         <JourneyIdMenuSidebar
             :is-menu-sidebar-visible="isMenuSidebarVisible"
             :curr-user="currUser! || {}"
+            :journey-id="String(journeyId)"
+            :template="template"
             @leave-journey="confirmLeave"
             @journey-edited="journeyEdited"
             @close="isMenuSidebarVisible = false"

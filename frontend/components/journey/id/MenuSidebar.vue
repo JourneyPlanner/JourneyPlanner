@@ -10,6 +10,14 @@ const props = defineProps({
         type: Object as PropType<User>,
         required: true,
     },
+    journeyId: {
+        type: String,
+        required: true,
+    },
+    template: {
+        type: Object as () => Template,
+        default: undefined,
+    },
 });
 
 const emit = defineEmits([
@@ -22,10 +30,12 @@ const emit = defineEmits([
 const journeyStore = useJourneyStore();
 const { t } = useTranslate();
 const { isAuthenticated } = useSanctumAuth();
+const currentTemplate = ref(props.template);
 
 const isVisible = ref(props.isMenuSidebarVisible);
 const isJourneyEditMenuVisible = ref(false);
 const isCreateTemplateVisible = ref(false);
+const updateTemplate = ref(false);
 
 watch(
     () => props.isMenuSidebarVisible,
@@ -48,6 +58,20 @@ function journeyEdited(journey: Journey) {
 
 function openUnlockDialog() {
     emit("open-unlock-dialog");
+}
+
+function update() {
+    isCreateTemplateVisible.value = true;
+    updateTemplate.value = true;
+}
+
+function closeTemplateDialog() {
+    isCreateTemplateVisible.value = false;
+    updateTemplate.value = false;
+}
+
+function changeToUpdate(template: Template) {
+    currentTemplate.value = template;
 }
 </script>
 
@@ -123,7 +147,10 @@ function openUnlockDialog() {
                         </div>
                     </AccordionTab>
                     <AccordionTab
-                        v-if="currUser?.role === 1 || !isAuthenticated"
+                        v-if="
+                            (currUser?.role === 1 || !isAuthenticated) &&
+                            currentTemplate == undefined
+                        "
                         :header="t('journey.template.create')"
                         :pt="{
                             root: {
@@ -155,6 +182,54 @@ function openUnlockDialog() {
                                 "
                             >
                                 <T key-name="journey.template.create" />
+                            </button>
+                        </div>
+
+                        <div
+                            v-if="!isAuthenticated"
+                            class="absolute top-0 -mt-10 flex h-full w-full items-center justify-center"
+                        >
+                            <button
+                                class="flex w-32 justify-center rounded-md border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 text-base font-medium text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                @click="openUnlockDialog"
+                            >
+                                <T key-name="journey.unlock.button" />
+                            </button>
+                        </div>
+                    </AccordionTab>
+                    <AccordionTab
+                        v-if="currentTemplate != undefined"
+                        :header="t('journey.template.update')"
+                        :pt="{
+                            root: {
+                                class: 'border-b-2 border-natural-300 dark:border-natural-700',
+                            },
+                            headerAction: {
+                                class: `pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50 ${!isAuthenticated ? 'blur-[1.75px]' : ''}`,
+                            },
+                            content: {
+                                class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50 relative',
+                            },
+                        }"
+                    >
+                        <div
+                            class="relative"
+                            :class="!isAuthenticated ? 'blur-[1.75px]' : ''"
+                        >
+                            <p
+                                class="text-base font-medium text-natural-600 dark:text-natural-300"
+                            >
+                                <T key-name="template.update.detail" />
+                            </p>
+                            <button
+                                class="mt-4 w-full rounded-lg border-2 border-dandelion-300 bg-natural-50 py-1 text-base font-semibold text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                @click="
+                                    isAuthenticated
+                                        ? update()
+                                        : openUnlockDialog()
+                                "
+                            >
+                                <T key-name="journey.template.update" />
                             </button>
                         </div>
 
@@ -251,7 +326,13 @@ function openUnlockDialog() {
         <JourneyIdDialogsCreateTemplateDialog
             v-if="currUser?.role === 1"
             :is-create-template-visible="isCreateTemplateVisible"
-            @close-template-dialog="isCreateTemplateVisible = false"
+            :update-template="updateTemplate"
+            :template-i-d="currentTemplate?.id.toString()"
+            :template-name="currentTemplate?.name"
+            :template-description="currentTemplate?.description"
+            @created-template="changeToUpdate"
+            @updated-template="changeToUpdate"
+            @close-template-dialog="closeTemplateDialog()"
         />
     </div>
 </template>

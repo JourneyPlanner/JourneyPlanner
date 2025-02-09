@@ -4,10 +4,18 @@ import { ErrorMessage, Field } from "vee-validate";
 import * as yup from "yup";
 
 const props = defineProps({
+    templateName: { type: String, default: "" },
+    templateDescription: { type: String, default: "" },
     isCreateTemplateVisible: { type: Boolean, required: true },
+    updateTemplate: { type: Boolean, default: false },
+    templateID: { type: String, default: "" },
 });
 
-const emit = defineEmits(["closeTemplateDialog"]);
+const emit = defineEmits([
+    "closeTemplateDialog",
+    "createdTemplate",
+    "updatedTemplate",
+]);
 
 const journey = useJourneyStore();
 const { t } = useTranslate();
@@ -15,19 +23,23 @@ const toast = useToast();
 const client = useSanctumClient();
 
 const savingTemplate = ref(false);
-const templateName = ref("");
+const templateName = ref(props.templateName);
+const templateDescription = ref(props.templateDescription);
 const isVisible = ref();
 
 watch(
     () => props.isCreateTemplateVisible,
     (value) => {
         isVisible.value = value;
+        templateName.value = props.templateName;
+        templateDescription.value = props.templateDescription;
     },
 );
 
 const close = () => {
     savingTemplate.value = false;
     templateName.value = "";
+    templateDescription.value = "";
     emit("closeTemplateDialog");
 };
 
@@ -66,59 +78,101 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
         name: values.name,
         description: values.description,
     };
-
-    await client(`/api/template/`, {
-        method: "POST",
-        body: template,
-        async onResponse({ response }) {
-            if (response.ok) {
-                toast.add({
-                    severity: "success",
-                    summary: t.value(
-                        "form.template.create.toast.success.heading",
-                    ),
-                    detail: t.value(
-                        "form.template.create.toast.success.detail",
-                    ),
-                    life: 3000,
-                });
-                close();
-                savingTemplate.value = false;
-            }
-        },
-        async onRequestError() {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value("common.error.unknown"),
-                life: 6000,
-            });
-            savingTemplate.value = false;
-        },
-        async onResponseError({ response }) {
-            if (response.status === 409) {
-                toast.add({
-                    severity: "error",
-                    summary: t.value(
-                        "form.template.create.toast.error.duplicate.heading",
-                    ),
-                    detail: t.value(
-                        "form.template.create.toast.error.duplicate.detail",
-                    ),
-                    life: 6000,
-                });
-                close();
-            } else {
+    if (props.updateTemplate) {
+        await client(`/api/template/${props.templateID}`, {
+            method: "PUT",
+            body: template,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value(
+                            "form.template.update.toast.success.heading",
+                        ),
+                        detail: t.value(
+                            "form.template.update.toast.success.detail",
+                        ),
+                        life: 3000,
+                    });
+                    emit("updatedTemplate", response._data.journey);
+                    close();
+                    savingTemplate.value = false;
+                }
+            },
+            async onRequestError() {
                 toast.add({
                     severity: "error",
                     summary: t.value("common.toast.error.heading"),
                     detail: t.value("common.error.unknown"),
                     life: 6000,
                 });
-            }
-            savingTemplate.value = false;
-        },
-    });
+                savingTemplate.value = false;
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                savingTemplate.value = false;
+            },
+        });
+    } else {
+        await client(`/api/template/`, {
+            method: "POST",
+            body: template,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value(
+                            "form.template.create.toast.success.heading",
+                        ),
+                        detail: t.value(
+                            "form.template.create.toast.success.detail",
+                        ),
+                        life: 3000,
+                    });
+                    emit("createdTemplate", response._data);
+                    close();
+                    savingTemplate.value = false;
+                }
+            },
+            async onRequestError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                savingTemplate.value = false;
+            },
+            async onResponseError({ response }) {
+                if (response.status === 409) {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value(
+                            "form.template.create.toast.error.duplicate.heading",
+                        ),
+                        detail: t.value(
+                            "form.template.create.toast.error.duplicate.detail",
+                        ),
+                        life: 6000,
+                    });
+                    close();
+                } else {
+                    toast.add({
+                        severity: "error",
+                        summary: t.value("common.toast.error.heading"),
+                        detail: t.value("common.error.unknown"),
+                        life: 6000,
+                    });
+                }
+                savingTemplate.value = false;
+            },
+        });
+    }
 });
 </script>
 
@@ -132,7 +186,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
             :draggable="false"
             close-on-escape
             dismissable-mask
-            class="z-50 mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-1/3"
+            class="z-50 mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-1/2 xl:w-5/12"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10',
@@ -157,7 +211,13 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                 <h3
                     class="text-nowrap text-2xl font-medium text-text dark:text-natural-50"
                 >
-                    <T key-name="journey.template.create" />
+                    <T
+                        :key-name="
+                            props.updateTemplate
+                                ? 'journey.template.update'
+                                : 'journey.template.create'
+                        "
+                    />
                 </h3>
                 <span
                     class="h-0.5 w-full bg-calypso-300 dark:bg-calypso-600 md:mr-2"
@@ -169,16 +229,23 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
             >
                 <div class="mb-5 flex flex-col">
                     <p
+                        v-if="!props.updateTemplate"
                         class="col-span-full col-start-1 row-span-1 -mt-1 mb-5 text-sm text-natural-600 dark:text-natural-200 md:text-base"
                     >
                         <T key-name="journey.template.create.description" />
                     </p>
+                    <p
+                        v-else
+                        class="col-span-full col-start-1 row-span-1 -mt-1 mb-5 text-sm text-natural-600 dark:text-natural-200 md:text-base"
+                    >
+                        <T key-name="template.update.detail" />
+                    </p>
                     <div
-                        class="mb-1 grid grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20 xl:gap-x-0"
+                        class="mb-1 grid w-full grid-cols-5 grid-rows-2 items-center xs:grid-cols-8 sm:grid-cols-4 sm:gap-x-20 xl:grid-cols-6 xl:gap-x-0"
                     >
                         <label
                             for="template-name"
-                            class="text-md col-start-1 row-start-1 text-nowrap font-medium md:text-lg"
+                            class="text-md col-span-3 col-start-1 row-start-1 text-nowrap font-medium md:text-lg"
                         >
                             <T key-name="form.input.template.name" />
                         </label>
@@ -187,10 +254,10 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                             v-model="templateName"
                             name="name"
                             :validate-on-input="true"
-                            class="col-span-full col-start-3 row-start-1 block w-full rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2"
+                            class="col-span-full row-start-1 block rounded-lg border-2 border-calypso-300 bg-natural-50 px-2.5 pb-1 pt-1 font-nunito font-normal text-text placeholder:text-natural-400 focus:outline-none focus:ring-1 dark:border-calypso-400 dark:bg-natural-900 dark:text-natural-50 xs:col-start-4 sm:col-start-2 xl:col-start-3"
                         />
                         <div
-                            class="col-start-3 row-start-2 -mt-3 xs:col-start-4 sm:col-start-2"
+                            class="col-start-3 row-start-2 -mt-3 xs:col-start-4 sm:col-start-2 lg:col-start-3"
                         >
                             <ErrorMessage
                                 name="name"
@@ -209,6 +276,7 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                         </label>
                         <Field
                             id="template-description"
+                            v-model="templateDescription"
                             type="text"
                             as="textarea"
                             name="description"
@@ -241,7 +309,11 @@ const onSubmitCreateTemplate = createTemplate(async (values) => {
                     />
                     <Button
                         type="submit"
-                        :label="t('common.button.create')"
+                        :label="
+                            props.updateTemplate
+                                ? t('common.button.update')
+                                : t('common.button.create')
+                        "
                         :loading="savingTemplate"
                         icon="pi pi-check"
                         :pt="{
