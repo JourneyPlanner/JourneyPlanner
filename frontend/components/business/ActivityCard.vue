@@ -13,7 +13,7 @@ function showInfo() {
 </script>
 
 <template>
-    <div class="cursor-pointer" @click="showInfo()">
+    <div class="hover:cursor-pointer" @click="showInfo()">
         <div
             class="fc-event relative col-span-1 mx-1 my-1 h-14 overflow-hidden overflow-ellipsis rounded-md border border-calypso-400 bg-light px-2 py-1 text-base font-normal dark:border-calypso-600 dark:bg-dark sm:h-16 sm:text-base lg:rounded-xl"
         >

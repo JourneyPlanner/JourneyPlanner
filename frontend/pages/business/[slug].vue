@@ -28,8 +28,6 @@ const texts = reactive({
     text: "",
 });
 
-const activities = ref<Activity[]>([]);
-
 const { data, error } = await useAsyncData("business", () =>
     client(
         `/api/business/${slug.value}?language=${tolgee.value.getLanguage()}`,
@@ -64,8 +62,10 @@ if (error.value) {
 //const isCloseIcon = ref(false);
 
 const showMoreTemplates = ref(false);
-const toggleText = ref(t.value("profile.showMore") + texts.company_name);
-const toggleTextShort = ref(t.value("profile.showMore.short"));
+const toggleTextActivities = ref(t.value("subdomain.activities.showMore"));
+const toggleTextShortActivities = ref(
+    t.value("subdomain.activities.showMore.short"),
+);
 
 const templates = ref<Template[]>([]);
 const openedTemplate = ref<Template | undefined>();
@@ -76,6 +76,7 @@ const nextTemplatesCursor = ref<string | null>(null);
 const templatesObserver = ref<IntersectionObserver>();
 const templatesLoader = ref<HTMLElement | undefined>();
 
+const activities = ref<Activity[]>([]);
 const activityLoader = ref<HTMLElement | undefined>();
 const showMoreActivities = ref<boolean>(false);
 const moreActivitiesAvailable = ref<boolean>(true);
@@ -167,13 +168,19 @@ onUnmounted(() => {
     if (templatesObserver.value && templatesLoader.value) {
         templatesObserver.value.unobserve(templatesLoader.value);
     }
+    if (activityObserver.value && activityLoader.value) {
+        activityObserver.value.unobserve(activityLoader.value);
+    }
 });
-/*
-const { data: templateData, refresh: refreshBusinessTemplates } = await useAsyncData(
-    "business-templates",
-    () => client(`/api/business/${slug.value}/templates?cursor=${templatesCursor.value}`),
-);*/
-const templateData = ref();
+
+const { data: templateData, refresh: refreshBusinessTemplates } =
+    await useAsyncData("business-templates", () =>
+        client(
+            `/api/business/${slug.value}/templates?cursor=${templatesCursor.value}`,
+        ),
+    );
+
+console.log(templateData.value.data);
 
 watch(
     templateData,
@@ -205,7 +212,7 @@ watch(showMoreTemplates, () => {
             if (target.isIntersecting) {
                 if (moreTemplatesAvailable.value && showMoreTemplates.value) {
                     templatesCursor.value = nextTemplatesCursor.value;
-                    //refreshBusinessTemplates();
+                    refreshBusinessTemplates();
                 }
             }
         });
@@ -217,9 +224,9 @@ watch(showMoreTemplates, () => {
 });
 
 const { data: activityData, refresh: refreshBusinessActivities } =
-    await useAsyncData("business-templates", () =>
+    await useAsyncData("business-activities", () =>
         client(
-            `/api/business/${slug.value}/activities?cursor=${templatesCursor.value}`,
+            `/api/business/${slug.value}/activities?cursor=${activitiesCursor.value}&per_page=21`,
         ),
     );
 
@@ -293,10 +300,10 @@ const navigateBack = () => {
 
 function toggleActivities() {
     showMoreActivities.value = !showMoreActivities.value;
-    toggleText.value = showMoreActivities.value
+    toggleTextActivities.value = showMoreActivities.value
         ? t.value("profile.showLess")
         : t.value("profile.showMore");
-    toggleTextShort.value = showMoreActivities.value
+    toggleTextShortActivities.value = showMoreActivities.value
         ? t.value("profile.showLess.short")
         : t.value("profile.showMore.short");
 }
@@ -371,7 +378,7 @@ function openActivityDialog(activity: Activity) {
                 <h2 class="text-xl font-medium">
                     <T key-name="subdomain.heading.activities" />
                 </h2>
-                <div id="activities" class="grid grid-cols-7 gap-x-2 gap-y-4">
+                <div id="activities" class="grid grid-cols-7">
                     <BusinessActivityCard
                         v-for="activity in activities"
                         :key="activity.id"
@@ -385,19 +392,19 @@ function openActivityDialog(activity: Activity) {
                             <ProgressSpinner class="w-10" />
                         </div>
                         <div class="flex justify-center italic">
-                            <T key-name="dashboard.templates.loading" />
+                            <T key-name="subomain.activities.loading" />
                         </div>
                     </div>
                 </div>
                 <div
-                    v-if="moreActivitiesAvailable"
+                    v-if="activities.length > 0"
                     class="mt-4 flex justify-center max-md:hidden"
                 >
                     <button
                         class="flex flex-col items-center justify-center text-text dark:text-natural-50"
                         @click="toggleActivities"
                     >
-                        <span>{{ toggleText }}</span>
+                        <span>{{ toggleTextActivities }}</span>
                         <span
                             class="pi mt-1"
                             :class="

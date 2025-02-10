@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
     template: {
         type: Object as PropType<Template>,
         required: true,
@@ -12,6 +12,8 @@ defineProps({
 
 defineEmits(["openTemplate"]);
 
+console.log(props.template.users[0].username);
+
 const isProfileDialogVisible = ref(false);
 </script>
 
@@ -20,8 +22,8 @@ const isProfileDialogVisible = ref(false);
         class="rounded-xl border-2 border-natural-200 bg-natural-50 text-text hover:cursor-pointer hover:border-calypso-400 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400"
         role="button"
         tabindex="0"
-        @click="$emit('openTemplate', template.id)"
-        @keyup.enter="$emit('openTemplate', template.id)"
+        @click="$emit('openTemplate', template?.id)"
+        @keyup.enter="$emit('openTemplate', template?.id)"
     >
         <div
             class="flex h-6 w-full items-center rounded-t-[0.7rem] bg-calypso-300 px-2 dark:bg-calypso-700"
@@ -45,7 +47,7 @@ const isProfileDialogVisible = ref(false);
             </h3>
             <h4
                 v-tooltip.top="{
-                    value: template.users[0].username,
+                    value: template?.users[0]?.username,
                     pt: { root: 'font-nunito' },
                 }"
                 class="-mt-1 truncate text-xl text-natural-600 dark:text-natural-300"
@@ -61,7 +63,7 @@ const isProfileDialogVisible = ref(false);
                             ? (isProfileDialogVisible = true)
                             : ''
                     "
-                    >{{ template.users[0].username }}</span
+                    >{{ template?.users[0]?.username }}</span
                 >
             </h4>
             <div id="template-details" class="mt-2">
@@ -73,15 +75,17 @@ const isProfileDialogVisible = ref(false);
                     class="flex flex-row items-center gap-x-1"
                 >
                     <i class="pi pi-map-marker text-lg text-calypso-600" />
-                    <h5 class="truncate text-lg">{{ template.destination }}</h5>
+                    <h5 class="truncate text-lg">
+                        {{ template?.destination }}
+                    </h5>
                 </div>
                 <div class="flex flex-row items-center gap-x-1">
                     <i class="pi pi-calendar text-lg text-calypso-600" />
                     <h5 class="truncate text-lg">
-                        {{ template.length }}
+                        {{ template?.length }}
                         <T
                             :key-name="
-                                template.length === 1
+                                template?.length === 1
                                     ? 'template.day'
                                     : 'template.days'
                             "
@@ -93,8 +97,8 @@ const isProfileDialogVisible = ref(false);
         <div class="dialogs">
             <JourneyIdDialogsProfileDialog
                 :visible="isProfileDialogVisible"
-                :username="template.users[0].username"
-                :displayname="template.users[0].display_name"
+                :username="template?.users[0]?.username"
+                :displayname="template?.users[0]?.display_name"
                 @close="isProfileDialogVisible = false"
             />
         </div>
