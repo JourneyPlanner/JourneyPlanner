@@ -127,6 +127,11 @@ class BusinessController extends Controller
             ->first()
             ->templates()
             ->wherePivot("visible", true)
+            ->with([
+                "users" => function ($query) {
+                    $query->select("id", "username", "display_name");
+                },
+            ])
             ->cursorPaginate(
                 $validated["per_page"] ?? TemplateController::$perPage,
                 TemplateController::getColumns()
