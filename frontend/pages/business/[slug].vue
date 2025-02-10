@@ -58,16 +58,11 @@ if (error.value) {
     });
 }
 
-//const allowedRoutes = ["/journey", "/dashboard?tab=templates"];
-//const isCloseIcon = ref(false);
-
-const showMoreTemplates = ref(false);
-const toggleTextActivities = ref(t.value("subdomain.activities.showMore"));
-const toggleTextShortActivities = ref(
-    t.value("subdomain.activities.showMore.short"),
-);
+const backRoute = ref<string>("/dashboard?tab=templates");
 
 const templates = ref<Template[]>([]);
+const initialTemplates = ref<Template[]>([]);
+const showMoreTemplates = ref(false);
 const openedTemplate = ref<Template | undefined>();
 const isTemplatePopupVisible = ref<boolean>(false);
 const moreTemplatesAvailable = ref<boolean>(true);
@@ -75,14 +70,23 @@ const templatesCursor = ref<string | null>(null);
 const nextTemplatesCursor = ref<string | null>(null);
 const templatesObserver = ref<IntersectionObserver>();
 const templatesLoader = ref<HTMLElement | undefined>();
+const toggleTextTemplates = ref(t.value("subdomain.templates.showMore"));
+const toggleTextShortTemplates = ref(
+    t.value("subdomain.templates.showMore.short"),
+);
 
 const activities = ref<Activity[]>([]);
+const initialActivities = ref<Activity[]>([]);
 const activityLoader = ref<HTMLElement | undefined>();
 const showMoreActivities = ref<boolean>(false);
 const moreActivitiesAvailable = ref<boolean>(true);
 const activitiesCursor = ref<string | null>(null);
 const nextActivitiesCursor = ref<string | null>(null);
 const activityObserver = ref<IntersectionObserver>();
+const toggleTextActivities = ref(t.value("subdomain.activities.showMore"));
+const toggleTextShortActivities = ref(
+    t.value("subdomain.activities.showMore.short"),
+);
 
 const isActivityInfoVisible = ref<boolean>(false);
 const activityId = ref<string | null>(null);
@@ -99,19 +103,13 @@ const opening_hours = ref<string | null>(null);
 const phone = ref<string | null>(null);
 
 onMounted(async () => {
-    /*
     const lastRoute = router.options.history.state.back as string;
-    if (
-        lastRoute &&
-        allowedRoutes.some((route) => lastRoute.startsWith(route))
-    ) {
-        isCloseIcon.value = true;
-    } else if (route?.query?.journey) {
-        isCloseIcon.value = true;
+
+    if (lastRoute && lastRoute !== "") {
+        backRoute.value = lastRoute;
     } else {
-        isCloseIcon.value = false;
+        backRoute.value = "/dashboard?tab=templates";
     }
-    */
 
     if (
         route.query.id &&
@@ -173,19 +171,96 @@ onUnmounted(() => {
     }
 });
 
-const { data: templateData, refresh: refreshBusinessTemplates } =
-    await useAsyncData("business-templates", () =>
+const { data: activityData, refresh: refreshBusinessActivities } =
+    await useLazyAsyncData("business-activities", () =>
         client(
-            `/api/business/${slug.value}/templates?cursor=${templatesCursor.value}`,
+            `/api/business/${slug.value}/activities?cursor=${activitiesCursor.value}&per_page=21`,
         ),
     );
 
-console.log(templateData.value.data);
+watch(showMoreActivities, () => {
+    if (showMoreActivities.value) {
+        if (activityObserver.value) {
+            activityObserver.value.disconnect();
+        }
+
+        activityObserver.value = new IntersectionObserver((entries) => {
+            if (entries.length === 0) {
+                return;
+            }
+            const target = entries[0];
+            if (target.isIntersecting) {
+                if (moreActivitiesAvailable.value && showMoreActivities.value) {
+                    activitiesCursor.value = nextActivitiesCursor.value;
+                    refreshBusinessActivities();
+                }
+            }
+        });
+
+        if (activityLoader.value) {
+            activityObserver.value.observe(activityLoader.value);
+        }
+    }
+});
+
+watch(
+    activityData,
+    () => {
+        if (activityData.value) {
+            if (activityData.value.prev_cursor === null) {
+                initialActivities.value = activityData.value.data;
+            }
+
+            activities.value.push(...activityData.value.data);
+            if (activityData.value.next_cursor === null) {
+                moreActivitiesAvailable.value = false;
+            } else {
+                nextActivitiesCursor.value = activityData.value.next_cursor;
+                moreActivitiesAvailable.value = true;
+            }
+        }
+    },
+    { immediate: true },
+);
+
+function toggleActivities() {
+    switch (showMoreActivities.value) {
+        case true:
+            showMoreActivities.value = false;
+            toggleTextActivities.value = t.value(
+                "subdomain.activities.showMore",
+            );
+            toggleTextShortActivities.value = t.value(
+                "subdomain.activities.showMore.short",
+            );
+            break;
+        case false:
+            showMoreActivities.value = true;
+            toggleTextActivities.value = t.value(
+                "subdomain.activities.showLess",
+            );
+            toggleTextShortActivities.value = t.value(
+                "subdomain.activities.showLess.short",
+            );
+            break;
+    }
+}
+
+const { data: templateData, refresh: refreshBusinessTemplates } =
+    await useLazyAsyncData("business-templates", () =>
+        client(
+            `/api/business/${slug.value}/templates?cursor=${templatesCursor.value}&per_page=8`,
+        ),
+    );
 
 watch(
     templateData,
     () => {
         if (templateData.value) {
+            if (templateData.value.prev_cursor === null) {
+                initialTemplates.value = templateData.value.data;
+            }
+
             templates.value.push(...templateData.value.data);
             if (templateData.value.next_cursor === null) {
                 moreTemplatesAvailable.value = false;
@@ -223,89 +298,23 @@ watch(showMoreTemplates, () => {
     }
 });
 
-const { data: activityData, refresh: refreshBusinessActivities } =
-    await useAsyncData("business-activities", () =>
-        client(
-            `/api/business/${slug.value}/activities?cursor=${activitiesCursor.value}&per_page=21`,
-        ),
-    );
-
-watch(showMoreActivities, () => {
-    if (showMoreActivities.value) {
-        if (activityObserver.value) {
-            activityObserver.value.disconnect();
-        }
-
-        activityObserver.value = new IntersectionObserver((entries) => {
-            if (entries.length === 0) {
-                return;
-            }
-            const target = entries[0];
-            if (target.isIntersecting) {
-                if (moreActivitiesAvailable.value && showMoreActivities.value) {
-                    activitiesCursor.value = nextActivitiesCursor.value;
-                    refreshBusinessActivities();
-                }
-            }
-        });
-
-        if (activityLoader.value) {
-            activityObserver.value.observe(activityLoader.value);
-        }
+function toggleTemplates() {
+    switch (showMoreTemplates.value) {
+        case true:
+            showMoreTemplates.value = false;
+            toggleTextTemplates.value = t.value("subdomain.templates.showMore");
+            toggleTextShortTemplates.value = t.value(
+                "subdomain.templates.showMore.short",
+            );
+            break;
+        case false:
+            showMoreTemplates.value = true;
+            toggleTextTemplates.value = t.value("subdomain.templates.showLess");
+            toggleTextShortTemplates.value = t.value(
+                "subdomain.templates.showLess.short",
+            );
+            break;
     }
-});
-
-watch(
-    activityData,
-    () => {
-        if (activityData.value) {
-            activities.value.push(...activityData.value.data);
-            if (activityData.value.next_cursor === null) {
-                moreActivitiesAvailable.value = false;
-            } else {
-                nextActivitiesCursor.value = activityData.value.next_cursor;
-                moreActivitiesAvailable.value = true;
-            }
-        }
-    },
-    { immediate: true },
-);
-
-/*
-const toggle = () => {
-    showMore.value = !showMore.value;
-    toggleText.value = showMore.value
-        ? t.value("profile.showLess") + username.value
-        : t.value("profile.showMore") + username.value;
-    toggleTextShort.value = showMore.value
-        ? t.value("profile.showLess.short")
-        : t.value("profile.showMore.short");
-};
-*/
-
-/*
-const navigateBack = () => {
-    const lastRoute = router.options.history.state.back as string;
-    if (
-        lastRoute &&
-        allowedRoutes.some((route) => lastRoute.startsWith(route))
-    ) {
-        router.back();
-    } else if (route?.query?.journey) {
-        router.push("/journey/" + route.query.journey);
-    } else {
-        router.push("/dashboard");
-    }
-};*/
-
-function toggleActivities() {
-    showMoreActivities.value = !showMoreActivities.value;
-    toggleTextActivities.value = showMoreActivities.value
-        ? t.value("profile.showLess")
-        : t.value("profile.showMore");
-    toggleTextShortActivities.value = showMoreActivities.value
-        ? t.value("profile.showLess.short")
-        : t.value("profile.showMore.short");
 }
 
 function openTemplateDialog(template: Template) {
@@ -334,12 +343,25 @@ function openActivityDialog(activity: Activity) {
 <template>
     <div>
         <div
-            class="relative h-96 bg-cover bg-center"
+            class="relative h-44 bg-cover bg-center lg:h-96"
             :style="{ backgroundImage: `url(${images.banner.link})` }"
         >
             <div
-                class="absolute inset-0 top-48 bg-gradient-to-b from-natural-50/0 to-natural-50"
+                class="absolute inset-0 top-20 bg-gradient-to-b from-natural-50/0 to-natural-50 lg:top-48"
             ></div>
+            <div class="absolute left-2.5 top-2.5 lg:left-5 lg:top-5">
+                <NuxtLink
+                    :to="backRoute"
+                    class="group flex items-center sm:ml-1 md:ml-2"
+                >
+                    <i class="pi pi-angle-left text-2xl" />
+                    <span
+                        class="ml-1.5 mt-0.5 text-xl group-hover:underline md:text-2xl"
+                    >
+                        <T key-name="common.back" />
+                    </span>
+                </NuxtLink>
+            </div>
             <img
                 :src="images.banner.link"
                 :alt="images.banner.alt_text"
@@ -353,7 +375,7 @@ function openActivityDialog(activity: Activity) {
             >
                 <div id="text" class="w-3/5 flex-1">
                     <h1 class="mb-2 text-2xl font-medium">
-                        JourneyPlanner for Businesses
+                        {{ texts.company_name }}
                     </h1>
                     <p class="text-lg">
                         {{ texts.text }}
@@ -378,7 +400,23 @@ function openActivityDialog(activity: Activity) {
                 <h2 class="text-xl font-medium">
                     <T key-name="subdomain.heading.activities" />
                 </h2>
-                <div id="activities" class="grid grid-cols-7">
+                <div
+                    v-if="!showMoreActivities"
+                    id="activities"
+                    class="grid grid-cols-7 grid-rows-3"
+                >
+                    <BusinessActivityCard
+                        v-for="activity in initialActivities"
+                        :key="activity.id"
+                        :activity="activity"
+                        @open-activity-dialog="openActivityDialog"
+                    />
+                </div>
+                <div
+                    v-else
+                    id="more-activities"
+                    class="grid grid-cols-7 grid-rows-3"
+                >
                     <BusinessActivityCard
                         v-for="activity in activities"
                         :key="activity.id"
@@ -421,7 +459,30 @@ function openActivityDialog(activity: Activity) {
                     <T key-name="subdomain.heading.templates" />
                 </h2>
                 <div
+                    v-if="!showMoreTemplates"
                     id="templates"
+                    class="relative mt-2 grid grid-cols-2 gap-5 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6"
+                >
+                    <TemplateCard
+                        v-for="template in initialTemplates"
+                        :key="template.id"
+                        class="hidden md:block"
+                        :template="template"
+                        :displayed-in-profile="false"
+                        @open-template="openTemplateDialog(template)"
+                    />
+                    <TemplateCardSmall
+                        v-for="template in initialTemplates"
+                        :key="template.id"
+                        class="md:hidden"
+                        :template="template"
+                        :displayed-in-profile="false"
+                        @open-template="openTemplateDialog(template)"
+                    />
+                </div>
+                <div
+                    v-else
+                    id="more-templates"
                     class="relative mt-2 grid grid-cols-2 gap-5 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6"
                 >
                     <TemplateCard
@@ -429,7 +490,7 @@ function openActivityDialog(activity: Activity) {
                         :key="template.id"
                         class="hidden md:block"
                         :template="template"
-                        :displayed-in-profile="true"
+                        :displayed-in-profile="false"
                         @open-template="openTemplateDialog(template)"
                     />
                     <TemplateCardSmall
@@ -437,21 +498,50 @@ function openActivityDialog(activity: Activity) {
                         :key="template.id"
                         class="md:hidden"
                         :template="template"
-                        :displayed-in-profile="true"
+                        :displayed-in-profile="false"
                         @open-template="openTemplateDialog(template)"
                     />
-                    <div
-                        v-if="templates.length === 0"
-                        class="col-span-full hidden md:block"
-                    >
-                        <T key-name="subdomain.template.none" />
+                </div>
+                <div
+                    v-if="templates.length === 0"
+                    class="col-span-full hidden md:block"
+                >
+                    <T key-name="subdomain.template.none" />
+                </div>
+                <div
+                    v-if="templates.length === 0"
+                    class="col-span-full md:hidden"
+                >
+                    <T key-name="subdomain.template.none" />
+                </div>
+                <div ref="templatesLoader" class="col-span-full">
+                    <div v-if="moreTemplatesAvailable && showMoreTemplates">
+                        <div class="flex justify-center">
+                            <ProgressSpinner class="w-10" />
+                        </div>
+                        <div class="flex justify-center italic">
+                            <T key-name="subomain.templates.loading" />
+                        </div>
                     </div>
-                    <div
-                        v-if="templates.length === 0"
-                        class="col-span-full md:hidden"
+                </div>
+                <div
+                    v-if="templates.length > 0"
+                    class="mt-4 flex justify-center max-md:hidden"
+                >
+                    <button
+                        class="flex flex-col items-center justify-center text-text dark:text-natural-50"
+                        @click="toggleTemplates"
                     >
-                        <T key-name="subdomain.template.none" />
-                    </div>
+                        <span>{{ toggleTextTemplates }}</span>
+                        <span
+                            class="pi mt-1"
+                            :class="
+                                showMoreTemplates
+                                    ? 'pi-chevron-up order-first mb-1'
+                                    : 'pi-chevron-down'
+                            "
+                        />
+                    </button>
                 </div>
             </div>
         </div>

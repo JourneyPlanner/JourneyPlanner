@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
     template: {
         type: Object as PropType<Template>,
         required: true,
@@ -11,8 +11,6 @@ const props = defineProps({
 });
 
 defineEmits(["openTemplate"]);
-
-console.log(props.template.users[0].username);
 
 const isProfileDialogVisible = ref(false);
 </script>
