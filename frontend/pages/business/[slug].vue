@@ -61,17 +61,10 @@ if (error.value) {
 
 const backRoute = ref<string>("/dashboard?tab=templates");
 
-const templates = ref<Template[]>([]);
-const initialTemplates = ref<Template[]>([]);
 const showMoreTemplates = ref(false);
 const openedTemplate = ref<Template | undefined>();
 const isTemplatePopupVisible = ref<boolean>(false);
-const moreTemplatesAvailable = ref<boolean>(true);
-const templatesCursor = ref<string | null>(null);
-const nextTemplatesCursor = ref<string | null>(null);
-const templatesObserver = ref<IntersectionObserver>();
 const templatesLoader = ref<HTMLElement | undefined>();
-const toggleTextTemplates = ref(t.value("subdomain.templates.showMore"));
 
 const maxDisplayedTemplates = computed(() => {
     if (screenWidth.value >= 1024) return 8;
@@ -79,8 +72,6 @@ const maxDisplayedTemplates = computed(() => {
     return 4;
 });
 
-const activities = ref<Activity[]>([]);
-const initialActivities = ref<Activity[]>([]);
 const maxDisplayedActivities = computed(() => {
     if (screenWidth.value >= 1280) return 21;
     if (screenWidth.value >= 1024) return 18;
@@ -90,11 +81,6 @@ const maxDisplayedActivities = computed(() => {
 });
 const activityLoader = ref<HTMLElement | undefined>();
 const showMoreActivities = ref<boolean>(false);
-const moreActivitiesAvailable = ref<boolean>(true);
-const activitiesCursor = ref<string | null>(null);
-const nextActivitiesCursor = ref<string | null>(null);
-const activityObserver = ref<IntersectionObserver>();
-const toggleTextActivities = ref(t.value("subdomain.activities.showMore"));
 
 const isActivityInfoVisible = ref<boolean>(false);
 const activityId = ref<string | null>(null);
@@ -172,154 +158,47 @@ onMounted(async () => {
     });
 });
 
-onUnmounted(() => {
-    if (templatesObserver.value && templatesLoader.value) {
-        templatesObserver.value.unobserve(templatesLoader.value);
-    }
-    if (activityObserver.value && activityLoader.value) {
-        activityObserver.value.unobserve(activityLoader.value);
-    }
-
+onUnmounted(async () => {
     window.removeEventListener("resize", updateScreenWidth);
+});
+
+const {
+    data: activities,
+    moreDataAvailable: moreActivitiesAvailable,
+    toggle: toggleActivities,
+    toggleText: toggleTextActivities,
+} = await useInfiniteScroll<Activity>({
+    loader: activityLoader,
+    showMoreData: showMoreActivities,
+    showMoreDataText: "subdomain.activities.showMore",
+    showLessDataText: "subdomain.activities.showLess",
+    identifier: "business-activities",
+    apiEndpoint: `/api/business/${slug.value}/activities`,
+    params: {
+        per_page: 21,
+    },
+});
+
+const {
+    data: templates,
+    moreDataAvailable: moreTemplatesAvailable,
+    toggle: toggleTemplates,
+    toggleText: toggleTextTemplates,
+} = await useInfiniteScroll<Template>({
+    loader: templatesLoader,
+    showMoreData: showMoreTemplates,
+    showMoreDataText: "subdomain.templates.showMore",
+    showLessDataText: "subdomain.templates.showLess",
+    identifier: "business-templates",
+    apiEndpoint: `/api/business/${slug.value}/templates`,
+    params: {
+        per_page: 8,
+    },
 });
 
 const updateScreenWidth = () => {
     screenWidth.value = window.innerWidth;
 };
-
-const { data: activityData, refresh: refreshBusinessActivities } =
-    await useLazyAsyncData("business-activities", () =>
-        client(
-            `/api/business/${slug.value}/activities?cursor=${activitiesCursor.value}&per_page=21`,
-        ),
-    );
-
-watch(showMoreActivities, () => {
-    if (showMoreActivities.value) {
-        if (activityObserver.value) {
-            activityObserver.value.disconnect();
-        }
-
-        activityObserver.value = new IntersectionObserver((entries) => {
-            if (entries.length === 0) {
-                return;
-            }
-            const target = entries[0];
-            if (target.isIntersecting) {
-                if (moreActivitiesAvailable.value && showMoreActivities.value) {
-                    activitiesCursor.value = nextActivitiesCursor.value;
-                    refreshBusinessActivities();
-                }
-            }
-        });
-
-        if (activityLoader.value) {
-            activityObserver.value.observe(activityLoader.value);
-        }
-    }
-});
-
-watch(
-    activityData,
-    () => {
-        if (activityData.value) {
-            if (activityData.value.prev_cursor === null) {
-                initialActivities.value = activityData.value.data;
-            }
-
-            activities.value.push(...activityData.value.data);
-            if (activityData.value.next_cursor === null) {
-                moreActivitiesAvailable.value = false;
-            } else {
-                nextActivitiesCursor.value = activityData.value.next_cursor;
-                moreActivitiesAvailable.value = true;
-            }
-        }
-    },
-    { immediate: true },
-);
-
-function toggleActivities() {
-    switch (showMoreActivities.value) {
-        case true:
-            showMoreActivities.value = false;
-            toggleTextActivities.value = t.value(
-                "subdomain.activities.showMore",
-            );
-            break;
-        case false:
-            showMoreActivities.value = true;
-            toggleTextActivities.value = t.value(
-                "subdomain.activities.showLess",
-            );
-            break;
-    }
-}
-
-const { data: templateData, refresh: refreshBusinessTemplates } =
-    await useLazyAsyncData("business-templates", () =>
-        client(
-            `/api/business/${slug.value}/templates?cursor=${templatesCursor.value}&per_page=8`,
-        ),
-    );
-
-watch(
-    templateData,
-    () => {
-        if (templateData.value) {
-            if (templateData.value.prev_cursor === null) {
-                initialTemplates.value = templateData.value.data;
-            }
-
-            templates.value.push(...templateData.value.data);
-            if (templateData.value.next_cursor === null) {
-                moreTemplatesAvailable.value = false;
-            } else {
-                nextTemplatesCursor.value = templateData.value.next_cursor;
-                moreTemplatesAvailable.value = true;
-            }
-        }
-    },
-    { immediate: true },
-);
-
-watch(showMoreTemplates, () => {
-    if (showMoreTemplates.value) {
-        if (templatesObserver.value) {
-            templatesObserver.value.disconnect();
-        }
-
-        templatesObserver.value = new IntersectionObserver((entries) => {
-            if (entries.length === 0) {
-                return;
-            }
-            const target = entries[0];
-            if (target.isIntersecting) {
-                if (moreTemplatesAvailable.value && showMoreTemplates.value) {
-                    templatesCursor.value = nextTemplatesCursor.value;
-                    refreshBusinessTemplates();
-                }
-            }
-        });
-
-        if (templatesLoader.value) {
-            templatesObserver.value.observe(templatesLoader.value);
-        }
-    }
-});
-
-function toggleTemplates() {
-    switch (showMoreTemplates.value) {
-        case true:
-            showMoreTemplates.value = false;
-            toggleTextTemplates.value = t.value("subdomain.templates.showMore");
-            break;
-        case false:
-            showMoreTemplates.value = true;
-            toggleTextTemplates.value = t.value("subdomain.templates.showLess");
-            break;
-    }
-}
 
 function openTemplateDialog(template: Template) {
     openedTemplate.value = template;
