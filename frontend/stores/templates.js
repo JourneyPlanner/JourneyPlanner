@@ -3,7 +3,7 @@ import { ref } from "vue";
 
 export const useTemplateStore = defineStore("templates", () => {
     const updateTemplates = ref(false);
-    const templatedWasEdited = ref(false);
+    const templateWasEdited = ref(false);
     const editedTemplate = ref();
 
     function changeUpdate(shouldUpdate) {
@@ -14,6 +14,6 @@ export const useTemplateStore = defineStore("templates", () => {
         updateTemplates,
         changeUpdate,
         editedTemplate,
-        templatedWasEdited,
+        templateWasEdited,
     };
 });

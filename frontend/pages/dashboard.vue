@@ -94,13 +94,13 @@ onMounted(() => {
         templateStore.changeUpdate(false);
     }
 
-    if (templateStore.templatedWasEdited) {
+    if (templateStore.templateWasEdited) {
         templates.value[
             templates.value.findIndex(
                 (obj) => obj.id === templateStore.editedTemplate.id,
             )
         ] = templateStore.editedTemplate;
-        templateStore.templatedWasEdited = false;
+        templateStore.templateWasEdited = false;
     }
     watch(
         tabIndex,
@@ -393,7 +393,7 @@ onMounted(() => {
                     (obj) => obj.id === templateStore.editedTemplate.id,
                 )
             ] = templateStore.editedTemplate;
-            templateStore.templatedWasEdited = false;
+            templateStore.templateWasEdited = false;
         },
         { deep: true },
     );
@@ -1489,13 +1489,13 @@ function editJourney(journey: Journey, id: string) {
                         <div class="flex items-center">
                             <h3 class="whitespace-nowrap text-2xl">
                                 <T
-                                    key-name="dashboard.template.filter.destination"
+                                    key-name="dashboard.template.filter.rating"
                                 />
                             </h3>
                         </div>
                         <p class="mb-1 text-natural-700 dark:text-natural-200">
                             <T
-                                key-name="dashboard.template.filter.destination.description"
+                                key-name="dashboard.template.filter.rating.description"
                             />
                         </p>
                         <div class="flex h-12 flex-row items-center gap-x-1">

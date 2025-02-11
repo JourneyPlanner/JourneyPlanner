@@ -36,6 +36,7 @@ const rating = ref(0);
 const avgRating = ref(1);
 const isRatingVisible = ref(false);
 const store = useTemplateStore();
+const isSubmitting = ref(false);
 
 const { data } = await useAsyncData("userRating", () =>
     client(`/api/template/${props.template.id}/rate`),
@@ -71,6 +72,8 @@ const close = (): void => {
 };
 
 async function changeRating() {
+    if (isSubmitting.value) return;
+    isSubmitting.value = true;
     const userRating = {
         rating: rating.value,
     };
@@ -94,7 +97,8 @@ async function changeRating() {
                 template.average_rating = response._data.average_rating;
                 template.total_ratings = response._data.total_ratings;
                 store.editedTemplate = template;
-                store.templatedWasEdited = true;
+                store.templateWasEdited = true;
+                isSubmitting.value = false;
             }
         },
         async onRequestError() {
@@ -104,6 +108,7 @@ async function changeRating() {
                 detail: t.value("common.error.unknown"),
                 life: 6000,
             });
+            isSubmitting.value = false;
         },
     });
 }
@@ -287,6 +292,7 @@ function changeRatingMobile() {
                             <Rating
                                 v-if="isRatingVisible"
                                 v-model="rating"
+                                :disabled="isSubmitting"
                                 :pt="{
                                     cancelItem: {
                                         class: 'hidden',
@@ -719,6 +725,7 @@ function changeRatingMobile() {
                     <Rating
                         v-if="isRatingVisible"
                         v-model="rating"
+                        :disabled="isSubmitting"
                         :pt="{
                             cancelItem: {
                                 class: 'hidden',
