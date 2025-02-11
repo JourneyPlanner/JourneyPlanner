@@ -61,7 +61,7 @@ class TemplateRatingController extends Controller
     public function show(Journey $journey)
     {
         $templateRating = TemplateRating::where("user_id", Auth::id())
-            ->where("journey_id", $journey->id)
+            ->where("template_id", $journey->id)
             ->first();
         return response()->json([
             "rating" => $templateRating ? $templateRating->rating : 0,
