@@ -9,6 +9,7 @@ const toast = useToast();
 const tolgee = useTolgee(["language"]);
 
 const slug = ref(route.params.slug);
+const screenWidth = ref(window.innerWidth);
 
 const images = reactive({
     banner: {
@@ -71,12 +72,22 @@ const nextTemplatesCursor = ref<string | null>(null);
 const templatesObserver = ref<IntersectionObserver>();
 const templatesLoader = ref<HTMLElement | undefined>();
 const toggleTextTemplates = ref(t.value("subdomain.templates.showMore"));
-const toggleTextShortTemplates = ref(
-    t.value("subdomain.templates.showMore.short"),
-);
+
+const maxDisplayedTemplates = computed(() => {
+    if (screenWidth.value >= 1024) return 8;
+    if (screenWidth.value >= 640) return 6;
+    return 4;
+});
 
 const activities = ref<Activity[]>([]);
 const initialActivities = ref<Activity[]>([]);
+const maxDisplayedActivities = computed(() => {
+    if (screenWidth.value >= 1280) return 21;
+    if (screenWidth.value >= 1024) return 18;
+    if (screenWidth.value >= 768) return 15;
+    if (screenWidth.value >= 640) return 8;
+    return 6;
+});
 const activityLoader = ref<HTMLElement | undefined>();
 const showMoreActivities = ref<boolean>(false);
 const moreActivitiesAvailable = ref<boolean>(true);
@@ -84,9 +95,6 @@ const activitiesCursor = ref<string | null>(null);
 const nextActivitiesCursor = ref<string | null>(null);
 const activityObserver = ref<IntersectionObserver>();
 const toggleTextActivities = ref(t.value("subdomain.activities.showMore"));
-const toggleTextShortActivities = ref(
-    t.value("subdomain.activities.showMore.short"),
-);
 
 const isActivityInfoVisible = ref<boolean>(false);
 const activityId = ref<string | null>(null);
@@ -110,6 +118,8 @@ onMounted(async () => {
     } else {
         backRoute.value = "/dashboard?tab=templates";
     }
+
+    window.addEventListener("resize", updateScreenWidth);
 
     if (
         route.query.id &&
@@ -169,7 +179,13 @@ onUnmounted(() => {
     if (activityObserver.value && activityLoader.value) {
         activityObserver.value.unobserve(activityLoader.value);
     }
+
+    window.removeEventListener("resize", updateScreenWidth);
 });
+
+const updateScreenWidth = () => {
+    screenWidth.value = window.innerWidth;
+};
 
 const { data: activityData, refresh: refreshBusinessActivities } =
     await useLazyAsyncData("business-activities", () =>
@@ -230,17 +246,11 @@ function toggleActivities() {
             toggleTextActivities.value = t.value(
                 "subdomain.activities.showMore",
             );
-            toggleTextShortActivities.value = t.value(
-                "subdomain.activities.showMore.short",
-            );
             break;
         case false:
             showMoreActivities.value = true;
             toggleTextActivities.value = t.value(
                 "subdomain.activities.showLess",
-            );
-            toggleTextShortActivities.value = t.value(
-                "subdomain.activities.showLess.short",
             );
             break;
     }
@@ -303,16 +313,10 @@ function toggleTemplates() {
         case true:
             showMoreTemplates.value = false;
             toggleTextTemplates.value = t.value("subdomain.templates.showMore");
-            toggleTextShortTemplates.value = t.value(
-                "subdomain.templates.showMore.short",
-            );
             break;
         case false:
             showMoreTemplates.value = true;
             toggleTextTemplates.value = t.value("subdomain.templates.showLess");
-            toggleTextShortTemplates.value = t.value(
-                "subdomain.templates.showLess.short",
-            );
             break;
     }
 }
@@ -338,21 +342,16 @@ function openActivityDialog(activity: Activity) {
 
     isActivityInfoVisible.value = true;
 }
-
-//TODO button unters bild
-//TODO nochmal das mit nth anschauen (siehe mit vue-show)
-//TODO responsive
-//TODO darkmode
 </script>
 
 <template>
-    <div>
+    <div class="text-text dark:text-natural-50">
         <div
             class="relative h-44 bg-cover bg-center lg:h-96"
             :style="{ backgroundImage: `url(${images.banner.link})` }"
         >
             <div
-                class="absolute inset-0 top-20 bg-gradient-to-b from-natural-50/0 to-natural-50 lg:top-48"
+                class="absolute inset-0 top-20 bg-gradient-to-b from-natural-50/0 to-background dark:from-background-dark/0 dark:to-background-dark lg:top-48"
             ></div>
             <div class="absolute left-2.5 top-2.5 lg:left-5 lg:top-5">
                 <NuxtLink
@@ -385,7 +384,7 @@ function openActivityDialog(activity: Activity) {
                     <p class="text-lg">
                         {{ texts.text }}
                     </p>
-                    <div class="mb-5 flex justify-center lg:justify-start">
+                    <div class="mb-5 flex justify-center md:justify-start">
                         <button
                             class="mt-3.5 w-44 rounded-lg border-2 border-dandelion-300 bg-natural-50 py-0.5 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 lg:w-48"
                         >
@@ -395,7 +394,7 @@ function openActivityDialog(activity: Activity) {
                         </button>
                     </div>
                 </div>
-                <div id="image" class="lg:w-2/5">
+                <div id="image" class="flex justify-center lg:w-2/5">
                     <NuxtImg
                         :src="images.image.link"
                         :alt="images.image.alt_text"
@@ -409,28 +408,18 @@ function openActivityDialog(activity: Activity) {
                 </h2>
                 <div
                     id="activities"
-                    class="grid grid-cols-2 lg:grid-cols-7"
-                    :class="{
-                        'nth-7-hidden lg:nth-15-hidden': !showMoreActivities,
-                    }"
+                    class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7"
                 >
                     <BusinessActivityCard
-                        v-for="activity in activities"
+                        v-for="(activity, index) in activities"
+                        v-show="
+                            showMoreActivities || index < maxDisplayedActivities
+                        "
                         :key="activity.id"
                         :activity="activity"
                         @open-activity-dialog="openActivityDialog"
                     />
                 </div>
-                <!--
-                <div v-if="!showMoreActivities" id="activities"
-                    class="grid grid-cols-2 lg:grid-cols-7 grid-rows-3 nth-7-hidden">
-                    <BusinessActivityCard v-for="activity in initialActivities" :key="activity.id" :activity="activity"
-                        @open-activity-dialog="openActivityDialog" />
-                </div>
-                <div v-else id="more-activities" class="grid grid-cols-2 lg:grid-cols-7">
-                    <BusinessActivityCard v-for="activity in activities" :key="activity.id" :activity="activity"
-                        @open-activity-dialog="openActivityDialog" />
-                </div>-->
                 <div ref="activityLoader" class="col-span-full">
                     <div v-if="moreActivitiesAvailable && showMoreActivities">
                         <div class="flex justify-center">
@@ -446,24 +435,10 @@ function openActivityDialog(activity: Activity) {
                     class="mt-4 flex justify-center"
                 >
                     <button
-                        class="flex flex-col items-center justify-center text-text dark:text-natural-50 max-md:hidden"
+                        class="flex flex-col items-center justify-center text-text dark:text-natural-50"
                         @click="toggleActivities"
                     >
                         <span>{{ toggleTextActivities }}</span>
-                        <span
-                            class="pi mt-1"
-                            :class="
-                                showMoreActivities
-                                    ? 'pi-chevron-up order-first mb-1'
-                                    : 'pi-chevron-down'
-                            "
-                        />
-                    </button>
-                    <button
-                        class="flex flex-col items-center justify-center text-text dark:text-natural-50 md:hidden"
-                        @click="toggleActivities"
-                    >
-                        <span>{{ toggleTextShortActivities }}</span>
                         <span
                             class="pi mt-1"
                             :class="
@@ -480,12 +455,14 @@ function openActivityDialog(activity: Activity) {
                     <T key-name="subdomain.heading.templates" />
                 </h2>
                 <div
-                    v-if="!showMoreTemplates"
                     id="templates"
-                    class="relative mt-2 grid grid-cols-2 gap-5 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6"
+                    class="relative mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-4"
                 >
                     <TemplateCard
-                        v-for="template in initialTemplates"
+                        v-for="(template, index) in templates"
+                        v-show="
+                            showMoreTemplates || index < maxDisplayedTemplates
+                        "
                         :key="template.id"
                         class="hidden md:block"
                         :template="template"
@@ -493,7 +470,10 @@ function openActivityDialog(activity: Activity) {
                         @open-template="openTemplateDialog(template)"
                     />
                     <TemplateCardSmall
-                        v-for="template in initialTemplates"
+                        v-for="(template, index) in templates"
+                        v-show="
+                            showMoreTemplates || index < maxDisplayedTemplates
+                        "
                         :key="template.id"
                         class="md:hidden"
                         :template="template"
@@ -501,38 +481,7 @@ function openActivityDialog(activity: Activity) {
                         @open-template="openTemplateDialog(template)"
                     />
                 </div>
-                <div
-                    v-else
-                    id="more-templates"
-                    class="relative mt-2 grid grid-cols-2 gap-5 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6"
-                >
-                    <TemplateCard
-                        v-for="template in templates"
-                        :key="template.id"
-                        class="hidden md:block"
-                        :template="template"
-                        :displayed-in-profile="false"
-                        @open-template="openTemplateDialog(template)"
-                    />
-                    <TemplateCardSmall
-                        v-for="template in templates"
-                        :key="template.id"
-                        class="md:hidden"
-                        :template="template"
-                        :displayed-in-profile="false"
-                        @open-template="openTemplateDialog(template)"
-                    />
-                </div>
-                <div
-                    v-if="templates.length === 0"
-                    class="col-span-full hidden md:block"
-                >
-                    <T key-name="subdomain.template.none" />
-                </div>
-                <div
-                    v-if="templates.length === 0"
-                    class="col-span-full md:hidden"
-                >
+                <div v-if="templates.length === 0" class="col-span-full">
                     <T key-name="subdomain.template.none" />
                 </div>
                 <div ref="templatesLoader" class="col-span-full">
@@ -550,24 +499,10 @@ function openActivityDialog(activity: Activity) {
                     class="mt-4 flex justify-center"
                 >
                     <button
-                        class="flex flex-col items-center justify-center text-text dark:text-natural-50 max-md:hidden"
+                        class="flex flex-col items-center justify-center text-text dark:text-natural-50"
                         @click="toggleTemplates"
                     >
                         <span>{{ toggleTextTemplates }}</span>
-                        <span
-                            class="pi mt-1"
-                            :class="
-                                showMoreTemplates
-                                    ? 'pi-chevron-up order-first mb-1'
-                                    : 'pi-chevron-down'
-                            "
-                        />
-                    </button>
-                    <button
-                        class="flex flex-col items-center justify-center text-text dark:text-natural-50 md:hidden"
-                        @click="toggleTemplates"
-                    >
-                        <span>{{ toggleTextShortTemplates }}</span>
                         <span
                             class="pi mt-1"
                             :class="
@@ -612,13 +547,3 @@ function openActivityDialog(activity: Activity) {
         </div>
     </div>
 </template>
-
-<style scoped>
-.nth-7-hidden > *:nth-child(n + 7) {
-    display: none;
-}
-
-.nth-15-hidden > *:nth-child(n + 15) {
-    display: none;
-}
-</style>

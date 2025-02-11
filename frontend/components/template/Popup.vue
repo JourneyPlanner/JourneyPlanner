@@ -461,7 +461,7 @@ const close = (): void => {
                     </div>
                 </div>
                 <div
-                    class="mt-auto flex w-full gap-x-2 text-text dark:text-natural-50"
+                    class="mt-auto flex w-full justify-center gap-x-2 text-text dark:text-natural-50 xs:gap-x-5"
                 >
                     <NuxtLink
                         class="flex h-10 items-center rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-base font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
