@@ -146,5 +146,7 @@ declare global {
         users: User[];
         from: string;
         to: string;
+        average_rating: number;
+        total_ratings: number;
     }
 }

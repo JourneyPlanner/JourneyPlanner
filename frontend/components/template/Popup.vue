@@ -34,6 +34,13 @@ const numRating = ref(0);
 const rating = ref(3);
 const avgRating = ref(1);
 const isRatingVisible = ref(false);
+const user = useSanctumUser<User>();
+console.log(user);
+
+const { data } = await useAsyncData("userRating", () =>
+    client(`/api/template/${props.template.id}/rate`),
+);
+console.log(data);
 
 watch(
     () => props.isTemplateDialogVisible,
@@ -48,22 +55,14 @@ watch(
                     }
                 },
             });
+            numRating.value = props.template.total_ratings;
+            avgRating.value = props.template.average_rating;
         }
     },
     { immediate: true },
 );
 
-await client(`/api/template/${props.template.id}/rate`, {
-    async onResponse({ response }) {
-        if (response.ok) {
-            console.log(props.template);
-            console.log(response);
-            numRating.value = response._data.total_ratings;
-            avgRating.value = response._data.average_rating;
-        }
-    },
-});
-
+console.log(props.template);
 const close = (): void => {
     activities.value = [];
     activityCount.value = null;
@@ -296,7 +295,7 @@ function removeRating() {
                             </Rating>
                             <i
                                 v-if="isRatingVisible"
-                                class="pi pi-times -ml-1 text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                class="pi pi-times -ml-1 cursor-pointer text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
                                 @click="removeRating"
                             />
                         </div>
