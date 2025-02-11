@@ -64,6 +64,7 @@ const filters = reactive({
     templateCreator: templateFilterstore.getFilter("templateCreator"),
     cursor: templateFilterstore.getFilter("cursor"),
     nextCursor: templateFilterstore.getFilter("nextCursor"),
+    rating: templateFilterstore.getFilter("rating"),
     search: templateFilterstore.getFilter("search"),
 });
 
@@ -258,19 +259,23 @@ onMounted(() => {
                         icon: "pi pi-star",
                         items: [
                             {
-                                label: t.value("dashboard.sort.ascending"),
+                                label: t.value(
+                                    "dashboard.sort.ascending.rating",
+                                ),
                                 icon: "pi pi-sort-amount-up",
                                 command: () => {
-                                    filters.sortby = "rating";
+                                    filters.sortby = "average_rating";
                                     filters.sortorder = "asc";
                                     refreshTemplates();
                                 },
                             },
                             {
-                                label: t.value("dashboard.sort.descending"),
+                                label: t.value(
+                                    "dashboard.sort.descending.rating",
+                                ),
                                 icon: "pi pi-sort-amount-down",
                                 command: () => {
-                                    filters.sortby = "rating";
+                                    filters.sortby = "average_rating";
                                     filters.sortorder = "desc";
                                     refreshTemplates();
                                 },
@@ -414,6 +419,7 @@ const {
                 template_creator: encodeURIComponent(filters.templateCreator),
                 cursor: filters.cursor,
                 per_page: filters.PER_PAGE,
+                filter_by_rating: filters.rating,
             },
         }),
     {
@@ -446,6 +452,11 @@ const refreshTemplates = () => {
     filters.nextCursor = null;
     filters.moreTemplatesAvailable = true;
     refresh();
+};
+
+const resetRating = () => {
+    filters.rating = null;
+    refreshTemplates();
 };
 
 function setAddressColor() {
@@ -1088,6 +1099,53 @@ function editJourney(journey: Journey, id: string) {
                                 @clear="(refreshTemplates(), getUser())"
                             />
                         </div>
+                        <div id="rating" class="mt-3">
+                            <div class="flex items-center">
+                                <h3 class="whitespace-nowrap text-xl">
+                                    <T
+                                        key-name="dashboard.template.filter.rating"
+                                    />
+                                </h3>
+                                <span
+                                    class="ml-1 h-0.5 w-full bg-calypso-400"
+                                />
+                            </div>
+                            <p
+                                class="mb-1 text-natural-700 dark:text-natural-200"
+                            >
+                                <T
+                                    key-name="dashboard.template.filter.rating.description"
+                                />
+                            </p>
+                            <div
+                                class="flex h-12 flex-row items-center gap-x-1"
+                            >
+                                <Rating
+                                    v-model="filters.rating"
+                                    :pt="{
+                                        cancelItem: {
+                                            class: 'hidden',
+                                        },
+                                    }"
+                                    @change="refreshTemplates()"
+                                >
+                                    <template #onicon>
+                                        <i
+                                            class="pi pi-star-fill mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
+                                        />
+                                    </template>
+                                    <template #officon>
+                                        <i
+                                            class="pi pi-star mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
+                                        />
+                                    </template>
+                                </Rating>
+                                <i
+                                    class="pi pi-times -ml-1 cursor-pointer text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                    @click="resetRating"
+                                />
+                            </div>
+                        </div>
                         <div class="flex justify-end pb-1 pt-20">
                             <button
                                 class="dark:text-mahagony-200 text-mahagony-400 hover:underline"
@@ -1403,6 +1461,47 @@ function editJourney(journey: Journey, id: string) {
                             @item-select="refreshTemplates()"
                             @clear="(refreshTemplates(), getUser())"
                         />
+                    </div>
+
+                    <div id="rating" class="mt-3">
+                        <div class="flex items-center">
+                            <h3 class="whitespace-nowrap text-2xl">
+                                <T
+                                    key-name="dashboard.template.filter.destination"
+                                />
+                            </h3>
+                        </div>
+                        <p class="mb-1 text-natural-700 dark:text-natural-200">
+                            <T
+                                key-name="dashboard.template.filter.destination.description"
+                            />
+                        </p>
+                        <div class="flex h-12 flex-row items-center gap-x-1">
+                            <Rating
+                                v-model="filters.rating"
+                                :pt="{
+                                    cancelItem: {
+                                        class: 'hidden',
+                                    },
+                                }"
+                                @change="refreshTemplates()"
+                            >
+                                <template #onicon>
+                                    <i
+                                        class="pi pi-star-fill mr-2 text-2xl text-calypso-600 dark:text-calypso-400"
+                                    />
+                                </template>
+                                <template #officon>
+                                    <i
+                                        class="pi pi-star mr-2 text-2xl text-calypso-600 dark:text-calypso-400"
+                                    />
+                                </template>
+                            </Rating>
+                            <i
+                                class="pi pi-times -ml-1 cursor-pointer text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                @click="resetRating"
+                            />
+                        </div>
                     </div>
                     <div
                         class="mt-5 flex w-full justify-center text-text dark:text-natural-50"

@@ -219,7 +219,9 @@ async function deleteTemplate(id: string) {
                     <div class="ml-auto flex items-center gap-x-1">
                         <i class="pi pi-star text-sm text-calypso-600" />
                         <h5 class="mr-2 truncate text-sm">
-                            {{ template.average_rating }}
+                            {{
+                                Math.round(template.average_rating * 100) / 100
+                            }}
                             ({{ template.total_ratings }})
                         </h5>
                     </div>

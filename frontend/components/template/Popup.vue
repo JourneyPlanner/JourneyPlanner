@@ -31,7 +31,7 @@ const isVisible = ref(false);
 const activityCount = ref(null);
 const activities = ref();
 const numRating = ref(0);
-const rating = ref(3);
+const rating = ref(0);
 const avgRating = ref(1);
 const isRatingVisible = ref(false);
 const user = useSanctumUser<User>();
@@ -41,6 +41,7 @@ const { data } = await useAsyncData("userRating", () =>
     client(`/api/template/${props.template.id}/rate`),
 );
 console.log(data);
+rating.value = data.value.rating;
 
 watch(
     () => props.isTemplateDialogVisible,
@@ -56,7 +57,8 @@ watch(
                 },
             });
             numRating.value = props.template.total_ratings;
-            avgRating.value = props.template.average_rating;
+            avgRating.value =
+                Math.round(props.template.average_rating * 100) / 100;
         }
     },
     { immediate: true },
@@ -81,13 +83,15 @@ async function changeRating() {
                 toast.add({
                     severity: "success",
                     summary: t.value(
-                        "form.template.create.toast.success.heading",
+                        "form.template.rate.toast.success.heading",
                     ),
-                    detail: t.value(
-                        "form.template.create.toast.success.detail",
-                    ),
+                    detail: t.value("form.template.rate.toast.success.detail"),
                     life: 3000,
                 });
+                numRating.value =
+                    Math.round(response._data.total_ratings * 100) / 100;
+                avgRating.value =
+                    Math.round(response._data.average_rating * 100) / 100;
             }
         },
         async onRequestError() {
@@ -103,6 +107,11 @@ async function changeRating() {
 
 function removeRating() {
     rating.value = 0;
+    changeRating();
+}
+
+function changeRatingMobile() {
+    isRatingVisible.value = false;
     changeRating();
 }
 </script>
@@ -160,10 +169,10 @@ function removeRating() {
                 id="template-content"
                 class="mx-4 -mb-2 mt-2 h-full xs:mx-8 sm:mx-12 md:mx-8"
             >
-                <div id="details" class="flex h-40 gap-x-4">
+                <div id="details" class="flex h-48 gap-x-4">
                     <div
                         id="facts"
-                        class="mb-4 flex w-1/2 flex-col gap-y-3 text-text dark:text-natural-50"
+                        class="flex h-full w-1/2 flex-col gap-y-3 text-text dark:text-natural-50"
                     >
                         <div
                             id="destination"
@@ -270,7 +279,7 @@ function removeRating() {
                             </span>
                         </div>
                         <div
-                            class="-mt-2 ml-1 flex flex-row items-center gap-x-1"
+                            class="-mt-2 ml-1 flex h-8 flex-row items-center gap-x-1"
                         >
                             <Rating
                                 v-if="isRatingVisible"
@@ -284,12 +293,12 @@ function removeRating() {
                             >
                                 <template #onicon>
                                     <i
-                                        class="pi pi-star-fill -ml-1 mr-2 text-xl text-calypso-600 dark:text-calypso-400"
+                                        class="pi pi-star-fill -ml-1 mr-2 text-xl text-calypso-600 hover:text-2xl dark:text-calypso-400"
                                     />
                                 </template>
                                 <template #officon>
                                     <i
-                                        class="pi pi-star -ml-1 mr-2 text-xl text-calypso-600 dark:text-calypso-400"
+                                        class="pi pi-star -ml-1 mr-2 text-xl text-calypso-600 hover:text-2xl dark:text-calypso-400"
                                     />
                                 </template>
                             </Rating>
@@ -312,7 +321,7 @@ function removeRating() {
                         </span>
                     </div>
                 </div>
-                <div id="activities" class="mt-2.5">
+                <div id="activities">
                     <h3 class="text-lg text-text dark:text-natural-50">
                         <T :key-name="'template.activity.pool'" />
                     </h3>
@@ -507,6 +516,48 @@ function removeRating() {
                                 />
                             </span>
                         </div>
+                        <div
+                            id="rating"
+                            class="flex flex-row items-center gap-x-1"
+                        >
+                            <i
+                                class="pi pi-star mr-2 text-base text-calypso-600 dark:text-calypso-400"
+                            />
+
+                            <span
+                                class="flex flex-row items-center gap-x-1 truncate text-base"
+                            >
+                                <Skeleton
+                                    v-if="activityCount === null"
+                                    width="1rem"
+                                    height="1.25rem"
+                                    class="dark:bg-natural-600"
+                                />
+                                <span v-else>
+                                    {{ avgRating }}
+                                </span>
+                                <T
+                                    :key-name="
+                                        avgRating === 1
+                                            ? 'template.rating.star'
+                                            : 'template.rating.stars'
+                                    "
+                                />
+                                ({{ numRating }})
+                                <button
+                                    @click="isRatingVisible = !isRatingVisible"
+                                >
+                                    <i
+                                        class="pi mr-2 text-xl text-text"
+                                        :class="
+                                            isRatingVisible
+                                                ? 'pi-angle-up'
+                                                : 'pi-angle-down'
+                                        "
+                                    />
+                                </button>
+                            </span>
+                        </div>
                     </div>
                     <div
                         id="description"
@@ -608,6 +659,92 @@ function removeRating() {
                         <T key-name="template.use" />
                     </NuxtLink>
                 </div>
+            </div>
+        </Sidebar>
+        <Sidebar
+            v-model:visible="isRatingVisible"
+            modal
+            :show-close-icon="false"
+            :block-scroll="true"
+            position="bottom"
+            :auto-z-index="true"
+            :draggable="false"
+            class="z-50 mt-auto flex h-[25%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden"
+            :pt="{
+                root: {
+                    class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:hidden ',
+                },
+                header: {
+                    class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50 rounded-3xl',
+                },
+                title: {
+                    class: 'font-nunito text-4xl font-semibold',
+                },
+                content: {
+                    class: 'font-nunito bg-background dark:bg-background-dark px-0 -ml-2 sm:pr-12 h-full',
+                },
+                footer: { class: 'h-0' },
+                closeButton: {
+                    class: 'justify-start w-full h-full items-center collapse',
+                },
+                mask: {
+                    class: 'sm:collapse bg-natural-50',
+                },
+            }"
+            @hide="isRatingVisible = false"
+            ><template #header>
+                <button class="-ml-6 flex justify-center pr-4" @click="close">
+                    <span class="pi pi-angle-down text-3xl" />
+                </button>
+                <div class="w-full">
+                    <h1
+                        class="mr-3 truncate text-nowrap text-3xl font-medium text-text dark:text-natural-50"
+                    >
+                        <T key-name="template.rate" />
+                    </h1>
+                </div>
+            </template>
+            <div class="flex w-full flex-col items-center justify-center">
+                <p
+                    class="ml-11 w-full truncate text-nowrap text-left text-xl font-medium text-text dark:text-natural-50"
+                >
+                    <T key-name="template.rate.detail" />
+                </p>
+                <div
+                    class="mb-4 mt-4 flex h-8 flex-row items-center justify-center gap-x-1"
+                >
+                    <Rating
+                        v-if="isRatingVisible"
+                        v-model="rating"
+                        :pt="{
+                            cancelItem: {
+                                class: 'hidden',
+                            },
+                        }"
+                    >
+                        <template #onicon>
+                            <i
+                                class="pi pi-star-fill -ml-1 mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
+                            />
+                        </template>
+                        <template #officon>
+                            <i
+                                class="pi pi-star -ml-1 mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
+                            />
+                        </template>
+                    </Rating>
+                    <i
+                        v-if="isRatingVisible"
+                        class="pi pi-times -ml-1 mt-1 cursor-pointer text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                        @click="rating = 0"
+                    />
+                </div>
+                <button
+                    class="ml-5 flex h-10 w-[90%] items-center justify-center rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-base font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
+                    @click="changeRatingMobile"
+                >
+                    <T key-name="common.save" />
+                </button>
             </div>
         </Sidebar>
     </div>
