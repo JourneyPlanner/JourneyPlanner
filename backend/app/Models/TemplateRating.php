@@ -58,7 +58,7 @@ class TemplateRating extends Model
                 ($average * $count + $weight * $globalAverage) /
                 ($count + $weight);
         } else {
-            $bayesianAverage = $globalAverage; // If no ratings, default to global average
+            $bayesianAverage = 0; // If no ratings, default to 0
         }
 
         $template->update([
