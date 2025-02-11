@@ -43,6 +43,7 @@ export default defineNuxtConfig({
         "@pinia/nuxt",
         "@nuxt/eslint",
         "@nuxt/image",
+        "nuxt-laravel-echo",
     ],
     css: [
         "@/assets/css/fonts/fonts.css",
@@ -63,6 +64,7 @@ export default defineNuxtConfig({
             NUXT_UPLOAD_URL: process.env.NUXT_UPLOAD_URL,
             NUXT_LIGHTGALLERY_KEY: process.env.NUXT_LIGHTGALLERY_KEY,
             NUXT_GOOGLE_CLIENT_ID: process.env.NUXT_GOOGLE_CLIENT_ID,
+            NUXT_REVERB_APP_KEY: process.env.NUXT_REVERB_APP_KEY,
         },
     },
     primevue: {
@@ -128,6 +130,13 @@ export default defineNuxtConfig({
         },
         endpoints: {
             user: "/api/me",
+        },
+    },
+    echo: {
+        key: process.env.NUXT_REVERB_APP_KEY,
+        authentication: {
+            baseUrl: process.env.NUXT_BACKEND_URL || "http://localhost:8000",
+            mode: "cookie",
         },
     },
 });
