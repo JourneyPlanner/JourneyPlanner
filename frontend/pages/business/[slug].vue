@@ -406,8 +406,10 @@ function openActivityDialog(activity: Activity) {
                 <h2 class="text-xl font-medium">
                     <T key-name="subdomain.heading.activities" />
                 </h2>
-                <div
+                <TransitionGroup
                     id="activities"
+                    name="fade"
+                    tag="div"
                     class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7"
                 >
                     <BusinessActivityCard
@@ -419,7 +421,7 @@ function openActivityDialog(activity: Activity) {
                         :activity="activity"
                         @open-activity-dialog="openActivityDialog"
                     />
-                </div>
+                </TransitionGroup>
                 <div ref="activityLoader" class="col-span-full">
                     <div v-if="moreActivitiesAvailable && showMoreActivities">
                         <div class="flex justify-center">
@@ -454,8 +456,9 @@ function openActivityDialog(activity: Activity) {
                 <h2 class="text-xl font-medium">
                     <T key-name="subdomain.heading.templates" />
                 </h2>
-                <div
-                    id="templates"
+                <TransitionGroup
+                    name="fade"
+                    tag="div"
                     class="relative mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-4"
                 >
                     <TemplateCard
@@ -480,7 +483,7 @@ function openActivityDialog(activity: Activity) {
                         :displayed-in-profile="false"
                         @open-template="openTemplateDialog(template)"
                     />
-                </div>
+                </TransitionGroup>
                 <div v-if="templates.length === 0" class="col-span-full">
                     <T key-name="subdomain.template.none" />
                 </div>
@@ -547,3 +550,16 @@ function openActivityDialog(activity: Activity) {
         </div>
     </div>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+}
+</style>
