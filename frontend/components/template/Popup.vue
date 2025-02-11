@@ -28,19 +28,18 @@ const { t } = useTranslate();
 const toast = useToast();
 
 const isVisible = ref(false);
+const template = props.template;
 const activityCount = ref(null);
 const activities = ref();
 const numRating = ref(0);
 const rating = ref(0);
 const avgRating = ref(1);
 const isRatingVisible = ref(false);
-const user = useSanctumUser<User>();
-console.log(user);
+const store = useTemplateStore();
 
 const { data } = await useAsyncData("userRating", () =>
     client(`/api/template/${props.template.id}/rate`),
 );
-console.log(data);
 rating.value = data.value.rating;
 
 watch(
@@ -64,7 +63,6 @@ watch(
     { immediate: true },
 );
 
-console.log(props.template);
 const close = (): void => {
     activities.value = [];
     activityCount.value = null;
@@ -92,6 +90,10 @@ async function changeRating() {
                     Math.round(response._data.total_ratings * 100) / 100;
                 avgRating.value =
                     Math.round(response._data.average_rating * 100) / 100;
+                template.average_rating = response._data.average_rating;
+                template.total_ratings = response._data.total_ratings;
+                store.editedTemplate = template;
+                store.templatedWasEdited = true;
             }
         },
         async onRequestError() {
@@ -268,7 +270,7 @@ function changeRatingMobile() {
                                     @click="isRatingVisible = !isRatingVisible"
                                 >
                                     <i
-                                        class="pi mr-2 text-xl text-text"
+                                        class="pi mr-2 text-xl text-natural-500 hover:text-natural-900 dark:text-natural-100 dark:hover:text-natural-400"
                                         :class="
                                             isRatingVisible
                                                 ? 'pi-angle-up'
@@ -548,7 +550,7 @@ function changeRatingMobile() {
                                     @click="isRatingVisible = !isRatingVisible"
                                 >
                                     <i
-                                        class="pi mr-2 text-xl text-text"
+                                        class="pi mr-2 text-xl text-natural-500 hover:text-natural-900 dark:text-natural-100 dark:hover:text-natural-400"
                                         :class="
                                             isRatingVisible
                                                 ? 'pi-angle-up'

@@ -93,6 +93,15 @@ onMounted(() => {
         refresh();
         templateStore.changeUpdate(false);
     }
+
+    if (templateStore.templatedWasEdited) {
+        templates.value[
+            templates.value.findIndex(
+                (obj) => obj.id === templateStore.editedTemplate.id,
+            )
+        ] = templateStore.editedTemplate;
+        templateStore.templatedWasEdited = false;
+    }
     watch(
         tabIndex,
         async () => {
@@ -372,6 +381,19 @@ onMounted(() => {
         filters,
         () => {
             templateFilterstore.setFilters(filters);
+        },
+        { deep: true },
+    );
+
+    watch(
+        templateStore,
+        () => {
+            templates.value[
+                templates.value.findIndex(
+                    (obj) => obj.id === templateStore.editedTemplate.id,
+                )
+            ] = templateStore.editedTemplate;
+            templateStore.templatedWasEdited = false;
         },
         { deep: true },
     );
