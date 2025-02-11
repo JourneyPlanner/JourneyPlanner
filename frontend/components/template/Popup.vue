@@ -63,6 +63,7 @@ watch(
     { immediate: true },
 );
 
+console.log(props.template);
 const close = (): void => {
     activities.value = [];
     activityCount.value = null;
