@@ -257,7 +257,7 @@ function openActivityDialog(activity: Activity) {
                 class="flex w-full flex-col justify-between gap-x-5 overflow-hidden lg:flex-row lg:pt-5"
             >
                 <div id="text" class="flex-1 lg:w-3/5">
-                    <h1 class="mb-2 text-2xl font-medium">
+                    <h1 class="mb-4 text-2xl font-semibold">
                         {{ texts.company_name }}
                     </h1>
                     <p class="text-lg">
@@ -265,7 +265,7 @@ function openActivityDialog(activity: Activity) {
                     </p>
                     <div class="mb-5 max-md:hidden">
                         <button
-                            class="mt-3.5 w-44 rounded-lg border-2 border-dandelion-300 bg-natural-50 py-0.5 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 lg:w-48"
+                            class="mt-6 w-44 rounded-xl border-2 border-dandelion-300 bg-natural-50 py-1 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 lg:w-48"
                         >
                             <a :href="texts.button_link" target="_blank">{{
                                 texts.button

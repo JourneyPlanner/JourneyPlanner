@@ -124,7 +124,7 @@ class BusinessController extends Controller
             "per_page" => "nullable|integer|min:1|max:100",
         ]);
         $templates = Business::where("slug", $slug)
-            ->first()
+            ->firstOrFail()
             ->templates()
             ->wherePivot("visible", true)
             ->with([
@@ -150,7 +150,7 @@ class BusinessController extends Controller
             "per_page" => "nullable|integer|min:1|max:100",
         ]);
         $activities = Business::where("slug", $slug)
-            ->first()
+            ->firstOrFail()
             ->activities()
             ->cursorPaginate(
                 $validated["per_page"] ?? TemplateController::$perPage
