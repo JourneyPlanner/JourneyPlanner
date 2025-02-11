@@ -253,6 +253,30 @@ onMounted(() => {
                             },
                         ],
                     },
+                    {
+                        label: t.value("dashboard.sort.rating"),
+                        icon: "pi pi-star",
+                        items: [
+                            {
+                                label: t.value("dashboard.sort.ascending"),
+                                icon: "pi pi-sort-amount-up",
+                                command: () => {
+                                    filters.sortby = "rating";
+                                    filters.sortorder = "asc";
+                                    refreshTemplates();
+                                },
+                            },
+                            {
+                                label: t.value("dashboard.sort.descending"),
+                                icon: "pi pi-sort-amount-down",
+                                command: () => {
+                                    filters.sortby = "rating";
+                                    filters.sortorder = "desc";
+                                    refreshTemplates();
+                                },
+                            },
+                        ],
+                    },
                 ];
             } else {
                 router.push({ path: "/dashboard" });

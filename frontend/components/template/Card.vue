@@ -220,6 +220,13 @@ async function deleteTemplate(id: string) {
                             "
                         />
                     </h5>
+                    <div class="ml-auto flex items-center gap-x-1">
+                        <i class="pi pi-star text-lg text-calypso-600" />
+                        <h5 class="truncate text-lg">
+                            {{ template.average_rating }}
+                            ({{ template.total_ratings }})
+                        </h5>
+                    </div>
                 </div>
             </div>
         </div>
