@@ -3,18 +3,37 @@
 namespace App\Http\Controllers\Journey;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Journey\UpdateTemplateRequest;
 use App\Models\Journey;
 use App\Models\JourneyUser;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class TemplateController extends Controller
 {
-    public static int $perPage = 20;
+    private $columns;
+    private int $perPage = 20;
+
+    /**
+     * The columns to exclude when cloning a journey for creating/updating a template.
+     */
+    private static array $columnsToExcludeFromClone = [
+        "id",
+        "created_at",
+        "updated_at",
+        "name",
+        "description",
+        "invite",
+        "is_template",
+        "created_from",
+        "average_rating",
+        "total_ratings",
+    ];
 
     public static function getColumns()
     {
@@ -61,6 +80,15 @@ class TemplateController extends Controller
     }
 
     /**
+     * Get all templates by the current user.
+     *
+     */
+    public function currentUserTemplatesIndex()
+    {
+        return $this->getTemplates(Auth::user()->username);
+    }
+
+    /**
      * Get templates based on the provided filters.
      */
     private function getTemplates(string $username = null)
@@ -92,6 +120,7 @@ class TemplateController extends Controller
             "template_destination_input" => "nullable|string",
             "template_destination_name" => "nullable|string",
             "template_creator" => "nullable|string",
+            "journey_id" => "nullable|uuid|exists:journeys,id",
         ]);
 
         // Get the validated values or use the default values
@@ -107,6 +136,7 @@ class TemplateController extends Controller
         $destination = $validated["template_destination_input"] ?? null;
         $destinationName = $validated["template_destination_name"] ?? null;
         $creator = $validated["template_creator"] ?? null;
+        $journey_id = $validated["journey_id"] ?? null;
 
         // Select all templates that match the search criteria
         $templates = Journey::where("is_template", true)
@@ -183,6 +213,9 @@ class TemplateController extends Controller
                     });
                 }
             )
+            ->when($journey_id, function ($query) use ($journey_id) {
+                $query->where("created_from", $journey_id);
+            })
             ->with([
                 "users" => function ($query) {
                     $query->select("id", "username", "display_name");
@@ -201,9 +234,9 @@ class TemplateController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            "journey_id" => "required|uuid",
+            "journey_id" => "required|uuid|exists:journeys,id",
             "name" => "required|string",
-            "description" => "string",
+            "description" => "nullable|string",
         ]);
         $journey = Journey::findOrFail($validated["journey_id"]);
         Gate::authorize("update", [$journey, false]);
@@ -219,13 +252,7 @@ class TemplateController extends Controller
         }
 
         $journeyTemplate = $journey
-            ->replicate([
-                "name",
-                "description",
-                "invite",
-                "is_template",
-                "created_from",
-            ])
+            ->replicate(static::$columnsToExcludeFromClone)
             ->fill([
                 "name" => $validated["name"],
                 "invite" => "",
@@ -235,6 +262,53 @@ class TemplateController extends Controller
             ]);
         $journeyTemplate->save();
 
+        $journeyTemplate = $this->cloneActivities($journey, $journeyTemplate);
+
+        $journeyTemplate->users()->attach(Auth::id(), [
+            "role" => JourneyUser::TEMPLATE_CREATOR_ROLE_ID,
+        ]);
+
+        return response()->json($journeyTemplate);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateTemplateRequest $request, Journey $journey)
+    {
+        $validated = $request->validated();
+        $template = $journey;
+
+        if (isset($validated["journey_id"])) {
+            $journey = Journey::findOrFail($validated["journey_id"]);
+            Gate::authorize("update", [$journey, false]);
+
+            $template->fill(
+                Arr::except(
+                    $journey->toArray(),
+                    static::$columnsToExcludeFromClone
+                )
+            );
+
+            $template->activities()->delete();
+            $template = $this->cloneActivities($journey, $template);
+        }
+        $template->update($validated);
+
+        return response()->json(
+            [
+                "message" => "Template updated successfully",
+                "journey" => $template,
+            ],
+            200
+        );
+    }
+
+    /**
+     * Clone the activities from the journey to the template.
+     */
+    private function cloneActivities($journey, $journeyTemplate)
+    {
         foreach ($journey->activities()->get() as $activity) {
             $activityTemplate = $activity->replicate(["journey_id"]);
             $activityTemplate->journey_id = $journeyTemplate->id;
@@ -253,26 +327,6 @@ class TemplateController extends Controller
             }
         }
 
-        $journeyTemplate->users()->attach(Auth::id(), [
-            "role" => JourneyUser::TEMPLATE_CREATOR_ROLE_ID,
-        ]);
-
-        return response()->json($journeyTemplate);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Journey $journey)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Journey $journey)
-    {
-        //
+        return $journeyTemplate;
     }
 }
