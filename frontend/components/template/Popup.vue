@@ -713,7 +713,9 @@ function changeRatingMobile() {
                     </h1>
                 </div>
             </template>
-            <div class="flex w-full flex-col items-center justify-center">
+            <div
+                class="flex w-full flex-col items-center justify-center overflow-hidden"
+            >
                 <p
                     class="ml-11 w-full truncate text-nowrap text-left text-xl font-medium text-text dark:text-natural-50"
                 >

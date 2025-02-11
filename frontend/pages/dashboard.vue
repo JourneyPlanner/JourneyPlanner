@@ -503,9 +503,13 @@ function setAddressColor() {
  * @param event MouseEvent
  */
 const closeFilterWhenOutsideClick = (event: MouseEvent) => {
+    if ((event.target as HTMLElement).classList.contains("pi-star")) {
+        return;
+    }
     const filterElement = filterDialog.value as HTMLElement;
     if (filterElement && !filterElement.contains(event.target as Node)) {
         isFilterVisible.value = false;
+        console.log(event);
     }
 };
 
@@ -544,7 +548,8 @@ const isFiltered = computed(() => {
             filters.TEMPLATE_MAX_LENGTH ||
         filters.templateDestinationInput !== "" ||
         filters.templateDestinationName !== "" ||
-        filters.templateCreator !== ""
+        filters.templateCreator !== "" ||
+        filters.rating !== null
     );
 });
 
@@ -1310,7 +1315,7 @@ function editJourney(journey: Journey, id: string) {
                 :draggable="false"
                 :block-scroll="true"
                 :show-close-icon="false"
-                class="z-50 mt-auto flex h-auto flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden lg:-z-10"
+                class="z-50 mt-auto flex h-fit max-h-[90%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden lg:-z-10"
                 :pt="{
                     root: {
                         class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden ',
@@ -1510,17 +1515,17 @@ function editJourney(journey: Journey, id: string) {
                             >
                                 <template #onicon>
                                     <i
-                                        class="pi pi-star-fill mr-2 text-2xl text-calypso-600 dark:text-calypso-400"
+                                        class="pi pi-star-fill ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
                                     />
                                 </template>
                                 <template #officon>
                                     <i
-                                        class="pi pi-star mr-2 text-2xl text-calypso-600 dark:text-calypso-400"
+                                        class="pi pi-star ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
                                     />
                                 </template>
                             </Rating>
                             <i
-                                class="pi pi-times -ml-1 cursor-pointer text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                class="pi pi-times cursor-pointer text-2xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
                                 @click="resetRating"
                             />
                         </div>
