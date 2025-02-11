@@ -45,7 +45,7 @@ if (error.value) {
     } else {
         throw createError({
             statusCode: 500,
-            message: "An error occurred while fetching user data",
+            message: "An error occurred while fetching the data",
             fatal: true,
         });
     }
@@ -338,6 +338,11 @@ function openActivityDialog(activity: Activity) {
 
     isActivityInfoVisible.value = true;
 }
+
+//TODO button unters bild
+//TODO nochmal das mit nth anschauen (siehe mit vue-show)
+//TODO responsive
+//TODO darkmode
 </script>
 
 <template>
@@ -368,27 +373,29 @@ function openActivityDialog(activity: Activity) {
                 class="sr-only"
             />
         </div>
-        <div class="flex flex-col gap-y-8 px-16">
+        <div class="flex flex-col gap-y-8 px-5 lg:px-16">
             <div
                 id="details"
-                class="flex w-full justify-between gap-x-5 overflow-hidden pt-5"
+                class="flex w-full flex-col justify-between gap-x-5 overflow-hidden lg:flex-row lg:pt-5"
             >
-                <div id="text" class="w-3/5 flex-1">
+                <div id="text" class="flex-1 lg:w-3/5">
                     <h1 class="mb-2 text-2xl font-medium">
                         {{ texts.company_name }}
                     </h1>
                     <p class="text-lg">
                         {{ texts.text }}
                     </p>
-                    <button
-                        class="mt-3.5 w-48 rounded-lg border-2 border-dandelion-300 bg-natural-50 py-0.5 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600"
-                    >
-                        <a :href="texts.button_link" target="_blank">{{
-                            texts.button
-                        }}</a>
-                    </button>
+                    <div class="mb-5 flex justify-center lg:justify-start">
+                        <button
+                            class="mt-3.5 w-44 rounded-lg border-2 border-dandelion-300 bg-natural-50 py-0.5 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 lg:w-48"
+                        >
+                            <a :href="texts.button_link" target="_blank">{{
+                                texts.button
+                            }}</a>
+                        </button>
+                    </div>
                 </div>
-                <div id="image" class="w-2/5">
+                <div id="image" class="lg:w-2/5">
                     <NuxtImg
                         :src="images.image.link"
                         :alt="images.image.alt_text"
@@ -401,21 +408,11 @@ function openActivityDialog(activity: Activity) {
                     <T key-name="subdomain.heading.activities" />
                 </h2>
                 <div
-                    v-if="!showMoreActivities"
                     id="activities"
-                    class="grid grid-cols-7 grid-rows-3"
-                >
-                    <BusinessActivityCard
-                        v-for="activity in initialActivities"
-                        :key="activity.id"
-                        :activity="activity"
-                        @open-activity-dialog="openActivityDialog"
-                    />
-                </div>
-                <div
-                    v-else
-                    id="more-activities"
-                    class="grid grid-cols-7 grid-rows-3"
+                    class="grid grid-cols-2 lg:grid-cols-7"
+                    :class="{
+                        'nth-7-hidden lg:nth-15-hidden': !showMoreActivities,
+                    }"
                 >
                     <BusinessActivityCard
                         v-for="activity in activities"
@@ -424,6 +421,16 @@ function openActivityDialog(activity: Activity) {
                         @open-activity-dialog="openActivityDialog"
                     />
                 </div>
+                <!--
+                <div v-if="!showMoreActivities" id="activities"
+                    class="grid grid-cols-2 lg:grid-cols-7 grid-rows-3 nth-7-hidden">
+                    <BusinessActivityCard v-for="activity in initialActivities" :key="activity.id" :activity="activity"
+                        @open-activity-dialog="openActivityDialog" />
+                </div>
+                <div v-else id="more-activities" class="grid grid-cols-2 lg:grid-cols-7">
+                    <BusinessActivityCard v-for="activity in activities" :key="activity.id" :activity="activity"
+                        @open-activity-dialog="openActivityDialog" />
+                </div>-->
                 <div ref="activityLoader" class="col-span-full">
                     <div v-if="moreActivitiesAvailable && showMoreActivities">
                         <div class="flex justify-center">
@@ -436,13 +443,27 @@ function openActivityDialog(activity: Activity) {
                 </div>
                 <div
                     v-if="activities.length > 0"
-                    class="mt-4 flex justify-center max-md:hidden"
+                    class="mt-4 flex justify-center"
                 >
                     <button
-                        class="flex flex-col items-center justify-center text-text dark:text-natural-50"
+                        class="flex flex-col items-center justify-center text-text dark:text-natural-50 max-md:hidden"
                         @click="toggleActivities"
                     >
                         <span>{{ toggleTextActivities }}</span>
+                        <span
+                            class="pi mt-1"
+                            :class="
+                                showMoreActivities
+                                    ? 'pi-chevron-up order-first mb-1'
+                                    : 'pi-chevron-down'
+                            "
+                        />
+                    </button>
+                    <button
+                        class="flex flex-col items-center justify-center text-text dark:text-natural-50 md:hidden"
+                        @click="toggleActivities"
+                    >
+                        <span>{{ toggleTextShortActivities }}</span>
                         <span
                             class="pi mt-1"
                             :class="
@@ -526,13 +547,27 @@ function openActivityDialog(activity: Activity) {
                 </div>
                 <div
                     v-if="templates.length > 0"
-                    class="mt-4 flex justify-center max-md:hidden"
+                    class="mt-4 flex justify-center"
                 >
                     <button
-                        class="flex flex-col items-center justify-center text-text dark:text-natural-50"
+                        class="flex flex-col items-center justify-center text-text dark:text-natural-50 max-md:hidden"
                         @click="toggleTemplates"
                     >
                         <span>{{ toggleTextTemplates }}</span>
+                        <span
+                            class="pi mt-1"
+                            :class="
+                                showMoreTemplates
+                                    ? 'pi-chevron-up order-first mb-1'
+                                    : 'pi-chevron-down'
+                            "
+                        />
+                    </button>
+                    <button
+                        class="flex flex-col items-center justify-center text-text dark:text-natural-50 md:hidden"
+                        @click="toggleTemplates"
+                    >
+                        <span>{{ toggleTextShortTemplates }}</span>
                         <span
                             class="pi mt-1"
                             :class="
@@ -577,3 +612,13 @@ function openActivityDialog(activity: Activity) {
         </div>
     </div>
 </template>
+
+<style scoped>
+.nth-7-hidden > *:nth-child(n + 7) {
+    display: none;
+}
+
+.nth-15-hidden > *:nth-child(n + 15) {
+    display: none;
+}
+</style>
