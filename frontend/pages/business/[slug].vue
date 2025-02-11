@@ -384,7 +384,7 @@ function openActivityDialog(activity: Activity) {
                     <p class="text-lg">
                         {{ texts.text }}
                     </p>
-                    <div class="mb-5 flex justify-center md:justify-start">
+                    <div class="mb-5 max-md:hidden">
                         <button
                             class="mt-3.5 w-44 rounded-lg border-2 border-dandelion-300 bg-natural-50 py-0.5 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 lg:w-48"
                         >
@@ -394,12 +394,21 @@ function openActivityDialog(activity: Activity) {
                         </button>
                     </div>
                 </div>
-                <div id="image" class="flex justify-center lg:w-2/5">
+                <div id="image" class="mt-2 flex justify-center lg:w-2/5">
                     <NuxtImg
                         :src="images.image.link"
                         :alt="images.image.alt_text"
                         class="max-h-[320px] rounded-xl object-contain"
                     />
+                </div>
+                <div class="mb-5 flex justify-center md:hidden">
+                    <button
+                        class="mt-3.5 w-44 rounded-lg border-2 border-dandelion-300 bg-natural-50 py-0.5 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 lg:w-48"
+                    >
+                        <a :href="texts.button_link" target="_blank">{{
+                            texts.button
+                        }}</a>
+                    </button>
                 </div>
             </div>
             <div id="activity-section">
