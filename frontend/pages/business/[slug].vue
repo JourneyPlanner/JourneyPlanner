@@ -232,15 +232,15 @@ function openActivityDialog(activity: Activity) {
             <div
                 class="absolute inset-0 top-20 bg-gradient-to-b from-natural-50/0 to-background dark:from-background-dark/0 dark:to-background-dark lg:top-48"
             ></div>
-            <div class="absolute left-2.5 top-2.5 lg:left-5 lg:top-5">
+            <div
+                class="absolute left-2.5 top-2.5 rounded-lg border-2 border-background bg-background text-text drop-shadow-lg backdrop-blur-xl hover:border-background-dark dark:border-background-dark dark:bg-background-dark dark:text-natural-50 dark:hover:border-background lg:left-5 lg:top-5"
+            >
                 <NuxtLink
                     :to="backRoute"
-                    class="group flex items-center sm:ml-1 md:ml-2"
+                    class="flex items-center sm:ml-1 sm:mr-2 md:ml-2 md:mr-3"
                 >
                     <i class="pi pi-angle-left text-2xl" />
-                    <span
-                        class="ml-1.5 mt-0.5 text-xl group-hover:underline md:text-2xl"
-                    >
+                    <span class="ml-1.5 mt-0.5 text-xl md:text-2xl">
                         <T key-name="common.back" />
                     </span>
                 </NuxtLink>
