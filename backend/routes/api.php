@@ -61,7 +61,7 @@ Route::apiResource("journey", JourneyController::class);
 Route::apiResource("journey/{journey}/activity", ActivityController::class);
 
 Route::apiResource("journey/{journey}/user", JourneyUserController::class)
-    ->only("index", "update")
+    ->only("index", "update", "destroy")
     ->middleware("auth:sanctum");
 
 Route::delete("journey/{journey}/leave", [

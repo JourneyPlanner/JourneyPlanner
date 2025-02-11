@@ -12,7 +12,8 @@ const currentRole = ref(props.role);
 const isProfileDialogVisible = ref(false);
 const route = useRoute();
 const router = useRouter();
-const emit = defineEmits(["changeRole"]);
+const emit = defineEmits(["changeRole", "kick"]);
+const isConfirmVisible = ref(false);
 
 onMounted(() => {
     if (route.query.username) {
@@ -39,6 +40,11 @@ function changeRole(selectedRole: number) {
     emit("changeRole", props.id, selectedRole);
     currentRole.value = selectedRole;
 }
+
+const kick = () => {
+    isConfirmVisible.value = false;
+    emit("kick", props.id);
+};
 
 const roleType = computed(() => {
     return currentRole.value === 1
@@ -99,6 +105,15 @@ const roleType = computed(() => {
         >
             <T key-name="journey.sidebar.list.member" />
         </h4>
+        <div class="flex w-4 justify-center">|</div>
+        <span
+            class="flex items-center justify-center"
+            @click="isConfirmVisible = true"
+        >
+            <i
+                class="pi pi-user-minus mr-1 cursor-pointer text-lg text-mahagony-400 hover:text-mahagony-500 dark:text-mahagony-300 dark:hover:text-mahagony-400"
+            />
+        </span>
     </form>
     <div id="dialogs">
         <JourneyIdDialogsProfileDialog
@@ -106,6 +121,12 @@ const roleType = computed(() => {
             :username="username"
             :displayname="displayName"
             @close="isProfileDialogVisible = false"
+        />
+        <JourneyIdComponentsConfirmKickMember
+            :visible="isConfirmVisible"
+            :name="displayName"
+            @close="isConfirmVisible = false"
+            @kick="kick"
         />
     </div>
 </template>

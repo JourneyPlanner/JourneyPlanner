@@ -29,6 +29,7 @@ const emit = defineEmits([
     "close",
     "open-qrcode",
     "open-unlock-dialog",
+    "kick",
 ]);
 
 const toast = useToast();
@@ -44,6 +45,13 @@ watch(
     () => props.isMemberSidebarVisible,
     (value) => {
         isVisible.value = value;
+    },
+);
+
+watch(
+    () => props.users,
+    (value) => {
+        users.value = value;
     },
 );
 
@@ -78,6 +86,37 @@ async function changeRole(userid: string, selectedRole: number) {
                 }
                 return user;
             });
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
+
+/*
+ * Kick specified user out of the journey
+ * @param userid - the id of the user
+ */
+async function kick(userid: string) {
+    if (!userid) return;
+    await client(`/api/journey/${props.journeyID}/user/${userid}`, {
+        method: "DELETE",
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value("journey.kick.toast.success"),
+                    detail: t.value("journey.kick.toast.success.detail"),
+                    life: 6000,
+                });
+
+                emit("kick");
+            }
         },
         async onResponseError() {
             toast.add({
@@ -160,7 +199,7 @@ function openUnlockDialog() {
                         <input
                             class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
                             disabled
-                            :value="props.invite"
+                            :value="invite"
                         />
                         <div class="flex w-1/5 justify-end">
                             <button
@@ -216,6 +255,7 @@ function openUnlockDialog() {
                             :edit="isEditEnabled"
                             :current-id="currUser.id"
                             @change-role="changeRole"
+                            @kick="kick"
                         />
                     </div>
                     <div
