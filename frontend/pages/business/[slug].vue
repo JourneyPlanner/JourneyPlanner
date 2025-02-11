@@ -442,7 +442,9 @@ function openActivityDialog(activity: Activity) {
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-    transition: all 0.5s ease;
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease;
 }
 
 .fade-enter-from,
