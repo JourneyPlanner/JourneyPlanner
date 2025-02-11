@@ -99,6 +99,7 @@ class TemplateController extends Controller
         $validated = request()->validate([
             "sort_by" =>
                 "nullable|string|in:id,name,destination,length,average_rating",
+            "filter_by_rating" => "nullable|integer|min:0|max:5",
             "order" => "nullable|string|in:asc,desc",
             "per_page" => "nullable|integer|min:1|max:100",
             "template_name" => "nullable|string",
@@ -130,6 +131,7 @@ class TemplateController extends Controller
         $sortBy = $validated["sort_by"] ?? "id";
         $order = $validated["order"] ?? "asc";
         $perPage = $validated["per_page"] ?? $this->perPage;
+        $filterByRating = $validated["filter_by_rating"] ?? null;
 
         $name = $validated["template_name"] ?? null;
         $lengthMin = $validated["template_journey_length_min"] ?? null;
@@ -216,6 +218,9 @@ class TemplateController extends Controller
                     });
                 }
             )
+            ->when($filterByRating, function ($query) use ($filterByRating) {
+                $query->where("average_rating", ">=", $filterByRating);
+            })
             ->when($journey_id, function ($query) use ($journey_id) {
                 $query->where("created_from", $journey_id);
             })
