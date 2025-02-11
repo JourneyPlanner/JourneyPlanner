@@ -437,7 +437,7 @@ function openActivityDialog(activity: Activity) {
                             <ProgressSpinner class="w-10" />
                         </div>
                         <div class="flex justify-center italic">
-                            <T key-name="subomain.activities.loading" />
+                            <T key-name="subdomain.activities.loading" />
                         </div>
                     </div>
                 </div>
@@ -502,7 +502,7 @@ function openActivityDialog(activity: Activity) {
                             <ProgressSpinner class="w-10" />
                         </div>
                         <div class="flex justify-center italic">
-                            <T key-name="subomain.templates.loading" />
+                            <T key-name="subdomain.templates.loading" />
                         </div>
                     </div>
                 </div>
