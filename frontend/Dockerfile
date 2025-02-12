@@ -1,4 +1,4 @@
-FROM node:lts as build-stage
+FROM node:lts AS build-stage
 WORKDIR /app
 ARG INFISICAL_API_URL
 ARG INFISICAL_TOKEN
@@ -6,16 +6,16 @@ ENV INFISICAL_API_URL=$INFISICAL_API_URL
 ENV INFISICAL_TOKEN=$INFISICAL_TOKEN
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 RUN apt-get update && apt-get install -y bash curl && curl -1sLf \
 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | bash \
 && apt-get update && apt-get install -y infisical
 
-COPY . .
+COPY --link . . 
 RUN infisical run --env=prod -- npm run build
 
-FROM node:lts as production-stage
+FROM node:lts AS production-stage
 WORKDIR /app
 
 COPY ecosystem.config.cjs .
