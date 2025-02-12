@@ -26,6 +26,7 @@ const emit = defineEmits(["close", "opened-preview"]);
 const client = useSanctumClient();
 const { t } = useTranslate();
 const toast = useToast();
+const { isAuthenticated } = useSanctumAuth();
 
 const isVisible = ref(false);
 const template = props.template;
@@ -37,11 +38,12 @@ const avgRating = ref(1);
 const isRatingVisible = ref(false);
 const store = useTemplateStore();
 const isSubmitting = ref(false);
-
-const { data } = await useAsyncData("userRating", () =>
-    client(`/api/template/${props.template.id}/rate`),
-);
-rating.value = data.value.rating;
+if (isAuthenticated.value) {
+    const { data } = await useAsyncData("userRating", () =>
+        client(`/api/template/${props.template.id}/rate`),
+    );
+    rating.value = data.value.rating;
+}
 
 watch(
     () => props.isTemplateDialogVisible,
@@ -64,7 +66,6 @@ watch(
     { immediate: true },
 );
 
-console.log(props.template);
 const close = (): void => {
     activities.value = [];
     activityCount.value = null;
@@ -253,7 +254,8 @@ function changeRatingMobile() {
                             />
 
                             <span
-                                class="flex flex-row items-center gap-x-1 truncate text-xl"
+                                class="flex cursor-pointer flex-row items-center gap-x-1 truncate text-xl"
+                                @click="isRatingVisible = !isRatingVisible"
                             >
                                 <Skeleton
                                     v-if="activityCount === null"
@@ -272,9 +274,7 @@ function changeRatingMobile() {
                                     "
                                 />
                                 ({{ numRating }})
-                                <button
-                                    @click="isRatingVisible = !isRatingVisible"
-                                >
+                                <button v-if="isAuthenticated">
                                     <i
                                         class="pi mr-2 text-xl text-natural-500 hover:text-natural-900 dark:text-natural-100 dark:hover:text-natural-400"
                                         :class="
@@ -313,7 +313,7 @@ function changeRatingMobile() {
                             </Rating>
                             <i
                                 v-if="isRatingVisible"
-                                class="pi pi-times -ml-1 cursor-pointer text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                class="pi pi-times -ml-1 mt-0.5 cursor-pointer text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
                                 @click="removeRating"
                             />
                         </div>
@@ -426,7 +426,7 @@ function changeRatingMobile() {
             position="bottom"
             :auto-z-index="true"
             :draggable="false"
-            class="z-50 mt-auto flex h-[85%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden"
+            class="z-50 mt-auto flex h-fit max-h-[85%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:hidden ',
@@ -463,7 +463,7 @@ function changeRatingMobile() {
                 </div>
             </template>
             <div class="flex h-full flex-col gap-y-5 pl-6 pr-2">
-                <div id="details" class="flex h-32 w-full flex-col gap-x-4">
+                <div id="details" class="flex w-full flex-col gap-x-4">
                     <div
                         id="facts"
                         class="flex flex-col gap-y-3 text-text dark:text-natural-50"
@@ -554,6 +554,7 @@ function changeRatingMobile() {
                                 />
                                 ({{ numRating }})
                                 <button
+                                    v-if="isAuthenticated"
                                     @click="isRatingVisible = !isRatingVisible"
                                 >
                                     <i
@@ -678,7 +679,7 @@ function changeRatingMobile() {
             position="bottom"
             :auto-z-index="true"
             :draggable="false"
-            class="z-50 mt-auto flex h-[25%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden"
+            class="z-50 mt-auto flex h-fit max-h-[45%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:hidden ',
@@ -702,7 +703,10 @@ function changeRatingMobile() {
             }"
             @hide="isRatingVisible = false"
             ><template #header>
-                <button class="-ml-6 flex justify-center pr-4" @click="close">
+                <button
+                    class="-ml-6 flex justify-center pr-4"
+                    @click="isRatingVisible = false"
+                >
                     <span class="pi pi-angle-down text-3xl" />
                 </button>
                 <div class="w-full">

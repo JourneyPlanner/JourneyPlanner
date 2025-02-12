@@ -394,6 +394,7 @@ onMounted(() => {
                 )
             ] = templateStore.editedTemplate;
             templateStore.templateWasEdited = false;
+            templates.value.sort((a, b) => b.average_rating - a.average_rating);
         },
         { deep: true },
     );
@@ -503,13 +504,16 @@ function setAddressColor() {
  * @param event MouseEvent
  */
 const closeFilterWhenOutsideClick = (event: MouseEvent) => {
-    if ((event.target as HTMLElement).classList.contains("pi-star")) {
+    if (
+        (event.target as HTMLElement).classList.contains(
+            "template-rating-filter",
+        )
+    ) {
         return;
     }
     const filterElement = filterDialog.value as HTMLElement;
     if (filterElement && !filterElement.contains(event.target as Node)) {
         isFilterVisible.value = false;
-        console.log(event);
     }
 };
 
@@ -1158,12 +1162,12 @@ function editJourney(journey: Journey, id: string) {
                                 >
                                     <template #onicon>
                                         <i
-                                            class="pi pi-star-fill mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
+                                            class="pi pi-star-fill template-rating-filter mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
                                         />
                                     </template>
                                     <template #officon>
                                         <i
-                                            class="pi pi-star mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
+                                            class="pi pi-star template-rating-filter mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
                                         />
                                     </template>
                                 </Rating>
@@ -1173,7 +1177,7 @@ function editJourney(journey: Journey, id: string) {
                                 />
                             </div>
                         </div>
-                        <div class="flex justify-end pb-1 pt-20">
+                        <div class="pt-auto mt-5 flex justify-end pb-1">
                             <button
                                 class="dark:text-mahagony-200 text-mahagony-400 hover:underline"
                                 data-test="templates-filter-clear"
@@ -1515,12 +1519,12 @@ function editJourney(journey: Journey, id: string) {
                             >
                                 <template #onicon>
                                     <i
-                                        class="pi pi-star-fill ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
+                                        class="pi pi-star-fill template-rating-filter ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
                                     />
                                 </template>
                                 <template #officon>
                                     <i
-                                        class="pi pi-star ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
+                                        class="pi pi-star template-rating-filter ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
                                     />
                                 </template>
                             </Rating>
