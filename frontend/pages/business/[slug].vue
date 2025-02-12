@@ -233,11 +233,11 @@ function openActivityDialog(activity: Activity) {
                 class="absolute inset-0 top-20 bg-gradient-to-b from-natural-50/0 to-background dark:from-background-dark/0 dark:to-background-dark lg:top-48"
             ></div>
             <div
-                class="absolute left-2.5 top-2.5 rounded-lg border-2 border-background bg-background text-text drop-shadow-lg backdrop-blur-xl hover:border-background-dark dark:border-background-dark dark:bg-background-dark dark:text-natural-50 dark:hover:border-background lg:left-5 lg:top-5"
+                class="absolute left-2.5 top-2.5 rounded-xl border-2 border-natural-400 bg-natural-50 text-text drop-shadow-lg backdrop-blur-xl hover:border-natural-400 hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-natural-600 dark:hover:bg-natural-950 lg:left-5 lg:top-5"
             >
                 <NuxtLink
                     :to="backRoute"
-                    class="flex items-center sm:ml-1 sm:mr-2 md:ml-2 md:mr-3"
+                    class="ml-1 mr-2 flex items-center md:ml-2 md:mr-3"
                 >
                     <i class="pi pi-angle-left text-2xl" />
                     <span class="ml-1.5 mt-0.5 text-xl md:text-2xl">
