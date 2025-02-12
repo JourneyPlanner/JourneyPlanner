@@ -740,18 +740,18 @@ function changeRatingMobile() {
                     >
                         <template #onicon>
                             <i
-                                class="pi pi-star-fill -ml-1 mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
+                                class="pi pi-star-fill ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
                             />
                         </template>
                         <template #officon>
                             <i
-                                class="pi pi-star -ml-1 mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
+                                class="pi pi-star ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
                             />
                         </template>
                     </Rating>
                     <i
                         v-if="isRatingVisible"
-                        class="pi pi-times -ml-1 mt-1 cursor-pointer text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                        class="pi pi-times -ml-1 mt-1 cursor-pointer text-2xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
                         @click="rating = 0"
                     />
                 </div>
