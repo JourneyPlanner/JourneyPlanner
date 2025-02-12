@@ -114,8 +114,8 @@ async function deleteTemplate(id: string) {
         class="rounded-xl border-2 border-natural-200 bg-natural-50 text-text hover:cursor-pointer hover:border-calypso-400 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400"
         role="button"
         tabindex="0"
-        @click="$emit('openTemplate', template.id)"
-        @keyup.enter="$emit('openTemplate', template.id)"
+        @click="$emit('openTemplate', template?.id)"
+        @keyup.enter="$emit('openTemplate', template?.id)"
     >
         <Menu
             id="overlay_menu"
@@ -178,7 +178,7 @@ async function deleteTemplate(id: string) {
             </div>
             <h4
                 v-tooltip.top="{
-                    value: template.users[0].username,
+                    value: template?.users[0]?.username,
                     pt: { root: 'font-nunito' },
                 }"
                 class="-mt-1 truncate text-xl text-natural-600 dark:text-natural-300"
@@ -194,7 +194,7 @@ async function deleteTemplate(id: string) {
                             ? (isProfileDialogVisible = true)
                             : ''
                     "
-                    >{{ template.users[0].username }}</span
+                    >{{ template?.users[0]?.username }}</span
                 >
             </h4>
             <div id="template-details" class="mt-2">
@@ -206,15 +206,17 @@ async function deleteTemplate(id: string) {
                     class="flex flex-row items-center gap-x-1"
                 >
                     <i class="pi pi-map-marker text-lg text-calypso-600" />
-                    <h5 class="truncate text-lg">{{ template.destination }}</h5>
+                    <h5 class="truncate text-lg">
+                        {{ template?.destination }}
+                    </h5>
                 </div>
                 <div class="flex flex-row items-center gap-x-1">
                     <i class="pi pi-calendar text-lg text-calypso-600" />
                     <h5 class="truncate text-lg">
-                        {{ template.length }}
+                        {{ template?.length }}
                         <T
                             :key-name="
-                                template.length === 1
+                                template?.length === 1
                                     ? 'template.day'
                                     : 'template.days'
                             "
@@ -226,8 +228,8 @@ async function deleteTemplate(id: string) {
         <div class="dialogs">
             <JourneyIdDialogsProfileDialog
                 :visible="isProfileDialogVisible"
-                :username="template.users[0].username"
-                :displayname="template.users[0].display_name"
+                :username="template?.users[0]?.username"
+                :displayname="template?.users[0]?.display_name"
                 @close="isProfileDialogVisible = false"
             />
             <JourneyIdDialogsCreateTemplateDialog

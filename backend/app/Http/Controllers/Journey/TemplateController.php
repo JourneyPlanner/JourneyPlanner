@@ -35,9 +35,9 @@ class TemplateController extends Controller
         "total_ratings",
     ];
 
-    public function __construct()
+    public static function getColumns()
     {
-        $this->columns = [
+        return [
             "id",
             "name",
             "destination",
@@ -126,7 +126,7 @@ class TemplateController extends Controller
         // Get the validated values or use the default values
         $sortBy = $validated["sort_by"] ?? "id";
         $order = $validated["order"] ?? "asc";
-        $perPage = $validated["per_page"] ?? $this->perPage;
+        $perPage = $validated["per_page"] ?? static::$perPage;
 
         $name = $validated["template_name"] ?? null;
         $lengthMin = $validated["template_journey_length_min"] ?? null;
@@ -222,7 +222,7 @@ class TemplateController extends Controller
                 },
             ])
             ->orderBy($sortBy, $order)
-            ->cursorPaginate($perPage, $this->columns)
+            ->cursorPaginate($perPage, static::getColumns())
             ->withQueryString();
 
         return response()->json($templates);

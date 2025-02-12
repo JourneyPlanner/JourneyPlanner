@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\Journey\Activity\ActivityController;
 use App\Http\Controllers\Journey\Activity\CalendarActivityController;
 use App\Http\Controllers\Journey\JourneyController;
@@ -146,3 +147,17 @@ Route::delete("user/delete-account", [
 
 Route::get("user/{username}", [UserController::class, "show"]);
 Route::get("user", [UserController::class, "index"]);
+
+Route::get("business/{slug}", [BusinessController::class, "show"]);
+Route::get("business/{slug}/image/{image}", [
+    BusinessController::class,
+    "showImage",
+]);
+Route::get("business/{slug}/templates", [
+    BusinessController::class,
+    "showTemplates",
+]);
+Route::get("business/{slug}/activities", [
+    BusinessController::class,
+    "showActivities",
+]);
