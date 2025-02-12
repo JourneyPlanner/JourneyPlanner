@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y bash curl && curl -1sLf \
 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | bash \
 && apt-get update && apt-get install -y infisical
 
-COPY --link --exclude=node_modules . . 
+COPY --link . . 
 RUN infisical run --env=prod -- npm run build
 
 FROM node:lts AS production-stage
