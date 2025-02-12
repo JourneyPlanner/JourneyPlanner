@@ -6,6 +6,9 @@ const { t } = useTranslate();
 const router = useRouter();
 const client = useSanctumClient();
 const toast = useToast();
+const templateStore = useTemplateStore();
+const user = useSanctumUser<User>();
+const { isAuthenticated } = useSanctumAuth();
 
 const username = ref(route.params.username);
 const displayname = ref("");
@@ -18,6 +21,8 @@ const MAX_FIRST_TEMPLATES = {
 const { data, error } = await useAsyncData("user", () =>
     client(`/api/user/${username.value}`),
 );
+
+const isCurrentUser = data.value?.username === user.value?.username;
 
 if (error.value) {
     if (error.value.statusCode === 404) {
@@ -41,10 +46,6 @@ if (error.value) {
     });
 }
 
-definePageMeta({
-    middleware: ["sanctum:auth"],
-});
-
 const showMore = ref(false);
 const toggleText = ref(t.value("profile.showMore") + username.value);
 const toggleTextShort = ref(t.value("profile.showMore.short"));
@@ -62,8 +63,9 @@ const loader = ref<HTMLElement | undefined>();
 onMounted(async () => {
     const lastRoute = router.options.history.state.back as string;
     if (
-        lastRoute &&
-        allowedRoutes.some((route) => lastRoute.startsWith(route))
+        (lastRoute &&
+            allowedRoutes.some((route) => lastRoute.startsWith(route))) ||
+        !isAuthenticated.value
     ) {
         isCloseIcon.value = true;
     } else if (route?.query?.journey) {
@@ -200,6 +202,15 @@ const toggle = () => {
 
 const navigateBack = () => {
     const lastRoute = router.options.history.state.back as string;
+
+    if (!isAuthenticated.value) {
+        if (lastRoute) {
+            router.push(lastRoute);
+        } else {
+            router.push("/journey/new");
+        }
+    }
+
     if (
         lastRoute &&
         allowedRoutes.some((route) => lastRoute.startsWith(route))
@@ -216,6 +227,16 @@ const openTemplateDialog = (template: Template) => {
     openedTemplate.value = template;
     isTemplatePopupVisible.value = true;
 };
+
+function removeTemplate(id: string) {
+    if (!id) return;
+    const index = templates.value.findIndex((template) => template.id === id);
+    if (index === -1) {
+        return;
+    }
+    templates.value.splice(index, 1);
+    templateStore.changeUpdate(true);
+}
 </script>
 
 <template>
@@ -283,7 +304,9 @@ const openTemplateDialog = (template: Template) => {
                         class="hidden md:block"
                         :template="template"
                         :displayed-in-profile="true"
+                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
+                        @template-deleted="removeTemplate"
                     />
                     <TemplateCardSmall
                         v-for="template in firstFourTemplates"
@@ -291,17 +314,19 @@ const openTemplateDialog = (template: Template) => {
                         class="md:hidden"
                         :template="template"
                         :displayed-in-profile="true"
+                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
+                        @template-deleted="removeTemplate"
                     />
                     <div
                         v-if="firstEightTemplates.length === 0"
-                        class="col-span-full hidden md:block"
+                        class="col-span-full hidden text-text dark:text-natural-50 md:block"
                     >
                         <T key-name="template.none" />
                     </div>
                     <div
                         v-if="firstFourTemplates.length === 0"
-                        class="col-span-full md:hidden"
+                        class="col-span-full text-text dark:text-natural-50 md:hidden"
                     >
                         <T key-name="template.none" />
                     </div>
@@ -317,7 +342,9 @@ const openTemplateDialog = (template: Template) => {
                         :key="template.id"
                         class="hidden md:block"
                         :template="template"
+                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
+                        @template-deleted="removeTemplate"
                     />
                     <TemplateCardSmall
                         v-for="template in remainingTemplatesMobile"
@@ -325,7 +352,9 @@ const openTemplateDialog = (template: Template) => {
                         class="md:hidden"
                         :template="template"
                         :displayed-in-profile="true"
+                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
+                        @template-deleted="removeTemplate"
                     />
                 </div>
                 <div ref="loader" class="col-span-full">
@@ -333,7 +362,9 @@ const openTemplateDialog = (template: Template) => {
                         <div class="flex justify-center">
                             <ProgressSpinner class="w-10" />
                         </div>
-                        <div class="flex justify-center italic">
+                        <div
+                            class="flex justify-center italic text-text dark:text-natural-50"
+                        >
                             <T key-name="dashboard.templates.loading" />
                         </div>
                     </div>
@@ -387,6 +418,29 @@ const openTemplateDialog = (template: Template) => {
                     isTemplatePopupVisible = false;
                     openedTemplate = undefined;
                 "
+            />
+            <ConfirmDialog
+                :draggable="false"
+                close-on-escape
+                dismissable-mask
+                group="username"
+                :pt="{
+                    header: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    content: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    footer: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
+                    },
+                    closeButton: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
+                    },
+                    closeButtonIcon: {
+                        class: 'h-5 w-5',
+                    },
+                }"
             />
         </div>
     </div>

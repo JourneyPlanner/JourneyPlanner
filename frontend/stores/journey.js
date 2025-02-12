@@ -70,6 +70,10 @@ export const useJourneyStore = defineStore("journey", () => {
         return this.docs;
     }
 
+    function getDescription() {
+        return this.journey.description;
+    }
+
     return {
         journey,
         media,
@@ -90,5 +94,6 @@ export const useJourneyStore = defineStore("journey", () => {
         getMedia,
         setDocs,
         getDocs,
+        getDescription,
     };
 });

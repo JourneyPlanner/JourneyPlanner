@@ -61,7 +61,7 @@ Route::apiResource("journey", JourneyController::class);
 Route::apiResource("journey/{journey}/activity", ActivityController::class);
 
 Route::apiResource("journey/{journey}/user", JourneyUserController::class)
-    ->only("index", "update")
+    ->only("index", "update", "destroy")
     ->middleware("auth:sanctum");
 
 Route::delete("journey/{journey}/leave", [
@@ -104,13 +104,18 @@ Route::post("template", [TemplateController::class, "store"])->middleware(
 );
 
 Route::get("template", [TemplateController::class, "index"]);
-
+Route::delete("template/{journey}", [JourneyController::class, "destroy"]);
+Route::put("template/{journey}", [TemplateController::class, "update"]);
 Route::get("template/{journey}", [TemplateController::class, "show"]);
 Route::get("template/{journey}/activity", [ActivityController::class, "index"]);
 Route::get("user/{username}/template", [
     TemplateController::class,
     "userTemplatesIndex",
 ]);
+Route::get("me/template", [
+    TemplateController::class,
+    "currentUserTemplatesIndex",
+])->middleware("auth:sanctum");
 
 Route::get("project", [ProjectController::class, "getProjectData"]);
 
