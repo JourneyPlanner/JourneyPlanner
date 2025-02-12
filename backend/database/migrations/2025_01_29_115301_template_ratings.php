@@ -24,6 +24,9 @@ return new class extends Migration {
                 ->cascadeOnDelete();
             $table->unsignedTinyInteger("rating");
             $table->timestamps();
+            $table->unique(["template_id", "user_id"]);
+            $table->index("template_id");
+            $table->index("user_id");
         });
 
         Schema::table("journeys", function (Blueprint $table) {
@@ -38,7 +41,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists("template_ratings");
-        Schema::table("templates", function (Blueprint $table) {
+        Schema::table("journeys", function (Blueprint $table) {
             $table->dropColumn("average_rating");
             $table->dropColumn("total_ratings");
         });
