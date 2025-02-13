@@ -26,29 +26,25 @@ class TemplateRating extends Model
         parent::boot();
 
         static::saved(function ($rating) {
-            $rating->updateTemplateRating();
+            $rating->updateAllTemplateRatings();
         });
 
         static::deleted(function ($rating) {
-            $rating->updateTemplateRating();
+            $rating->updateAllTemplateRatings();
         });
     }
 
     /**
      * Update the average rating and total ratings of the template.
      */
-    public function updateTemplateRating()
+    public function updateTemplateRating($template_id)
     {
-        $template = Journey::find($this->template_id);
+        $template = Journey::find($template_id);
 
-        $average = TemplateRating::where(
-            "template_id",
-            $this->template_id
-        )->avg("rating");
-        $count = TemplateRating::where(
-            "template_id",
-            $this->template_id
-        )->count();
+        $average = TemplateRating::where("template_id", $template_id)->avg(
+            "rating"
+        );
+        $count = TemplateRating::where("template_id", $template_id)->count();
 
         $globalAverage = TemplateRating::avg("rating");
         $weight = max(5, Journey::avg("total_ratings")); // Confidence value (weight constant)
@@ -65,6 +61,18 @@ class TemplateRating extends Model
             "average_rating" => $bayesianAverage,
             "total_ratings" => $count,
         ]);
+    }
+
+    /**
+     * Update the average rating and total ratings of all templates.
+     */
+    public function updateAllTemplateRatings()
+    {
+        Journey::chunk(100, function ($templates) {
+            foreach ($templates as $template) {
+                $this->updateTemplateRating($template->id);
+            }
+        });
     }
 
     /**
