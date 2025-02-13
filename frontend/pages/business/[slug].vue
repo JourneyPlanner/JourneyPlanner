@@ -170,8 +170,8 @@ const {
 } = await useInfiniteScroll<Activity>({
     loader: activityLoader,
     showMoreData: showMoreActivities,
-    showMoreDataText: "subdomain.activities.showMore",
-    showLessDataText: "subdomain.activities.showLess",
+    showMoreDataText: t.value("subdomain.activities.showMore"),
+    showLessDataText: t.value("subdomain.activities.showLess"),
     identifier: "business-activities",
     apiEndpoint: `/api/business/${slug.value}/activities`,
     params: {
@@ -187,8 +187,8 @@ const {
 } = await useInfiniteScroll<Template>({
     loader: templatesLoader,
     showMoreData: showMoreTemplates,
-    showMoreDataText: "subdomain.templates.showMore",
-    showLessDataText: "subdomain.templates.showLess",
+    showMoreDataText: t.value("subdomain.templates.showMore"),
+    showLessDataText: t.value("subdomain.templates.showLess"),
     identifier: "business-templates",
     apiEndpoint: `/api/business/${slug.value}/templates`,
     params: {

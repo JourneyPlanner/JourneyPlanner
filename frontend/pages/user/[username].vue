@@ -9,12 +9,26 @@ const { isAuthenticated } = useSanctumAuth<boolean>();
 const client = useSanctumClient();
 
 const ALLOWED_ROUTES = ["/journey", "/dashboard?tab=templates"];
+const screenWidth = ref(window.innerWidth);
 
 const isCurrentUser = ref<boolean>(false);
-const username = ref<string>(route.params.username as string);
+const username = ref<string>(
+    (route.params.username as string).replace("@", ""),
+);
 const displayname = ref<string>("");
 const profilePicture = ref("https://placehold.co/44");
 const joinDate = ref<Date | null>(null);
+
+const showMoreTemplates = ref<boolean>(false);
+const openedTemplate = ref<Template | undefined>();
+const isTemplatePopupVisible = ref<boolean>(false);
+const templatesLoader = ref<HTMLElement | undefined>();
+
+const maxDisplayedTemplates = computed(() => {
+    if (screenWidth.value >= 1024) return 6;
+    if (screenWidth.value >= 640) return 6;
+    return 4;
+});
 
 const { data, error } = await useAsyncData("user", () =>
     client(`/api/user/${username.value}`),
@@ -64,6 +78,32 @@ onMounted(() => {
     }
 });
 
+const {
+    data: templates,
+    moreDataAvailable: moreTemplatesAvailable,
+    status: templatesStatus,
+    toggle: toggleTemplates,
+    toggleText: toggleTextTemplates,
+} = await useInfiniteScroll<Template>({
+    loader: templatesLoader,
+    showMoreData: showMoreTemplates,
+    showMoreDataText: t.value("profile.showMore", {
+        username: isCurrentUser.value
+            ? t.value("profile.templates.created.by.you")
+            : username.value,
+    }),
+    showLessDataText: t.value("profile.showLess", {
+        username: isCurrentUser.value
+            ? t.value("profile.templates.created.by.you")
+            : username.value,
+    }),
+    identifier: "user-templates",
+    apiEndpoint: `/api/user/${username.value}/template`,
+    params: {
+        per_page: 6,
+    },
+});
+
 const whoseProfile = computed(() => {
     if (isCurrentUser.value) {
         return t.value("profile.your");
@@ -71,6 +111,24 @@ const whoseProfile = computed(() => {
         return `${displayname.value}`;
     }
 });
+
+const whoseTemplates = computed(() => {
+    if (isCurrentUser.value) {
+        return t.value("profile.yourTemplates");
+    } else {
+        return t.value("profile.templates", { username: username.value });
+    }
+});
+
+function openTemplateDialog(template: Template) {
+    openedTemplate.value = template;
+    isTemplatePopupVisible.value = true;
+}
+
+//TODO: darkmode
+//TODO: responsive
+//TODO: max width username/displayname
+//TODO: wieso werden nicht alle templates geladen, zweiter request ist []
 </script>
 
 <template>
@@ -94,11 +152,18 @@ const whoseProfile = computed(() => {
                 </div>
             </div>
         </div>
-        <div id="content" class="mt-5 flex w-full flex-row pl-16">
+        <div id="content" class="mt-5 flex w-full flex-row pl-16 pr-28">
             <div
                 id="profile"
-                class="flex h-[65vh] w-[48vh] flex-col items-center rounded-lg border-[3px] border-calypso-400 pt-5"
+                class="relative flex h-[65vh] min-w-[48vh] flex-col items-center rounded-lg border-[3px] border-calypso-400 pt-5"
             >
+                <button
+                    v-if="isCurrentUser"
+                    class="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                    @click="console.log('Edit profile')"
+                >
+                    <i class="pi pi-pencil" />
+                </button>
                 <NuxtImg
                     :src="profilePicture"
                     class="h-40 w-40 rounded-full object-contain"
@@ -106,15 +171,97 @@ const whoseProfile = computed(() => {
                 />
                 <h2 class="mt-6 text-2xl">{{ displayname }}</h2>
                 <h3 class="mt-1 text-xl text-natural-800">@{{ username }}</h3>
-                <span class="mb-1 mt-auto"
-                    ><T
+                <span class="mb-1 mt-auto">
+                    <T
                         key-name="profile.created_at"
                         :params="{
                             year: joinDate ? joinDate.getFullYear() : '',
                         }"
-                /></span>
+                    />
+                </span>
             </div>
-            <div id="templates"></div>
+            <div id="template-section" class="ml-10 w-full">
+                <h2 class="text-2xl font-semibold">
+                    {{ whoseTemplates }}
+                </h2>
+                <TransitionGroup
+                    name="fade"
+                    tag="div"
+                    class="relative mt-2 grid w-full grid-cols-2 gap-2 sm:grid-cols-3 md:gap-4 lg:grid-cols-3 lg:gap-4"
+                >
+                    <Skeleton
+                        v-for="index in maxDisplayedTemplates"
+                        v-show="
+                            templatesStatus === 'pending' && !showMoreTemplates
+                        "
+                        :key="index"
+                        class="w-16"
+                        height="10rem"
+                    />
+                    <TemplateCard
+                        v-for="(template, index) in templates"
+                        v-show="
+                            templatesStatus === 'success' &&
+                            (showMoreTemplates || index < maxDisplayedTemplates)
+                        "
+                        :key="template.id"
+                        class="hidden md:block"
+                        :template="template"
+                        :displayed-in-profile="false"
+                        @open-template="openTemplateDialog(template)"
+                    />
+                    <TemplateCardSmall
+                        v-for="(template, index) in templates"
+                        v-show="
+                            showMoreTemplates || index < maxDisplayedTemplates
+                        "
+                        :key="template.id"
+                        class="md:hidden"
+                        :template="template"
+                        :displayed-in-profile="false"
+                        @open-template="openTemplateDialog(template)"
+                    />
+                </TransitionGroup>
+                <div
+                    v-if="
+                        templates.length === 0 &&
+                        templatesStatus !== 'idle' &&
+                        templatesStatus !== 'pending'
+                    "
+                    class="col-span-full"
+                >
+                    <T key-name="template.none" />
+                </div>
+                <div ref="templatesLoader" class="col-span-full">
+                    <div v-if="moreTemplatesAvailable && showMoreTemplates">
+                        <div class="flex justify-center">
+                            <ProgressSpinner class="w-10" />
+                        </div>
+                        <div class="flex justify-center italic">
+                            <T key-name="dashboard.templates.loading" />
+                        </div>
+                    </div>
+                </div>
+                <div
+                    v-if="templates.length > 0"
+                    class="mt-4 flex justify-center"
+                >
+                    <button
+                        class="flex flex-col items-center justify-center text-text dark:text-natural-50"
+                        @click="toggleTemplates"
+                    >
+                        <span>{{ toggleTextTemplates }}</span>
+                        <span
+                            class="pi mt-1"
+                            :class="
+                                showMoreTemplates
+                                    ? 'pi-chevron-up order-first mb-1'
+                                    : 'pi-chevron-down'
+                            "
+                        />
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
