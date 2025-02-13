@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Gate;
 
 class TemplateController extends Controller
 {
-    private $columns;
-    private int $perPage = 20;
+    public static int $perPage = 20;
 
     /**
      * The columns to exclude when cloning a journey for creating/updating a template.
@@ -35,9 +34,9 @@ class TemplateController extends Controller
         "total_ratings",
     ];
 
-    public function __construct()
+    public static function getColumns()
     {
-        $this->columns = [
+        return [
             "id",
             "name",
             "destination",
@@ -130,7 +129,7 @@ class TemplateController extends Controller
         // Get the validated values or use the default values
         $sortBy = $validated["sort_by"] ?? "average_rating";
         $order = $validated["order"] ?? "desc";
-        $perPage = $validated["per_page"] ?? $this->perPage;
+        $perPage = $validated["per_page"] ?? static::$perPage;
         $filterByRating = $validated["filter_by_rating"] ?? null;
 
         $name = $validated["template_name"] ?? null;
@@ -230,7 +229,7 @@ class TemplateController extends Controller
                 },
             ])
             ->orderBy($sortBy, $order)
-            ->cursorPaginate($perPage, $this->columns)
+            ->cursorPaginate($perPage, static::getColumns())
             ->withQueryString();
 
         return response()->json($templates);
