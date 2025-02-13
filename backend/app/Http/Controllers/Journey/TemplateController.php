@@ -129,7 +129,7 @@ class TemplateController extends Controller
 
         // Get the validated values or use the default values
         $sortBy = $validated["sort_by"] ?? "average_rating";
-        $order = $validated["order"] ?? "asc";
+        $order = $validated["order"] ?? "desc";
         $perPage = $validated["per_page"] ?? $this->perPage;
         $filterByRating = $validated["filter_by_rating"] ?? null;
 
