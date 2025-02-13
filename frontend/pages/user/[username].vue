@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { useTranslate } from "@tolgee/vue";
+import { GravatarQuickEditorCore } from "@gravatar-com/quick-editor";
+import { useTolgee, useTranslate } from "@tolgee/vue";
 
 const route = useRoute();
 const router = useRouter();
 const { t } = useTranslate();
+const tolgee = useTolgee(["language"]);
 const user = useSanctumUser<User>();
 const { isAuthenticated } = useSanctumAuth<boolean>();
 const client = useSanctumClient();
+const gravatarEditor = ref<GravatarQuickEditorCore | undefined>();
 
 const ALLOWED_ROUTES = ["/journey", "/dashboard?tab=templates"];
 const screenWidth = ref(window.innerWidth);
@@ -76,6 +79,18 @@ onMounted(() => {
     } else {
         backRoute.value = "/dashboard";
     }
+
+    gravatarEditor.value = new GravatarQuickEditorCore({
+        email: user?.value?.email,
+        scope: ["avatars"],
+        locale: tolgee.value?.getLanguage(),
+        onProfileUpdated: (profile) => {
+            console.log("Profile updated", profile);
+        },
+        onOpened: () => {
+            console.log("Editor opened");
+        },
+    });
 });
 
 const {
@@ -160,7 +175,7 @@ function openTemplateDialog(template: Template) {
                 <button
                     v-if="isCurrentUser"
                     class="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                    @click="console.log('Edit profile')"
+                    @click="gravatarEditor?.open()"
                 >
                     <i class="pi pi-pencil" />
                 </button>
