@@ -8,6 +8,7 @@ use App\Http\Controllers\Journey\JourneyUserController;
 use App\Http\Controllers\Journey\MediaController;
 use App\Http\Controllers\Journey\TemplateController;
 use App\Http\Controllers\Journey\UploadController;
+use App\Http\Controllers\Journey\TemplateRatingController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -113,6 +114,14 @@ Route::get("user/{username}/template", [
     TemplateController::class,
     "userTemplatesIndex",
 ]);
+Route::post("template/{journey}/rate", [
+    TemplateRatingController::class,
+    "rate",
+])->middleware("auth:sanctum");
+Route::get("template/{journey}/rate", [
+    TemplateRatingController::class,
+    "show",
+])->middleware("auth:sanctum");
 Route::get("me/template", [
     TemplateController::class,
     "currentUserTemplatesIndex",

@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Gate;
 
 class TemplateController extends Controller
 {
-    private $columns;
-    private int $perPage = 20;
+    public static int $perPage = 20;
 
     /**
      * The columns to exclude when cloning a journey for creating/updating a template.
@@ -45,6 +44,8 @@ class TemplateController extends Controller
             "to",
             "description",
             "mapbox_full_address",
+            "average_rating",
+            "total_ratings",
             DB::raw("DATEDIFF(`to`, `from`) + 1 AS length"), // Only works with MySQL
         ];
     }
@@ -95,7 +96,9 @@ class TemplateController extends Controller
     {
         // Validate the request
         $validated = request()->validate([
-            "sort_by" => "nullable|string|in:id,name,destination,length",
+            "sort_by" =>
+                "nullable|string|in:id,name,destination,length,average_rating",
+            "filter_by_rating" => "nullable|integer|min:0|max:5",
             "order" => "nullable|string|in:asc,desc",
             "per_page" => "nullable|integer|min:1|max:100",
             "template_name" => "nullable|string",
@@ -124,9 +127,10 @@ class TemplateController extends Controller
         ]);
 
         // Get the validated values or use the default values
-        $sortBy = $validated["sort_by"] ?? "id";
-        $order = $validated["order"] ?? "asc";
+        $sortBy = $validated["sort_by"] ?? "average_rating";
+        $order = $validated["order"] ?? "desc";
         $perPage = $validated["per_page"] ?? static::$perPage;
+        $filterByRating = $validated["filter_by_rating"] ?? null;
 
         $name = $validated["template_name"] ?? null;
         $lengthMin = $validated["template_journey_length_min"] ?? null;
@@ -213,6 +217,9 @@ class TemplateController extends Controller
                     });
                 }
             )
+            ->when($filterByRating, function ($query) use ($filterByRating) {
+                $query->where("average_rating", ">=", $filterByRating);
+            })
             ->when($journey_id, function ($query) use ($journey_id) {
                 $query->where("created_from", $journey_id);
             })

@@ -18,6 +18,7 @@ export const useTemplateFilterStore = defineStore("template-filter", () => {
         templateCreator: "",
         cursor: null,
         nextCursor: null,
+        rating: null,
         search: "",
     });
 
@@ -46,6 +47,7 @@ export const useTemplateFilterStore = defineStore("template-filter", () => {
             templateCreator: "",
             cursor: null,
             nextCursor: null,
+            rating: null,
             search: "",
         };
         return this.filters;
