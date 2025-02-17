@@ -15,6 +15,7 @@ const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 const { t } = useTranslate();
 const fullConfig = resolveConfig(tailwindConfig);
+const echo = useEcho();
 
 const journeyId = route.params.id;
 const activityDataLoaded = ref(false);
@@ -47,7 +48,22 @@ onMounted(() => {
     if (route.query.username) {
         isMemberSidebarVisible.value = true;
     }
+
+    subscribeToPrivateChannel();
 });
+
+const writeNewMessage = (e: object) => console.log(JSON.stringify(e));
+
+function subscribeToPrivateChannel() {
+    const name = "App.Models.User." + currUser.value?.id;
+    const event = ".JourneyUpdated";
+
+    echo.private(name)
+        .listen(event, (e: object) => writeNewMessage(e))
+        .error((e: object) => {
+            console.error("Private channel error", e);
+        });
+}
 
 const { data, error } = await useAsyncData("journey", () =>
     client(`/api/journey/${journeyId}`),

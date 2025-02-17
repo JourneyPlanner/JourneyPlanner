@@ -134,6 +134,7 @@ export default defineNuxtConfig({
     },
     echo: {
         key: process.env.NUXT_REVERB_APP_KEY,
+        scheme: "http",
         authentication: {
             baseUrl: process.env.NUXT_BACKEND_URL || "http://localhost:8000",
             mode: "cookie",
