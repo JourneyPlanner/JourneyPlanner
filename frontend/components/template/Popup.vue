@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { UTCDate } from "@date-fns/utc";
 import { T, useTranslate } from "@tolgee/vue";
-import { format, parse } from "date-fns";
+import { differenceInDays, format, parse } from "date-fns";
 
 const props = defineProps({
     template: {
@@ -123,6 +124,19 @@ function changeRatingMobile() {
     isRatingVisible.value = false;
     changeRating();
 }
+
+const length = computed(() => {
+    if (template.length) {
+        return template.length;
+    } else {
+        return (
+            differenceInDays(
+                new UTCDate(template.to),
+                new UTCDate(template.from),
+            ) + 1
+        );
+    }
+});
 </script>
 
 <template>
@@ -206,10 +220,10 @@ function changeRatingMobile() {
                                 class="pi pi-calendar mr-2 text-xl text-calypso-600 dark:text-calypso-400"
                             />
                             <h5 class="truncate text-xl">
-                                {{ template.length }}
+                                {{ length }}
                                 <T
                                     :key-name="
-                                        template.length === 1
+                                        length === 1
                                             ? 'template.day'
                                             : 'template.days'
                                     "
@@ -487,10 +501,10 @@ function changeRatingMobile() {
                                 class="pi pi-calendar mr-2 text-base text-calypso-600 dark:text-calypso-400"
                             />
                             <h5 class="truncate text-base">
-                                {{ template.length }}
+                                {{ length }}
                                 <T
                                     :key-name="
-                                        template.length === 1
+                                        length === 1
                                             ? 'template.day'
                                             : 'template.days'
                                     "
