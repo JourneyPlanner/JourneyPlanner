@@ -91,15 +91,17 @@ await client(`/api/journey/${journeyId}/activity`, {
     },
 });
 
-await client(`/api/me/template?journey_id=${journeyId}`, {
-    async onResponse({ response }) {
-        if (response.ok) {
-            if (response._data.data) {
-                template.value = response._data.data[0];
+if (isAuthenticated.value) {
+    await client(`/api/me/template?journey_id=${journeyId}`, {
+        async onResponse({ response }) {
+            if (response.ok) {
+                if (response._data.data) {
+                    template.value = response._data.data[0];
+                }
             }
-        }
-    },
-});
+        },
+    });
+}
 
 const journeyData = data as Ref<Journey>;
 journeyStore.setJourney(journeyData);
