@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,8 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Journey extends Model
 {
-    use HasFactory;
-    use HasUuids;
+    use HasFactory, HasUuids, BroadcastsEvents;
 
     /**
      * The attributes that are mass assignable.
@@ -50,6 +50,16 @@ class Journey extends Model
      * @var array<int, string>
      */
     protected $hidden = ["pivot"];
+
+    /**
+     * Get the channels that model events should broadcast on.
+     *
+     * @return array<int, \Illuminate\Broadcasting\Channel|\Illuminate\Database\Eloquent\Model>
+     */
+    public function broadcastOn(string $event): array
+    {
+        return [$this, $this->user];
+    }
 
     /**
      * The users that are a part of the journey.

@@ -141,7 +141,7 @@ export default defineNuxtConfig({
     },
     vite: {
         optimizeDeps: {
-            include: ["pusher-js"], // or ['nuxt-laravel-echo > pusher-js'] for newer Vite versions
+            include: ["nuxt-laravel-echo > pusher-js"], // or ['nuxt-laravel-echo > pusher-js'] for newer Vite versions
         },
     },
 });
