@@ -139,4 +139,9 @@ export default defineNuxtConfig({
             mode: "cookie",
         },
     },
+    vite: {
+        optimizeDeps: {
+            include: ["pusher-js"], // or ['nuxt-laravel-echo > pusher-js'] for newer Vite versions
+        },
+    },
 });
