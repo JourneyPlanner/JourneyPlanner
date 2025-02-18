@@ -42,6 +42,22 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
+     * Bootstrap the model and its traits.
+     *
+     * @return void
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saved(function ($user) {
+            if ($user->wasChanged("email")) {
+                $user->update(["email_hash" => hash("sha256", $user->email)]);
+            }
+        });
+    }
+
+    /**
      * The journeys that the user is a part of.
      */
     public function journeys(): BelongsToMany
