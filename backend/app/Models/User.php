@@ -52,7 +52,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
         static::saved(function ($user) {
             if ($user->wasChanged("email")) {
-                $user->update(["email_hash" => hash("sha256", $user->email)]);
+                $user->email_hash = hash("sha256", $user->email);
+                $user->save();
             }
         });
     }

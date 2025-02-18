@@ -1,12 +1,12 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -17,12 +17,9 @@ return new class extends Migration
         });
 
         // Hash all emails
-        DB::table("users")->get()->each(function ($user) {
-            DB::table("users")
-                ->where("id", $user->id)
-                ->update([
-                    "email_hash" => hash("sha256", $user->email),
-                ]);
+        User::chunk(10, function (User $user) {
+            $user->email_hash = hash("sha256", $user->email);
+            $user->save();
         });
     }
 
