@@ -17,7 +17,7 @@ return new class extends Migration {
 
         Journey::chunk(10, function ($journeys) {
             foreach ($journeys as $journey) {
-                $journey->length = $journey->from->diff($journey->to)->d + 1;
+                $journey->length = $journey->from->diffInDays($journey->to) + 1;
                 $journey->save();
             }
         });

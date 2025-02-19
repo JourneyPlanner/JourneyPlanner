@@ -63,10 +63,9 @@ class Journey extends Model
         parent::boot();
 
         // Update length if start or end has changed
-        static::saved(function ($journey) {
-            if ($journey->wasChanged("from") || $journey->wasChanged("to")) {
-                $journey->length = $journey->from->diff($journey->to)->d + 1;
-                $journey->save();
+        static::saving(function ($journey) {
+            if ($journey->isDirty("from") || $journey->isDirty("to")) {
+                $journey->length = $journey->from->diffInDays($journey->to) + 1;
             }
         });
     }
