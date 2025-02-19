@@ -50,10 +50,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         parent::boot();
 
-        static::saved(function ($user) {
-            if ($user->wasChanged("email")) {
+        static::saving(function ($user) {
+            if ($user->isDirty("email")) {
                 $user->email_hash = hash("sha256", $user->email);
-                $user->save();
             }
         });
     }
