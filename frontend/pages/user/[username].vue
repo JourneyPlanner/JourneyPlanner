@@ -19,7 +19,6 @@ const username = ref<string>(
     (route.params.username as string).replace("@", ""),
 );
 const displayname = ref<string>("");
-const profilePicture = ref("https://placehold.co/44");
 const joinDate = ref<Date | null>(null);
 
 const showMoreTemplates = ref<boolean>(false);
@@ -51,16 +50,21 @@ if (error.value) {
             fatal: true,
         });
     }
-} else {
-    isCurrentUser.value = data.value?.username === user.value?.username;
-    displayname.value = data.value?.display_name;
-    username.value = data.value?.username;
-    //profilePicture.value = data.value?.profile_picture;
-    joinDate.value = new Date(data.value?.created_at);
-    useHead({
-        title: `${displayname.value} (@${username.value}) | JourneyPlanner`,
-    });
 }
+
+isCurrentUser.value = data.value?.username === user.value?.username;
+displayname.value = data.value?.display_name;
+username.value = data.value?.username;
+
+const { avatarUrl, refreshAvatar } = useGravatar(
+    data.value?.email_hash,
+    data.value?.display_name,
+);
+
+joinDate.value = new Date(data.value?.created_at);
+useHead({
+    title: `${displayname.value} (@${username.value}) | JourneyPlanner`,
+});
 
 const backRoute = ref("");
 
@@ -84,11 +88,8 @@ onMounted(() => {
         email: user?.value?.email,
         scope: ["avatars"],
         locale: tolgee.value?.getLanguage(),
-        onProfileUpdated: (profile) => {
-            console.log("Profile updated", profile);
-        },
-        onOpened: () => {
-            console.log("Editor opened");
+        onProfileUpdated: () => {
+            refreshAvatar();
         },
     });
 });
@@ -144,6 +145,8 @@ function openTemplateDialog(template: Template) {
 //TODO: responsive
 //TODO: max width username/displayname
 //TODO: wieso werden nicht alle templates geladen, zweiter request ist []
+//TODO: zumindest auf subdomain derzeit auch show more obwohl next cursor null ist
+//TODO: wenn man auf der Business Seite auf den Back Button klickt und dann mit dem Browser wieder zurücknavigiert dann sind alle Templates/Activities doppelt
 </script>
 
 <template>
@@ -180,9 +183,14 @@ function openTemplateDialog(template: Template) {
                     <i class="pi pi-pencil" />
                 </button>
                 <NuxtImg
-                    :src="profilePicture"
+                    :src="avatarUrl"
                     class="h-40 w-40 rounded-full object-contain"
+                    :class="
+                        isCurrentUser ? 'cursor-pointer hover:opacity-80' : ''
+                    "
                     :alt="t('profile.picture')"
+                    placeholder
+                    @click="isCurrentUser && gravatarEditor?.open()"
                 />
                 <h2 class="mt-6 text-2xl">{{ displayname }}</h2>
                 <h3 class="mt-1 text-xl text-natural-800">@{{ username }}</h3>
