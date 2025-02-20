@@ -3,7 +3,6 @@
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -17,9 +16,11 @@ return new class extends Migration {
         });
 
         // Hash all emails
-        User::chunk(10, function (User $user) {
-            $user->email_hash = hash("sha256", $user->email);
-            $user->save();
+        User::chunk(10, function ($users) {
+            foreach ($users as $user) {
+                $user->email_hash = hash("sha256", $user->email);
+                $user->save();
+            }
         });
     }
 
