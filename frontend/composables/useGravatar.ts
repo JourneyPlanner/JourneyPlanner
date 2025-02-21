@@ -18,7 +18,6 @@ export const useGravatar = (hash: string, displayName: string) => {
 
     const refreshAvatar = () => {
         timestamp.value = Date.now();
-        return avatarUrl.value;
     };
 
     return { avatarUrl, refreshAvatar };

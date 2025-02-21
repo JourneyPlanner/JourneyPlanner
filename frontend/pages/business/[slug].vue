@@ -399,7 +399,8 @@ function openActivityDialog(activity: Activity) {
                 <div
                     v-if="
                         templates.length > 0 &&
-                        (moreTemplatesAvailable || templates.length)
+                        (moreTemplatesAvailable ||
+                            templates.length > maxDisplayedTemplates)
                     "
                     class="mt-4 flex justify-center"
                 >
