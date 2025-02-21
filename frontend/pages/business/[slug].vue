@@ -60,6 +60,7 @@ if (error.value) {
 }
 
 const backRoute = ref<string>("/dashboard?tab=templates");
+const ALLOWED_ROUTES = ["/journey", "/dashboard?tab=templates", "/user"];
 
 const showMoreTemplates = ref(false);
 const openedTemplate = ref<Template | undefined>();
@@ -99,7 +100,12 @@ const phone = ref<string | null>(null);
 onMounted(async () => {
     const lastRoute = router.options.history.state.back as string;
 
-    if (lastRoute && lastRoute !== "") {
+    if (
+        (lastRoute &&
+            lastRoute !== "" &&
+            ALLOWED_ROUTES.some((route) => lastRoute.startsWith(route))) ||
+        lastRoute === "/"
+    ) {
         backRoute.value = lastRoute;
     } else {
         backRoute.value = "/dashboard?tab=templates";
@@ -305,6 +311,7 @@ function openActivityDialog(activity: Activity) {
                         v-show="
                             showMoreActivities || index < maxDisplayedActivities
                         "
+                        :id="activity.id"
                         :key="activity.id"
                         :activity="activity"
                         @open-activity-dialog="openActivityDialog"
@@ -354,7 +361,7 @@ function openActivityDialog(activity: Activity) {
                         v-show="
                             showMoreTemplates || index < maxDisplayedTemplates
                         "
-                        :key="template.id"
+                        :key="'template-card' + template.id"
                         class="hidden md:block"
                         :template="template"
                         :displayed-in-profile="false"
@@ -365,7 +372,7 @@ function openActivityDialog(activity: Activity) {
                         v-show="
                             showMoreTemplates || index < maxDisplayedTemplates
                         "
-                        :key="template.id"
+                        :key="'template-card-small' + template.id"
                         class="md:hidden"
                         :template="template"
                         :displayed-in-profile="false"
