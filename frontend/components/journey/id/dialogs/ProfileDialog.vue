@@ -151,7 +151,10 @@ const close = (): void => {
                 <h1
                     class="text-lg font-medium text-text dark:text-natural-50 xs:text-xl md:text-xl"
                 >
-                    <T key-name="profile.templates" />
+                    <T
+                        key-name="profile.templates"
+                        :params="{ username: username }"
+                    />
                     {{ username }}
                 </h1>
                 <div
