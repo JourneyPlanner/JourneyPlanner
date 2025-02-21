@@ -98,7 +98,6 @@ export async function useInfiniteScroll<T>(options: {
         cursor.value = null;
         nextCursor.value = null;
         moreDataAvailable.value = false;
-        console.log("Infinite scroll unmounted");
     });
 
     return { data: allData, moreDataAvailable, status, toggle, toggleText };

@@ -85,6 +85,7 @@ body {
 
 /*default scrollbar style*/
 ::-webkit-scrollbar {
+    height: 5px;
     width: 5px;
 }
 

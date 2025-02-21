@@ -30,7 +30,8 @@ const isTemplatePopupVisible = ref<boolean>(false);
 const templatesLoader = ref<HTMLElement | undefined>();
 
 const maxDisplayedTemplates = computed(() => {
-    if (screenWidth.value >= 1024) return 6;
+    if (screenWidth.value >= 1280) return 6;
+    if (screenWidth.value >= 1024) return 4;
     if (screenWidth.value >= 640) return 6;
     return 4;
 });
@@ -87,6 +88,8 @@ onMounted(() => {
         backRoute.value = "/dashboard";
     }
 
+    window.addEventListener("resize", updateScreenWidth);
+
     gravatarEditor.value = new GravatarQuickEditorCore({
         email: user?.value?.email,
         scope: ["avatars"],
@@ -95,6 +98,10 @@ onMounted(() => {
             refreshAvatar();
         },
     });
+});
+
+onUnmounted(async () => {
+    window.removeEventListener("resize", updateScreenWidth);
 });
 
 const {
@@ -123,8 +130,6 @@ const {
     },
 });
 
-console.log(showMoreTemplates.value);
-
 const whoseProfile = computed(() => {
     if (isCurrentUser.value) {
         return t.value("profile.your");
@@ -141,6 +146,10 @@ const whoseTemplates = computed(() => {
     }
 });
 
+const updateScreenWidth = () => {
+    screenWidth.value = window.innerWidth;
+};
+
 function openTemplateDialog(template: Template) {
     openedTemplate.value = template;
     isTemplatePopupVisible.value = true;
@@ -153,54 +162,61 @@ const locale = computed(() => {
         return enUS;
     }
 });
-
-//TODO: responsive
-//TODO: slug back wenn davor mal template offen dann blöde
 </script>
 
 <template>
     <div class="text-text dark:text-natural-50">
-        <div id="header" class="mt-5 flex flex-col">
-            <div class="flex flex-row items-center">
+        <div id="header" class="mt-2 flex lg:mt-5 lg:flex-col">
+            <div class="flex w-full flex-row items-center justify-between">
                 <NuxtLink
                     :to="backRoute"
-                    class="pi pi-angle-left cursor-pointer pl-2 pr-2 text-2xl text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 xs:text-3xl md:pr-3 md:text-3xl lg:pl-2 lg:pr-6"
+                    class="pi pi-angle-left cursor-pointer pr-1 text-3xl text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 max-lg:mb-0.5 xs:text-3xl md:pr-3 md:text-3xl lg:pl-2 lg:pr-6"
                 />
                 <div class="flex w-full flex-row items-center justify-between">
                     <h1
-                        class="max-w-48 truncate text-nowrap text-xl font-medium text-text dark:text-natural-50 xs:text-2xl sm:max-w-sm md:max-w-screen-md md:text-3xl"
+                        class="max-w-52 truncate text-nowrap text-2xl font-medium text-text dark:text-natural-50 xs:max-w-60 xs:text-2xl sm:max-w-96 md:max-w-[32rem] lg:max-w-[38rem] lg:text-3xl"
                     >
                         {{ whoseProfile }}
                     </h1>
                     <NuxtLink
                         :to="backRoute"
-                        class="pi pi-times cursor-pointer pl-2 pr-2 text-2xl text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 xs:text-3xl md:pr-3 md:text-3xl lg:pr-10"
-                    />
+                        class="hidden cursor-pointer pl-2 pr-2 text-2xl text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 md:pr-3 lg:block lg:pr-10"
+                    >
+                        <i class="pi pi-times xs:text-3xl md:text-3xl" />
+                    </NuxtLink>
+                    <button
+                        v-if="isCurrentUser"
+                        class="mr-5 flex h-8 w-8 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 sm:h-9 sm:w-9 lg:hidden"
+                        @click="gravatarEditor?.open()"
+                    >
+                        <i class="pi pi-pencil" />
+                    </button>
                 </div>
             </div>
         </div>
         <div
             id="content"
-            class="mt-5 flex w-full cursor-default flex-row pl-16 pr-28"
+            class="mt-3 flex w-full cursor-default flex-col pl-2 lg:mt-5 lg:flex-row lg:pl-16 lg:pr-5 xl:pr-28"
         >
             <div
                 id="profile"
-                class="relative flex h-[65vh] min-w-[48vh] max-w-[48vh] flex-col items-center rounded-xl border-[3px] border-calypso-400 pt-5"
+                class="relative flex flex-row lg:h-[65vh] lg:min-w-[48vh] lg:max-w-[48vh] lg:flex-col lg:items-center lg:rounded-xl lg:border-[3px] lg:border-calypso-400 lg:pt-5"
             >
                 <button
                     v-if="isCurrentUser"
-                    class="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                    class="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:hidden"
                     @click="gravatarEditor?.open()"
                 >
                     <i class="pi pi-pencil" />
                 </button>
                 <div
-                    class="group relative"
+                    id="picture"
+                    class="group relative xs:ml-2 md:ml-10"
                     @click="isCurrentUser && gravatarEditor?.open()"
                 >
                     <NuxtImg
                         :src="avatarUrl"
-                        class="h-40 w-40 rounded-full object-contain"
+                        class="h-28 w-28 rounded-full border object-contain sm:h-36 sm:w-36 lg:h-40 lg:w-40"
                         :class="
                             isCurrentUser
                                 ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
@@ -214,53 +230,64 @@ const locale = computed(() => {
                         class="pi pi-pencil invisible absolute left-1/2 top-1/2 cursor-pointer group-hover:visible"
                     />
                 </div>
-                <h2
-                    v-tooltip.top="{
-                        value: displayname,
-                        pt: { root: 'font-nunito' },
-                    }"
-                    class="mt-6 max-w-full truncate px-10 text-2xl"
+                <div
+                    class="flex h-full max-w-44 flex-col max-xs:ml-2 xs:ml-4 xs:max-w-56 sm:max-w-96 lg:mt-6 lg:w-full lg:max-w-full lg:items-center lg:justify-center lg:px-10"
                 >
-                    {{ displayname }}
-                </h2>
-                <h3
-                    v-tooltip.top="{
-                        value: username,
-                        pt: { root: 'font-nunito' },
-                    }"
-                    class="mt-1 max-w-full truncate px-10 text-xl text-natural-800 dark:text-natural-200"
-                >
-                    @{{ username }}
-                </h3>
-                <span
-                    v-tooltip.top="{
-                        value: $t('profile.created_at.tooltip', {
-                            date: joinDate
-                                ? format(new Date(joinDate), 'dd. MMMM yyyy', {
-                                      locale: locale,
-                                  })
-                                : '',
-                        }),
-                        pt: { root: 'font-nunito text-center' },
-                    }"
-                    class="mb-1 mt-auto text-natural-900 dark:text-natural-200"
-                >
-                    <T
-                        key-name="profile.created_at"
-                        :params="{
-                            year: joinDate ? joinDate.getFullYear() : '',
+                    <h2
+                        v-tooltip.top="{
+                            value: displayname,
+                            pt: { root: 'font-nunito' },
                         }"
-                    />
-                </span>
+                        class="max-w-full truncate text-xl sm:text-2xl lg:text-2xl"
+                    >
+                        {{ displayname }}
+                    </h2>
+                    <h3
+                        v-tooltip.top="{
+                            value: username,
+                            pt: { root: 'font-nunito' },
+                        }"
+                        class="max-w-full truncate text-lg text-natural-800 dark:text-natural-200 sm:text-xl lg:mt-1 lg:text-xl"
+                    >
+                        @{{ username }}
+                    </h3>
+                    <span
+                        v-tooltip.top="{
+                            value: $t('profile.created_at.tooltip', {
+                                date: joinDate
+                                    ? format(
+                                          new Date(joinDate),
+                                          'dd. MMMM yyyy',
+                                          {
+                                              locale: locale,
+                                          },
+                                      )
+                                    : '',
+                            }),
+                            pt: { root: 'font-nunito text-center' },
+                        }"
+                        class="mb-1 mt-auto text-natural-900 dark:text-natural-200"
+                    >
+                        <T
+                            key-name="profile.created_at"
+                            :params="{
+                                year: joinDate ? joinDate.getFullYear() : '',
+                            }"
+                        />
+                    </span>
+                </div>
             </div>
-            <div id="template-section" class="ml-10 w-full">
-                <h2 class="text-2xl font-semibold">
+            <div
+                id="template-section"
+                class="w-full px-2 max-lg:mt-10 md:px-10 lg:ml-5 xl:ml-10"
+            >
+                <h2 class="text-lg sm:text-xl lg:text-2xl lg:font-semibold">
                     {{ whoseTemplates }}
                 </h2>
                 <TransitionGroup
                     name="fade"
                     tag="div"
-                    class="relative mt-2 grid w-full grid-cols-2 gap-2 sm:grid-cols-3 md:gap-4 lg:grid-cols-3 lg:gap-4"
+                    class="relative mt-2 grid w-full grid-cols-2 gap-2 sm:grid-cols-3 md:gap-4 lg:grid-cols-2 lg:gap-4 xl:grid-cols-3"
                 >
                     <Skeleton
                         v-for="index in maxDisplayedTemplates"
@@ -276,8 +303,8 @@ const locale = computed(() => {
                         v-show="
                             showMoreTemplates || index < maxDisplayedTemplates
                         "
-                        :key="template.id"
-                        class="hidden md:block"
+                        :key="'template-card' + template.id"
+                        class="hidden lg:block"
                         :template="template"
                         :displayed-in-profile="true"
                         @open-template="openTemplateDialog(template)"
@@ -287,8 +314,8 @@ const locale = computed(() => {
                         v-show="
                             showMoreTemplates || index < maxDisplayedTemplates
                         "
-                        :key="template.id"
-                        class="md:hidden"
+                        :key="'template-card-small' + template.id"
+                        class="lg:hidden"
                         :template="template"
                         :displayed-in-profile="true"
                         @open-template="openTemplateDialog(template)"
@@ -315,7 +342,11 @@ const locale = computed(() => {
                     </div>
                 </div>
                 <div
-                    v-if="templates.length > 0 && showMoreTemplates"
+                    v-if="
+                        templates.length > 0 &&
+                        (moreTemplatesAvailable ||
+                            templates.length > maxDisplayedTemplates)
+                    "
                     class="mt-4 flex justify-center"
                 >
                     <button
