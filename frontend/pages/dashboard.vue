@@ -1112,9 +1112,9 @@ function editJourney(journey: Journey, id: string) {
                             <AutoComplete
                                 v-model="filters.templateCreator"
                                 data-test="templates-filter-creator"
-                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem]"
+                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem] font-nunito"
                                 :pt="{
-                                    panel: 'w-20 bg-natural-50 dark:bg-natural-900',
+                                    panel: 'w-20 bg-natural-50 dark:bg-natural-900 font-nunito',
                                     emptyMessage:
                                         'text-text dark:text-natural-50 font-nunito p-1',
                                     item: 'text-text dark:text-natural-50 hover:text-text hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',

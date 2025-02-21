@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { GravatarQuickEditorCore } from "@gravatar-com/quick-editor";
 import { useTolgee, useTranslate } from "@tolgee/vue";
+import { format } from "date-fns";
+import { de } from "date-fns/locale/de";
+import { enUS } from "date-fns/locale/en-US";
 
 const route = useRoute();
 const router = useRouter();
@@ -55,13 +58,13 @@ if (error.value) {
 isCurrentUser.value = data.value?.username === user.value?.username;
 displayname.value = data.value?.display_name;
 username.value = data.value?.username;
+joinDate.value = new Date(data.value?.created_at);
 
 const { avatarUrl, refreshAvatar } = useGravatar(
     data.value?.email_hash,
     data.value?.display_name,
 );
 
-joinDate.value = new Date(data.value?.created_at);
 useHead({
     title: `${displayname.value} (@${username.value}) | JourneyPlanner`,
 });
@@ -120,6 +123,8 @@ const {
     },
 });
 
+console.log(showMoreTemplates.value);
+
 const whoseProfile = computed(() => {
     if (isCurrentUser.value) {
         return t.value("profile.your");
@@ -141,16 +146,20 @@ function openTemplateDialog(template: Template) {
     isTemplatePopupVisible.value = true;
 }
 
-//TODO: darkmode
+const locale = computed(() => {
+    if (tolgee.value?.getLanguage() === "de") {
+        return de;
+    } else {
+        return enUS;
+    }
+});
+
 //TODO: responsive
-//TODO: max width username/displayname
-//TODO: wieso werden nicht alle templates geladen, zweiter request ist []
-//TODO: zumindest auf subdomain derzeit auch show more obwohl next cursor null ist
-//TODO: wenn man auf der Business Seite auf den Back Button klickt und dann mit dem Browser wieder zurücknavigiert dann sind alle Templates/Activities doppelt
+//TODO: slug back wenn davor mal template offen dann blöde
 </script>
 
 <template>
-    <div>
+    <div class="text-text dark:text-natural-50">
         <div id="header" class="mt-5 flex flex-col">
             <div class="flex flex-row items-center">
                 <NuxtLink
@@ -170,10 +179,13 @@ function openTemplateDialog(template: Template) {
                 </div>
             </div>
         </div>
-        <div id="content" class="mt-5 flex w-full flex-row pl-16 pr-28">
+        <div
+            id="content"
+            class="mt-5 flex w-full cursor-default flex-row pl-16 pr-28"
+        >
             <div
                 id="profile"
-                class="relative flex h-[65vh] min-w-[48vh] flex-col items-center rounded-lg border-[3px] border-calypso-400 pt-5"
+                class="relative flex h-[65vh] min-w-[48vh] max-w-[48vh] flex-col items-center rounded-xl border-[3px] border-calypso-400 pt-5"
             >
                 <button
                     v-if="isCurrentUser"
@@ -182,19 +194,57 @@ function openTemplateDialog(template: Template) {
                 >
                     <i class="pi pi-pencil" />
                 </button>
-                <NuxtImg
-                    :src="avatarUrl"
-                    class="h-40 w-40 rounded-full object-contain"
-                    :class="
-                        isCurrentUser ? 'cursor-pointer hover:opacity-80' : ''
-                    "
-                    :alt="t('profile.picture')"
-                    placeholder
+                <div
+                    class="group relative"
                     @click="isCurrentUser && gravatarEditor?.open()"
-                />
-                <h2 class="mt-6 text-2xl">{{ displayname }}</h2>
-                <h3 class="mt-1 text-xl text-natural-800">@{{ username }}</h3>
-                <span class="mb-1 mt-auto">
+                >
+                    <NuxtImg
+                        :src="avatarUrl"
+                        class="h-40 w-40 rounded-full object-contain"
+                        :class="
+                            isCurrentUser
+                                ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
+                                : ''
+                        "
+                        :alt="t('profile.picture')"
+                        placeholder
+                    />
+                    <i
+                        v-show="isCurrentUser"
+                        class="pi pi-pencil invisible absolute left-1/2 top-1/2 cursor-pointer group-hover:visible"
+                    />
+                </div>
+                <h2
+                    v-tooltip.top="{
+                        value: displayname,
+                        pt: { root: 'font-nunito' },
+                    }"
+                    class="mt-6 max-w-full truncate px-10 text-2xl"
+                >
+                    {{ displayname }}
+                </h2>
+                <h3
+                    v-tooltip.top="{
+                        value: username,
+                        pt: { root: 'font-nunito' },
+                    }"
+                    class="mt-1 max-w-full truncate px-10 text-xl text-natural-800 dark:text-natural-200"
+                >
+                    @{{ username }}
+                </h3>
+                <span
+                    v-tooltip.top="{
+                        value: $t('profile.created_at.tooltip', {
+                            date: joinDate
+                                ? format(new Date(joinDate), 'dd. MMMM yyyy', {
+                                      locale: locale,
+                                  })
+                                : '',
+                        }),
+                        pt: { root: 'font-nunito text-center' },
+                    }"
+                    class="mb-1 mt-auto text-natural-900 dark:text-natural-200"
+                >
                     <T
                         key-name="profile.created_at"
                         :params="{
@@ -224,13 +274,12 @@ function openTemplateDialog(template: Template) {
                     <TemplateCard
                         v-for="(template, index) in templates"
                         v-show="
-                            templatesStatus === 'success' &&
-                            (showMoreTemplates || index < maxDisplayedTemplates)
+                            showMoreTemplates || index < maxDisplayedTemplates
                         "
                         :key="template.id"
                         class="hidden md:block"
                         :template="template"
-                        :displayed-in-profile="false"
+                        :displayed-in-profile="true"
                         @open-template="openTemplateDialog(template)"
                     />
                     <TemplateCardSmall
@@ -241,7 +290,7 @@ function openTemplateDialog(template: Template) {
                         :key="template.id"
                         class="md:hidden"
                         :template="template"
-                        :displayed-in-profile="false"
+                        :displayed-in-profile="true"
                         @open-template="openTemplateDialog(template)"
                     />
                 </TransitionGroup>
@@ -266,7 +315,7 @@ function openTemplateDialog(template: Template) {
                     </div>
                 </div>
                 <div
-                    v-if="templates.length > 0"
+                    v-if="templates.length > 0 && showMoreTemplates"
                     class="mt-4 flex justify-center"
                 >
                     <button
@@ -285,6 +334,17 @@ function openTemplateDialog(template: Template) {
                     </button>
                 </div>
             </div>
+        </div>
+        <div id="dialogs">
+            <TemplatePopup
+                v-if="openedTemplate"
+                :template="openedTemplate"
+                :is-template-dialog-visible="isTemplatePopupVisible"
+                @close="
+                    isTemplatePopupVisible = false;
+                    openedTemplate = undefined;
+                "
+            />
         </div>
     </div>
 </template>

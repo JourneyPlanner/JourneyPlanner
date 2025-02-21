@@ -328,7 +328,7 @@ function openActivityDialog(activity: Activity) {
                     </div>
                 </div>
                 <div
-                    v-if="activities.length > 0"
+                    v-if="activities.length > 0 && showMoreActivities"
                     class="mt-4 flex justify-center"
                 >
                     <button
@@ -393,7 +393,7 @@ function openActivityDialog(activity: Activity) {
                     </div>
                 </div>
                 <div
-                    v-if="templates.length > 0"
+                    v-if="templates.length > 0 && showMoreTemplates"
                     class="mt-4 flex justify-center"
                 >
                     <button
