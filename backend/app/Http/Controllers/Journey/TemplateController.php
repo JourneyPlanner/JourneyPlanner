@@ -227,6 +227,11 @@ class TemplateController extends Controller
                 "users" => function ($query) {
                     $query->select("id", "username", "display_name");
                 },
+                "businesses" => function ($query) {
+                    $query
+                        ->select("id", "slug", "name")
+                        ->wherePivot("created_by_business", true);
+                },
             ])
             ->orderBy($sortBy, $order)
             ->cursorPaginate($perPage, static::getColumns())
