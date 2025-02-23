@@ -16,6 +16,7 @@ const gravatarEditor = ref<GravatarQuickEditorCore | undefined>();
 
 const ALLOWED_ROUTES = ["/journey", "/dashboard?tab=templates"];
 const screenWidth = ref(window.innerWidth);
+const isCloseIconVisible = ref(route.query.ref === "profile-dialog");
 
 const isCurrentUser = ref<boolean>(false);
 const username = ref<string>(
@@ -130,14 +131,6 @@ const {
     },
 });
 
-const whoseProfile = computed(() => {
-    if (isCurrentUser.value) {
-        return t.value("profile.your");
-    } else {
-        return `${displayname.value}`;
-    }
-});
-
 const whoseTemplates = computed(() => {
     if (isCurrentUser.value) {
         return t.value("profile.yourTemplates");
@@ -174,11 +167,12 @@ const locale = computed(() => {
                 />
                 <div class="flex w-full flex-row items-center justify-between">
                     <h1
-                        class="max-w-52 truncate text-nowrap text-2xl font-medium text-text dark:text-natural-50 xs:max-w-60 xs:text-2xl sm:max-w-96 md:max-w-[32rem] lg:max-w-[38rem] lg:text-3xl"
+                        class="max-w-52 truncate text-nowrap text-xl font-medium text-text dark:text-natural-50 xs:text-xl lg:text-2xl"
                     >
-                        {{ whoseProfile }}
+                        <T key-name="common.back" />
                     </h1>
                     <NuxtLink
+                        v-show="isCloseIconVisible"
                         :to="backRoute"
                         class="hidden cursor-pointer pl-2 pr-2 text-2xl text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 md:pr-3 lg:block lg:pr-10"
                     >
@@ -200,7 +194,7 @@ const locale = computed(() => {
         >
             <div
                 id="profile"
-                class="relative flex flex-row lg:h-[65vh] lg:min-w-[48vh] lg:max-w-[48vh] lg:flex-col lg:items-center lg:rounded-xl lg:border-[3px] lg:border-calypso-400 lg:pt-5"
+                class="relative flex flex-row md:ml-10 lg:ml-0 lg:h-[65vh] lg:min-w-[48vh] lg:max-w-[48vh] lg:flex-col lg:items-center lg:rounded-xl lg:border-[3px] lg:border-calypso-400 lg:pt-5"
             >
                 <button
                     v-if="isCurrentUser"
@@ -211,7 +205,7 @@ const locale = computed(() => {
                 </button>
                 <div
                     id="picture"
-                    class="group relative xs:ml-2 md:ml-10"
+                    class="group relative"
                     @click="isCurrentUser && gravatarEditor?.open()"
                 >
                     <NuxtImg
@@ -222,7 +216,7 @@ const locale = computed(() => {
                                 ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
                                 : ''
                         "
-                        :alt="t('profile.picture')"
+                        :alt="t('profile.picture', { username: username })"
                         placeholder
                     />
                     <i
@@ -231,7 +225,8 @@ const locale = computed(() => {
                     />
                 </div>
                 <div
-                    class="flex h-full max-w-44 flex-col max-xs:ml-2 xs:ml-4 xs:max-w-56 sm:max-w-96 lg:mt-6 lg:w-full lg:max-w-full lg:items-center lg:justify-center lg:px-10"
+                    id="info"
+                    class="ml-2 flex h-full max-w-44 flex-col xs:ml-4 xs:max-w-56 sm:max-w-96 md:ml-8 lg:ml-0 lg:mt-6 lg:w-full lg:max-w-full lg:items-center lg:justify-center lg:px-10"
                 >
                     <h2
                         v-tooltip.top="{
@@ -244,7 +239,7 @@ const locale = computed(() => {
                     </h2>
                     <h3
                         v-tooltip.top="{
-                            value: username,
+                            value: '@' + username,
                             pt: { root: 'font-nunito' },
                         }"
                         class="max-w-full truncate text-lg text-natural-800 dark:text-natural-200 sm:text-xl lg:mt-1 lg:text-xl"
