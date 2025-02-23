@@ -209,11 +209,37 @@ class TemplateController extends Controller
                 },
                 function ($query) use ($creator) {
                     $query->when($creator, function ($query) use ($creator) {
-                        $query->whereHas("users", function ($query) use (
-                            $creator
-                        ) {
-                            $query->where("username", "like", "%$creator%");
-                        });
+                        $query
+                            ->whereHas("users", function ($query) use (
+                                $creator
+                            ) {
+                                $query
+                                    ->where("username", "like", "%$creator%")
+                                    ->orWhere(
+                                        "display_name",
+                                        "like",
+                                        "%$creator%"
+                                    );
+                            })
+                            ->orWhereHas("businesses", function ($query) use (
+                                $creator
+                            ) {
+                                $query
+                                    ->where(function ($query) use ($creator) {
+                                        $query
+                                            ->where(
+                                                "slug",
+                                                "like",
+                                                "%$creator%"
+                                            )
+                                            ->orWhere(
+                                                "name",
+                                                "like",
+                                                "%$creator%"
+                                            );
+                                    })
+                                    ->where("created_by_business", true);
+                            });
                     });
                 }
             )
