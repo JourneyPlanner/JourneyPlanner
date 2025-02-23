@@ -42,7 +42,7 @@ const isProfileDialogVisible = ref(false);
                     </h3>
                     <h4
                         v-tooltip.top="{
-                            value: template.users[0].username,
+                            value: template.creator.username,
                             pt: { root: 'font-nunito' },
                         }"
                         class="-mt-1 truncate text-sm text-natural-600 dark:text-natural-300"
@@ -50,7 +50,7 @@ const isProfileDialogVisible = ref(false);
                         <T key-name="template.by" /><span
                             class="cursor-pointer hover:text-calypso-600 hover:underline"
                             @click.stop="isProfileDialogVisible = true"
-                            >{{ template.users[0].username }}</span
+                            >{{ template.creator.username }}</span
                         >
                     </h4>
                 </div>
@@ -110,8 +110,8 @@ const isProfileDialogVisible = ref(false);
         <div class="dialogs">
             <JourneyIdDialogsProfileDialog
                 :visible="isProfileDialogVisible"
-                :username="template.users[0].username"
-                :displayname="template.users[0].display_name"
+                :username="template.creator.username"
+                :displayname="template.creator.display_name"
                 @close="isProfileDialogVisible = false"
             />
         </div>
