@@ -49,20 +49,31 @@ onMounted(() => {
         isMemberSidebarVisible.value = true;
     }
 
-    subscribeToPrivateChannel();
+    subscribeToChannel();
 });
 
-const writeNewMessage = (e: object) => console.log(JSON.stringify(e));
-
-function subscribeToPrivateChannel() {
+function subscribeToChannel() {
     const name = "App.Models.Journey." + journeyId;
-    const event = ".JourneyUpdated";
 
     echo.private(name)
-        .listen(event, (e: object) => writeNewMessage(e))
+        .listen(".JourneyUpdated", (e: object) => journeyUpdated(e))
+        .listen(".ActivityUpdated", (e: object) => activityUpdated(e))
+        .listen(".ActivityCreated", (e: object) => activityCreated(e))
         .error((e: object) => {
             console.error("Private channel error", e);
         });
+}
+
+function journeyUpdated(e: object) {
+    console.log(e);
+}
+
+function activityUpdated(e: object) {
+    console.log(e);
+}
+
+function activityCreated(e: object) {
+    console.log(e);
 }
 
 const { data, error } = await useAsyncData("journey", () =>
