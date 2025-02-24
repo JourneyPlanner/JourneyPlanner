@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Journey;
+use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -12,3 +14,10 @@ use Illuminate\Support\Facades\Broadcast;
 | used to check if an authenticated user can listen to the channel.
 |
 */
+
+Broadcast::channel("App.Models.Journey.{journey}", function (
+    User $user,
+    Journey $journey
+) {
+    return $user->can("view", [$journey, true]);
+});

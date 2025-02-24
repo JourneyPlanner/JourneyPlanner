@@ -59,7 +59,7 @@ class Journey extends Model
      */
     public function broadcastOn(string $event): array
     {
-        return [new Channel("Journey." . $this->id)];
+        return [$this];
     }
 
     /**

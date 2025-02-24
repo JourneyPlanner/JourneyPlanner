@@ -55,10 +55,10 @@ onMounted(() => {
 const writeNewMessage = (e: object) => console.log(JSON.stringify(e));
 
 function subscribeToPrivateChannel() {
-    const name = "Journey." + journeyId;
+    const name = "App.Models.Journey." + journeyId;
     const event = ".JourneyUpdated";
 
-    echo.channel(name)
+    echo.private(name)
         .listen(event, (e: object) => writeNewMessage(e))
         .error((e: object) => {
             console.error("Private channel error", e);
