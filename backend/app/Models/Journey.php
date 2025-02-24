@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,7 +59,7 @@ class Journey extends Model
      */
     public function broadcastOn(string $event): array
     {
-        return [$this, $this->user];
+        return [new Channel("Journey." . $this->id)];
     }
 
     /**
