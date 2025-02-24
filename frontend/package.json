@@ -48,7 +48,7 @@
         "jszip": "^3.10.1",
         "lightgallery": "^2.8.2",
         "nuxt": "^3.15.4",
-        "pinia": "^2.3.1",
+        "pinia": "^3.0.1",
         "primeicons": "^7.0.0",
         "primevue": "^3.52.0",
         "qrcode": "^1.5.4",
