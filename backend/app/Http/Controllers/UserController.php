@@ -45,6 +45,7 @@ class UserController extends Controller
         $user = User::where("username", $username)->firstOrFail([
             "username",
             "display_name",
+            "email_hash",
             "created_at",
         ]);
 
@@ -85,7 +86,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             "password" => "string|nullable",
-            "email" => "required|email|unique:users",
+            "email" => "required|string|lowercase|email|max:255|unique:users",
         ]);
 
         $user = $request->user();

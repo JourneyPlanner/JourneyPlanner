@@ -115,6 +115,7 @@ useHead({
                 id: 'TEMPLATE',
                 display_name: 'TEMPLATE',
                 username: 'TEMPLATE',
+                email: 'TEMPLATE',
                 role: 0,
             }"
         />
@@ -133,6 +134,7 @@ useHead({
                 id: 'TEMPLATE',
                 display_name: 'TEMPLATE',
                 username: 'TEMPLATE',
+                email: 'TEMPLATE',
                 role: 0,
             }"
             :is-activity-dialog-visible="false"
