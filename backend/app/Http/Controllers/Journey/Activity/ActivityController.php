@@ -302,14 +302,13 @@ class ActivityController extends Controller
                 $subActivity->save();
 
                 $editedCalendarActivity->activity_id = $subActivity->id;
-                $editedCalendarActivity->save();
 
                 if ($timeDifference) {
                     $editedCalendarActivity->start = $editedCalendarActivity->start->add(
                         $timeDifference
                     );
-                    $editedCalendarActivity->save();
                 }
+                $editedCalendarActivity->save();
 
                 if ($repeatedChanged) {
                     $activities[] = $subActivity->load("calendarActivities");
