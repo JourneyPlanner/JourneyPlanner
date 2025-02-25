@@ -90,7 +90,8 @@ class ActivityController extends Controller
 
         static::handleRepeatingActivity($journey, $activity, $calendarActivity);
 
-        return response()->json($activity->load("calendarActivities"), 201);
+        //return response()->json($activity->load("calendarActivities"), 201);
+        return response()->noContent();
     }
 
     /**
@@ -423,7 +424,8 @@ class ActivityController extends Controller
             ...$baseActivity->children()->with("calendarActivities")->get()
         );
         $activities[] = $baseActivity->load("calendarActivities");
-        return response()->json($activities, 200);
+        //return response()->json($activities, 200);
+        return response()->noContent();
     }
 
     /**
@@ -471,7 +473,8 @@ class ActivityController extends Controller
             ->with("calendarActivities")
             ->get();
         $activities[] = $baseActivity->load("calendarActivities");
-        return response()->json($activities, 200);
+        //return response()->json($activities, 200);
+        return response()->noContent();
     }
 
     /**

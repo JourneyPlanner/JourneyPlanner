@@ -73,7 +73,8 @@ class CalendarActivityController extends Controller
             ->get();
         $activities[] = $baseActivity->load("calendarActivities");
         $activities = $activities->merge($emptyActivities);
-        return response()->json($activities, 200);
+        //return response()->json($activities, 200);
+        return response()->noContent();
     }
 
     /**
