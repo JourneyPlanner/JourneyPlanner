@@ -134,4 +134,9 @@ class Activity extends Model
     {
         return [$this->journey];
     }
+
+    public function broadCastWith()
+    {
+        return $this->toArray();
+    }
 }
