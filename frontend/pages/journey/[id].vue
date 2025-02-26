@@ -49,6 +49,8 @@ onMounted(() => {
         isMemberSidebarVisible.value = true;
     }
 
+    calculateDays(journeyData.value.from, journeyData.value.to);
+
     subscribeToChannel();
 });
 
@@ -56,16 +58,12 @@ function subscribeToChannel() {
     const name = "App.Models.Journey." + journeyId;
 
     echo.private(name)
-        .listen(".JourneyUpdated", (e: object) => journeyUpdated(e))
+        .listen(".JourneyUpdated", (e: object) => journeyEdited(e.model))
         .listen(".ActivityUpdated", (e: object) => activityUpdated(e))
         .listen(".ActivityCreated", (e: object) => activityCreated(e))
         .error((e: object) => {
             console.error("Private channel error", e);
         });
-}
-
-function journeyUpdated(e: object) {
-    console.log(e);
 }
 
 function activityUpdated(e: object) {
@@ -193,10 +191,6 @@ const daystoEnd = ref(
     Math.ceil(differenceInHours(toDate.value, currentDate) / 24),
 );
 
-onMounted(() => {
-    calculateDays(journeyData.value.from, journeyData.value.to);
-});
-
 const confirmLeave = (event: Event) => {
     isMemberSidebarVisible.value = false;
     confirm.require({
@@ -267,7 +261,7 @@ function calculateDays(from: string, to: string) {
 
 async function journeyEdited(journey: Journey) {
     clearCalendar.value = false;
-    journeyStore.setJourney(journey);
+    journeyStore.updateJourney(journey);
     useHead({
         title: `${journey.name} | JourneyPlanner`,
     });
