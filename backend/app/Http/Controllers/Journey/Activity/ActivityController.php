@@ -12,7 +12,7 @@ use App\Models\Journey;
 use App\Services\MapboxService;
 use DateInterval;
 use DateTime;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
@@ -52,7 +52,7 @@ class ActivityController extends Controller
     public function store(
         StoreActivityRequest $request,
         Journey $journey
-    ): JsonResponse {
+    ): Response {
         // Validate the request
         $validated = $request->validated();
         // Limit the number of activities for guests
@@ -75,22 +75,26 @@ class ActivityController extends Controller
         // Create the calendar activity if the date is provided
         if (!static::createCalendarActivityIfNeeded($validated, $activity)) {
             $activity["calendar_activities"] = [];
-            return response()->json($activity, 201);
+            //return response()->json($activity, 201);
+            return response()->noContent();
         }
 
         // Handle repeating activities
         if (!isset($validated["repeat_type"])) {
-            return response()->json($activity->load("calendarActivities"), 201);
+            //return response()->json($activity->load("calendarActivities"), 201);
+            return response()->noContent();
         }
 
         $calendarActivity = $activity->calendarActivities()->first();
         if (!$calendarActivity) {
-            return response()->json($activity, 201);
+            //return response()->json($activity, 201);
+            return response()->noContent();
         }
 
         static::handleRepeatingActivity($journey, $activity, $calendarActivity);
 
-        return response()->json($activity->load("calendarActivities"), 201);
+        //return response()->json($activity->load("calendarActivities"), 201);
+        return response()->noContent();
     }
 
     /**
@@ -111,7 +115,7 @@ class ActivityController extends Controller
         UpdateActivityRequest $request,
         Journey $journey,
         Activity $activity
-    ) {
+    ): Response {
         // Validate the request
         $validated = $request->validated();
         $generalizeBaseActivityInsteadOfDeleting = false;
@@ -302,14 +306,13 @@ class ActivityController extends Controller
                 $subActivity->save();
 
                 $editedCalendarActivity->activity_id = $subActivity->id;
-                $editedCalendarActivity->save();
 
                 if ($timeDifference) {
                     $editedCalendarActivity->start = $editedCalendarActivity->start->add(
                         $timeDifference
                     );
-                    $editedCalendarActivity->save();
                 }
+                $editedCalendarActivity->save();
 
                 if ($repeatedChanged) {
                     $activities[] = $subActivity->load("calendarActivities");
@@ -424,7 +427,8 @@ class ActivityController extends Controller
             ...$baseActivity->children()->with("calendarActivities")->get()
         );
         $activities[] = $baseActivity->load("calendarActivities");
-        return response()->json($activities, 200);
+        //return response()->json($activities, 200);
+        return response()->noContent();
     }
 
     /**
@@ -472,7 +476,8 @@ class ActivityController extends Controller
             ->with("calendarActivities")
             ->get();
         $activities[] = $baseActivity->load("calendarActivities");
-        return response()->json($activities, 200);
+        //return response()->json($activities, 200);
+        return response()->noContent();
     }
 
     /**

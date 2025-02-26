@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CalendarActivity extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, BroadcastsEvents;
 
     /**
      * The activity that the calendar activity belongs to.
@@ -34,4 +35,14 @@ class CalendarActivity extends Model
     protected $casts = [
         "start" => "datetime",
     ];
+
+    /**
+     * Get the channels that model events should broadcast on.
+     *
+     * @return array<int, \Illuminate\Broadcasting\Channel|\Illuminate\Database\Eloquent\Model>
+     */
+    public function broadcastOn(string $event): array
+    {
+        return [$this->activity->journey];
+    }
 }

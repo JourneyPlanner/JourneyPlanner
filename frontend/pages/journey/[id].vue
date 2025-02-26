@@ -61,16 +61,29 @@ function subscribeToChannel() {
         .listen(".JourneyUpdated", (e: object) => journeyEdited(e.model))
         .listen(".ActivityUpdated", (e: object) => activityUpdated(e))
         .listen(".ActivityCreated", (e: object) => activityCreated(e))
+        .listen(".ActivityDeleted", (e: object) => activityDeleted(e))
+        .listen(".CalendarActivityUpdated", (e: object) => activityUpdated(e))
+        .listen(".CalendarActivityCreated", (e: object) => activityCreated(e))
+        .listen(".CalendarActivityDeleted", (e: object) => activityCreated(e))
         .error((e: object) => {
             console.error("Private channel error", e);
         });
 }
 
 function activityUpdated(e: object) {
-    console.log(e);
+    activityStore.updateActivity(e);
 }
 
 function activityCreated(e: object) {
+    console.log(e);
+    const responseData = Array.isArray(e) ? e : [e];
+    activityStore.addActivity(e);
+    const activites = [] as Activity[];
+    activites.push(...responseData);
+    activityStore.setNewActivity(e);
+}
+
+function activityDeleted(e: object) {
     console.log(e);
 }
 

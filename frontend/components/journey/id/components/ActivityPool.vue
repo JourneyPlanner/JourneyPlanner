@@ -196,7 +196,7 @@ async function deleteActivity(activity_id: string) {
                     ),
                     life: 6000,
                 });
-                activities.value
+                /* activities.value
                     .filter((activity) => activity.id === activity_id)
                     .forEach(async (activity: Activity) => {
                         activities.value.splice(
@@ -204,7 +204,7 @@ async function deleteActivity(activity_id: string) {
                             1,
                         );
                         store.setActivities(activities.value);
-                    });
+                    }); */
             }
         },
         async onRequestError() {
