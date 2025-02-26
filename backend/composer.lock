@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ffcd1301207816e2561a2959853585f",
+    "content-hash": "736230c4538150a9daff5e18c2c53dd6",
     "packages": [
         {
             "name": "brick/math",
@@ -693,16 +693,16 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.18.0",
+            "version": "v2.18.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "846f149c9f879449145326dad99ef00bf1d879f3"
+                "reference": "d8d201ba8a189a3cd7fb34e4da569f2ed440eee7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/846f149c9f879449145326dad99ef00bf1d879f3",
-                "reference": "846f149c9f879449145326dad99ef00bf1d879f3",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/d8d201ba8a189a3cd7fb34e4da569f2ed440eee7",
+                "reference": "d8d201ba8a189a3cd7fb34e4da569f2ed440eee7",
                 "shasum": ""
             },
             "require": {
@@ -756,9 +756,9 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client/issues",
-                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.18.0"
+                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.18.2"
             },
-            "time": "2024-10-16T21:58:58+00:00"
+            "time": "2024-12-16T22:52:40+00:00"
         },
         {
             "name": "google/apiclient-services",
@@ -806,25 +806,26 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.43.0",
+            "version": "v1.46.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "b6a80acd906492086db59aada9196dcfb9c512fe"
+                "reference": "7fafae99a41984cbfb92508174263cf7bf3049b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/b6a80acd906492086db59aada9196dcfb9c512fe",
-                "reference": "b6a80acd906492086db59aada9196dcfb9c512fe",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/7fafae99a41984cbfb92508174263cf7bf3049b9",
+                "reference": "7fafae99a41984cbfb92508174263cf7bf3049b9",
                 "shasum": ""
             },
             "require": {
                 "firebase/php-jwt": "^6.0",
                 "guzzlehttp/guzzle": "^7.4.5",
                 "guzzlehttp/psr7": "^2.4.5",
-                "php": "^8.1",
+                "php": "^8.0",
                 "psr/cache": "^2.0||^3.0",
-                "psr/http-message": "^1.1||^2.0"
+                "psr/http-message": "^1.1||^2.0",
+                "psr/log": "^3.0"
             },
             "require-dev": {
                 "guzzlehttp/promises": "^2.0",
@@ -851,18 +852,18 @@
                 "Apache-2.0"
             ],
             "description": "Google Auth Library for PHP",
-            "homepage": "http://github.com/google/google-auth-library-php",
+            "homepage": "https://github.com/google/google-auth-library-php",
             "keywords": [
                 "Authentication",
                 "google",
                 "oauth2"
             ],
             "support": {
-                "docs": "https://googleapis.github.io/google-auth-library-php/main/",
+                "docs": "https://cloud.google.com/php/docs/reference/auth/latest",
                 "issues": "https://github.com/googleapis/google-auth-library-php/issues",
-                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.43.0"
+                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.46.0"
             },
-            "time": "2024-11-07T19:35:20+00:00"
+            "time": "2025-02-12T22:21:37+00:00"
         },
         {
             "name": "graham-campbell/result-type",
@@ -4303,21 +4304,21 @@
         },
         {
             "name": "serdud/socialite-google-one-tap",
-            "version": "v2.1.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/serdud/socialite-google-one-tap.git",
-                "reference": "ac62f48196e9a696b226b3094b9ccfd48f66b134"
+                "reference": "277db6fc66a80e9af3160e4b44ebab051619d976"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/serdud/socialite-google-one-tap/zipball/ac62f48196e9a696b226b3094b9ccfd48f66b134",
-                "reference": "ac62f48196e9a696b226b3094b9ccfd48f66b134",
+                "url": "https://api.github.com/repos/serdud/socialite-google-one-tap/zipball/277db6fc66a80e9af3160e4b44ebab051619d976",
+                "reference": "277db6fc66a80e9af3160e4b44ebab051619d976",
                 "shasum": ""
             },
             "require": {
                 "google/apiclient": "^2.0",
-                "illuminate/support": "^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0",
+                "illuminate/support": "^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0 || ^12.0",
                 "laravel/socialite": "~5.0",
                 "php": "^7.4 || ^8.0"
             },
@@ -4355,9 +4356,9 @@
             ],
             "support": {
                 "issues": "https://github.com/serdud/socialite-google-one-tap/issues",
-                "source": "https://github.com/serdud/socialite-google-one-tap/tree/v2.1.0"
+                "source": "https://github.com/serdud/socialite-google-one-tap/tree/v2.2.0"
             },
-            "time": "2024-03-10T20:49:54+00:00"
+            "time": "2025-02-22T12:12:02+00:00"
         },
         {
             "name": "socialiteproviders/manager",
