@@ -188,7 +188,7 @@ function changeRatingMobile() {
                         <div
                             id="user"
                             v-tooltip.top="{
-                                value: template.destination,
+                                value: template.creator.username,
                                 pt: { root: 'font-nunito' },
                             }"
                             class="flex cursor-pointer flex-row items-center gap-x-1"
