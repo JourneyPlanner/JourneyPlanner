@@ -60,6 +60,7 @@ if (error.value) {
 }
 
 const backRoute = ref<string>("/dashboard?tab=templates");
+const ALLOWED_ROUTES = ["/journey", "/dashboard?tab=templates", "/user"];
 
 const showMoreTemplates = ref(false);
 const openedTemplate = ref<Template | undefined>();
@@ -99,7 +100,12 @@ const phone = ref<string | null>(null);
 onMounted(async () => {
     const lastRoute = router.options.history.state.back as string;
 
-    if (lastRoute && lastRoute !== "") {
+    if (
+        (lastRoute &&
+            lastRoute !== "" &&
+            ALLOWED_ROUTES.some((route) => lastRoute.startsWith(route))) ||
+        lastRoute === "/"
+    ) {
         backRoute.value = lastRoute;
     } else {
         backRoute.value = "/dashboard?tab=templates";
@@ -170,8 +176,8 @@ const {
 } = await useInfiniteScroll<Activity>({
     loader: activityLoader,
     showMoreData: showMoreActivities,
-    showMoreDataText: "subdomain.activities.showMore",
-    showLessDataText: "subdomain.activities.showLess",
+    showMoreDataText: t.value("subdomain.activities.showMore"),
+    showLessDataText: t.value("subdomain.activities.showLess"),
     identifier: "business-activities",
     apiEndpoint: `/api/business/${slug.value}/activities`,
     params: {
@@ -187,8 +193,8 @@ const {
 } = await useInfiniteScroll<Template>({
     loader: templatesLoader,
     showMoreData: showMoreTemplates,
-    showMoreDataText: "subdomain.templates.showMore",
-    showLessDataText: "subdomain.templates.showLess",
+    showMoreDataText: t.value("subdomain.templates.showMore"),
+    showLessDataText: t.value("subdomain.templates.showLess"),
     identifier: "business-templates",
     apiEndpoint: `/api/business/${slug.value}/templates`,
     params: {
@@ -305,6 +311,7 @@ function openActivityDialog(activity: Activity) {
                         v-show="
                             showMoreActivities || index < maxDisplayedActivities
                         "
+                        :id="activity.id"
                         :key="activity.id"
                         :activity="activity"
                         @open-activity-dialog="openActivityDialog"
@@ -321,7 +328,11 @@ function openActivityDialog(activity: Activity) {
                     </div>
                 </div>
                 <div
-                    v-if="activities.length > 0"
+                    v-if="
+                        activities.length > 0 &&
+                        (moreActivitiesAvailable ||
+                            activities.length > maxDisplayedActivities)
+                    "
                     class="mt-4 flex justify-center"
                 >
                     <button
@@ -354,7 +365,7 @@ function openActivityDialog(activity: Activity) {
                         v-show="
                             showMoreTemplates || index < maxDisplayedTemplates
                         "
-                        :key="template.id"
+                        :key="'template-card' + template.id"
                         class="hidden md:block"
                         :template="template"
                         :displayed-in-profile="false"
@@ -365,7 +376,7 @@ function openActivityDialog(activity: Activity) {
                         v-show="
                             showMoreTemplates || index < maxDisplayedTemplates
                         "
-                        :key="template.id"
+                        :key="'template-card-small' + template.id"
                         class="md:hidden"
                         :template="template"
                         :displayed-in-profile="false"
@@ -386,7 +397,11 @@ function openActivityDialog(activity: Activity) {
                     </div>
                 </div>
                 <div
-                    v-if="templates.length > 0"
+                    v-if="
+                        templates.length > 0 &&
+                        (moreTemplatesAvailable ||
+                            templates.length > maxDisplayedTemplates)
+                    "
                     class="mt-4 flex justify-center"
                 >
                     <button

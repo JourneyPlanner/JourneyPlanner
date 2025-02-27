@@ -1,10 +1,10 @@
-import { useTranslate } from "@tolgee/vue";
-
 /**
  * Composable to implement infinite scrolling
  * @param options {Object} - Necessary options for the composable
  * @param options.loader {Ref<HTMLElement | undefined>} - The loader element that will be observed for intersection
  * @param options.showMoreData {Ref<boolean>} - A boolean ref that toggles the infinite scrolling
+ * @param options.showMoreDataText {string} - The text (or t.value(text)) to show when infinite scrolling is enabled
+ * @param options.showLessDataText {string} - The text (or t.value(text)) to show when infinite scrolling is disabled
  * @param options.identifier {string} - The identifier for the useLazyAsyncData composable
  * @param options.apiEndpoint {string} - The API endpoint to fetch data from
  * @param options.params {Object} - The parameters to be sent to the API endpoint
@@ -20,7 +20,6 @@ export async function useInfiniteScroll<T>(options: {
     params: { [key: string]: string | number };
 }) {
     const client = useSanctumClient();
-    const { t } = useTranslate();
     const observer = ref<IntersectionObserver | null>(null);
 
     const moreDataAvailable = ref<boolean>(false);
@@ -53,7 +52,7 @@ export async function useInfiniteScroll<T>(options: {
         }
     });
 
-    const { data, refresh } = useLazyAsyncData(options.identifier, () =>
+    const { data, refresh, status } = useLazyAsyncData(options.identifier, () =>
         client(options.apiEndpoint, {
             params: {
                 ...options.params,
@@ -64,8 +63,9 @@ export async function useInfiniteScroll<T>(options: {
 
     watch(
         data,
-        () => {
+        async () => {
             if (data.value) {
+                await nextTick();
                 allData.value.push(...data.value.data);
 
                 if (data?.value.next_cursor === null) {
@@ -85,15 +85,20 @@ export async function useInfiniteScroll<T>(options: {
 
     const toggleText = computed(() =>
         options.showMoreData.value
-            ? t.value(options.showLessDataText)
-            : t.value(options.showMoreDataText),
+            ? options.showLessDataText
+            : options.showMoreDataText,
     );
 
     onUnmounted(() => {
         if (observer.value) {
             observer.value.disconnect();
         }
+        allData.value = [];
+        data.value = null;
+        cursor.value = null;
+        nextCursor.value = null;
+        moreDataAvailable.value = false;
     });
 
-    return { data: allData, moreDataAvailable, toggle, toggleText };
+    return { data: allData, moreDataAvailable, status, toggle, toggleText };
 }
