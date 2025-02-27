@@ -12,6 +12,8 @@ defineProps({
     },
 });
 
+const router = useRouter();
+
 defineEmits(["openTemplate"]);
 
 const { t } = useTranslate();
@@ -31,26 +33,43 @@ const isProfileDialogVisible = ref(false);
                 class="ml-1.5 flex items-center border-l-2 border-natural-400 pl-1 hover:border-calypso-400 dark:border-natural-400 dark:hover:border-calypso-400"
             >
                 <div class="ml-1.5 w-2/5 sm:w-1/3 lg:w-2/6 xl:w-1/3">
-                    <h3
-                        v-tooltip.top="{
-                            value: template.name,
-                            pt: { root: 'font-nunito' },
-                        }"
-                        class="truncate text-base font-medium text-text dark:text-natural-50"
-                    >
-                        {{ template.name }}
-                    </h3>
+                    <div class="flex items-center">
+                        <h3
+                            v-tooltip.top="{
+                                value: template.name,
+                                pt: { root: 'font-nunito' },
+                            }"
+                            class="truncate text-base font-medium text-text dark:text-natural-50"
+                        >
+                            {{ template.name }}
+                        </h3>
+                        <span
+                            v-if="template?.creator?.business"
+                            type="button"
+                            aria-haspopup="true"
+                            aria-controls="overlay_menu"
+                            class="pi pi-verified ml-auto justify-end text-lg text-calypso-600 dark:text-calypso-400"
+                        />
+                    </div>
                     <h4
                         v-tooltip.top="{
-                            value: template.users[0].username,
+                            value: template.creator.username,
                             pt: { root: 'font-nunito' },
                         }"
                         class="-mt-1 truncate text-sm text-natural-600 dark:text-natural-300"
                     >
                         <T key-name="template.by" /><span
                             class="cursor-pointer hover:text-calypso-600 hover:underline"
-                            @click.stop="isProfileDialogVisible = true"
-                            >{{ template.users[0].username }}</span
+                            @click.stop="
+                                !template?.creator?.business
+                                    ? (isProfileDialogVisible = true)
+                                    : template?.creator?.business
+                                      ? router.push(
+                                            `/business/${template?.creator?.username}`,
+                                        )
+                                      : ''
+                            "
+                            >{{ template.creator.username }}</span
                         >
                     </h4>
                 </div>
@@ -62,7 +81,7 @@ const isProfileDialogVisible = ref(false);
                             value: template.destination,
                             pt: { root: 'font-nunito' },
                         }"
-                        class="flex min-w-28 max-w-28 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-36 sm:min-w-32 sm:max-w-32 sm:gap-x-2 lg:min-w-24 lg:max-w-24 xl:min-w-32 xl:max-w-32 2xl:min-w-44 2xl:max-w-44"
+                        class="flex min-w-28 max-w-28 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-36 sm:min-w-32 sm:max-w-32 sm:gap-x-2 lg:min-w-20 lg:max-w-20 xl:min-w-24 xl:max-w-24 2xl:min-w-32 2xl:max-w-32"
                     >
                         <i
                             class="pi pi-map-marker text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
@@ -83,7 +102,7 @@ const isProfileDialogVisible = ref(false);
                                 ),
                             pt: { root: 'font-nunito' },
                         }"
-                        class="flex min-w-20 max-w-20 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-32 sm:min-w-32 sm:max-w-24 sm:gap-x-2 lg:min-w-24 lg:max-w-24 xl:min-w-32 xl:max-w-32 2xl:min-w-32 2xl:max-w-32"
+                        class="flex min-w-20 max-w-20 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-32 sm:min-w-32 sm:max-w-24 sm:gap-x-2 lg:min-w-16 lg:max-w-16 xl:min-w-20 xl:max-w-20 2xl:min-w-24 2xl:max-w-24"
                     >
                         <i
                             class="pi pi-calendar text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
@@ -99,6 +118,17 @@ const isProfileDialogVisible = ref(false);
                             />
                         </h5>
                     </div>
+                    <div
+                        class="flex min-w-20 max-w-20 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-32 sm:min-w-32 sm:max-w-24 sm:gap-x-2 lg:min-w-16 lg:max-w-16 xl:min-w-20 xl:max-w-20 2xl:min-w-24 2xl:max-w-24"
+                    >
+                        <i
+                            class="pi pi-star text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
+                        />
+                        <h5 class="truncate text-sm xl:text-base">
+                            {{ template.average_rating }}
+                            ({{ template.total_ratings }})
+                        </h5>
+                    </div>
                 </div>
                 <button class="ml-auto mr-2 flex items-center xs:mr-3 sm:mr-4">
                     <i
@@ -110,8 +140,8 @@ const isProfileDialogVisible = ref(false);
         <div class="dialogs">
             <JourneyIdDialogsProfileDialog
                 :visible="isProfileDialogVisible"
-                :username="template.users[0].username"
-                :displayname="template.users[0].display_name"
+                :username="template.creator.username"
+                :displayname="template.creator.display_name"
                 @close="isProfileDialogVisible = false"
             />
         </div>
