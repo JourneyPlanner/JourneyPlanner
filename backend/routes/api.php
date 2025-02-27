@@ -170,3 +170,8 @@ Route::get("business/{slug}/activities", [
     BusinessController::class,
     "showActivities",
 ]);
+
+Route::post("business/{slug}/uploadImage", [
+    BusinessController::class,
+    "uploadImage",
+])->middleware("auth:sanctum");

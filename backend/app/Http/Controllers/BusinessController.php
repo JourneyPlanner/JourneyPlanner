@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Journey\TemplateController;
 use App\Models\Business\Business;
 use App\Models\Business\BusinessImage;
+use App\Models\Business\BusinessImageAltText;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Business\BusinessText;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class BusinessController extends Controller
 {
@@ -81,11 +84,7 @@ class BusinessController extends Controller
         $businessToReturn["images"] = [];
         foreach ($business->images as $image) {
             $imageToReturn = [];
-            $imageToReturn["link"] = url(
-                "/api/business/{$slug}/image/{$image->id}",
-                [],
-                config("app.env") === "production"
-            );
+            $imageToReturn["link"] = $image->getLink();
             $imageToReturn[
                 "alt_text"
             ] = $image->imageAltTexts->first()->alt_text;
@@ -105,9 +104,7 @@ class BusinessController extends Controller
      */
     public function showImage(string $slug, BusinessImage $image)
     {
-        $path = storage_path(
-            "app/business_images/{$image->business()->first()->slug}/{$image->file_name}"
-        );
+        $path = $image->getPath();
         if (file_exists($path)) {
             return response()->file($path);
         } else {
@@ -158,5 +155,64 @@ class BusinessController extends Controller
             ->withQueryString();
 
         return response()->json($activities);
+    }
+
+    /**
+     * Upload an image for a business.
+     */
+    public function uploadImage(string $slug, Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            "image" => "nullable|image",
+            "type" => "required|string|in:image,banner",
+            "alt_texts" => "required|array",
+            "alt_texts.*.language" => "required|string|in:en,de",
+            "alt_texts.*.alt_text" => "required|string|max:255",
+        ]);
+        $business = Business::where("slug", $slug)->firstOrFail();
+
+        // Verify user business membership
+        Gate::authorize("update", $business);
+
+        $businessImage = $business
+            ->images()
+            ->where("key", $validated["type"])
+            ->first();
+        $image = $request->file("image");
+
+        // Save the image
+        if ($image) {
+            if ($businessImage) {
+                Storage::delete($businessImage->getPath());
+            }
+
+            $fileName = $image->store("business_images/{$slug}");
+            $businessImage = BusinessImage::updateOrCreate(
+                ["business_id" => $business->id, "key" => $validated["type"]],
+                ["path" => $fileName]
+            );
+        } elseif (!$businessImage) {
+            return response()->json(["error" => "No image provided"], 400);
+        }
+
+        // Save alt texts
+        foreach ($validated["alt_texts"] as $altText) {
+            BusinessImageAltText::updateOrCreate(
+                [
+                    "business_image_id" => $businessImage->id,
+                    "language" => $altText["language"],
+                ],
+                ["alt_text" => $altText["alt_text"]]
+            );
+        }
+
+        // Prepare the response
+        $businessImage->load("imageAltTexts");
+        $response = [];
+        $response["link"] = $businessImage->getLink();
+        foreach ($businessImage->imageAltTexts as $altText) {
+            $response["alt_texts"][$altText->language] = $altText->alt_text;
+        }
+        return response()->json($response, 201);
     }
 }
