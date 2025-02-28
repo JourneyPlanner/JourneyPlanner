@@ -34,19 +34,11 @@ Route::middleware(["auth:sanctum"])->get("/me", function (Request $request) {
         "username" => $user->username,
         "display_name" => $user->display_name,
         "email_needs_verification" => $user->getPendingEmail(),
-        "created_at" => $user->created_at,
-        "updated_at" => $user->updated_at,
-    ]);
-});
-
-Route::middleware(["auth:sanctum"])->get("/me/requiresPassword", function (
-    Request $request
-) {
-    $user = $request->user();
-    return response()->json([
         "requiresPassword" => !(
             !$user->password || Hash::check("", $user->password)
         ),
+        "created_at" => $user->created_at,
+        "updated_at" => $user->updated_at,
     ]);
 });
 
@@ -170,3 +162,9 @@ Route::get("business/{slug}/activities", [
     BusinessController::class,
     "showActivities",
 ]);
+
+Route::post("business/{slug}/uploadImage", [
+    BusinessController::class,
+    "uploadImage",
+])->middleware("auth:sanctum");
+Route::get("me/business", [BusinessController::class, "currentsUserIndex"]);

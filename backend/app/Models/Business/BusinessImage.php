@@ -34,4 +34,26 @@ class BusinessImage extends Model
     {
         return $this->belongsTo(Business::class);
     }
+
+    /**
+     * Get the path to the image file.
+     */
+    public function getPath(): string
+    {
+        return storage_path(
+            "app/business_images/{$this->business->slug}/{$this->file_name}"
+        );
+    }
+
+    /**
+     * Get the URL to the image file.
+     */
+    public function getLink(): string
+    {
+        return url(
+            "/api/business/{$this->business->slug}/image/{$this->id}",
+            [],
+            config("app.env") === "production"
+        );
+    }
 }
