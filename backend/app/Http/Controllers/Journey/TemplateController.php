@@ -68,6 +68,7 @@ class TemplateController extends Controller
 
         // Load the template creator
         $journey->load("users:id,display_name,username");
+        $journey->load("businesses:id,slug,name");
 
         return response()->json($journey);
     }
@@ -92,7 +93,7 @@ class TemplateController extends Controller
     /**
      * Get templates based on the provided filters.
      */
-    private function getTemplates(string $username = null)
+    private function getTemplates(?string $username = null)
     {
         // Validate the request
         $validated = request()->validate([
