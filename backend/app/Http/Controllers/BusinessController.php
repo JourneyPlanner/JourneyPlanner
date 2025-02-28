@@ -215,4 +215,18 @@ class BusinessController extends Controller
         }
         return response()->json($response, 201);
     }
+
+    /**
+     * Get the businesses of the authenticated user.
+     */
+    public function currentsUserIndex(Request $request): JsonResponse
+    {
+        $businesses = $request
+            ->user()
+            ->businesses()
+            ->select("id", "name", "slug")
+            ->get();
+
+        return response()->json($businesses);
+    }
 }

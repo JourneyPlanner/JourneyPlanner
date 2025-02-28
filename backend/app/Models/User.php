@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Business\Business;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -55,6 +56,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function media(): HasMany
     {
         return $this->hasMany(Media::class);
+    }
+
+    /**
+     * The businesses that the user is a part of.
+     */
+    public function businesses(): BelongsToMany
+    {
+        return $this->belongsToMany(Business::class);
     }
 
     /**

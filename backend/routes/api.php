@@ -167,3 +167,4 @@ Route::post("business/{slug}/uploadImage", [
     BusinessController::class,
     "uploadImage",
 ])->middleware("auth:sanctum");
+Route::get("me/business", [BusinessController::class, "currentsUserIndex"]);
