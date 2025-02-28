@@ -62,6 +62,7 @@ if (error.value) {
 const backRoute = ref<string>("/dashboard?tab=templates");
 
 const showMoreTemplates = ref(false);
+const editingEnabled = ref(false);
 const openedTemplate = ref<Template | undefined>();
 const isTemplatePopupVisible = ref<boolean>(false);
 const templatesLoader = ref<HTMLElement | undefined>();
@@ -221,19 +222,26 @@ function openActivityDialog(activity: Activity) {
 
     isActivityInfoVisible.value = true;
 }
+
+function changeEditing() {
+    if (editingEnabled.value) {
+        console.log(editingEnabled.value);
+    }
+    editingEnabled.value = !editingEnabled.value;
+}
 </script>
 
 <template>
     <div class="text-text dark:text-natural-50">
         <div
-            class="relative h-44 bg-cover bg-center lg:h-96"
+            class="group relative h-44 bg-cover bg-center lg:h-96"
             :style="{ backgroundImage: `url(${images.banner.link})` }"
         >
             <div
-                class="absolute inset-0 top-20 bg-gradient-to-b from-natural-50/0 to-background dark:from-background-dark/0 dark:to-background-dark lg:top-48"
+                class="absolute inset-0 top-20 z-50 bg-gradient-to-b from-natural-50/0 to-background dark:from-background-dark/0 dark:to-background-dark lg:top-48"
             ></div>
             <div
-                class="absolute left-2.5 top-2.5 rounded-xl border-2 border-natural-400 bg-natural-50 text-text drop-shadow-lg backdrop-blur-xl hover:border-natural-400 hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-natural-600 dark:hover:bg-natural-950 lg:left-5 lg:top-5"
+                class="absolute left-2.5 top-2.5 z-50 rounded-xl border-2 border-natural-400 bg-natural-50 text-text drop-shadow-lg backdrop-blur-xl hover:border-natural-400 hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-natural-600 dark:hover:bg-natural-950 lg:left-5 lg:top-5"
             >
                 <NuxtLink
                     :to="backRoute"
@@ -245,11 +253,34 @@ function openActivityDialog(activity: Activity) {
                     </span>
                 </NuxtLink>
             </div>
+            <button
+                class="absolute right-2.5 top-2.5 z-50 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-text drop-shadow-lg backdrop-blur-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 lg:right-5 lg:top-5"
+                @click="changeEditing"
+            >
+                <span class="pi pi-pencil mr-1 text-lg md:text-xl"></span>
+                <span class="ml-1.5 mt-0.5 text-xl md:text-2xl">
+                    <T key-name="common.edit" />
+                </span>
+            </button>
             <img
                 :src="images.banner.link"
                 :alt="images.banner.alt_text"
                 class="sr-only"
+                :class="
+                    editingEnabled
+                        ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
+                        : ''
+                "
             />
+            <div
+                class="absolute inset-0 flex max-h-[320px] cursor-pointer items-center justify-center bg-background-dark bg-opacity-70 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            >
+                <span class="text-xl font-semibold text-natural-50"
+                    >[
+                    <T key-name="subdomain.change.image" />
+                    ]</span
+                >
+            </div>
         </div>
         <div class="flex flex-col gap-y-8 px-5 lg:px-16">
             <div
@@ -273,12 +304,29 @@ function openActivityDialog(activity: Activity) {
                         </button>
                     </div>
                 </div>
-                <div id="image" class="mt-2 flex justify-center lg:w-2/5">
+                <div
+                    id="image"
+                    class="group relative mt-2 flex justify-center lg:w-2/5"
+                >
                     <NuxtImg
                         :src="images.image.link"
                         :alt="images.image.alt_text"
                         class="max-h-[320px] rounded-xl object-contain"
+                        :class="
+                            editingEnabled
+                                ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
+                                : ''
+                        "
                     />
+                    <div
+                        class="absolute inset-0 flex max-h-[320px] cursor-pointer items-center justify-center rounded-xl bg-background-dark bg-opacity-70 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    >
+                        <span class="text-xl font-semibold text-natural-50"
+                            >[
+                            <T key-name="subdomain.change.image" />
+                            ]</span
+                        >
+                    </div>
                 </div>
                 <div class="mb-5 flex justify-center md:hidden">
                     <button
