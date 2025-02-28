@@ -125,6 +125,14 @@ function changeRatingMobile() {
     isRatingVisible.value = false;
     changeRating();
 }
+
+function handleUserClick() {
+    if (!template?.creator?.business) {
+        isProfileDialogVisible.value = true;
+    } else {
+        router.push(`/business/${template?.creator?.username}`);
+    }
+}
 </script>
 
 <template>
@@ -192,23 +200,17 @@ function changeRatingMobile() {
                                 pt: { root: 'font-nunito' },
                             }"
                             class="flex cursor-pointer flex-row items-center gap-x-1"
-                            @click="
-                                !template?.creator?.business
-                                    ? (isProfileDialogVisible = true)
-                                    : router.push(
-                                          `/business/${template?.creator?.username}`,
-                                      )
-                            "
+                            @click="handleUserClick"
                         >
                             <i
-                                class="pi mr-2 text-xl text-calypso-600 dark:text-calypso-400"
+                                class="pi mr-2 text-xl text-calypso-600 hover:text-calypso-800 dark:text-calypso-400 dark:hover:text-calypso-200"
                                 :class="
                                     template.creator.business
                                         ? 'pi-building'
                                         : 'pi-user'
                                 "
                             />
-                            <h5 class="truncate text-xl">
+                            <h5 class="truncate text-xl hover:underline">
                                 {{ template.creator.username }}
                             </h5>
                         </div>
@@ -499,13 +501,7 @@ function changeRatingMobile() {
                     <div
                         id="user"
                         class="flex cursor-pointer flex-row items-center gap-x-1"
-                        @click="
-                            !template?.creator?.business
-                                ? (isProfileDialogVisible = true)
-                                : router.push(
-                                      `/business/${template?.creator?.username}`,
-                                  )
-                        "
+                        @click="handleUserClick"
                     >
                         <i
                             class="pi mr-2 text-calypso-600 dark:text-calypso-400"

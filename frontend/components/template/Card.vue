@@ -107,6 +107,14 @@ async function deleteTemplate(id: string) {
         },
     });
 }
+
+function handleUserClick() {
+    if (!props.displayedInProfile && !props.template?.creator?.business) {
+        isProfileDialogVisible.value = true;
+    } else if (props.template?.creator?.business) {
+        router.push(`/business/${props.template?.creator?.username}`);
+    }
+}
 </script>
 
 <template>
@@ -169,9 +177,10 @@ async function deleteTemplate(id: string) {
                 <div class="flex items-center pl-2">
                     <span
                         v-if="template?.creator?.business"
-                        type="button"
-                        aria-haspopup="true"
-                        aria-controls="overlay_menu"
+                        v-tooltip.top="{
+                            value: t('template.created.business'),
+                            pt: { root: 'font-nunito' },
+                        }"
                         class="pi pi-verified ml-auto justify-end text-xl text-calypso-600 dark:text-calypso-400"
                     />
                 </div>
@@ -198,15 +207,7 @@ async function deleteTemplate(id: string) {
                             ? 'cursor-pointer hover:text-calypso-600 hover:underline'
                             : ''
                     "
-                    @click.stop="
-                        !displayedInProfile && !template?.creator?.business
-                            ? (isProfileDialogVisible = true)
-                            : template?.creator?.business
-                              ? router.push(
-                                    `/business/${template?.creator?.username}`,
-                                )
-                              : ''
-                    "
+                    @click.stop="handleUserClick"
                     >{{ template?.creator?.username }}</span
                 >
             </h4>
