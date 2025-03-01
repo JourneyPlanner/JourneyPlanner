@@ -220,20 +220,20 @@ onMounted(() => {
                         icon: "pi pi-book",
                         items: [
                             {
-                                label: t.value("dashboard.sort.ascending"),
+                                label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-up",
                                 command: () => {
                                     filters.sortby = "name";
-                                    filters.sortorder = "asc";
+                                    filters.sortorder = "desc";
                                     refreshTemplates();
                                 },
                             },
                             {
-                                label: t.value("dashboard.sort.descending"),
+                                label: t.value("dashboard.sort.ascending"),
                                 icon: "pi pi-sort-alpha-down",
                                 command: () => {
                                     filters.sortby = "name";
-                                    filters.sortorder = "desc";
+                                    filters.sortorder = "asc";
                                     refreshTemplates();
                                 },
                             },
@@ -244,20 +244,20 @@ onMounted(() => {
                         icon: "pi pi-map-marker",
                         items: [
                             {
-                                label: t.value("dashboard.sort.ascending"),
+                                label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-up",
                                 command: () => {
                                     filters.sortby = "destination";
-                                    filters.sortorder = "asc";
+                                    filters.sortorder = "desc";
                                     refreshTemplates();
                                 },
                             },
                             {
-                                label: t.value("dashboard.sort.descending"),
+                                label: t.value("dashboard.sort.ascending"),
                                 icon: "pi pi-sort-alpha-down",
                                 command: () => {
                                     filters.sortby = "destination";
-                                    filters.sortorder = "desc";
+                                    filters.sortorder = "asc";
                                     refreshTemplates();
                                 },
                             },
@@ -303,17 +303,17 @@ onMounted(() => {
                         icon: "pi pi-book",
                         items: [
                             {
-                                label: t.value("dashboard.sort.ascending"),
+                                label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-up",
                                 command: () => {
-                                    sortJourneys("name-asc");
+                                    sortJourneys("name-desc");
                                 },
                             },
                             {
-                                label: t.value("dashboard.sort.descending"),
+                                label: t.value("dashboard.sort.ascending"),
                                 icon: "pi pi-sort-alpha-down",
                                 command: () => {
-                                    sortJourneys("name-desc");
+                                    sortJourneys("name-asc");
                                 },
                             },
                         ],
@@ -343,17 +343,19 @@ onMounted(() => {
                         icon: "pi pi-map-marker",
                         items: [
                             {
-                                label: t.value("dashboard.sort.ascending"),
+                                label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-up",
+                                key: "journey-destination-descending",
                                 command: () => {
-                                    sortJourneys("destination-asc");
+                                    sortJourneys("destination-desc");
                                 },
                             },
                             {
-                                label: t.value("dashboard.sort.descending"),
+                                label: t.value("dashboard.sort.ascending"),
                                 icon: "pi pi-sort-alpha-down",
+                                key: "journey-destination-ascending",
                                 command: () => {
-                                    sortJourneys("destination-desc");
+                                    sortJourneys("destination-asc");
                                 },
                             },
                         ],
@@ -659,17 +661,17 @@ function sortJourneys(sortKey: string) {
     currentJourneys.value.sort((a: Journey, b: Journey) => {
         switch (sortKey) {
             case "name-asc":
-                return b.name.localeCompare(a.name);
-            case "name-desc":
                 return a.name.localeCompare(b.name);
+            case "name-desc":
+                return b.name.localeCompare(a.name);
             case "startdate-asc":
                 return compareAsc(new Date(a.from), new Date(b.from));
             case "startdate-desc":
                 return compareDesc(new Date(a.from), new Date(b.from));
             case "destination-asc":
-                return b.destination.localeCompare(a.destination);
-            case "destination-desc":
                 return a.destination.localeCompare(b.destination);
+            case "destination-desc":
+                return b.destination.localeCompare(a.destination);
             default:
                 return 0;
         }
@@ -1110,9 +1112,9 @@ function editJourney(journey: Journey, id: string) {
                             <AutoComplete
                                 v-model="filters.templateCreator"
                                 data-test="templates-filter-creator"
-                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem]"
+                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem] font-nunito"
                                 :pt="{
-                                    panel: 'w-20 bg-natural-50 dark:bg-natural-900',
+                                    panel: 'w-20 bg-natural-50 dark:bg-natural-900 font-nunito',
                                     emptyMessage:
                                         'text-text dark:text-natural-50 font-nunito p-1',
                                     item: 'text-text dark:text-natural-50 hover:text-text hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
@@ -1559,14 +1561,7 @@ function editJourney(journey: Journey, id: string) {
                 ref="menu"
                 :model="items"
                 popup
-                class="rounded-xl border-2 border-natural-200 bg-natural-50 dark:border-natural-900 dark:bg-natural-800"
-                :pt="{
-                    menuitem: {
-                        class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-300 rounded-md',
-                    },
-                    content: { class: 'hover:bg-dandelion-300 rounded-md' },
-                    submenu: { class: 'bg-natural-50 dark:bg-natural-800' },
-                }"
+                class="rounded-xl border-2 border-natural-200 bg-natural-50 font-nunito dark:border-natural-900 dark:bg-natural-800"
             >
                 <template #start>
                     <h1
@@ -1587,6 +1582,7 @@ function editJourney(journey: Journey, id: string) {
                     <a
                         v-ripple
                         class="align-items-center flex rounded-md bg-natural-50 text-sm text-text hover:bg-dandelion-100 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                        :class="item.class"
                         v-bind="props.action"
                     >
                         <span :class="item.icon" />

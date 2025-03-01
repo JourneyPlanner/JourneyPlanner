@@ -149,7 +149,7 @@ async function deleteTemplate(id: string) {
                         value: template.name,
                         pt: { root: 'font-nunito' },
                     }"
-                    class="w-full truncate text-xl font-medium"
+                    class="w-full truncate text-lg font-medium"
                 >
                     <div
                         class="block overflow-hidden overflow-ellipsis text-nowrap"
