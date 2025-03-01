@@ -54,6 +54,23 @@ class Journey extends Model
     protected $hidden = ["pivot"];
 
     /**
+     * Bootstrap the model and its traits.
+     *
+     * @return void
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        // Update length if start or end has changed
+        static::saving(function ($journey) {
+            if ($journey->isDirty("from") || $journey->isDirty("to")) {
+                $journey->length = $journey->from->diffInDays($journey->to) + 1;
+            }
+        });
+    }
+
+    /**
      * The users that are a part of the journey.
      */
     public function users(): BelongsToMany

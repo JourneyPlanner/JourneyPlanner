@@ -46,7 +46,7 @@ class TemplateController extends Controller
             "mapbox_full_address",
             "average_rating",
             "total_ratings",
-            DB::raw("DATEDIFF(`to`, `from`) + 1 AS length"), // Only works with MySQL
+            "length",
         ];
     }
 
@@ -180,11 +180,7 @@ class TemplateController extends Controller
                 $query->where("name", "like", "%$name%");
             })
             ->when($lengthMin, function ($query) use ($lengthMin) {
-                $query->where(
-                    DB::raw("DATEDIFF(`to`, `from`) + 1"),
-                    ">=",
-                    $lengthMin
-                );
+                $query->where("length", ">=", $lengthMin);
             })
             ->when($lengthMax, function ($query) use (
                 $lengthMax,
@@ -193,11 +189,7 @@ class TemplateController extends Controller
                 if ($lengthMax >= $lengthMaxConst) {
                     $lengthMax = PHP_INT_MAX;
                 }
-                $query->where(
-                    DB::raw("DATEDIFF(`to`, `from`) + 1"),
-                    "<=",
-                    $lengthMax
-                );
+                $query->where("length", "<=", $lengthMax);
             })
             ->when(
                 $username,
