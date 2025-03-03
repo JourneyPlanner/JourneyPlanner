@@ -121,6 +121,12 @@ class Journey extends Model
         return $this->belongsTo(Journey::class, "created_from");
     }
 
+    /**
+     * Get the creator of the template.
+     *
+     * This will return the business or user that created the template.
+     * @return array|null Returns null if neither users nor businesses relationships are loaded
+     */
     public function getCreatorAttribute()
     {
         if (
