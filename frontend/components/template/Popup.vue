@@ -199,18 +199,20 @@ function handleUserClick() {
                                 value: template.creator.username,
                                 pt: { root: 'font-nunito' },
                             }"
-                            class="flex cursor-pointer flex-row items-center gap-x-1"
-                            @click="handleUserClick"
+                            class="flex flex-row items-center gap-x-1"
                         >
                             <i
-                                class="pi mr-2 text-xl text-calypso-600 hover:text-calypso-800 dark:text-calypso-400 dark:hover:text-calypso-200"
+                                class="pi mr-2 text-xl text-calypso-600 dark:text-calypso-400"
                                 :class="
                                     template.creator.business
                                         ? 'pi-building'
                                         : 'pi-user'
                                 "
                             />
-                            <h5 class="truncate text-xl hover:underline">
+                            <h5
+                                class="cursor-pointer truncate text-xl hover:underline"
+                                @click="handleUserClick"
+                            >
                                 {{ template.creator.username }}
                             </h5>
                         </div>

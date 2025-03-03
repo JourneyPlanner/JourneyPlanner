@@ -40,14 +40,14 @@ function handleUserClick() {
             <div
                 class="ml-1.5 flex items-center border-l-2 border-natural-400 pl-1 hover:border-calypso-400 dark:border-natural-400 dark:hover:border-calypso-400"
             >
-                <div class="ml-1.5 w-2/5 sm:w-1/3 lg:w-2/6 xl:w-1/3">
+                <div class="ml-1.5 w-1/2 lg:w-1/3">
                     <div class="flex items-center">
                         <h3
                             v-tooltip.top="{
                                 value: template.name,
                                 pt: { root: 'font-nunito' },
                             }"
-                            class="truncate text-base font-medium text-text dark:text-natural-50"
+                            class="truncate pr-2 text-base font-medium text-text dark:text-natural-50"
                         >
                             {{ template.name }}
                         </h3>
@@ -57,7 +57,7 @@ function handleUserClick() {
                                 value: t('template.created.business'),
                                 pt: { root: 'font-nunito' },
                             }"
-                            class="pi pi-verified ml-auto justify-end text-lg text-calypso-600 dark:text-calypso-400"
+                            class="pi pi-verified justify-end text-lg text-calypso-600 dark:text-calypso-400"
                         />
                     </div>
                     <h4
@@ -75,14 +75,14 @@ function handleUserClick() {
                     </h4>
                 </div>
                 <div
-                    class="ml-3 flex flex-col gap-x-0.5 text-text dark:text-natural-50 xs:ml-[3vw] lg:ml-3 lg:flex-row lg:gap-x-4 xl:ml-5"
+                    class="ml-3 w-1/2 gap-x-0.5 text-text dark:text-natural-50 max-lg:flex max-lg:flex-col xs:ml-[3vw] lg:ml-3 lg:grid lg:w-2/3 lg:grid-cols-9 lg:gap-4"
                 >
                     <div
                         v-tooltip.top="{
                             value: template.destination,
                             pt: { root: 'font-nunito' },
                         }"
-                        class="flex min-w-28 max-w-28 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-36 sm:min-w-32 sm:max-w-32 sm:gap-x-2 lg:min-w-20 lg:max-w-20 xl:min-w-24 xl:max-w-24 2xl:min-w-32 2xl:max-w-32"
+                        class="col-span-3 flex flex-row items-center gap-x-1"
                     >
                         <i
                             class="pi pi-map-marker text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
@@ -103,7 +103,7 @@ function handleUserClick() {
                                 ),
                             pt: { root: 'font-nunito' },
                         }"
-                        class="flex min-w-20 max-w-20 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-32 sm:min-w-32 sm:max-w-24 sm:gap-x-2 lg:min-w-16 lg:max-w-16 xl:min-w-20 xl:max-w-20 2xl:min-w-24 2xl:max-w-24"
+                        class="col-span-3 flex flex-row items-center gap-x-1"
                     >
                         <i
                             class="pi pi-calendar text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
@@ -120,7 +120,7 @@ function handleUserClick() {
                         </h5>
                     </div>
                     <div
-                        class="flex min-w-20 max-w-20 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-32 sm:min-w-32 sm:max-w-24 sm:gap-x-2 lg:min-w-16 lg:max-w-16 xl:min-w-20 xl:max-w-20 2xl:min-w-24 2xl:max-w-24"
+                        class="col-span-2 flex min-w-20 max-w-20 flex-row items-center gap-x-1"
                     >
                         <i
                             class="pi pi-star text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
@@ -130,8 +130,18 @@ function handleUserClick() {
                             ({{ template.total_ratings }})
                         </h5>
                     </div>
+
+                    <button
+                        class="col-span-1 ml-auto mr-2 hidden items-center xs:mr-3 sm:mr-4 lg:flex"
+                    >
+                        <i
+                            class="pi pi-arrow-up-right-and-arrow-down-left-from-center text-base text-natural-500 hover:text-calypso-950 dark:text-natural-400 dark:hover:text-natural-50"
+                        />
+                    </button>
                 </div>
-                <button class="ml-auto mr-2 flex items-center xs:mr-3 sm:mr-4">
+                <button
+                    class="col-span-1 ml-auto mr-2 items-center max-lg:flex xs:mr-3 sm:mr-4 lg:hidden"
+                >
                     <i
                         class="pi pi-arrow-up-right-and-arrow-down-left-from-center text-base text-natural-500 hover:text-calypso-950 dark:text-natural-400 dark:hover:text-natural-50"
                     />
