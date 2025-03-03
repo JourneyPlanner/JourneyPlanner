@@ -78,6 +78,18 @@ export const useActivityStore = defineStore("activities", () => {
         ];
     }
 
+    function removeActivity(removedActivity) {
+        return activityData.value
+            .filter((activity) => activity.id === removedActivity.id)
+            .forEach(async (activity) => {
+                activityData.value.splice(
+                    activityData.value.indexOf(activity),
+                    1,
+                );
+                setActivities(activityData.value);
+            });
+    }
+
     return {
         activityData,
         setActivities,
@@ -89,5 +101,6 @@ export const useActivityStore = defineStore("activities", () => {
         updateActivity,
         findBaseActivity,
         getAllChildren,
+        removeActivity,
     };
 });

@@ -63,7 +63,9 @@ function subscribeToChannel() {
         .listen(".ActivityCreated", (e: object) => activityCreated(e))
         .listen(".ActivityDeleted", (e: object) => activityDeleted(e))
         .listen(".CalendarActivityUpdated", (e: object) => activityUpdated(e))
-        .listen(".CalendarActivityCreated", (e: object) => activityCreated(e))
+        .listen(".CalendarActivityCreated", (e: object) =>
+            calendarActivityCreated(e),
+        )
         .listen(".CalendarActivityDeleted", (e: object) => activityCreated(e))
         .error((e: object) => {
             console.error("Private channel error", e);
@@ -71,7 +73,8 @@ function subscribeToChannel() {
 }
 
 function activityUpdated(e: object) {
-    activityStore.updateActivity(e);
+    console.log(e);
+    activityStore.updateActivity([e]);
 }
 
 function activityCreated(e: object) {
@@ -84,7 +87,13 @@ function activityCreated(e: object) {
 }
 
 function activityDeleted(e: object) {
-    console.log(e);
+    activityStore.removeActivity(e);
+}
+
+function calendarActivityCreated(e: object) {
+    console.log(e.model);
+    console.log(e.model.activity);
+    activityStore.updateActivity([e]);
 }
 
 const { data, error } = await useAsyncData("journey", () =>
