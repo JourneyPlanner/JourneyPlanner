@@ -32,7 +32,7 @@
         "@studiometa/vue-mapbox-gl": "^2.7.2",
         "@tolgee/vue": "^6.1.1",
         "@uppy/core": "^4.4.2",
-        "@uppy/dashboard": "^4.3.1",
+        "@uppy/dashboard": "^4.3.2",
         "@uppy/drag-drop": "^4.1.1",
         "@uppy/file-input": "^4.1.1",
         "@uppy/locales": "^4.5.0",
