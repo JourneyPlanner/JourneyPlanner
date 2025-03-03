@@ -180,11 +180,11 @@ const locale = computed(() => {
         </div>
         <div
             id="content"
-            class="mt-3 flex w-full cursor-default flex-col pl-2 lg:mt-5 lg:flex-row lg:pl-16 lg:pr-5 xl:pr-28"
+            class="mt-3 flex w-full cursor-default flex-col pl-2 pr-2 lg:mt-5 lg:flex-row lg:pl-16 lg:pr-5 xl:pr-28"
         >
             <div
                 id="profile"
-                class="relative flex flex-row md:ml-10 lg:ml-0 lg:h-[65vh] lg:min-w-[48vh] lg:max-w-[48vh] lg:flex-col lg:items-center lg:rounded-xl lg:border-[3px] lg:border-calypso-400 lg:pt-5"
+                class="relative flex flex-row max-lg:border-b-2 max-lg:border-calypso-600 max-lg:pb-4 md:ml-10 lg:ml-0 lg:h-[65vh] lg:min-w-[48vh] lg:max-w-[48vh] lg:flex-col lg:items-center lg:rounded-xl lg:border-[3px] lg:border-calypso-400 lg:pt-5"
             >
                 <button
                     v-if="isCurrentUser"
@@ -216,7 +216,7 @@ const locale = computed(() => {
                 </div>
                 <div
                     id="info"
-                    class="ml-2 flex h-full max-w-44 flex-col xs:ml-4 xs:max-w-56 sm:max-w-96 md:ml-8 lg:ml-0 lg:mt-6 lg:w-full lg:max-w-full lg:items-center lg:justify-center lg:px-10"
+                    class="ml-2 flex max-w-44 flex-col xs:ml-4 xs:max-w-56 sm:max-w-96 md:ml-8 lg:ml-0 lg:mt-6 lg:w-full lg:max-w-full lg:items-center lg:justify-center lg:px-10"
                 >
                     <h1
                         v-tooltip.top="{
@@ -264,7 +264,7 @@ const locale = computed(() => {
             </div>
             <div
                 id="template-section"
-                class="w-full px-2 max-lg:mt-10 md:px-10 lg:ml-5 xl:ml-10"
+                class="w-full px-2 max-lg:mt-5 md:px-10 lg:ml-5 xl:ml-10"
             >
                 <h2 class="text-lg sm:text-xl lg:text-2xl lg:font-semibold">
                     {{ whoseTemplates }}
