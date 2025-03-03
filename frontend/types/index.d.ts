@@ -147,4 +147,8 @@ declare global {
         from: string;
         to: string;
     }
+
+    interface WebsocketEvent {
+        model: Journey | Activity | object;
+    }
 }
