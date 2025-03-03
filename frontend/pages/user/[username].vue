@@ -16,7 +16,6 @@ const gravatarEditor = ref<GravatarQuickEditorCore | undefined>();
 
 const ALLOWED_ROUTES = ["/journey", "/dashboard?tab=templates"];
 const screenWidth = ref(window.innerWidth);
-const isCloseIconVisible = ref(route.query.ref === "profile-dialog");
 
 const isCurrentUser = ref<boolean>(false);
 const username = ref<string>(
@@ -117,12 +116,12 @@ const {
     showMoreDataText: t.value("profile.showMore", {
         username: isCurrentUser.value
             ? t.value("profile.templates.created.by.you")
-            : username.value,
+            : "@" + username.value,
     }),
     showLessDataText: t.value("profile.showLess", {
         username: isCurrentUser.value
             ? t.value("profile.templates.created.by.you")
-            : username.value,
+            : "@" + username.value,
     }),
     identifier: "user-templates",
     apiEndpoint: `/api/user/${username.value}/template`,
@@ -163,29 +162,20 @@ const locale = computed(() => {
             <div class="flex w-full flex-row items-center justify-between">
                 <NuxtLink
                     :to="backRoute"
-                    class="pi pi-angle-left cursor-pointer pr-1 text-3xl text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 max-lg:mb-0.5 xs:text-3xl md:pr-3 md:text-3xl lg:pl-2 lg:pr-6"
-                />
-                <div class="flex w-full flex-row items-center justify-between">
-                    <h1
-                        class="max-w-52 truncate text-nowrap text-xl font-medium text-text dark:text-natural-50 xs:text-xl lg:text-2xl"
-                    >
+                    class="flex cursor-pointer items-center gap-x-2 pl-2 text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 lg:pl-8"
+                >
+                    <i class="pi pi-angle-left text-3xl md:text-3xl" />
+                    <span class="mt-0.5 text-2xl font-semibold">
                         <T key-name="common.back" />
-                    </h1>
-                    <NuxtLink
-                        v-show="isCloseIconVisible"
-                        :to="backRoute"
-                        class="hidden cursor-pointer pl-2 pr-2 text-2xl text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 md:pr-3 lg:block lg:pr-10"
-                    >
-                        <i class="pi pi-times xs:text-3xl md:text-3xl" />
-                    </NuxtLink>
-                    <button
-                        v-if="isCurrentUser"
-                        class="mr-5 flex h-8 w-8 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 sm:h-9 sm:w-9 lg:hidden"
-                        @click="gravatarEditor?.open()"
-                    >
-                        <i class="pi pi-pencil" />
-                    </button>
-                </div>
+                    </span>
+                </NuxtLink>
+                <button
+                    v-if="isCurrentUser"
+                    class="mr-5 flex h-8 w-8 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 sm:h-9 sm:w-9 lg:hidden"
+                    @click="gravatarEditor?.open()"
+                >
+                    <i class="pi pi-pencil" />
+                </button>
             </div>
         </div>
         <div
@@ -228,7 +218,7 @@ const locale = computed(() => {
                     id="info"
                     class="ml-2 flex h-full max-w-44 flex-col xs:ml-4 xs:max-w-56 sm:max-w-96 md:ml-8 lg:ml-0 lg:mt-6 lg:w-full lg:max-w-full lg:items-center lg:justify-center lg:px-10"
                 >
-                    <h2
+                    <h1
                         v-tooltip.top="{
                             value: displayname,
                             pt: { root: 'font-nunito' },
@@ -236,8 +226,8 @@ const locale = computed(() => {
                         class="max-w-full truncate text-xl sm:text-2xl lg:text-2xl"
                     >
                         {{ displayname }}
-                    </h2>
-                    <h3
+                    </h1>
+                    <h2
                         v-tooltip.top="{
                             value: '@' + username,
                             pt: { root: 'font-nunito' },
@@ -245,7 +235,7 @@ const locale = computed(() => {
                         class="max-w-full truncate text-lg text-natural-800 dark:text-natural-200 sm:text-xl lg:mt-1 lg:text-xl"
                     >
                         @{{ username }}
-                    </h3>
+                    </h2>
                     <span
                         v-tooltip.top="{
                             value: $t('profile.created_at.tooltip', {
