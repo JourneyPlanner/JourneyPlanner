@@ -58,14 +58,24 @@ function subscribeToChannel() {
     const name = "App.Models.Journey." + journeyId;
 
     echo.private(name)
-        .listen(".JourneyUpdated", (e: object) => journeyEdited(e.model))
-        .listen(".JourneyUserUpdated", (e: object) => journeyEdited(e.model))
-        .listen(".ActivityUpdated", (e: object) => activityUpdated(e))
-        .listen(".ActivityCreated", (e: object) => activityCreated(e))
-        .listen(".ActivityDeleted", (e: object) => activityDeleted(e))
-        .listen(".CalendarActivityUpdated", (e: object) => activityUpdated(e))
-        .listen(".CalendarActivityCreated", (e: object) => activityCreated(e))
-        .listen(".CalendarActivityDeleted", (e: object) => activityCreated(e))
+        .listen(".JourneyUpdated", (e: WebsocketEvent) =>
+            journeyEdited(e.model as Journey),
+        )
+        .listen(".JourneyUserUpdated", (e: WebsocketEvent) =>
+            journeyEdited(e.model as Journey),
+        )
+        .listen(".ActivityUpdated", (e: WebsocketEvent) => activityUpdated(e))
+        .listen(".ActivityCreated", (e: WebsocketEvent) => activityCreated(e))
+        .listen(".ActivityDeleted", (e: WebsocketEvent) => activityDeleted(e))
+        .listen(".CalendarActivityUpdated", (e: WebsocketEvent) =>
+            activityUpdated(e),
+        )
+        .listen(".CalendarActivityCreated", (e: WebsocketEvent) =>
+            activityCreated(e),
+        )
+        .listen(".CalendarActivityDeleted", (e: WebsocketEvent) =>
+            activityCreated(e),
+        )
         .error((e: object) => {
             console.error("Private channel error", e);
         });
