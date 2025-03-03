@@ -216,7 +216,7 @@ const locale = computed(() => {
                 </div>
                 <div
                     id="info"
-                    class="ml-2 flex max-w-44 flex-col xs:ml-4 xs:max-w-56 sm:max-w-96 md:ml-8 lg:ml-0 lg:mt-6 lg:w-full lg:max-w-full lg:items-center lg:justify-center lg:px-10"
+                    class="ml-2 flex max-w-44 flex-col xs:ml-4 xs:max-w-56 sm:max-w-96 md:ml-8 lg:ml-0 lg:mt-6 lg:h-full lg:w-full lg:max-w-full lg:items-center lg:justify-center lg:px-10"
                 >
                     <h1
                         v-tooltip.top="{
