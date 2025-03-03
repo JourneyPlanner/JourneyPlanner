@@ -50,7 +50,7 @@ onMounted(() => {
     }
 
     calculateDays(journeyData.value.from, journeyData.value.to);
-
+    updateInvite();
     subscribeToChannel();
 });
 
@@ -59,6 +59,7 @@ function subscribeToChannel() {
 
     echo.private(name)
         .listen(".JourneyUpdated", (e: object) => journeyEdited(e.model))
+        .listen(".JourneyUserUpdated", (e: object) => journeyEdited(e.model))
         .listen(".ActivityUpdated", (e: object) => activityUpdated(e))
         .listen(".ActivityCreated", (e: object) => activityCreated(e))
         .listen(".ActivityDeleted", (e: object) => activityDeleted(e))
@@ -143,8 +144,7 @@ const journeyData = data as Ref<Journey>;
 journeyStore.setJourney(journeyData);
 
 const title = journeyData.value.name;
-journeyData.value.invite =
-    window.location.origin + "/invite/" + journeyData.value.invite;
+
 useHead({
     title: `${title} | JourneyPlanner`,
 });
@@ -170,28 +170,34 @@ if (isAuthenticated.value) {
 }
 
 const colorMode = useColorMode();
-const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-let darkColor = fullConfig.theme.accentColor["text"] as string;
-let lightColor = fullConfig.theme.accentColor["background"] as string;
 
-if (
-    colorMode.preference === "dark" ||
-    (darkThemeMq.matches && colorMode.preference === "system")
-) {
-    darkColor = fullConfig.theme.accentColor["background"] as string;
-    lightColor = fullConfig.theme.accentColor["text"] as string;
+function updateInvite() {
+    const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+    let darkColor = fullConfig.theme.accentColor["text"] as string;
+    let lightColor = fullConfig.theme.accentColor["background"] as string;
+
+    if (
+        colorMode.preference === "dark" ||
+        (darkThemeMq.matches && colorMode.preference === "system")
+    ) {
+        darkColor = fullConfig.theme.accentColor["background"] as string;
+        lightColor = fullConfig.theme.accentColor["text"] as string;
+    }
+
+    const opts = {
+        margin: 0,
+        color: {
+            dark: darkColor,
+            light: lightColor,
+        },
+    };
+
+    journeyData.value.invite =
+        window.location.origin + "/invite/" + journeyData.value.invite;
+    QRCode.toDataURL(journeyStore.getInvite(), opts, function (error, url) {
+        qrcode.value = url;
+    });
 }
-
-const opts = {
-    margin: 0,
-    color: {
-        dark: darkColor,
-        light: lightColor,
-    },
-};
-QRCode.toDataURL(journeyStore.getInvite(), opts, function (error, url) {
-    qrcode.value = url;
-});
 
 const fromDate = ref(new Date(journeyData.value.from.split("T")[0]));
 const toDate = ref(new Date(journeyData.value.to.split("T")[0]));
@@ -279,7 +285,7 @@ async function journeyEdited(journey: Journey) {
         title: `${journey.name} | JourneyPlanner`,
     });
     calculateDays(journey.from, journey.to);
-
+    updateInvite();
     await client(`/api/journey/${journeyId}/activity`, {
         async onResponse({ response }) {
             if (response.ok) {
