@@ -221,6 +221,7 @@ class TemplateController extends Controller
                 },
             ])
             ->orderBy($sortBy, $order)
+            ->orderBy("id", "asc")
             ->cursorPaginate($perPage, static::getColumns())
             ->withQueryString();
 

@@ -93,6 +93,7 @@ declare global {
         display_name: string;
         username: string;
         role: number;
+        email: string;
     }
 
     interface RepeatType {

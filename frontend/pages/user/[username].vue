@@ -1,28 +1,44 @@
 <script setup lang="ts">
-import { useTranslate } from "@tolgee/vue";
+import { GravatarQuickEditorCore } from "@gravatar-com/quick-editor";
+import { useTolgee, useTranslate } from "@tolgee/vue";
+import { format } from "date-fns";
+import { de } from "date-fns/locale/de";
+import { enUS } from "date-fns/locale/en-US";
 
 const route = useRoute();
-const { t } = useTranslate();
 const router = useRouter();
-const client = useSanctumClient();
-const toast = useToast();
-const templateStore = useTemplateStore();
+const { t } = useTranslate();
+const tolgee = useTolgee(["language"]);
 const user = useSanctumUser<User>();
-const { isAuthenticated } = useSanctumAuth();
+const { isAuthenticated } = useSanctumAuth<boolean>();
+const client = useSanctumClient();
+const gravatarEditor = ref<GravatarQuickEditorCore | undefined>();
 
-const username = ref(route.params.username);
-const displayname = ref("");
+const ALLOWED_ROUTES = ["/journey", "/dashboard?tab=templates"];
+const screenWidth = ref(window.innerWidth);
 
-const MAX_FIRST_TEMPLATES = {
-    MOBILE: 4,
-    DESKTOP: 8,
-};
+const isCurrentUser = ref<boolean>(false);
+const username = ref<string>(
+    (route.params.username as string).replace("@", ""),
+);
+const displayname = ref<string>("");
+const joinDate = ref<Date | null>(null);
+
+const showMoreTemplates = ref<boolean>(false);
+const openedTemplate = ref<Template | undefined>();
+const isTemplatePopupVisible = ref<boolean>(false);
+const templatesLoader = ref<HTMLElement | undefined>();
+
+const maxDisplayedTemplates = computed(() => {
+    if (screenWidth.value >= 1280) return 6;
+    if (screenWidth.value >= 1024) return 4;
+    if (screenWidth.value >= 640) return 6;
+    return 4;
+});
 
 const { data, error } = await useAsyncData("user", () =>
     client(`/api/user/${username.value}`),
 );
-
-const isCurrentUser = data.value?.username === user.value?.username;
 
 if (error.value) {
     if (error.value.statusCode === 404) {
@@ -38,369 +54,298 @@ if (error.value) {
             fatal: true,
         });
     }
-} else {
-    displayname.value = data.value.display_name;
-    username.value = data.value.username;
-    useHead({
-        title: `${displayname.value} (@${username.value}) | JourneyPlanner`,
-    });
 }
 
-const showMore = ref(false);
-const toggleText = ref(t.value("profile.showMore") + username.value);
-const toggleTextShort = ref(t.value("profile.showMore.short"));
-const allowedRoutes = ["/journey", "/dashboard?tab=templates"];
-const isCloseIcon = ref(false);
-const templates = ref<Template[]>([]);
-const openedTemplate = ref<Template | undefined>();
-const isTemplatePopupVisible = ref<boolean>(false);
-const moreTemplatesAvailable = ref<boolean>(true);
-const cursor = ref<string | null>(null);
-const nextCursor = ref<string | null>(null);
-const observer = ref<IntersectionObserver>();
-const loader = ref<HTMLElement | undefined>();
+isCurrentUser.value = data.value?.username === user.value?.username;
+displayname.value = data.value?.display_name;
+username.value = data.value?.username;
+joinDate.value = new Date(data.value?.created_at);
 
-onMounted(async () => {
+const { avatarUrl, refreshAvatar } = useGravatar(
+    data.value?.email_hash,
+    data.value?.display_name,
+);
+
+useHead({
+    title: `${displayname.value} (@${username.value}) | JourneyPlanner`,
+});
+
+const backRoute = ref("");
+
+onMounted(() => {
     const lastRoute = router.options.history.state.back as string;
-    if (
-        (lastRoute &&
-            allowedRoutes.some((route) => lastRoute.startsWith(route))) ||
-        !isAuthenticated.value
-    ) {
-        isCloseIcon.value = true;
-    } else if (route?.query?.journey) {
-        isCloseIcon.value = true;
-    } else {
-        isCloseIcon.value = false;
-    }
-
-    if (
-        route.query.id &&
-        route.query.id !== "undefined" &&
-        route.query.id !== "null" &&
-        route.query.id !== ""
-    ) {
-        client(`/api/template/${route.query.id}`, {
-            async onResponse({ response }) {
-                if (response.ok) {
-                    openedTemplate.value = response._data;
-                    isTemplatePopupVisible.value = true;
-                }
-            },
-            async onResponseError({ response }) {
-                if (response.status === 404) {
-                    toast.add({
-                        severity: "error",
-                        summary: t.value("template.notfound.summary"),
-                        detail: t.value("template.notfound.summary.detail"),
-                        life: 6000,
-                    });
-                } else {
-                    toast.add({
-                        severity: "error",
-                        summary: t.value("common.toast.error.heading"),
-                        detail: t.value("common.error.unknown"),
-                        life: 6000,
-                    });
-                }
-                router.push({
-                    query: {},
-                });
-            },
-        });
-    }
-
-    watch(isTemplatePopupVisible, (value) => {
-        if (value) {
-            router.push({
-                query: {
-                    id: openedTemplate.value ? openedTemplate.value.id : null,
-                },
-            });
-        } else {
-            router.push({
-                query: {},
-            });
-        }
-    });
-});
-
-onUnmounted(() => {
-    if (observer.value && loader.value) {
-        observer.value.unobserve(loader.value);
-    }
-});
-
-const { data: templateData, refresh } = await useAsyncData(
-    "userTemplates",
-    () => client(`/api/user/${username.value}/template?cursor=${cursor.value}`),
-);
-
-watch(
-    templateData,
-    () => {
-        if (templateData.value) {
-            templates.value.push(...templateData.value.data);
-            if (templateData.value.next_cursor === null) {
-                moreTemplatesAvailable.value = false;
-            } else {
-                nextCursor.value = templateData.value.next_cursor;
-                moreTemplatesAvailable.value = true;
-            }
-        }
-    },
-    { immediate: true },
-);
-
-watch(showMore, () => {
-    if (showMore.value) {
-        if (observer.value) {
-            observer.value.disconnect();
-        }
-
-        observer.value = new IntersectionObserver((entries) => {
-            if (entries.length === 0) {
-                return;
-            }
-            const target = entries[0];
-            if (target.isIntersecting) {
-                if (moreTemplatesAvailable.value && showMore.value) {
-                    cursor.value = nextCursor.value;
-                    refresh();
-                }
-            }
-        });
-
-        if (loader.value) {
-            observer.value.observe(loader.value);
-        }
-    }
-});
-
-const firstEightTemplates = computed(() =>
-    templates.value.slice(0, MAX_FIRST_TEMPLATES.DESKTOP),
-);
-const firstFourTemplates = computed(() =>
-    templates.value.slice(0, MAX_FIRST_TEMPLATES.MOBILE),
-);
-const remainingTemplatesDesktop = computed(() =>
-    templates.value.slice(MAX_FIRST_TEMPLATES.DESKTOP),
-);
-const remainingTemplatesMobile = computed(() =>
-    templates.value.slice(MAX_FIRST_TEMPLATES.MOBILE),
-);
-
-const toggle = () => {
-    showMore.value = !showMore.value;
-    toggleText.value = showMore.value
-        ? t.value("profile.showLess") + username.value
-        : t.value("profile.showMore") + username.value;
-    toggleTextShort.value = showMore.value
-        ? t.value("profile.showLess.short")
-        : t.value("profile.showMore.short");
-};
-
-const navigateBack = () => {
-    const lastRoute = router.options.history.state.back as string;
-
-    if (!isAuthenticated.value) {
-        if (lastRoute) {
-            router.push(lastRoute);
-        } else {
-            router.push("/journey/new");
-        }
-    }
-
     if (
         lastRoute &&
-        allowedRoutes.some((route) => lastRoute.startsWith(route))
+        (ALLOWED_ROUTES.some((route) => lastRoute.startsWith(route)) ||
+            !isAuthenticated.value)
     ) {
-        router.back();
+        backRoute.value = lastRoute;
+    } else if (!isAuthenticated.value) {
+        backRoute.value = "/journey/new";
     } else if (route?.query?.journey) {
-        router.push("/journey/" + route.query.journey);
+        backRoute.value = `/journey/${route.query.journey}`;
     } else {
-        router.push("/dashboard");
+        backRoute.value = "/dashboard";
     }
+
+    window.addEventListener("resize", updateScreenWidth);
+
+    gravatarEditor.value = new GravatarQuickEditorCore({
+        email: user?.value?.email,
+        scope: ["avatars"],
+        locale: tolgee.value?.getLanguage(),
+        onProfileUpdated: () => {
+            refreshAvatar();
+        },
+    });
+});
+
+onUnmounted(async () => {
+    window.removeEventListener("resize", updateScreenWidth);
+});
+
+const {
+    data: templates,
+    moreDataAvailable: moreTemplatesAvailable,
+    status: templatesStatus,
+    toggle: toggleTemplates,
+    toggleText: toggleTextTemplates,
+} = await useInfiniteScroll<Template>({
+    loader: templatesLoader,
+    showMoreData: showMoreTemplates,
+    showMoreDataText: t.value("profile.showMore", {
+        username: isCurrentUser.value
+            ? t.value("profile.templates.created.by.you")
+            : "@" + username.value,
+    }),
+    showLessDataText: t.value("profile.showLess", {
+        username: isCurrentUser.value
+            ? t.value("profile.templates.created.by.you")
+            : "@" + username.value,
+    }),
+    identifier: "user-templates",
+    apiEndpoint: `/api/user/${username.value}/template`,
+    params: {
+        per_page: 6,
+    },
+});
+
+const whoseTemplates = computed(() => {
+    if (isCurrentUser.value) {
+        return t.value("profile.yourTemplates");
+    } else {
+        return t.value("profile.templates", { username: username.value });
+    }
+});
+
+const updateScreenWidth = () => {
+    screenWidth.value = window.innerWidth;
 };
 
-const openTemplateDialog = (template: Template) => {
+function openTemplateDialog(template: Template) {
     openedTemplate.value = template;
     isTemplatePopupVisible.value = true;
-};
-
-function removeTemplate(id: string) {
-    if (!id) return;
-    const index = templates.value.findIndex((template) => template.id === id);
-    if (index === -1) {
-        return;
-    }
-    templates.value.splice(index, 1);
-    templateStore.changeUpdate(true);
 }
+
+const locale = computed(() => {
+    if (tolgee.value?.getLanguage() === "de") {
+        return de;
+    } else {
+        return enUS;
+    }
+});
 </script>
 
 <template>
-    <div>
-        <div class="px-1 font-nunito text-text dark:text-natural-50 md:px-3">
-            <div id="header" class="mt-5 flex flex-col">
-                <div class="flex flex-row items-center">
-                    <div class="flex flex-row items-center">
-                        <span
-                            class="mr-1 h-0.5 w-2 bg-calypso-400 xs:mr-2 xs:w-4 sm:mr-3.5 sm:w-8 md:mr-5 md:w-10"
-                        />
-                        <h1
-                            class="max-w-48 truncate text-nowrap text-xl font-medium text-text dark:text-natural-50 xs:text-2xl sm:max-w-sm md:max-w-screen-md md:text-3xl"
-                        >
-                            {{ displayname }}
-                        </h1>
-                    </div>
+    <div class="text-text dark:text-natural-50">
+        <div id="header" class="mt-2 flex lg:mt-5 lg:flex-col">
+            <div class="flex w-full flex-row items-center justify-between">
+                <NuxtLink
+                    :to="backRoute"
+                    class="flex cursor-pointer items-center gap-x-1 pl-2 text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 lg:gap-x-2 lg:pl-8"
+                >
+                    <i class="pi pi-angle-left text-2xl sm:text-3xl" />
                     <span
-                        class="ml-1 h-0.5 w-full bg-calypso-400 xs:ml-2 sm:ml-3.5 md:ml-5 md:mr-5"
-                    />
-                    <span
-                        v-if="isCloseIcon"
-                        class="pi pi-times cursor-pointer pl-2 pr-2 text-2xl text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 xs:text-3xl md:pr-3 md:text-3xl lg:pr-5"
-                        @click="navigateBack"
-                    />
-                    <NuxtLink
-                        v-else
-                        to="/dashboard"
-                        class="group mx-2 flex items-center sm:ml-1 md:ml-2 lg:mr-5"
+                        class="mt-0.5 text-xl font-semibold sm:text-2xl lg:text-2xl"
                     >
-                        <SvgDashboardIcon
-                            class="h-7 w-7 fill-text dark:fill-natural-50 md:h-6 md:w-6"
-                        />
-                        <p
-                            class="hidden text-xl text-text group-hover:underline dark:text-natural-50 sm:block lg:text-2xl"
-                        >
-                            Dashboard
-                        </p>
-                    </NuxtLink>
+                        <T key-name="common.back" />
+                    </span>
+                </NuxtLink>
+                <button
+                    v-if="isCurrentUser"
+                    class="mr-5 flex h-8 w-8 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 sm:h-9 sm:w-9 lg:hidden"
+                    @click="gravatarEditor?.open()"
+                >
+                    <i class="pi pi-pencil" />
+                </button>
+            </div>
+        </div>
+        <div
+            id="content"
+            class="mt-3 flex w-full cursor-default flex-col pl-2 pr-2 lg:mt-5 lg:flex-row lg:pl-16 lg:pr-5 xl:pr-28"
+        >
+            <div
+                id="profile"
+                class="relative flex flex-row px-2 max-lg:pb-4 md:ml-10 lg:ml-0 lg:h-[65vh] lg:min-w-[48vh] lg:max-w-[48vh] lg:flex-col lg:items-center lg:rounded-xl lg:border-[3px] lg:border-calypso-400 lg:pt-5"
+            >
+                <button
+                    v-if="isCurrentUser"
+                    class="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:hidden"
+                    @click="gravatarEditor?.open()"
+                >
+                    <i class="pi pi-pencil" />
+                </button>
+                <div
+                    id="picture"
+                    class="group relative"
+                    @click="isCurrentUser && gravatarEditor?.open()"
+                >
+                    <NuxtImg
+                        :src="avatarUrl"
+                        class="h-28 w-28 rounded-full border object-contain sm:h-36 sm:w-36 lg:h-40 lg:w-40"
+                        :class="
+                            isCurrentUser
+                                ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
+                                : ''
+                        "
+                        :alt="t('profile.picture', { username: username })"
+                        placeholder
+                    />
+                    <i
+                        v-show="isCurrentUser"
+                        class="pi pi-pencil invisible absolute left-1/2 top-1/2 cursor-pointer group-hover:visible"
+                    />
                 </div>
-                <div class="mt-0.5 md:mt-2">
+                <div
+                    id="info"
+                    class="ml-2 flex max-w-44 flex-col xs:ml-4 xs:max-w-56 sm:max-w-96 md:ml-8 lg:ml-0 lg:mt-6 lg:h-full lg:w-full lg:max-w-full lg:items-center lg:justify-center lg:px-10"
+                >
+                    <h1
+                        v-tooltip.top="{
+                            value: displayname,
+                            pt: { root: 'font-nunito' },
+                        }"
+                        class="max-w-full truncate text-xl sm:text-2xl lg:text-2xl"
+                    >
+                        {{ displayname }}
+                    </h1>
                     <h2
-                        class="ml-3 max-w-48 truncate text-lg text-natural-500 dark:text-natural-300 xs:ml-6 xs:text-xl sm:ml-[2.875rem] md:ml-[3.75rem] md:max-w-screen-md md:text-2xl"
+                        v-tooltip.top="{
+                            value: '@' + username,
+                            pt: { root: 'font-nunito' },
+                        }"
+                        class="max-w-full truncate text-lg text-natural-800 dark:text-natural-200 sm:text-xl lg:mt-1 lg:text-xl"
                     >
                         @{{ username }}
                     </h2>
+                    <span
+                        v-tooltip.top="{
+                            value: $t('profile.created_at.tooltip', {
+                                date: joinDate
+                                    ? format(
+                                          new Date(joinDate),
+                                          'dd. MMMM yyyy',
+                                          {
+                                              locale: locale,
+                                          },
+                                      )
+                                    : '',
+                            }),
+                            pt: { root: 'font-nunito text-center' },
+                        }"
+                        class="mb-1 mt-auto text-natural-900 dark:text-natural-200"
+                    >
+                        <T
+                            key-name="profile.created_at"
+                            :params="{
+                                year: joinDate ? joinDate.getFullYear() : '',
+                            }"
+                        />
+                    </span>
                 </div>
             </div>
+            <div class="mx-2 h-0.5 bg-calypso-600 md:mx-10 lg:hidden"></div>
             <div
-                class="ml-3 mt-6 pr-2 xs:ml-6 xs:pr-10 sm:ml-[2.875rem] md:ml-[3.75rem] md:mt-16 md:pr-20 lg:mt-10"
+                id="template-section"
+                class="w-full px-2 max-lg:mt-4 md:px-10 lg:ml-5 xl:ml-10"
             >
-                <h1
-                    class="text-lg font-medium text-text dark:text-natural-50 xs:text-xl md:text-2xl"
+                <h2 class="text-lg sm:text-xl lg:text-2xl lg:font-semibold">
+                    {{ whoseTemplates }}
+                </h2>
+                <TransitionGroup
+                    name="fade"
+                    tag="div"
+                    class="relative mt-2 grid w-full grid-cols-2 gap-2 sm:grid-cols-3 md:gap-4 lg:grid-cols-2 lg:gap-4 xl:grid-cols-3"
                 >
-                    <T key-name="profile.templates" />
-                    {{ username }}
-                </h1>
-                <div
-                    id="templates"
-                    class="relative mt-2 grid grid-cols-2 gap-5 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6"
-                >
+                    <Skeleton
+                        v-for="index in maxDisplayedTemplates"
+                        v-show="
+                            templatesStatus === 'pending' && !showMoreTemplates
+                        "
+                        :key="index"
+                        class="w-16"
+                        height="10rem"
+                    />
                     <TemplateCard
-                        v-for="template in firstEightTemplates"
-                        :key="template.id"
-                        class="hidden md:block"
+                        v-for="(template, index) in templates"
+                        v-show="
+                            showMoreTemplates || index < maxDisplayedTemplates
+                        "
+                        :key="'template-card' + template.id"
+                        class="hidden lg:block"
                         :template="template"
                         :displayed-in-profile="true"
-                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
-                        @template-deleted="removeTemplate"
                     />
                     <TemplateCardSmall
-                        v-for="template in firstFourTemplates"
-                        :key="template.id"
-                        class="md:hidden"
+                        v-for="(template, index) in templates"
+                        v-show="
+                            showMoreTemplates || index < maxDisplayedTemplates
+                        "
+                        :key="'template-card-small' + template.id"
+                        class="lg:hidden"
                         :template="template"
                         :displayed-in-profile="true"
-                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
-                        @template-deleted="removeTemplate"
                     />
-                    <div
-                        v-if="firstEightTemplates.length === 0"
-                        class="col-span-full hidden text-text dark:text-natural-50 md:block"
-                    >
-                        <T key-name="template.none" />
-                    </div>
-                    <div
-                        v-if="firstFourTemplates.length === 0"
-                        class="col-span-full text-text dark:text-natural-50 md:hidden"
-                    >
-                        <T key-name="template.none" />
-                    </div>
-                </div>
-
+                </TransitionGroup>
                 <div
-                    v-if="showMore"
-                    id="more-templates"
-                    class="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6"
+                    v-if="
+                        templates.length === 0 &&
+                        templatesStatus !== 'idle' &&
+                        templatesStatus !== 'pending'
+                    "
+                    class="col-span-full"
                 >
-                    <TemplateCard
-                        v-for="template in remainingTemplatesDesktop"
-                        :key="template.id"
-                        class="hidden md:block"
-                        :template="template"
-                        :is-current-user="isCurrentUser"
-                        @open-template="openTemplateDialog(template)"
-                        @template-deleted="removeTemplate"
-                    />
-                    <TemplateCardSmall
-                        v-for="template in remainingTemplatesMobile"
-                        :key="template.id"
-                        class="md:hidden"
-                        :template="template"
-                        :displayed-in-profile="true"
-                        :is-current-user="isCurrentUser"
-                        @open-template="openTemplateDialog(template)"
-                        @template-deleted="removeTemplate"
-                    />
+                    <T key-name="template.none" />
                 </div>
-                <div ref="loader" class="col-span-full">
-                    <div v-if="moreTemplatesAvailable && showMore">
+                <div ref="templatesLoader" class="col-span-full">
+                    <div v-if="moreTemplatesAvailable && showMoreTemplates">
                         <div class="flex justify-center">
                             <ProgressSpinner class="w-10" />
                         </div>
-                        <div
-                            class="flex justify-center italic text-text dark:text-natural-50"
-                        >
+                        <div class="flex justify-center italic">
                             <T key-name="dashboard.templates.loading" />
                         </div>
                     </div>
                 </div>
                 <div
-                    v-if="remainingTemplatesDesktop.length > 0"
-                    class="mt-4 flex justify-center max-md:hidden"
+                    v-if="
+                        templates.length > 0 &&
+                        (moreTemplatesAvailable ||
+                            templates.length > maxDisplayedTemplates)
+                    "
+                    class="mt-4 flex justify-center"
                 >
                     <button
                         class="flex flex-col items-center justify-center text-text dark:text-natural-50"
-                        @click="toggle"
+                        @click="toggleTemplates"
                     >
-                        <span>{{ toggleText }}</span>
+                        <span>{{ toggleTextTemplates }}</span>
                         <span
                             class="pi mt-1"
                             :class="
-                                showMore
-                                    ? 'pi-chevron-up order-first mb-1'
-                                    : 'pi-chevron-down'
-                            "
-                        />
-                    </button>
-                </div>
-                <div
-                    v-if="remainingTemplatesMobile.length > 0"
-                    class="mt-4 flex justify-center md:hidden"
-                >
-                    <button
-                        class="flex flex-col items-center justify-center text-text dark:text-natural-50"
-                        @click="toggle"
-                    >
-                        <span>{{ toggleTextShort }}</span>
-                        <span
-                            class="pi mt-1"
-                            :class="
-                                showMore
+                                showMoreTemplates
                                     ? 'pi-chevron-up order-first mb-1'
                                     : 'pi-chevron-down'
                             "
@@ -418,29 +363,6 @@ function removeTemplate(id: string) {
                     isTemplatePopupVisible = false;
                     openedTemplate = undefined;
                 "
-            />
-            <ConfirmDialog
-                :draggable="false"
-                close-on-escape
-                dismissable-mask
-                group="username"
-                :pt="{
-                    header: {
-                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                    },
-                    content: {
-                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
-                    },
-                    footer: {
-                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
-                    },
-                    closeButton: {
-                        class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
-                    },
-                    closeButtonIcon: {
-                        class: 'h-5 w-5',
-                    },
-                }"
             />
         </div>
     </div>

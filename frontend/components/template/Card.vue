@@ -78,7 +78,7 @@ const confirmDelete = (event: Event) => {
                 detail: t.value("delete.template.toast.message"),
                 life: 3000,
             });
-            deleteTemplate(props.template.id);
+            deleteTemplate(props?.template?.id);
         },
     });
 };
@@ -111,7 +111,7 @@ async function deleteTemplate(id: string) {
 
 <template>
     <div
-        class="rounded-xl border-2 border-natural-200 bg-natural-50 text-text hover:cursor-pointer hover:border-calypso-400 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400"
+        class="min-w-72 rounded-xl border-2 border-natural-200 bg-natural-50 text-text hover:cursor-pointer hover:border-calypso-400 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400"
         role="button"
         tabindex="0"
         @click="$emit('openTemplate', template?.id)"
@@ -154,7 +154,7 @@ async function deleteTemplate(id: string) {
             <div class="flex">
                 <h3
                     v-tooltip.top="{
-                        value: template.name,
+                        value: template?.name,
                         pt: { root: 'font-nunito' },
                     }"
                     class="w-full truncate text-xl font-medium"
@@ -163,7 +163,7 @@ async function deleteTemplate(id: string) {
                         class="block overflow-hidden overflow-ellipsis text-nowrap"
                         :class="!isCurrentUser ? 'w-full' : 'w-11/12'"
                     >
-                        {{ template.name }}
+                        {{ template?.name }}
                     </div>
                 </h3>
                 <Button
@@ -200,7 +200,7 @@ async function deleteTemplate(id: string) {
             <div id="template-details" class="mt-2">
                 <div
                     v-tooltip.top="{
-                        value: template.destination,
+                        value: template?.destination,
                         pt: { root: 'font-nunito' },
                     }"
                     class="flex flex-row items-center gap-x-1"
@@ -226,9 +226,9 @@ async function deleteTemplate(id: string) {
                         <i class="pi pi-star text-lg text-calypso-600" />
                         <h5 class="truncate text-lg">
                             {{
-                                Math.round(template.average_rating * 100) / 100
+                                Math.round(template?.average_rating * 100) / 100
                             }}
-                            ({{ template.total_ratings }})
+                            ({{ template?.total_ratings }})
                         </h5>
                     </div>
                 </div>

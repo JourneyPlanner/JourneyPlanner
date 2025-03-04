@@ -113,6 +113,7 @@ function changeTemplateDetails(template: Template) {
                 id: 'TEMPLATE_EDIT',
                 display_name: 'TEMPLATE_EDIT',
                 username: 'TEMPLATE_EDIT',
+                email: 'TEMPLATE_EDIT',
                 role: 1,
             }"
         />
@@ -131,6 +132,7 @@ function changeTemplateDetails(template: Template) {
                 id: 'TEMPLATE_EDIT',
                 display_name: 'TEMPLATE_EDIT',
                 username: 'TEMPLATE_EDIT',
+                email: 'TEMPLATE_EDIT',
                 role: 1,
             }"
             :is-activity-dialog-visible="false"
