@@ -162,10 +162,12 @@ const locale = computed(() => {
             <div class="flex w-full flex-row items-center justify-between">
                 <NuxtLink
                     :to="backRoute"
-                    class="flex cursor-pointer items-center gap-x-2 pl-2 text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 lg:pl-8"
+                    class="flex cursor-pointer items-center gap-x-1 pl-2 text-natural-600 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 lg:gap-x-2 lg:pl-8"
                 >
-                    <i class="pi pi-angle-left text-3xl md:text-3xl" />
-                    <span class="mt-0.5 text-2xl font-semibold">
+                    <i class="pi pi-angle-left text-2xl sm:text-3xl" />
+                    <span
+                        class="mt-0.5 text-xl font-semibold sm:text-2xl lg:text-2xl"
+                    >
                         <T key-name="common.back" />
                     </span>
                 </NuxtLink>
@@ -184,7 +186,7 @@ const locale = computed(() => {
         >
             <div
                 id="profile"
-                class="relative flex flex-row max-lg:border-b-2 max-lg:border-calypso-600 max-lg:pb-4 md:ml-10 lg:ml-0 lg:h-[65vh] lg:min-w-[48vh] lg:max-w-[48vh] lg:flex-col lg:items-center lg:rounded-xl lg:border-[3px] lg:border-calypso-400 lg:pt-5"
+                class="relative flex flex-row px-2 max-lg:pb-4 md:ml-10 lg:ml-0 lg:h-[65vh] lg:min-w-[48vh] lg:max-w-[48vh] lg:flex-col lg:items-center lg:rounded-xl lg:border-[3px] lg:border-calypso-400 lg:pt-5"
             >
                 <button
                     v-if="isCurrentUser"
@@ -262,9 +264,10 @@ const locale = computed(() => {
                     </span>
                 </div>
             </div>
+            <div class="mx-2 h-0.5 bg-calypso-600 md:mx-10 lg:hidden"></div>
             <div
                 id="template-section"
-                class="w-full px-2 max-lg:mt-5 md:px-10 lg:ml-5 xl:ml-10"
+                class="w-full px-2 max-lg:mt-4 md:px-10 lg:ml-5 xl:ml-10"
             >
                 <h2 class="text-lg sm:text-xl lg:text-2xl lg:font-semibold">
                     {{ whoseTemplates }}
