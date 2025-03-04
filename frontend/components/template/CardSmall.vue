@@ -173,7 +173,7 @@ function handleUserClick() {
                     <span
                         v-tooltip.top="{
                             value: t('template.created.business'),
-                            pt: { root: 'font-nunito' },
+                            pt: { root: 'font-nunito text-center' },
                         }"
                         class="pi pi-verified ml-auto justify-end text-lg text-calypso-600 dark:text-calypso-400"
                     />
@@ -191,7 +191,7 @@ function handleUserClick() {
             <h4
                 v-tooltip.top="{
                     value: template.creator.username,
-                    pt: { root: 'font-nunito' },
+                    pt: { root: 'font-nunito ' },
                 }"
                 class="-mt-1 truncate text-base text-natural-600 dark:text-natural-300"
             >

@@ -179,7 +179,7 @@ function handleUserClick() {
                         v-if="template?.creator?.business"
                         v-tooltip.top="{
                             value: t('template.created.business'),
-                            pt: { root: 'font-nunito' },
+                            pt: { root: 'font-nunito text-center' },
                         }"
                         class="pi pi-verified ml-auto justify-end text-xl text-calypso-600 dark:text-calypso-400"
                     />

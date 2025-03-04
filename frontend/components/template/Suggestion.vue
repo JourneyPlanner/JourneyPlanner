@@ -22,7 +22,7 @@ const isProfileDialogVisible = ref(false);
 function handleUserClick() {
     if (!props.template?.creator?.business) {
         isProfileDialogVisible.value = true;
-    } else if (props.template?.creator?.business) {
+    } else {
         router.push(`/business/${props.template?.creator?.username}`);
     }
 }
@@ -38,9 +38,9 @@ function handleUserClick() {
     >
         <div class="py-1 hover:border-y-2 hover:border-calypso-400">
             <div
-                class="ml-1.5 flex items-center border-l-2 border-natural-400 pl-1 hover:border-calypso-400 dark:border-natural-400 dark:hover:border-calypso-400"
+                class="ml-1.5 items-center border-l-2 border-natural-400 pl-1 hover:border-calypso-400 dark:border-natural-400 dark:hover:border-calypso-400 max-lg:grid max-lg:grid-cols-9 lg:flex"
             >
-                <div class="ml-1.5 w-1/2 lg:w-1/3">
+                <div class="ml-1.5 max-lg:col-span-4 lg:w-1/3">
                     <div class="flex items-center">
                         <h3
                             v-tooltip.top="{
@@ -55,7 +55,7 @@ function handleUserClick() {
                             v-if="template?.creator?.business"
                             v-tooltip.top="{
                                 value: t('template.created.business'),
-                                pt: { root: 'font-nunito' },
+                                pt: { root: 'font-nunito text-center' },
                             }"
                             class="pi pi-verified justify-end text-lg text-calypso-600 dark:text-calypso-400"
                         />
@@ -75,7 +75,7 @@ function handleUserClick() {
                     </h4>
                 </div>
                 <div
-                    class="ml-3 w-1/2 gap-x-0.5 text-text dark:text-natural-50 max-lg:flex max-lg:flex-col xs:ml-[3vw] lg:ml-3 lg:grid lg:w-2/3 lg:grid-cols-9 lg:gap-4"
+                    class="ml-3 gap-x-0.5 text-text dark:text-natural-50 max-lg:col-span-4 max-lg:flex max-lg:flex-col xs:ml-[3vw] lg:ml-3 lg:grid lg:w-2/3 lg:grid-cols-9 lg:gap-4"
                 >
                     <div
                         v-tooltip.top="{
