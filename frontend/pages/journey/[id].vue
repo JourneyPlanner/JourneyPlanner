@@ -102,7 +102,7 @@ function activityDeleted(e: object) {
 function calendarActivityCreated(e: object) {
     console.log(e.model);
     console.log(e.model.activity);
-    activityStore.updateActivity([e]);
+    activityStore.createCalendarActivity(e.model);
 }
 
 const { data, error } = await useAsyncData("journey", () =>

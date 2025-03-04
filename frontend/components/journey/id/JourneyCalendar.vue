@@ -45,6 +45,7 @@ const client = useSanctumClient();
 const alreadyAdded = ref(false);
 const { t } = useTranslate();
 const { addedActivity } = storeToRefs(store);
+const { newCalendarActivity } = storeToRefs(store);
 const { oldActivity } = storeToRefs(store);
 const toast = useToast();
 const props = defineProps({
@@ -345,6 +346,11 @@ const calendarOptions = reactive({
 
 watch(addedActivity, () => {
     addNewActivities(addedActivity.value);
+});
+
+watch(newCalendarActivity, () => {
+    console.log(newCalendarActivity);
+    addActivity(newCalendarActivity.value);
 });
 
 watch(
@@ -657,6 +663,20 @@ async function addNewActivities(activities: Activity[]) {
             );
         }
     });
+}
+
+function addActivity(addCalendarActivity: CalendarActivity) {
+    console.log(addCalendarActivity);
+    const calApi = fullCalendar.value.getApi();
+    if (calApi.getEventById(addCalendarActivity.id) !== null) {
+        calApi.getEventById(addCalendarActivity.id).remove();
+    }
+    if (addCalendarActivity.start.split(" ")[1] <= "06:00:00") {
+        calApi.setOption("slotMinTime", "00:00:00");
+        document.getElementsByClassName("fc-showAllHours-button")[0].innerHTML =
+            "0:00 - 0:00";
+    }
+    calApi.addEvent(addCalendarActivity);
 }
 
 function call(editType: string) {
