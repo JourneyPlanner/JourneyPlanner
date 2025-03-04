@@ -40,7 +40,7 @@ function handleUserClick() {
             <div
                 class="ml-1.5 items-center border-l-2 border-natural-400 pl-1 hover:border-calypso-400 dark:border-natural-400 dark:hover:border-calypso-400 max-lg:grid max-lg:grid-cols-9 lg:flex"
             >
-                <div class="ml-1.5 max-lg:col-span-4 lg:w-1/3">
+                <div class="ml-1.5 max-lg:col-span-4 lg:w-2/5">
                     <div class="flex items-center">
                         <h3
                             v-tooltip.top="{
@@ -75,7 +75,7 @@ function handleUserClick() {
                     </h4>
                 </div>
                 <div
-                    class="ml-3 gap-x-0.5 text-text dark:text-natural-50 max-lg:col-span-4 max-lg:flex max-lg:flex-col xs:ml-[3vw] lg:ml-3 lg:grid lg:w-2/3 lg:grid-cols-9 lg:gap-4"
+                    class="ml-3 gap-x-0.5 text-text dark:text-natural-50 max-lg:col-span-4 max-lg:flex max-lg:flex-col xs:ml-[3vw] lg:ml-3 lg:grid lg:w-3/5 lg:grid-cols-8 lg:gap-4"
                 >
                     <div
                         v-tooltip.top="{
@@ -103,7 +103,7 @@ function handleUserClick() {
                                 ),
                             pt: { root: 'font-nunito' },
                         }"
-                        class="col-span-3 flex flex-row items-center gap-x-1"
+                        class="col-span-2 flex flex-row items-center gap-x-1"
                     >
                         <i
                             class="pi pi-calendar text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
