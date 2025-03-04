@@ -29,8 +29,10 @@ const toast = useToast();
 const { isAuthenticated } = useSanctumAuth();
 
 const isVisible = ref(false);
+const isProfileDialogVisible = ref(false);
 const template = props.template;
 const activityCount = ref(null);
+const router = useRouter();
 const activities = ref();
 const numRating = ref(0);
 const rating = ref(0);
@@ -123,6 +125,14 @@ function changeRatingMobile() {
     isRatingVisible.value = false;
     changeRating();
 }
+
+function handleUserClick() {
+    if (!template?.creator?.business) {
+        isProfileDialogVisible.value = true;
+    } else {
+        router.push(`/business/${template?.creator?.username}`);
+    }
+}
 </script>
 
 <template>
@@ -178,11 +188,34 @@ function changeRatingMobile() {
                 id="template-content"
                 class="mx-4 -mb-2 mt-2 h-full xs:mx-8 sm:mx-12 md:mx-8"
             >
-                <div id="details" class="flex h-48 gap-x-4">
+                <div id="details" class="flex h-56 gap-x-4">
                     <div
                         id="facts"
                         class="flex h-full w-1/2 flex-col gap-y-3 text-text dark:text-natural-50"
                     >
+                        <div
+                            id="user"
+                            v-tooltip.top="{
+                                value: template.creator.username,
+                                pt: { root: 'font-nunito' },
+                            }"
+                            class="flex flex-row items-center gap-x-1"
+                        >
+                            <i
+                                class="pi mr-2 text-xl text-calypso-600 dark:text-calypso-400"
+                                :class="
+                                    template.creator.business
+                                        ? 'pi-building'
+                                        : 'pi-user'
+                                "
+                            />
+                            <h5
+                                class="cursor-pointer truncate text-xl hover:underline"
+                                @click="handleUserClick"
+                            >
+                                {{ template.creator.username }}
+                            </h5>
+                        </div>
                         <div
                             id="destination"
                             v-tooltip.top="{
@@ -463,7 +496,27 @@ function changeRatingMobile() {
                 </div>
             </template>
             <div class="flex h-full flex-col gap-y-5 pl-6 pr-2">
-                <div id="details" class="flex w-full flex-col gap-x-4">
+                <div
+                    id="details"
+                    class="flex flex-col gap-y-3 text-text dark:text-natural-50"
+                >
+                    <div
+                        id="user"
+                        class="flex cursor-pointer flex-row items-center gap-x-1"
+                        @click="handleUserClick"
+                    >
+                        <i
+                            class="pi mr-2 text-calypso-600 dark:text-calypso-400"
+                            :class="
+                                template.creator.business
+                                    ? 'pi-building'
+                                    : 'pi-user'
+                            "
+                        />
+                        <h5 class="truncate text-base">
+                            {{ template.creator.username }}
+                        </h5>
+                    </div>
                     <div
                         id="facts"
                         class="flex flex-col gap-y-3 text-text dark:text-natural-50"
@@ -763,5 +816,13 @@ function changeRatingMobile() {
                 </button>
             </div>
         </Sidebar>
+        <div class="dialogs">
+            <JourneyIdDialogsProfileDialog
+                :visible="isProfileDialogVisible"
+                :username="template?.creator?.username"
+                :displayname="template?.creator?.display_name"
+                @close="isProfileDialogVisible = false"
+            />
+        </div>
     </div>
 </template>

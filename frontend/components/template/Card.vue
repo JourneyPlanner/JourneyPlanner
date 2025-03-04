@@ -107,6 +107,14 @@ async function deleteTemplate(id: string) {
         },
     });
 }
+
+function handleUserClick() {
+    if (!props.displayedInProfile && !props.template?.creator?.business) {
+        isProfileDialogVisible.value = true;
+    } else if (props.template?.creator?.business) {
+        router.push(`/business/${props.template?.creator?.username}`);
+    }
+}
 </script>
 
 <template>
@@ -166,6 +174,16 @@ async function deleteTemplate(id: string) {
                         {{ template?.name }}
                     </div>
                 </h3>
+                <div class="flex items-center pl-2">
+                    <span
+                        v-if="template?.creator?.business"
+                        v-tooltip.top="{
+                            value: t('template.created.business'),
+                            pt: { root: 'font-nunito text-center' },
+                        }"
+                        class="pi pi-verified ml-auto justify-end text-xl text-calypso-600 dark:text-calypso-400"
+                    />
+                </div>
                 <Button
                     v-if="isCurrentUser"
                     type="button"
@@ -178,7 +196,7 @@ async function deleteTemplate(id: string) {
             </div>
             <h4
                 v-tooltip.top="{
-                    value: template?.users[0]?.username,
+                    value: template?.creator?.username,
                     pt: { root: 'font-nunito' },
                 }"
                 class="-mt-1 truncate text-xl text-natural-600 dark:text-natural-300"
@@ -189,12 +207,8 @@ async function deleteTemplate(id: string) {
                             ? 'cursor-pointer hover:text-calypso-600 hover:underline'
                             : ''
                     "
-                    @click.stop="
-                        !displayedInProfile
-                            ? (isProfileDialogVisible = true)
-                            : ''
-                    "
-                    >{{ template?.users[0]?.username }}</span
+                    @click.stop="handleUserClick"
+                    >{{ template?.creator?.username }}</span
                 >
             </h4>
             <div id="template-details" class="mt-2">
@@ -237,8 +251,8 @@ async function deleteTemplate(id: string) {
         <div class="dialogs">
             <JourneyIdDialogsProfileDialog
                 :visible="isProfileDialogVisible"
-                :username="template?.users[0]?.username"
-                :displayname="template?.users[0]?.display_name"
+                :username="template?.creator?.username"
+                :displayname="template?.creator?.display_name"
                 @close="isProfileDialogVisible = false"
             />
             <JourneyIdDialogsCreateTemplateDialog
