@@ -2,7 +2,6 @@
 
 namespace App\Models\Business;
 
-use App\Models\Activity;
 use App\Models\Journey;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,13 +46,5 @@ class Business extends Model
             "business_templates",
             relatedPivotKey: "template_id"
         );
-    }
-
-    /**
-     * The business's activities.
-     */
-    public function activities(): BelongsToMany
-    {
-        return $this->belongsToMany(Activity::class, "business_activities");
     }
 }
