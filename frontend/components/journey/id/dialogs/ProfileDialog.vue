@@ -182,7 +182,7 @@ const close = (): void => {
                     />
                     <div
                         v-if="templates && templates.length === 0"
-                        class="col-span-full"
+                        class="col-span-full text-natural-500 dark:text-natural-300"
                     >
                         <T key-name="template.none" />
                     </div>
@@ -285,7 +285,7 @@ const close = (): void => {
                     />
                     <div
                         v-if="templates && templates.length === 0"
-                        class="col-span-full"
+                        class="col-span-full text-natural-500 dark:text-natural-300"
                     >
                         <T key-name="template.none" />
                     </div>

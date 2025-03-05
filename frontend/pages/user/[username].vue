@@ -315,7 +315,7 @@ const locale = computed(() => {
                         templatesStatus !== 'idle' &&
                         templatesStatus !== 'pending'
                     "
-                    class="col-span-full"
+                    class="col-span-full text-natural-500 dark:text-natural-300"
                 >
                     <T key-name="template.none" />
                 </div>
