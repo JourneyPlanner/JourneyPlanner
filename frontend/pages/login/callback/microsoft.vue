@@ -11,6 +11,10 @@ useHead({
     title: `Microsoft Auth | JourneyPlanner`,
 });
 
+defineRouteRules({
+    robots: false,
+});
+
 const route = useRoute();
 const code = route.query.code as string;
 

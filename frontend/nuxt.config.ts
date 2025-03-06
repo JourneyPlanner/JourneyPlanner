@@ -7,6 +7,9 @@ export default defineNuxtConfig({
     future: {
         typescriptBundlerResolution: false,
     },
+    experimental: {
+        inlineRouteRules: true,
+    },
     app: {
         pageTransition: { name: "page", mode: "out-in" },
         layoutTransition: { name: "page", mode: "out-in" },
@@ -27,6 +30,24 @@ export default defineNuxtConfig({
                 },
                 { rel: "manifest", href: "/site.webmanifest" },
             ],
+            meta: [
+                {
+                    name: "description",
+                    content: "JourneyPlanner - Travel planning made easy",
+                },
+                { property: "og:site_name", content: "JourneyPlanner" },
+                { property: "og:url", content: process.env.NUXT_FRONTEND_URL },
+                { property: "og:type", content: "website" },
+                { property: "og:title", content: "JourneyPlanner" },
+                {
+                    property: "og:description",
+                    content: "Travel planning made ease",
+                },
+                {
+                    property: "og:image",
+                    content: `${process.env.NUXT_FRONTEND_URL}/og-image.png`,
+                },
+            ],
         },
     },
     vue: {
@@ -43,6 +64,7 @@ export default defineNuxtConfig({
         "@pinia/nuxt",
         "@nuxt/eslint",
         "@nuxt/image",
+        "@nuxtjs/seo",
     ],
     css: [
         "@/assets/css/fonts/fonts.css",
@@ -59,6 +81,7 @@ export default defineNuxtConfig({
             NUXT_TOLGEE_API_KEY: process.env.NUXT_TOLGEE_API_KEY,
             NUXT_TOLGEE_API_URL: process.env.NUXT_TOLGEE_API_URL,
             NUXT_BACKEND_URL: process.env.NUXT_BACKEND_URL,
+            NUXT_FRONTEND_URL: process.env.NUXT_FRONTEND_URL,
             NUXT_MAPBOX_API_KEY: process.env.NUXT_MAPBOX_API_KEY,
             NUXT_UPLOAD_URL: process.env.NUXT_UPLOAD_URL,
             NUXT_LIGHTGALLERY_KEY: process.env.NUXT_LIGHTGALLERY_KEY,
