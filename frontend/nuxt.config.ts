@@ -14,6 +14,7 @@ export default defineNuxtConfig({
         pageTransition: { name: "page", mode: "out-in" },
         layoutTransition: { name: "page", mode: "out-in" },
         head: {
+            titleTemplate: "%s",
             link: [
                 {
                     rel: "icon",
@@ -42,10 +43,6 @@ export default defineNuxtConfig({
                 {
                     property: "og:description",
                     content: "Travel planning made ease",
-                },
-                {
-                    property: "og:image",
-                    content: `${process.env.NUXT_FRONTEND_URL}/og-image.png`,
                 },
             ],
         },
