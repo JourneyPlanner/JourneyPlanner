@@ -117,22 +117,37 @@ class BusinessController extends Controller
     ): JsonResponse {
         $validated = $request->validate([
             "per_page" => "nullable|integer|min:1|max:100",
+            "private" => "nullable|boolean",
         ]);
-        $templates = $business
-            ->templates()
-            ->wherePivot("visible", true)
+        $perPage = $validated["per_page"] ?? TemplateController::$perPage;
+        $includePrivate = $validated["private"] ?? false;
+
+        $templates = $business->templates();
+
+        if ($includePrivate) {
+            Gate::authorize("update", $business);
+        } else {
+            $templates = $templates->wherePivot("visible", true);
+        }
+
+        $templates = $templates
             ->with([
                 "users" => function ($query) {
                     $query->select("id", "username", "display_name");
                 },
             ])
-            ->cursorPaginate(
-                $validated["per_page"] ?? TemplateController::$perPage,
-                TemplateController::getColumns()
-            )
+            ->cursorPaginate($perPage, static::getColumns())
             ->withQueryString();
 
         return response()->json($templates);
+    }
+
+    /**
+     * Get the columns to select for the templates.
+     */
+    private static function getColumns(): array
+    {
+        return array_merge(TemplateController::getColumns(), ["visible"]);
     }
 
     /**
