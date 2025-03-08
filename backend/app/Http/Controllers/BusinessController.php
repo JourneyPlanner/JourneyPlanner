@@ -98,7 +98,7 @@ class BusinessController extends Controller
     /**
      * Get a specific image of a business.
      */
-    public function showImage(string $slug, BusinessImage $image)
+    public function showImage(Business $business, BusinessImage $image)
     {
         $path = $image->getPath();
         if (file_exists($path)) {
@@ -111,13 +111,14 @@ class BusinessController extends Controller
     /**
      * Get all templates of a business.
      */
-    public function showTemplates(string $slug, Request $request): JsonResponse
-    {
+    public function showTemplates(
+        Business $business,
+        Request $request
+    ): JsonResponse {
         $validated = $request->validate([
             "per_page" => "nullable|integer|min:1|max:100",
         ]);
-        $templates = Business::where("slug", $slug)
-            ->firstOrFail()
+        $templates = $business
             ->templates()
             ->wherePivot("visible", true)
             ->with([
@@ -137,13 +138,14 @@ class BusinessController extends Controller
     /**
      * Get all activities of a business.
      */
-    public function showActivities(string $slug, Request $request): JsonResponse
-    {
+    public function showActivities(
+        Business $business,
+        Request $request
+    ): JsonResponse {
         $validated = $request->validate([
             "per_page" => "nullable|integer|min:1|max:100",
         ]);
-        $activities = Business::where("slug", $slug)
-            ->firstOrFail()
+        $activities = $business
             ->activities()
             ->cursorPaginate(
                 $validated["per_page"] ?? TemplateController::$perPage
@@ -188,8 +190,13 @@ class BusinessController extends Controller
     /**
      * Upload an image for a business.
      */
-    public function uploadImage(string $slug, Request $request): JsonResponse
-    {
+    public function uploadImage(
+        Business $business,
+        Request $request
+    ): JsonResponse {
+        // Verify user business membership
+        Gate::authorize("update", $business);
+
         $validated = $request->validate([
             "image" => "nullable|image",
             "type" => "required|string|in:image,banner",
@@ -197,10 +204,6 @@ class BusinessController extends Controller
             "alt_texts.*.language" => "required|string|in:en,de",
             "alt_texts.*.alt_text" => "required|string|max:255",
         ]);
-        $business = Business::where("slug", $slug)->firstOrFail();
-
-        // Verify user business membership
-        Gate::authorize("update", $business);
 
         $businessImage = $business
             ->images()
@@ -214,7 +217,7 @@ class BusinessController extends Controller
                 Storage::delete($businessImage->file_name);
             }
 
-            $fileName = $image->store("business_images/{$slug}");
+            $fileName = $image->store("business_images/{$business->slug}");
             $businessImage = BusinessImage::updateOrCreate(
                 ["business_id" => $business->id, "key" => $validated["type"]],
                 ["file_name" => $fileName]
