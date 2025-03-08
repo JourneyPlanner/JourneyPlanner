@@ -183,13 +183,13 @@ class BusinessController extends Controller
         // Save the image
         if ($image) {
             if ($businessImage) {
-                Storage::delete($businessImage->getPath());
+                Storage::delete($businessImage->file_name);
             }
 
             $fileName = $image->store("business_images/{$slug}");
             $businessImage = BusinessImage::updateOrCreate(
                 ["business_id" => $business->id, "key" => $validated["type"]],
-                ["path" => $fileName]
+                ["file_name" => $fileName]
             );
         } elseif (!$businessImage) {
             return response()->json(["error" => "No image provided"], 400);

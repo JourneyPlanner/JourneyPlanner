@@ -40,9 +40,7 @@ class BusinessImage extends Model
      */
     public function getPath(): string
     {
-        return storage_path(
-            "app/business_images/{$this->business->slug}/{$this->file_name}"
-        );
+        return storage_path("app/{$this->file_name}");
     }
 
     /**
