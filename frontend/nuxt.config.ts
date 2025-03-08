@@ -42,9 +42,19 @@ export default defineNuxtConfig({
                 { property: "og:title", content: "JourneyPlanner" },
                 {
                     property: "og:description",
-                    content: "Travel planning made ease",
+                    content: "Travel planning made easy",
                 },
             ],
+        },
+    },
+    ogImage: {
+        enabled: false,
+    },
+    linkChecker: {
+        failOnError: true,
+        report: {
+            html: true,
+            markdown: true,
         },
     },
     vue: {
