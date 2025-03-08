@@ -9,6 +9,7 @@ use App\Models\Business\BusinessImageAltText;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Business\BusinessText;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,15 +18,10 @@ class BusinessController extends Controller
     /**
      * Get a specific business by its slug.
      */
-    public function show(string $slug, Request $request): JsonResponse
+    public function show(Business $business, Request $request): JsonResponse
     {
         $validated = $request->validate([
             "language" => "required|string|in:en,de",
-        ]);
-        $business = Business::where("slug", $slug)->firstOrFail([
-            "id",
-            "name",
-            "default_language",
         ]);
 
         // Load images and texts for the specified language
@@ -155,6 +151,38 @@ class BusinessController extends Controller
             ->withQueryString();
 
         return response()->json($activities);
+    }
+
+    public function update(Request $request, Business $business): Response
+    {
+        // Verify user business membership
+        Gate::authorize("update", $business);
+
+        // Validate the request
+        $validated = $request->validate([
+            "texts" => "required|array",
+            "texts.*.language" => "in:de,en",
+            "texts.*.texts" => "required|array",
+            "texts.*.texts.*.key" =>
+                "required|string|in:company_name,button,button_link,text",
+            "texts.*.texts.*.value" => "required|string",
+        ]);
+
+        // Update the texts
+        foreach ($validated["texts"] as $text) {
+            foreach ($text["texts"] as $textValue) {
+                BusinessText::updateOrCreate(
+                    [
+                        "business_id" => $business->id,
+                        "key" => $textValue["key"],
+                        "language" => $text["language"],
+                    ],
+                    ["value" => $textValue["value"]]
+                );
+            }
+        }
+
+        return response()->noContent();
     }
 
     /**

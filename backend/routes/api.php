@@ -149,7 +149,7 @@ Route::delete("user/delete-account", [
 Route::get("user/{username}", [UserController::class, "show"]);
 Route::get("user", [UserController::class, "index"]);
 
-Route::get("business/{slug}", [BusinessController::class, "show"]);
+Route::get("business/{business:slug}", [BusinessController::class, "show"]);
 Route::get("business/{slug}/image/{image}", [
     BusinessController::class,
     "showImage",
@@ -162,9 +162,12 @@ Route::get("business/{slug}/activities", [
     BusinessController::class,
     "showActivities",
 ]);
-
+Route::get("me/business", [BusinessController::class, "currentsUserIndex"]);
 Route::post("business/{slug}/uploadImage", [
     BusinessController::class,
     "uploadImage",
 ])->middleware("auth:sanctum");
-Route::get("me/business", [BusinessController::class, "currentsUserIndex"]);
+Route::post("business/{business:slug}/updateTexts", [
+    BusinessController::class,
+    "update",
+]);
