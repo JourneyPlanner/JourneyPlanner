@@ -87,7 +87,7 @@ onMounted(() => {
 });
 
 const { data: requiresPassword, refresh: refreshRequiresPassword } =
-    await useAsyncData("reqpw", () => client(`/api/me/requiresPassword`), {
+    await useAsyncData("reqpw", () => client(`/api/me/`), {
         getCachedData(key) {
             return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
         },

@@ -17,6 +17,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    openedFromBusiness: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const { t } = useTranslate();
@@ -121,7 +125,7 @@ async function deleteTemplate(id: string) {
             id="overlay_menu"
             ref="menu"
             :model="templateItems"
-            class="bg-natural-50 dark:bg-natural-800"
+            class="z-[502] bg-natural-50 dark:bg-natural-800"
             :popup="true"
             :pt="{
                 root: {
@@ -167,7 +171,7 @@ async function deleteTemplate(id: string) {
                     </div>
                 </h3>
                 <Button
-                    v-if="isCurrentUser"
+                    v-if="isCurrentUser || openedFromBusiness"
                     type="button"
                     icon="pi pi-ellipsis-v"
                     aria-haspopup="true"

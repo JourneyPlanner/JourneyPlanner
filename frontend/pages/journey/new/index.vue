@@ -6,10 +6,14 @@ import { useForm } from "vee-validate";
 import * as yup from "yup";
 
 const { t } = useTranslate();
+const route = useRoute();
+const router = useRouter();
 const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 const toast = useToast();
 const store = useJourneysStore();
+
+console.log(route.query.creationType);
 
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
@@ -22,6 +26,12 @@ const templateDestinationName = ref("");
 const suggestions = ref<Template[]>([]);
 const journeyName = ref();
 const journeyRange = ref();
+const creationType = ref();
+
+if (route.query.creationType == "template") {
+    creationType.value = route.query.creationType;
+    cancel.value = router.options.history.state.back as string;
+}
 
 const title = t.value("title.journey.create");
 useHead({
@@ -235,19 +245,33 @@ function changeRange(newRange: Date[]) {
                         for="create-journey"
                         class="text-center text-2xl font-bold text-text dark:text-natural-50 md:mb-5 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
                     >
-                        <T key-name="form.header.journey.create" />
+                        <T
+                            :key-name="
+                                creationType != 'template'
+                                    ? 'form.header.journey.create'
+                                    : 'form.header.template.create'
+                            "
+                        />
                     </legend>
                     <form class="px-1 lg:px-5" @submit="onSubmit">
                         <FormInput
                             id="journey-name"
                             name="journeyName"
-                            translation-key="form.input.journey.name"
+                            :translation-key="
+                                creationType != 'template'
+                                    ? 'form.input.journey.name'
+                                    : 'form.input.template.name'
+                            "
                             @change-input="changeName"
                         />
                         <FormAddressInput
                             id="journey-destination"
                             name="journeyDestination"
-                            :placeholder="t('form.input.journey.destination')"
+                            :placeholder="
+                                creationType != 'template'
+                                    ? t('form.input.journey.destination')
+                                    : t('form.input.template.destination')
+                            "
                             class="relative mb-4"
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
                             @change-address="changeAddress"
@@ -263,12 +287,15 @@ function changeRange(newRange: Date[]) {
                             />
                         </div>
                         <Divider
-                            v-if="isAuthenticated"
+                            v-if="isAuthenticated && creationType != 'template'"
                             type="solid"
                             class="border-10 mt-2 border pt-0 text-calypso-300 dark:text-calypso-400"
                         />
 
-                        <div v-if="isAuthenticated" class="relative my-2 flex">
+                        <div
+                            v-if="isAuthenticated && creationType != 'template'"
+                            class="relative my-2 flex"
+                        >
                             <input
                                 id="journey-invite"
                                 v-model="journeyInviteLink"
@@ -322,7 +349,10 @@ function changeRange(newRange: Date[]) {
                     </form>
                 </fieldset>
             </div>
-            <div class="mt-2 flex items-center justify-center px-4 font-nunito">
+            <div
+                v-if="creationType != 'template'"
+                class="mt-2 flex items-center justify-center px-4 font-nunito"
+            >
                 <div
                     id="template-section"
                     class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-2/4 md:w-2/5"
