@@ -3,18 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Journey\TemplateController;
+use App\Http\Requests\Journey\StoreJourneyRequest;
 use App\Models\Business\Business;
 use App\Models\Business\BusinessImage;
 use App\Models\Business\BusinessImageAltText;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Business\BusinessText;
+use App\Models\Journey;
+use App\Services\MapboxService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class BusinessController extends Controller
 {
+    /**
+     * The Mapbox service.
+     */
+    private $mapboxService;
+
+    /**
+     * Create a new controller instance.
+     */
+    public function __construct(MapboxService $mapboxService)
+    {
+        $this->mapboxService = $mapboxService;
+    }
+
     /**
      * Get a specific business by its slug.
      */
@@ -203,6 +219,32 @@ class BusinessController extends Controller
         }
 
         return response()->noContent();
+    }
+
+    /**
+     * Create a template for a business.
+     */
+    public function createTemplate(
+        Business $business,
+        StoreJourneyRequest $request
+    ): JsonResponse {
+        // Verify user business membership
+        Gate::authorize("update", $business);
+
+        // Validate the request
+        $validated = $request->validated();
+
+        $validated = $this->mapboxService->fetchAddressDetails($validated);
+
+        // Create the template
+        $template = new Journey($validated);
+        $template->is_template = true;
+        $template->save();
+
+        // Set the visibility
+        $business->templates()->attach($template->id);
+
+        return response()->json($template, 201);
     }
 
     /**

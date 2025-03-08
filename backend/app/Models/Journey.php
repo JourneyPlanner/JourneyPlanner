@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Business\Business;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -93,6 +94,19 @@ class Journey extends Model
         return $this->hasMany(Journey::class, "created_from")->where(
             "is_template",
             "1"
+        );
+    }
+
+    /**
+     * The businesses that are a part of the journey.
+     */
+    public function businesses(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Business::class,
+            "business_templates",
+            "business_id",
+            "journey_id"
         );
     }
 

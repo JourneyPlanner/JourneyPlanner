@@ -175,3 +175,7 @@ Route::post("business/{business:slug}/updateTemplates", [
     BusinessController::class,
     "updateTemplates",
 ]);
+Route::post("business/{business:slug}/createTemplate", [
+    BusinessController::class,
+    "createTemplate",
+]);
