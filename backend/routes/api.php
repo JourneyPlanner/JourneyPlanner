@@ -169,5 +169,9 @@ Route::post("business/{business:slug}/uploadImage", [
 ])->middleware("auth:sanctum");
 Route::post("business/{business:slug}/updateTexts", [
     BusinessController::class,
-    "update",
+    "updateTexts",
+]);
+Route::post("business/{business:slug}/updateTemplates", [
+    BusinessController::class,
+    "updateTemplates",
 ]);

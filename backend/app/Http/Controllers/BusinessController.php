@@ -155,7 +155,10 @@ class BusinessController extends Controller
         return response()->json($activities);
     }
 
-    public function update(Request $request, Business $business): Response
+    /**
+     * Update the texts of a business.
+     */
+    public function updateTexts(Request $request, Business $business): Response
     {
         // Verify user business membership
         Gate::authorize("update", $business);
@@ -183,6 +186,37 @@ class BusinessController extends Controller
                 );
             }
         }
+
+        return response()->noContent();
+    }
+
+    /**
+     * Update the templates of a business.
+     */
+    public function updateTemplates(
+        Request $request,
+        Business $business
+    ): Response {
+        // Verify user business membership
+        Gate::authorize("update", $business);
+
+        // Validate the request
+        $validated = $request->validate([
+            "templates" => "nullable|array",
+            "templates.*" => "required|exists:journeys,id",
+        ]);
+
+        // Sometimes there is an issue with the request validation and the templates key is not set
+        if (!isset($validated["templates"])) {
+            $validated["templates"] = [];
+        }
+
+        // Update the templates
+        $business->templates()->update(["visible" => false]);
+        $business
+            ->templates()
+            ->whereIn("id", $validated["templates"])
+            ->update(["visible" => true]);
 
         return response()->noContent();
     }
