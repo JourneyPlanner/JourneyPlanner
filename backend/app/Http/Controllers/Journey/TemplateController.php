@@ -46,7 +46,7 @@ class TemplateController extends Controller
             "mapbox_full_address",
             "average_rating",
             "total_ratings",
-            DB::raw("DATEDIFF(`to`, `from`) + 1 AS length"), // Only works with MySQL
+            "length",
         ];
     }
 
@@ -68,6 +68,7 @@ class TemplateController extends Controller
 
         // Load the template creator
         $journey->load("users:id,display_name,username");
+        $journey->load("businesses:id,slug,name");
 
         return response()->json($journey);
     }
@@ -92,7 +93,7 @@ class TemplateController extends Controller
     /**
      * Get templates based on the provided filters.
      */
-    private function getTemplates(string $username = null)
+    private function getTemplates(?string $username = null)
     {
         // Validate the request
         $validated = request()->validate([
@@ -180,11 +181,7 @@ class TemplateController extends Controller
                 $query->where("name", "like", "%$name%");
             })
             ->when($lengthMin, function ($query) use ($lengthMin) {
-                $query->where(
-                    DB::raw("DATEDIFF(`to`, `from`) + 1"),
-                    ">=",
-                    $lengthMin
-                );
+                $query->where("length", ">=", $lengthMin);
             })
             ->when($lengthMax, function ($query) use (
                 $lengthMax,
@@ -193,11 +190,7 @@ class TemplateController extends Controller
                 if ($lengthMax >= $lengthMaxConst) {
                     $lengthMax = PHP_INT_MAX;
                 }
-                $query->where(
-                    DB::raw("DATEDIFF(`to`, `from`) + 1"),
-                    "<=",
-                    $lengthMax
-                );
+                $query->where("length", "<=", $lengthMax);
             })
             ->when(
                 $username,
@@ -209,11 +202,37 @@ class TemplateController extends Controller
                 },
                 function ($query) use ($creator) {
                     $query->when($creator, function ($query) use ($creator) {
-                        $query->whereHas("users", function ($query) use (
-                            $creator
-                        ) {
-                            $query->where("username", "like", "%$creator%");
-                        });
+                        $query
+                            ->whereHas("users", function ($query) use (
+                                $creator
+                            ) {
+                                $query
+                                    ->where("username", "like", "%$creator%")
+                                    ->orWhere(
+                                        "display_name",
+                                        "like",
+                                        "%$creator%"
+                                    );
+                            })
+                            ->orWhereHas("businesses", function ($query) use (
+                                $creator
+                            ) {
+                                $query
+                                    ->where(function ($query) use ($creator) {
+                                        $query
+                                            ->where(
+                                                "slug",
+                                                "like",
+                                                "%$creator%"
+                                            )
+                                            ->orWhere(
+                                                "name",
+                                                "like",
+                                                "%$creator%"
+                                            );
+                                    })
+                                    ->where("created_by_business", true);
+                            });
                     });
                 }
             )
@@ -227,8 +246,14 @@ class TemplateController extends Controller
                 "users" => function ($query) {
                     $query->select("id", "username", "display_name");
                 },
+                "businesses" => function ($query) {
+                    $query
+                        ->select("id", "slug", "name")
+                        ->wherePivot("created_by_business", true);
+                },
             ])
             ->orderBy($sortBy, $order)
+            ->orderBy("id", "asc")
             ->cursorPaginate($perPage, static::getColumns())
             ->withQueryString();
 

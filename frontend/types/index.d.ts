@@ -93,6 +93,7 @@ declare global {
         display_name: string;
         username: string;
         role: number;
+        email: string;
     }
 
     interface RepeatType {
@@ -136,6 +137,12 @@ declare global {
         activity_id: string;
     }
 
+    interface Creator {
+        business: boolean;
+        username: string;
+        display_name: string;
+    }
+
     interface Template {
         id: string;
         name: string;
@@ -143,7 +150,7 @@ declare global {
         destination: string;
         length: number;
         mapbox_full_address: string;
-        users: User[];
+        creator: Creator;
         from: string;
         to: string;
         average_rating: number;

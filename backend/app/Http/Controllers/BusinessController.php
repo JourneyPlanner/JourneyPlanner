@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Journey\TemplateController;
 use App\Http\Requests\Journey\StoreJourneyRequest;
+use App\Models\Activity;
 use App\Models\Business\Business;
 use App\Models\Business\BusinessImage;
 use App\Models\Business\BusinessImageAltText;
@@ -151,6 +152,11 @@ class BusinessController extends Controller
                 "users" => function ($query) {
                     $query->select("id", "username", "display_name");
                 },
+                "businesses" => function ($query) {
+                    $query
+                        ->select("id", "slug", "name")
+                        ->wherePivot("created_by_business", true);
+                },
             ])
             ->cursorPaginate($perPage, static::getColumns())
             ->withQueryString();
@@ -176,8 +182,17 @@ class BusinessController extends Controller
         $validated = $request->validate([
             "per_page" => "nullable|integer|min:1|max:100",
         ]);
-        $activities = $business
-            ->activities()
+        $businessId = Business::where("slug", $slug)->firstOrFail("id")->id;
+        $activities = Activity::query()
+            ->join("journeys", "activities.journey_id", "=", "journeys.id")
+            ->join(
+                "business_templates",
+                "journeys.id",
+                "=",
+                "business_templates.template_id"
+            )
+            ->where("business_templates.business_id", $businessId)
+            ->select("activities.*")
             ->cursorPaginate(
                 $validated["per_page"] ?? TemplateController::$perPage
             )

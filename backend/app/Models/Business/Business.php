@@ -2,7 +2,6 @@
 
 namespace App\Models\Business;
 
-use App\Models\Activity;
 use App\Models\Journey;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -49,7 +48,6 @@ class Business extends Model
             relatedPivotKey: "template_id"
         );
     }
-
     /**
      * The business's activities.
      */
@@ -57,7 +55,7 @@ class Business extends Model
     {
         return $this->belongsToMany(Activity::class, "business_activities");
     }
-
+    
     /**
      * The users that are a part of the business.
      */

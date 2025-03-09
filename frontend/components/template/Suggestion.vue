@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTranslate } from "@tolgee/vue";
 
-defineProps({
+const props = defineProps({
     template: {
         type: Object as PropType<Template>,
         required: true,
@@ -12,10 +12,20 @@ defineProps({
     },
 });
 
+const router = useRouter();
+
 defineEmits(["openTemplate"]);
 
 const { t } = useTranslate();
 const isProfileDialogVisible = ref(false);
+
+function handleUserClick() {
+    if (!props.template?.creator?.business) {
+        isProfileDialogVisible.value = true;
+    } else {
+        router.push(`/business/${props.template?.creator?.username}`);
+    }
+}
 </script>
 
 <template>
@@ -28,41 +38,51 @@ const isProfileDialogVisible = ref(false);
     >
         <div class="py-1 hover:border-y-2 hover:border-calypso-400">
             <div
-                class="ml-1.5 flex items-center border-l-2 border-natural-400 pl-1 hover:border-calypso-400 dark:border-natural-400 dark:hover:border-calypso-400"
+                class="ml-1.5 items-center border-l-2 border-natural-400 pl-1 hover:border-calypso-400 dark:border-natural-400 dark:hover:border-calypso-400 max-lg:grid max-lg:grid-cols-9 lg:flex"
             >
-                <div class="ml-1.5 w-2/5 sm:w-1/3 lg:w-2/6 xl:w-1/3">
-                    <h3
-                        v-tooltip.top="{
-                            value: template.name,
-                            pt: { root: 'font-nunito' },
-                        }"
-                        class="truncate text-base font-medium text-text dark:text-natural-50"
-                    >
-                        {{ template.name }}
-                    </h3>
+                <div class="ml-1.5 max-lg:col-span-4 lg:w-2/5">
+                    <div class="flex items-center">
+                        <h3
+                            v-tooltip.top="{
+                                value: template.name,
+                                pt: { root: 'font-nunito' },
+                            }"
+                            class="truncate pr-2 text-base font-medium text-text dark:text-natural-50"
+                        >
+                            {{ template.name }}
+                        </h3>
+                        <span
+                            v-if="template?.creator?.business"
+                            v-tooltip.top="{
+                                value: t('template.created.business'),
+                                pt: { root: 'font-nunito text-center' },
+                            }"
+                            class="pi pi-verified justify-end text-lg text-calypso-600 dark:text-calypso-400"
+                        />
+                    </div>
                     <h4
                         v-tooltip.top="{
-                            value: template.users[0].username,
+                            value: template.creator.username,
                             pt: { root: 'font-nunito' },
                         }"
                         class="-mt-1 truncate text-sm text-natural-600 dark:text-natural-300"
                     >
                         <T key-name="template.by" /><span
                             class="cursor-pointer hover:text-calypso-600 hover:underline"
-                            @click.stop="isProfileDialogVisible = true"
-                            >{{ template.users[0].username }}</span
+                            @click.stop="handleUserClick"
+                            >{{ template.creator.username }}</span
                         >
                     </h4>
                 </div>
                 <div
-                    class="ml-3 flex flex-col gap-x-0.5 text-text dark:text-natural-50 xs:ml-[3vw] lg:ml-3 lg:flex-row lg:gap-x-4 xl:ml-5"
+                    class="ml-3 gap-x-0.5 text-text dark:text-natural-50 max-lg:col-span-4 max-lg:flex max-lg:flex-col xs:ml-[3vw] lg:ml-3 lg:grid lg:w-3/5 lg:grid-cols-8 lg:gap-4"
                 >
                     <div
                         v-tooltip.top="{
                             value: template.destination,
                             pt: { root: 'font-nunito' },
                         }"
-                        class="flex min-w-28 max-w-28 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-36 sm:min-w-32 sm:max-w-32 sm:gap-x-2 lg:min-w-24 lg:max-w-24 xl:min-w-32 xl:max-w-32 2xl:min-w-44 2xl:max-w-44"
+                        class="col-span-3 flex flex-row items-center gap-x-1"
                     >
                         <i
                             class="pi pi-map-marker text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
@@ -83,7 +103,7 @@ const isProfileDialogVisible = ref(false);
                                 ),
                             pt: { root: 'font-nunito' },
                         }"
-                        class="flex min-w-20 max-w-20 flex-row items-center gap-x-1 xs:min-w-36 xs:max-w-32 sm:min-w-32 sm:max-w-24 sm:gap-x-2 lg:min-w-24 lg:max-w-24 xl:min-w-32 xl:max-w-32 2xl:min-w-32 2xl:max-w-32"
+                        class="col-span-2 flex flex-row items-center gap-x-1"
                     >
                         <i
                             class="pi pi-calendar text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
@@ -99,8 +119,29 @@ const isProfileDialogVisible = ref(false);
                             />
                         </h5>
                     </div>
+                    <div
+                        class="col-span-2 flex min-w-20 max-w-20 flex-row items-center gap-x-1"
+                    >
+                        <i
+                            class="pi pi-star text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
+                        />
+                        <h5 class="truncate text-sm xl:text-base">
+                            {{ template.average_rating }}
+                            ({{ template.total_ratings }})
+                        </h5>
+                    </div>
+
+                    <button
+                        class="col-span-1 ml-auto mr-2 hidden items-center xs:mr-3 sm:mr-4 lg:flex"
+                    >
+                        <i
+                            class="pi pi-arrow-up-right-and-arrow-down-left-from-center text-base text-natural-500 hover:text-calypso-950 dark:text-natural-400 dark:hover:text-natural-50"
+                        />
+                    </button>
                 </div>
-                <button class="ml-auto mr-2 flex items-center xs:mr-3 sm:mr-4">
+                <button
+                    class="col-span-1 ml-auto mr-2 items-center max-lg:flex xs:mr-3 sm:mr-4 lg:hidden"
+                >
                     <i
                         class="pi pi-arrow-up-right-and-arrow-down-left-from-center text-base text-natural-500 hover:text-calypso-950 dark:text-natural-400 dark:hover:text-natural-50"
                     />
@@ -110,8 +151,8 @@ const isProfileDialogVisible = ref(false);
         <div class="dialogs">
             <JourneyIdDialogsProfileDialog
                 :visible="isProfileDialogVisible"
-                :username="template.users[0].username"
-                :displayname="template.users[0].display_name"
+                :username="template.creator.username"
+                :displayname="template.creator.display_name"
                 @close="isProfileDialogVisible = false"
             />
         </div>

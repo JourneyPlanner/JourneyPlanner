@@ -141,7 +141,7 @@ const close = (): void => {
             </template>
             <div class="mt-1">
                 <NuxtLink
-                    :to="'/user/' + username"
+                    :to="'/user/' + username + '?ref=profile-dialog'"
                     class="group ml-4 max-w-36 truncate text-xl text-natural-500 hover:text-calypso-600 dark:text-natural-300 dark:hover:text-calypso-600 xs:ml-6 xs:max-w-48 sm:ml-[2.875rem] sm:max-w-72 md:ml-8 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
                 >
                     @<span class="group-hover:underline">{{ username }}</span>
@@ -151,8 +151,10 @@ const close = (): void => {
                 <h1
                     class="text-lg font-medium text-text dark:text-natural-50 xs:text-xl md:text-xl"
                 >
-                    <T key-name="profile.templates" />
-                    {{ username }}
+                    <T
+                        key-name="profile.templates"
+                        :params="{ username: username }"
+                    />
                 </h1>
                 <div
                     v-if="isLoading"
@@ -188,7 +190,7 @@ const close = (): void => {
                 <div class="flex flex-row justify-center">
                     <NuxtLink
                         class="mt-6 flex rounded-xl border-2 border-dandelion-300 bg-natural-50 px-4 py-1 text-center text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
-                        :to="'/user/' + username"
+                        :to="'/user/' + username + '?ref=profile-dialog'"
                     >
                         <T key-name="profile.see.full" />
                     </NuxtLink>
@@ -238,7 +240,7 @@ const close = (): void => {
                         {{ displayname }}
                     </h1>
                     <NuxtLink
-                        :to="'/user/' + username"
+                        :to="'/user/' + username + '?ref=profile-dialog'"
                         class="group max-w-36 truncate text-xl text-natural-500 hover:text-calypso-600 dark:text-natural-300 xs:max-w-48 sm:ml-[2.875rem] sm:max-w-72 md:ml-8 md:max-w-80 lg:max-w-96 xl:max-w-[28rem] 2xl:max-w-[32rem]"
                     >
                         (@<span class="group-hover:underline">{{
@@ -252,8 +254,10 @@ const close = (): void => {
                 <h1
                     class="text-lg font-medium text-text dark:text-natural-50 xs:text-xl md:text-xl"
                 >
-                    <T key-name="profile.templates" />
-                    {{ username }}
+                    <T
+                        key-name="profile.templates"
+                        :params="{ username: username }"
+                    />
                 </h1>
                 <div
                     v-if="isLoading"
@@ -291,7 +295,7 @@ const close = (): void => {
                 >
                     <NuxtLink
                         class="w-full text-nowrap rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-lg font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
-                        :to="'/user/' + username"
+                        :to="'/user/' + username + '?ref=profile-dialog'"
                     >
                         <T key-name="profile.see.full" />
                     </NuxtLink>
