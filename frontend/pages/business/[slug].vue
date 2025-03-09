@@ -448,7 +448,7 @@ function editImage(whichImage: string) {
                     </h2>
                     <NuxtLink
                         v-if="editingEnabled"
-                        to="/journey/new?creationType=template"
+                        :to="'/journey/new?creationType=template&slug=' + slug"
                         class="ml-auto flex w-48 items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 py-1 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 lg:w-52"
                     >
                         <span class="pi pi-plus ml-1 mr-2 text-lg" />

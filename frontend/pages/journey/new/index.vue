@@ -27,10 +27,12 @@ const suggestions = ref<Template[]>([]);
 const journeyName = ref();
 const journeyRange = ref();
 const creationType = ref();
+const slug = ref();
 
 if (route.query.creationType == "template") {
     creationType.value = route.query.creationType;
     cancel.value = router.options.history.state.back as string;
+    slug.value = route.query.slug;
 }
 
 const title = t.value("title.journey.create");
@@ -131,7 +133,6 @@ const onSubmit = handleSubmit(async (values) => {
     const invite = journeyInvite.value;
     const mapbox_full_address = values.mapbox?.properties.full_address;
     const mapbox_id = values.mapbox?.properties.mapbox_id;
-
     const journey = {
         name,
         destination,
@@ -143,39 +144,69 @@ const onSubmit = handleSubmit(async (values) => {
         role: 1,
     };
 
-    await client("/api/journey", {
-        method: "POST",
-        body: journey,
-        async onResponse({ response }) {
-            if (response.ok) {
-                toast.add({
-                    severity: "success",
-                    summary: t.value("form.journey.toast.success.heading"),
-                    detail: t.value("form.journey.toast.success"),
-                    life: 3000,
-                });
-                response._data.journey.role = 1;
-                store.addJourney(response._data.journey);
-                if (!isAuthenticated.value) {
-                    localStorage.setItem(
-                        "JP_guest_journey_id",
-                        response._data.journey.id,
-                    );
+    if (creationType.value == "template") {
+        await client(`/api/business/${slug.value}/createTemplate`, {
+            method: "POST",
+            body: journey,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value("form.journey.toast.success.heading"),
+                        detail: t.value("form.journey.toast.success"),
+                        life: 3000,
+                    });
+                    console.log(response);
+                    store.addJourney(response._data);
+                    await navigateTo("/template/" + response._data.id);
+                    loading.value = false;
                 }
-                await navigateTo("/journey/" + response._data.journey.id);
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
                 loading.value = false;
-            }
-        },
-        async onResponseError() {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value("common.error.unknown"),
-                life: 6000,
-            });
-            loading.value = false;
-        },
-    });
+            },
+        });
+    } else {
+        await client("/api/journey", {
+            method: "POST",
+            body: journey,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value("form.journey.toast.success.heading"),
+                        detail: t.value("form.journey.toast.success"),
+                        life: 3000,
+                    });
+                    response._data.journey.role = 1;
+                    store.addJourney(response._data.journey);
+                    if (!isAuthenticated.value) {
+                        localStorage.setItem(
+                            "JP_guest_journey_id",
+                            response._data.journey.id,
+                        );
+                    }
+                    await navigateTo("/journey/" + response._data.journey.id);
+                    loading.value = false;
+                }
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                loading.value = false;
+            },
+        });
+    }
 });
 
 function copyToClipboard() {
