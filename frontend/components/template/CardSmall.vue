@@ -19,10 +19,6 @@ const props = defineProps({
     },
 });
 
-if (!props.template.users[0]) {
-    console.log(props.template);
-}
-
 const { t } = useTranslate();
 const toast = useToast();
 const client = useSanctumClient();

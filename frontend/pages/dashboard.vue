@@ -35,7 +35,7 @@ const searchValueJourneys = ref<string>("");
 //user settings
 const isUserSettingsVisible = ref<boolean>(false);
 
-//templates
+//templatesf
 const openedTemplate = ref<Template>();
 const isTemplatePopupVisible = ref(false);
 const isFilterVisible = ref<boolean>(route.query.filter_open === "true");
@@ -1325,7 +1325,7 @@ function editJourney(journey: Journey, id: string) {
                     data-test="user-profile-button"
                 >
                     <span
-                        class="pi pi-building mt-1 rounded-full border-2 border-dandelion-300 p-1.5 text-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:hover:bg-pesto-600"
+                        class="pi pi-building mt-1 rounded-full border-2 border-dandelion-300 p-1.5 text-xl text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                     />
                 </NuxtLink>
                 <button

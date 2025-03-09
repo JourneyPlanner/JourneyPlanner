@@ -7,7 +7,10 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close"]);
+const toast = useToast();
+const route = useRoute();
 const { t } = useTranslate();
+const client = useSanctumClient();
 const visible = ref();
 const templatesLoader = ref<HTMLElement | undefined>();
 const showMoreTemplates = ref(false);
@@ -28,8 +31,14 @@ const {
         per_page: 8,
     },
 });
+const checkedItems = ref(new Map());
 
-const checkedItems = ref(Array(templates.value.length).fill(false));
+watch(templates.value, (newTemplates) => {
+    newTemplates.forEach((element) => {
+        checkedItems.value.set(element.id, element.visible == 1 ? true : false);
+    });
+    console.log(checkedItems);
+});
 
 watch(
     () => props.isVisible,
@@ -41,6 +50,50 @@ watch(
 const close = () => {
     emit("close");
 };
+
+async function changeVisibleTemplates() {
+    const visibleTemplates: { templates: number[] } = { templates: [] };
+    checkedItems.value.forEach((value, key) => {
+        if (value) {
+            visibleTemplates.templates.push(key);
+        }
+    });
+    await client(`/api/business/${route.params.slug}/updateTemplates `, {
+        method: "POST",
+        body: visibleTemplates,
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value(
+                        "form.input.activity.edit.toast.success.heading",
+                    ),
+                    detail: t.value(
+                        "form.input.activity.edit.toast.success.detail",
+                    ),
+                    life: 6000,
+                });
+                close();
+            }
+        },
+        async onRequestError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
 </script>
 <template>
     <div>
@@ -106,17 +159,30 @@ const close = () => {
                         "
                         :key="template.id"
                         class="cursor-pointer rounded-xl px-2 py-2"
-                        :class="{ 'bg-natural-100': checkedItems[index] }"
-                        @click="checkedItems[index] = !checkedItems[index]"
+                        :class="{
+                            'bg-natural-100': checkedItems.get(template.id),
+                        }"
+                        @click="
+                            checkedItems.set(
+                                template.id,
+                                !checkedItems.get(template.id),
+                            )
+                        "
                     >
                         <label
                             class="relative flex w-fit cursor-pointer items-center rounded-md p-1"
                         >
                             <input
                                 :id="index.toString()"
-                                v-model="checkedItems[index]"
+                                :checked="checkedItems.get(template.id)"
                                 type="checkbox"
                                 class="peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-calypso-400 bg-natural-50 transition-all checked:border-calypso-400 checked:bg-calypso-400 dark:bg-natural-800 checked:dark:bg-calypso-500"
+                                @change="
+                                    checkedItems.set(
+                                        template.id,
+                                        !checkedItems.get(template.id),
+                                    )
+                                "
                             />
                             <div
                                 class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-natural-50 opacity-0 transition-opacity peer-checked:opacity-100"
@@ -180,7 +246,7 @@ const close = () => {
                     :class="showMoreTemplates ? '-mt-7' : '-mt-11'"
                 >
                     <Button
-                        type="submit"
+                        type="button"
                         :label="t('common.save')"
                         icon="pi pi-save"
                         :pt="{
@@ -192,6 +258,7 @@ const close = () => {
                             },
                         }"
                         class="mt-auto flex h-9 w-48 flex-row justify-center rounded-xl border-2 border-atlantis-400 bg-natural-50 text-center text-text hover:bg-atlantis-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-atlantis-30040"
+                        @click="changeVisibleTemplates"
                     />
                 </div>
             </div>

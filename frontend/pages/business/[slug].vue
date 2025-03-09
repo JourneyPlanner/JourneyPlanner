@@ -221,6 +221,7 @@ const {
     identifier: "business-templates",
     apiEndpoint: `/api/business/${slug.value}/templates`,
     params: {
+        private: true,
         per_page: 8,
     },
 });
@@ -270,13 +271,62 @@ function editImage(whichImage: string) {
         isImageEditSidebarVisible.value = true;
     }
 }
+
+interface AltTexte {
+    de: string;
+    en: string;
+}
+
+async function updateImage(altTexsts: AltTexte, link: string) {
+    console.log(altTexsts);
+    console.log(editBanner.value);
+    console.log(tolgee.value.getLanguage());
+    if (editBanner.value) {
+        images.banner.link = "";
+        images.banner.alt_text =
+            tolgee.value.getLanguage() == "de" ? altTexsts.de : altTexsts.en;
+        setTimeout(() => {
+            images.banner.link = link;
+        }, 50);
+    } else {
+        images.image.link = "";
+        images.image.alt_text =
+            tolgee.value.getLanguage() == "de" ? altTexsts.de : altTexsts.en;
+        setTimeout(() => {
+            images.image.link = link;
+        }, 50);
+    }
+}
+
+const updatedBannerUrl = computed(
+    () => `${images.banner.link}?t=${Date.now()}`,
+);
+
+interface BusinessTexts {
+    texts: {
+        company_name: string;
+        button_link: string;
+        button: string;
+        text: string;
+    }[];
+}
+
+function updateTexts(buisnessTexts: BusinessTexts) {
+    const index = tolgee.value.getLanguage() == "de" ? 0 : 1;
+    texts.company_name = buisnessTexts.texts[index].company_name;
+    texts.text = buisnessTexts.texts[index].text;
+    texts.button = buisnessTexts.texts[index].button;
+    texts.button_link = buisnessTexts.texts[index].button_link;
+}
+
+const updatedImageUrl = computed(() => `${images.image.link}?t=${Date.now()}`);
 </script>
 
 <template>
     <div class="text-text dark:text-natural-50">
         <div
             class="group relative h-44 bg-cover bg-center lg:h-96"
-            :style="{ backgroundImage: `url(${images.banner.link})` }"
+            :style="{ backgroundImage: `url(${updatedBannerUrl})` }"
             @click="editImage('banner')"
         >
             <div
@@ -306,7 +356,8 @@ function editImage(whichImage: string) {
                 </span>
             </button>
             <img
-                :src="images.banner.link"
+                :key="updatedBannerUrl"
+                :src="updatedBannerUrl"
                 :alt="images.banner.alt_text"
                 class="sr-only"
                 :class="
@@ -361,7 +412,8 @@ function editImage(whichImage: string) {
                     @click="editImage('image')"
                 >
                     <NuxtImg
-                        :src="images.image.link"
+                        :key="updatedImageUrl"
+                        :src="updatedImageUrl"
                         :alt="images.image.alt_text"
                         class="max-h-[320px] rounded-xl object-contain"
                         :class="
@@ -485,6 +537,7 @@ function editImage(whichImage: string) {
                             showMoreTemplates || index < maxDisplayedTemplates
                         "
                         :key="'template-card' + template.id"
+                        :v-if="template.visible = 1"
                         class="hidden md:block"
                         :template="template"
                         :displayed-in-profile="false"
@@ -576,10 +629,12 @@ function editImage(whichImage: string) {
                 :edit-banner="editBanner"
                 :edit-other-image="editOtherImage"
                 @close="isImageEditSidebarVisible = false"
+                @update-image="updateImage"
             />
             <BusinessEditTextEditSidebar
                 :is-sidebar-visible="isTextEditSidebarVisible"
                 @close="isTextEditSidebarVisible = false"
+                @update-texts="updateTexts"
             />
             <BusinessActivityInfoDialog
                 :is-visible="isactivityInfoDialogVisible"

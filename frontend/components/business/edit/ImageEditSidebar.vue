@@ -16,7 +16,7 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "updateImage"]);
 
 const isVisible = ref(props.isSidebarVisible);
 const toast = useToast();
@@ -35,6 +35,10 @@ watch(
 );
 
 const close = () => {
+    file.value = null;
+    altTextEnglish.value = null;
+    altTextGerman.value = null;
+    imageUrl.value = null;
     emit("close");
 };
 
@@ -93,8 +97,11 @@ async function handleSubmit() {
     ];
 
     const formData = new FormData();
-    formData.append("image", file.value);
-    formData.append("type", "image");
+    if (file.value) {
+        formData.append("image", file.value);
+    }
+
+    formData.append("type", props.editBanner ? "banner" : "image");
 
     altTexts.forEach((alt, index) => {
         formData.append(`alt_texts[${index}][language]`, alt.language);
@@ -116,6 +123,12 @@ async function handleSubmit() {
                     ),
                     life: 6000,
                 });
+                console.log(response._data.alt_texts);
+                emit(
+                    "updateImage",
+                    response._data.alt_texts,
+                    response._data.link,
+                );
                 close();
             }
         },

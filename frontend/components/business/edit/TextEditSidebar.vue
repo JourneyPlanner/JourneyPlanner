@@ -8,7 +8,7 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "updateTexts"]);
 
 const isVisible = ref(props.isSidebarVisible);
 const { t } = useTranslate();
@@ -16,8 +16,12 @@ const textGerman = ref("");
 const textEnglish = ref("");
 const buttonTextGerman = ref("");
 const buttonTextEnglish = ref("");
+const headlineTextGerman = ref("");
+const headlineTextEnglish = ref("");
 const link = ref("");
-const companyName = ref("");
+const client = useSanctumClient();
+const route = useRoute();
+const toast = useToast();
 
 watch(
     () => props.isSidebarVisible,
@@ -30,7 +34,108 @@ const close = () => {
     emit("close");
 };
 
-async function handleSubmit() {}
+async function handleSubmit() {
+    const texts = {
+        texts: [
+            {
+                language: "de",
+                texts: [
+                    {
+                        key: "text",
+                        value: textGerman.value,
+                    },
+                    {
+                        key: "button",
+                        value: buttonTextGerman.value,
+                    },
+                    {
+                        key: "button_link",
+                        value: link.value,
+                    },
+                    {
+                        key: "company_name",
+                        value: headlineTextGerman.value,
+                    },
+                ],
+            },
+            {
+                language: "en",
+                texts: [
+                    {
+                        key: "text",
+                        value: textEnglish.value,
+                    },
+                    {
+                        key: "button",
+                        value: buttonTextEnglish.value,
+                    },
+                    {
+                        key: "button_link",
+                        value: link.value,
+                    },
+                    {
+                        key: "company_name",
+                        value: headlineTextEnglish.value,
+                    },
+                ],
+            },
+        ],
+    };
+
+    const buisnessTexts = {
+        texts: [
+            {
+                company_name: headlineTextGerman.value,
+                button_link: link.value,
+                button: buttonTextGerman.value,
+                text: textGerman.value,
+            },
+            {
+                company_name: headlineTextEnglish.value,
+                button_link: link.value,
+                button: buttonTextGerman.value,
+                text: textEnglish.value,
+            },
+        ],
+    };
+
+    await client(`/api/business/${route.params.slug}/updateTexts `, {
+        method: "POST",
+        body: texts,
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value(
+                        "form.input.activity.edit.toast.success.heading",
+                    ),
+                    detail: t.value(
+                        "form.input.activity.edit.toast.success.detail",
+                    ),
+                    life: 6000,
+                });
+                emit("updateTexts", buisnessTexts);
+                close();
+            }
+        },
+        async onRequestError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
 </script>
 <template>
     <div>
@@ -93,12 +198,43 @@ async function handleSubmit() {}
                     <T key-name="business.text.edit.headline.detail" />
                 </div>
                 <div class="max-w-lg pt-6">
+                    <div
+                        class="font-nunito text-xl font-medium text-text dark:text-natural-50"
+                    >
+                        <T key-name="common.deutsch" />
+                    </div>
                     <input
-                        id="link"
-                        v-model="companyName"
+                        id="german-headline-text"
+                        v-model="headlineTextGerman"
                         type="text"
+                        maxlength="50"
                         class="w-full rounded-lg border-2 border-natural-300 bg-natural-50 px-2.5 py-0.5 text-lg font-medium text-text placeholder:text-natural-500 hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                     />
+                    <div
+                        class="items-end-end flex w-full justify-end pt-1 text-natural-500 dark:text-natural-300"
+                    >
+                        {{ headlineTextGerman.length }}/50
+                        <T key-name="business.edit.text.characters" />
+                    </div>
+
+                    <div
+                        class="pt-4 font-nunito text-xl font-medium text-text dark:text-natural-50"
+                    >
+                        <T key-name="common.english" />
+                    </div>
+                    <input
+                        id="english-headline-text"
+                        v-model="headlineTextEnglish"
+                        type="text"
+                        maxlength="50"
+                        class="w-full rounded-lg border-2 border-natural-300 bg-natural-50 px-2.5 py-0.5 text-lg font-medium text-text placeholder:text-natural-500 hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                    />
+                    <div
+                        class="items-end-end mb-6 flex w-full justify-end pt-1 text-natural-500 dark:text-natural-300"
+                    >
+                        {{ headlineTextEnglish.length }}/50
+                        <T key-name="business.edit.text.characters" />
+                    </div>
                 </div>
                 <div class="flex items-center pt-8">
                     <div

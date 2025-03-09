@@ -17,7 +17,7 @@ export async function useInfiniteScroll<T>(options: {
     showLessDataText: string;
     identifier: string;
     apiEndpoint: string;
-    params: { [key: string]: string | number };
+    params: { [key: string]: string | number | boolean };
 }) {
     const client = useSanctumClient();
     const observer = ref<IntersectionObserver | null>(null);
