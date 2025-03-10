@@ -170,12 +170,12 @@ Route::post("business/{business:slug}/uploadImage", [
 Route::post("business/{business:slug}/updateTexts", [
     BusinessController::class,
     "updateTexts",
-]);
+])->middleware("auth:sanctum");
 Route::post("business/{business:slug}/updateTemplates", [
     BusinessController::class,
     "updateTemplates",
-]);
+])->middleware("auth:sanctum");
 Route::post("business/{business:slug}/createTemplate", [
     BusinessController::class,
     "createTemplate",
-]);
+])->middleware("auth:sanctum");

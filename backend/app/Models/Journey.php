@@ -86,6 +86,9 @@ class Journey extends Model
         return $this->belongsToMany(User::class);
     }
 
+    /**
+     * The businesses that are a part of the journey.
+     */
     public function businesses(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -127,19 +130,6 @@ class Journey extends Model
         return $this->hasMany(Journey::class, "created_from")->where(
             "is_template",
             "1"
-        );
-    }
-
-    /**
-     * The businesses that are a part of the journey.
-     */
-    public function businesses(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Business::class,
-            "business_templates",
-            "business_id",
-            "journey_id"
         );
     }
 

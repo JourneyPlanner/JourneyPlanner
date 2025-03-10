@@ -182,7 +182,7 @@ class BusinessController extends Controller
         $validated = $request->validate([
             "per_page" => "nullable|integer|min:1|max:100",
         ]);
-        $businessId = Business::where("slug", $slug)->firstOrFail("id")->id;
+
         $activities = Activity::query()
             ->join("journeys", "activities.journey_id", "=", "journeys.id")
             ->join(
@@ -191,7 +191,8 @@ class BusinessController extends Controller
                 "=",
                 "business_templates.template_id"
             )
-            ->where("business_templates.business_id", $businessId)
+            ->where("business_templates.business_id", $business->id)
+            ->where("business_templates.visible", true)
             ->select("activities.*")
             ->cursorPaginate(
                 $validated["per_page"] ?? TemplateController::$perPage
@@ -253,11 +254,17 @@ class BusinessController extends Controller
 
         // Create the template
         $template = new Journey($validated);
+
+        // Geocode the full address if it exists
+        $template = $this->mapboxService->setGeocodeData($template, $validated);
+
         $template->is_template = true;
         $template->save();
 
         // Set the visibility
-        $business->templates()->attach($template->id);
+        $business
+            ->templates()
+            ->attach($template->id, ["created_by_business" => true]);
 
         return response()->json($template, 201);
     }
@@ -358,11 +365,12 @@ class BusinessController extends Controller
      */
     public function currentsUserIndex(Request $request): JsonResponse
     {
-        $businesses = $request
-            ->user()
-            ->businesses()
-            ->select("id", "name", "slug")
-            ->get();
+        $user = $request->user();
+        if (!$user) {
+            return response()->json([]);
+        }
+
+        $businesses = $user->businesses()->select("id", "name", "slug")->get();
 
         return response()->json($businesses);
     }

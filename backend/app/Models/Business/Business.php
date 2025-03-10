@@ -55,7 +55,7 @@ class Business extends Model
     {
         return $this->belongsToMany(Activity::class, "business_activities");
     }
-    
+
     /**
      * The users that are a part of the business.
      */
