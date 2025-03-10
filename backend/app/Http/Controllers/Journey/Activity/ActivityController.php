@@ -334,6 +334,9 @@ class ActivityController extends Controller
                         $baseActivity->children()->get()
                         as $childActivity
                     ) {
+                        if ($childActivity->id === $editedActivity->id) {
+                            continue;
+                        }
                         $activities[] = static::updateActivitiesAfter(
                             $childActivity,
                             $baseActivity,
@@ -386,6 +389,9 @@ class ActivityController extends Controller
                         $baseActivity->children()->get()
                         as $childActivity
                     ) {
+                        if ($childActivity->id === $editedActivity->id) {
+                            continue;
+                        }
                         static::updateActivitiesAfter(
                             $childActivity,
                             $baseActivity,
