@@ -85,7 +85,7 @@ function handleUserClick() {
                         class="col-span-3 flex flex-row items-center gap-x-1"
                     >
                         <i
-                            class="pi pi-map-marker text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
+                            class="pi pi-map-marker text-sm text-calypso-600 dark:text-calypso-400 xl:text-base"
                         />
                         <h5 class="truncate text-sm xl:text-base">
                             {{ template.destination }}
@@ -106,7 +106,7 @@ function handleUserClick() {
                         class="col-span-2 flex flex-row items-center gap-x-1"
                     >
                         <i
-                            class="pi pi-calendar text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
+                            class="pi pi-calendar text-sm text-calypso-600 dark:text-calypso-400 xl:text-base"
                         />
                         <h5 class="truncate text-sm xl:text-base">
                             {{ template.length }}
@@ -123,7 +123,7 @@ function handleUserClick() {
                         class="col-span-2 flex min-w-20 max-w-20 flex-row items-center gap-x-1"
                     >
                         <i
-                            class="pi pi-star text-sm text-calypso-400 dark:text-calypso-400 xl:text-base"
+                            class="pi pi-star text-sm text-calypso-600 dark:text-calypso-400 xl:text-base"
                         />
                         <h5 class="truncate text-sm xl:text-base">
                             {{ template.average_rating }}
