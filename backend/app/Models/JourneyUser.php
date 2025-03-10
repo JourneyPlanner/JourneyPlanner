@@ -34,4 +34,27 @@ class JourneyUser extends Pivot
     {
         return [new PrivateChannel("App.Models.Journey.{$this->journey_id}")];
     }
+
+    /**
+     * Get the user that the journey user belongs to.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            "id" => $this->user_id,
+            "username" => $this->user->username,
+            "display_name" => $this->user->display_name,
+            "role" => $this->role,
+        ];
+    }
 }
