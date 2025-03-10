@@ -46,6 +46,7 @@ const alreadyAdded = ref(false);
 const { t } = useTranslate();
 const { addedActivity } = storeToRefs(store);
 const { newCalendarActivity } = storeToRefs(store);
+const { removedCalendarActivity } = storeToRefs(store);
 const { oldActivity } = storeToRefs(store);
 const toast = useToast();
 const props = defineProps({
@@ -346,6 +347,10 @@ const calendarOptions = reactive({
 
 watch(addedActivity, () => {
     addNewActivities(addedActivity.value);
+});
+
+watch(removedCalendarActivity, () => {
+    removeActivity(removedCalendarActivity.value);
 });
 
 watch(newCalendarActivity, () => {
@@ -677,6 +682,11 @@ function addActivity(addCalendarActivity: CalendarActivity) {
             "0:00 - 0:00";
     }
     calApi.addEvent(addCalendarActivity);
+}
+
+function removeActivity(removedCalendarActivity: CalendarActivity) {
+    const calApi = fullCalendar.value.getApi();
+    calApi.getEventById(removedCalendarActivity.id).remove();
 }
 
 function call(editType: string) {

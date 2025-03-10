@@ -7,6 +7,7 @@ export const useActivityStore = defineStore("activities", () => {
     const activityData = ref([]);
     const addedActivity = ref([]);
     const newCalendarActivity = ref();
+    const removedCalendarActivity = ref();
     const oldActivity = ref([]);
 
     function setActivities(activityData) {
@@ -110,10 +111,21 @@ export const useActivityStore = defineStore("activities", () => {
         );
     }
 
-    function createCalendarActivity(addCalendarActivity) {
+    function createOrUpdateCalendarActivity(addCalendarActivity) {
         const activityIndex = activityData.value.findIndex(
             (obj) => obj.id === addCalendarActivity.activity_id,
         );
+        if (!activityData.value[activityIndex].calendar_activities) {
+            Object.assign(activityData.value[activityIndex], {
+                calendar_activities: [],
+            });
+        }
+        const calendarActivityIndex = activityData.value[
+            activityIndex
+        ].calendar_activities.findIndex(
+            (obj) => obj.id === addCalendarActivity.id,
+        );
+
         const newEnd = add(new UTCDate(addCalendarActivity.start), {
             hours: parseInt(
                 addCalendarActivity.activity.estimated_duration.split(":")[0],
@@ -129,10 +141,44 @@ export const useActivityStore = defineStore("activities", () => {
         console.log(activity);
         console.log(calendarActivityWithoutMainActivity);
         console.log(activityData.value[activityIndex]);
-        activityData.value[activityIndex].calendar_activities.push(
-            calendarActivityWithoutMainActivity,
-        );
+        if (calendarActivityIndex != -1) {
+            activityData.value[activityIndex].calendar_activities[
+                calendarActivityIndex
+            ] = calendarActivityWithoutMainActivity;
+        } else {
+            activityData.value[activityIndex].calendar_activities.push(
+                calendarActivityWithoutMainActivity,
+            );
+        }
+
         newCalendarActivity.value = calendarActivityWithoutMainActivity;
+    }
+
+    function removeCalendarActivity(rmdCalendarActivity) {
+        const activityIndex = activityData.value.findIndex(
+            (obj) => obj.id === rmdCalendarActivity.activity_id,
+        );
+        if (!activityData.value[activityIndex].calendar_activities) {
+            Object.assign(activityData.value[activityIndex], {
+                calendar_activities: [],
+            });
+        }
+        const calendarActivityIndex = activityData.value[
+            activityIndex
+        ].calendar_activities.findIndex(
+            (obj) => obj.id === rmdCalendarActivity.id,
+        );
+
+        const { activity, ...calendarActivityWithoutMainActivity } =
+            rmdCalendarActivity;
+        console.log(activity);
+        console.log(calendarActivityWithoutMainActivity);
+        console.log(activityData.value[activityIndex]);
+        activityData.value[activityIndex].calendar_activities[
+            calendarActivityIndex
+        ] = calendarActivityWithoutMainActivity;
+
+        removedCalendarActivity.value = calendarActivityWithoutMainActivity;
     }
 
     return {
@@ -147,8 +193,10 @@ export const useActivityStore = defineStore("activities", () => {
         findBaseActivity,
         getAllChildren,
         removeActivity,
-        createCalendarActivity,
+        createOrUpdateCalendarActivity,
+        removeCalendarActivity,
         updateCalendarActivity,
         newCalendarActivity,
+        removedCalendarActivity,
     };
 });

@@ -68,13 +68,13 @@ function subscribeToChannel() {
         .listen(".ActivityCreated", (e: WebsocketEvent) => activityCreated(e))
         .listen(".ActivityDeleted", (e: WebsocketEvent) => activityDeleted(e))
         .listen(".CalendarActivityUpdated", (e: WebsocketEvent) =>
-            activityUpdated(e),
+            calendarActivityCreated(e),
         )
         .listen(".CalendarActivityCreated", (e: WebsocketEvent) =>
             calendarActivityCreated(e),
         )
         .listen(".CalendarActivityDeleted", (e: WebsocketEvent) =>
-            activityCreated(e),
+            calendarActivityRemoved(e),
         )
         .error((e: object) => {
             console.error("Private channel error", e);
@@ -95,14 +95,18 @@ function activityCreated(e: object) {
     activityStore.setNewActivity(e);
 }
 
-function activityDeleted(e: object) {
+function activityDeleted(e: WebsocketEvent) {
     activityStore.removeActivity(e);
 }
 
-function calendarActivityCreated(e: object) {
+function calendarActivityCreated(e: WebsocketEvent) {
     console.log(e.model);
-    console.log(e.model.activity);
-    activityStore.createCalendarActivity(e.model);
+    activityStore.createOrUpdateCalendarActivity(e.model);
+}
+
+function calendarActivityRemoved(e: WebsocketEvent) {
+    console.log(e.model);
+    activityStore.removeCalendarActivity(e.model);
 }
 
 const { data, error } = await useAsyncData("journey", () =>
