@@ -110,6 +110,7 @@ export default defineNuxtConfig({
                 "AccordionTab",
                 "Slider",
                 "AutoComplete",
+                "Rating",
             ],
         },
     },

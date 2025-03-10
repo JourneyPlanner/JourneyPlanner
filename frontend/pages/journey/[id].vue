@@ -121,14 +121,14 @@ if (error.value?.statusCode === 404) {
     throw createError({
         statusCode: 404,
         data: "isTolgeeKey",
-        statusMessage: "error.journey.notfound",
+        message: "error.journey.notfound",
         fatal: true,
     });
 } else if (error.value?.statusCode === 403) {
     throw createError({
         statusCode: 403,
         data: "isTolgeeKey",
-        statusMessage: "error.journey.access",
+        message: "error.journey.access",
         fatal: true,
     });
 }
@@ -147,15 +147,17 @@ await client(`/api/journey/${journeyId}/activity`, {
     },
 });
 
-await client(`/api/me/template?journey_id=${journeyId}`, {
-    async onResponse({ response }) {
-        if (response.ok) {
-            if (response._data.data) {
-                template.value = response._data.data[0];
+if (isAuthenticated.value) {
+    await client(`/api/me/template?journey_id=${journeyId}`, {
+        async onResponse({ response }) {
+            if (response.ok) {
+                if (response._data.data) {
+                    template.value = response._data.data[0];
+                }
             }
-        }
-    },
-});
+        },
+    });
+}
 
 const journeyData = data as Ref<Journey>;
 journeyStore.setJourney(journeyData);
@@ -166,10 +168,14 @@ useHead({
     title: `${title} | JourneyPlanner`,
 });
 
+let refreshUsers: (() => Promise<void>) | undefined;
+
 if (isAuthenticated.value) {
-    const { data } = await useAsyncData<User[]>("users", () =>
+    const { data, refresh } = await useAsyncData<User[]>("users", () =>
         client(`/api/journey/${journeyId}/user`),
     );
+
+    refreshUsers = refresh;
 
     if (data.value !== null) {
         users.value = data.value;
@@ -184,6 +190,10 @@ if (isAuthenticated.value) {
     if (curr.value !== null) {
         currUser.value = curr.value;
     }
+
+    watch(data, () => {
+        users.value = data?.value || [];
+    });
 }
 
 const colorMode = useColorMode();
@@ -391,6 +401,7 @@ function scrollToTarget(target: string) {
             @close="isMemberSidebarVisible = false"
             @open-qrcode="openQRCode"
             @open-unlock-dialog="isUnlockDialogVisible = true"
+            @kick="refreshUsers"
         />
         <JourneyIdMenuSidebar
             :is-menu-sidebar-visible="isMenuSidebarVisible"

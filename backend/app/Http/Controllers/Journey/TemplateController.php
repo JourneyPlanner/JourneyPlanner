@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Gate;
 
 class TemplateController extends Controller
 {
-    private $columns;
-    private int $perPage = 20;
+    public static int $perPage = 20;
 
     /**
      * The columns to exclude when cloning a journey for creating/updating a template.
@@ -35,9 +34,9 @@ class TemplateController extends Controller
         "total_ratings",
     ];
 
-    public function __construct()
+    public static function getColumns()
     {
-        $this->columns = [
+        return [
             "id",
             "name",
             "destination",
@@ -45,7 +44,9 @@ class TemplateController extends Controller
             "to",
             "description",
             "mapbox_full_address",
-            DB::raw("DATEDIFF(`to`, `from`) + 1 AS length"), // Only works with MySQL
+            "average_rating",
+            "total_ratings",
+            "length",
         ];
     }
 
@@ -67,6 +68,7 @@ class TemplateController extends Controller
 
         // Load the template creator
         $journey->load("users:id,display_name,username");
+        $journey->load("businesses:id,slug,name");
 
         return response()->json($journey);
     }
@@ -91,11 +93,13 @@ class TemplateController extends Controller
     /**
      * Get templates based on the provided filters.
      */
-    private function getTemplates(string $username = null)
+    private function getTemplates(?string $username = null)
     {
         // Validate the request
         $validated = request()->validate([
-            "sort_by" => "nullable|string|in:id,name,destination,length",
+            "sort_by" =>
+                "nullable|string|in:id,name,destination,length,average_rating",
+            "filter_by_rating" => "nullable|integer|min:0|max:5",
             "order" => "nullable|string|in:asc,desc",
             "per_page" => "nullable|integer|min:1|max:100",
             "template_name" => "nullable|string",
@@ -124,9 +128,10 @@ class TemplateController extends Controller
         ]);
 
         // Get the validated values or use the default values
-        $sortBy = $validated["sort_by"] ?? "id";
-        $order = $validated["order"] ?? "asc";
-        $perPage = $validated["per_page"] ?? $this->perPage;
+        $sortBy = $validated["sort_by"] ?? "average_rating";
+        $order = $validated["order"] ?? "desc";
+        $perPage = $validated["per_page"] ?? static::$perPage;
+        $filterByRating = $validated["filter_by_rating"] ?? null;
 
         $name = $validated["template_name"] ?? null;
         $lengthMin = $validated["template_journey_length_min"] ?? null;
@@ -176,11 +181,7 @@ class TemplateController extends Controller
                 $query->where("name", "like", "%$name%");
             })
             ->when($lengthMin, function ($query) use ($lengthMin) {
-                $query->where(
-                    DB::raw("DATEDIFF(`to`, `from`) + 1"),
-                    ">=",
-                    $lengthMin
-                );
+                $query->where("length", ">=", $lengthMin);
             })
             ->when($lengthMax, function ($query) use (
                 $lengthMax,
@@ -189,11 +190,7 @@ class TemplateController extends Controller
                 if ($lengthMax >= $lengthMaxConst) {
                     $lengthMax = PHP_INT_MAX;
                 }
-                $query->where(
-                    DB::raw("DATEDIFF(`to`, `from`) + 1"),
-                    "<=",
-                    $lengthMax
-                );
+                $query->where("length", "<=", $lengthMax);
             })
             ->when(
                 $username,
@@ -205,14 +202,43 @@ class TemplateController extends Controller
                 },
                 function ($query) use ($creator) {
                     $query->when($creator, function ($query) use ($creator) {
-                        $query->whereHas("users", function ($query) use (
-                            $creator
-                        ) {
-                            $query->where("username", "like", "%$creator%");
-                        });
+                        $query
+                            ->whereHas("users", function ($query) use (
+                                $creator
+                            ) {
+                                $query
+                                    ->where("username", "like", "%$creator%")
+                                    ->orWhere(
+                                        "display_name",
+                                        "like",
+                                        "%$creator%"
+                                    );
+                            })
+                            ->orWhereHas("businesses", function ($query) use (
+                                $creator
+                            ) {
+                                $query
+                                    ->where(function ($query) use ($creator) {
+                                        $query
+                                            ->where(
+                                                "slug",
+                                                "like",
+                                                "%$creator%"
+                                            )
+                                            ->orWhere(
+                                                "name",
+                                                "like",
+                                                "%$creator%"
+                                            );
+                                    })
+                                    ->where("created_by_business", true);
+                            });
                     });
                 }
             )
+            ->when($filterByRating, function ($query) use ($filterByRating) {
+                $query->where("average_rating", ">=", $filterByRating);
+            })
             ->when($journey_id, function ($query) use ($journey_id) {
                 $query->where("created_from", $journey_id);
             })
@@ -220,9 +246,15 @@ class TemplateController extends Controller
                 "users" => function ($query) {
                     $query->select("id", "username", "display_name");
                 },
+                "businesses" => function ($query) {
+                    $query
+                        ->select("id", "slug", "name")
+                        ->wherePivot("created_by_business", true);
+                },
             ])
             ->orderBy($sortBy, $order)
-            ->cursorPaginate($perPage, $this->columns)
+            ->orderBy("id", "asc")
+            ->cursorPaginate($perPage, static::getColumns())
             ->withQueryString();
 
         return response()->json($templates);

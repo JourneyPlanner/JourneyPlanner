@@ -271,13 +271,18 @@ async function deleteJourney(id: string) {
                     >
                         <T key-name="dashboard.edit.dates" />
                     </label>
-                    <FormCalendar
-                        id="journey-range-calendar"
-                        name="range"
-                        class="my-0 mr-0 mt-1 w-2/3"
-                        translation-key="form.input.journey.dates"
-                        :prefill="[new Date(props.from), new Date(props.to)]"
-                    />
+                    <div class="w-2/3">
+                        <FormCalendarSelect
+                            id="journey-range-calendar"
+                            name="range"
+                            class="my-0 mr-0 mt-1 w-full"
+                            translation-key="form.input.journey.dates"
+                            :prefill="[
+                                new Date(props.from),
+                                new Date(props.to),
+                            ]"
+                        />
+                    </div>
                 </div>
             </div>
             <div class="mt-10 flex justify-between gap-2 lg:mt-8">

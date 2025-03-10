@@ -64,6 +64,7 @@ const filters = reactive({
     templateCreator: templateFilterstore.getFilter("templateCreator"),
     cursor: templateFilterstore.getFilter("cursor"),
     nextCursor: templateFilterstore.getFilter("nextCursor"),
+    rating: templateFilterstore.getFilter("rating"),
     search: templateFilterstore.getFilter("search"),
 });
 
@@ -91,6 +92,15 @@ onMounted(() => {
         templates.value = [];
         refresh();
         templateStore.changeUpdate(false);
+    }
+
+    if (templateStore.templateWasEdited) {
+        templates.value[
+            templates.value.findIndex(
+                (obj) => obj.id === templateStore.editedTemplate.id,
+            )
+        ] = templateStore.editedTemplate;
+        templateStore.templateWasEdited = false;
     }
     watch(
         tabIndex,
@@ -210,20 +220,20 @@ onMounted(() => {
                         icon: "pi pi-book",
                         items: [
                             {
-                                label: t.value("dashboard.sort.ascending"),
+                                label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-up",
                                 command: () => {
                                     filters.sortby = "name";
-                                    filters.sortorder = "asc";
+                                    filters.sortorder = "desc";
                                     refreshTemplates();
                                 },
                             },
                             {
-                                label: t.value("dashboard.sort.descending"),
+                                label: t.value("dashboard.sort.ascending"),
                                 icon: "pi pi-sort-alpha-down",
                                 command: () => {
                                     filters.sortby = "name";
-                                    filters.sortorder = "desc";
+                                    filters.sortorder = "asc";
                                     refreshTemplates();
                                 },
                             },
@@ -234,19 +244,47 @@ onMounted(() => {
                         icon: "pi pi-map-marker",
                         items: [
                             {
-                                label: t.value("dashboard.sort.ascending"),
+                                label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-up",
+                                command: () => {
+                                    filters.sortby = "destination";
+                                    filters.sortorder = "desc";
+                                    refreshTemplates();
+                                },
+                            },
+                            {
+                                label: t.value("dashboard.sort.ascending"),
+                                icon: "pi pi-sort-alpha-down",
                                 command: () => {
                                     filters.sortby = "destination";
                                     filters.sortorder = "asc";
                                     refreshTemplates();
                                 },
                             },
+                        ],
+                    },
+                    {
+                        label: t.value("dashboard.sort.rating"),
+                        icon: "pi pi-star",
+                        items: [
                             {
-                                label: t.value("dashboard.sort.descending"),
-                                icon: "pi pi-sort-alpha-down",
+                                label: t.value(
+                                    "dashboard.sort.ascending.rating",
+                                ),
+                                icon: "pi pi-sort-amount-up",
                                 command: () => {
-                                    filters.sortby = "destination";
+                                    filters.sortby = "average_rating";
+                                    filters.sortorder = "asc";
+                                    refreshTemplates();
+                                },
+                            },
+                            {
+                                label: t.value(
+                                    "dashboard.sort.descending.rating",
+                                ),
+                                icon: "pi pi-sort-amount-down",
+                                command: () => {
+                                    filters.sortby = "average_rating";
                                     filters.sortorder = "desc";
                                     refreshTemplates();
                                 },
@@ -265,17 +303,17 @@ onMounted(() => {
                         icon: "pi pi-book",
                         items: [
                             {
-                                label: t.value("dashboard.sort.ascending"),
+                                label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-up",
                                 command: () => {
-                                    sortJourneys("name-asc");
+                                    sortJourneys("name-desc");
                                 },
                             },
                             {
-                                label: t.value("dashboard.sort.descending"),
+                                label: t.value("dashboard.sort.ascending"),
                                 icon: "pi pi-sort-alpha-down",
                                 command: () => {
-                                    sortJourneys("name-desc");
+                                    sortJourneys("name-asc");
                                 },
                             },
                         ],
@@ -305,17 +343,19 @@ onMounted(() => {
                         icon: "pi pi-map-marker",
                         items: [
                             {
-                                label: t.value("dashboard.sort.ascending"),
+                                label: t.value("dashboard.sort.descending"),
                                 icon: "pi pi-sort-alpha-up",
+                                key: "journey-destination-descending",
                                 command: () => {
-                                    sortJourneys("destination-asc");
+                                    sortJourneys("destination-desc");
                                 },
                             },
                             {
-                                label: t.value("dashboard.sort.descending"),
+                                label: t.value("dashboard.sort.ascending"),
                                 icon: "pi pi-sort-alpha-down",
+                                key: "journey-destination-ascending",
                                 command: () => {
-                                    sortJourneys("destination-desc");
+                                    sortJourneys("destination-asc");
                                 },
                             },
                         ],
@@ -343,6 +383,20 @@ onMounted(() => {
         filters,
         () => {
             templateFilterstore.setFilters(filters);
+        },
+        { deep: true },
+    );
+
+    watch(
+        templateStore,
+        () => {
+            templates.value[
+                templates.value.findIndex(
+                    (obj) => obj.id === templateStore.editedTemplate.id,
+                )
+            ] = templateStore.editedTemplate;
+            templateStore.templateWasEdited = false;
+            templates.value.sort((a, b) => b.average_rating - a.average_rating);
         },
         { deep: true },
     );
@@ -390,6 +444,7 @@ const {
                 template_creator: encodeURIComponent(filters.templateCreator),
                 cursor: filters.cursor,
                 per_page: filters.PER_PAGE,
+                filter_by_rating: filters.rating,
             },
         }),
     {
@@ -424,6 +479,11 @@ const refreshTemplates = () => {
     refresh();
 };
 
+const resetRating = () => {
+    filters.rating = null;
+    refreshTemplates();
+};
+
 function setAddressColor() {
     const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -446,6 +506,13 @@ function setAddressColor() {
  * @param event MouseEvent
  */
 const closeFilterWhenOutsideClick = (event: MouseEvent) => {
+    if (
+        (event.target as HTMLElement).classList.contains(
+            "template-rating-filter",
+        )
+    ) {
+        return;
+    }
     const filterElement = filterDialog.value as HTMLElement;
     if (filterElement && !filterElement.contains(event.target as Node)) {
         isFilterVisible.value = false;
@@ -487,7 +554,8 @@ const isFiltered = computed(() => {
             filters.TEMPLATE_MAX_LENGTH ||
         filters.templateDestinationInput !== "" ||
         filters.templateDestinationName !== "" ||
-        filters.templateCreator !== ""
+        filters.templateCreator !== "" ||
+        filters.rating !== null
     );
 });
 
@@ -593,17 +661,17 @@ function sortJourneys(sortKey: string) {
     currentJourneys.value.sort((a: Journey, b: Journey) => {
         switch (sortKey) {
             case "name-asc":
-                return b.name.localeCompare(a.name);
-            case "name-desc":
                 return a.name.localeCompare(b.name);
+            case "name-desc":
+                return b.name.localeCompare(a.name);
             case "startdate-asc":
                 return compareAsc(new Date(a.from), new Date(b.from));
             case "startdate-desc":
                 return compareDesc(new Date(a.from), new Date(b.from));
             case "destination-asc":
-                return b.destination.localeCompare(a.destination);
-            case "destination-desc":
                 return a.destination.localeCompare(b.destination);
+            case "destination-desc":
+                return b.destination.localeCompare(a.destination);
             default:
                 return 0;
         }
@@ -1044,9 +1112,9 @@ function editJourney(journey: Journey, id: string) {
                             <AutoComplete
                                 v-model="filters.templateCreator"
                                 data-test="templates-filter-creator"
-                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem]"
+                                input-class="bg-natural-50 dark:bg-natural-700 border-2 border-natural-300 dark:border-natural-800 rounded-lg pl-1.5 text-base focus:border-calypso-400 dark:focus:border-calypso-400 py-[0.275rem] font-nunito"
                                 :pt="{
-                                    panel: 'w-20 bg-natural-50 dark:bg-natural-900',
+                                    panel: 'w-20 bg-natural-50 dark:bg-natural-900 font-nunito',
                                     emptyMessage:
                                         'text-text dark:text-natural-50 font-nunito p-1',
                                     item: 'text-text dark:text-natural-50 hover:text-text hover:bg-natural-100 dark:hover:bg-natural-700 focus:bg-natural-100 dark:focus:bg-natural-700',
@@ -1064,7 +1132,54 @@ function editJourney(journey: Journey, id: string) {
                                 @clear="(refreshTemplates(), getUser())"
                             />
                         </div>
-                        <div class="flex justify-end pb-1 pt-20">
+                        <div id="rating" class="mt-3">
+                            <div class="flex items-center">
+                                <h3 class="whitespace-nowrap text-xl">
+                                    <T
+                                        key-name="dashboard.template.filter.rating"
+                                    />
+                                </h3>
+                                <span
+                                    class="ml-1 h-0.5 w-full bg-calypso-400"
+                                />
+                            </div>
+                            <p
+                                class="mb-1 text-natural-700 dark:text-natural-200"
+                            >
+                                <T
+                                    key-name="dashboard.template.filter.rating.description"
+                                />
+                            </p>
+                            <div
+                                class="flex h-12 flex-row items-center gap-x-1"
+                            >
+                                <Rating
+                                    v-model="filters.rating"
+                                    :pt="{
+                                        cancelItem: {
+                                            class: 'hidden',
+                                        },
+                                    }"
+                                    @change="refreshTemplates()"
+                                >
+                                    <template #onicon>
+                                        <i
+                                            class="pi pi-star-fill template-rating-filter mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
+                                        />
+                                    </template>
+                                    <template #officon>
+                                        <i
+                                            class="pi pi-star template-rating-filter mr-2 text-2xl text-calypso-600 hover:text-3xl dark:text-calypso-400"
+                                        />
+                                    </template>
+                                </Rating>
+                                <i
+                                    class="pi pi-times -ml-1 cursor-pointer text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                    @click="resetRating"
+                                />
+                            </div>
+                        </div>
+                        <div class="pt-auto mt-5 flex justify-end pb-1">
                             <button
                                 class="dark:text-mahagony-200 text-mahagony-400 hover:underline"
                                 data-test="templates-filter-clear"
@@ -1206,7 +1321,7 @@ function editJourney(journey: Journey, id: string) {
                 :draggable="false"
                 :block-scroll="true"
                 :show-close-icon="false"
-                class="z-50 mt-auto flex h-auto flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden lg:-z-10"
+                class="z-50 mt-auto flex h-fit max-h-[90%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden lg:-z-10"
                 :pt="{
                     root: {
                         class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:-z-10 lg:hidden ',
@@ -1380,6 +1495,47 @@ function editJourney(journey: Journey, id: string) {
                             @clear="(refreshTemplates(), getUser())"
                         />
                     </div>
+
+                    <div id="rating" class="mt-3">
+                        <div class="flex items-center">
+                            <h3 class="whitespace-nowrap text-2xl">
+                                <T
+                                    key-name="dashboard.template.filter.rating"
+                                />
+                            </h3>
+                        </div>
+                        <p class="mb-1 text-natural-700 dark:text-natural-200">
+                            <T
+                                key-name="dashboard.template.filter.rating.description"
+                            />
+                        </p>
+                        <div class="flex h-12 flex-row items-center gap-x-1">
+                            <Rating
+                                v-model="filters.rating"
+                                :pt="{
+                                    cancelItem: {
+                                        class: 'hidden',
+                                    },
+                                }"
+                                @change="refreshTemplates()"
+                            >
+                                <template #onicon>
+                                    <i
+                                        class="pi pi-star-fill template-rating-filter ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
+                                    />
+                                </template>
+                                <template #officon>
+                                    <i
+                                        class="pi pi-star template-rating-filter ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
+                                    />
+                                </template>
+                            </Rating>
+                            <i
+                                class="pi pi-times cursor-pointer text-2xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                @click="resetRating"
+                            />
+                        </div>
+                    </div>
                     <div
                         class="mt-5 flex w-full justify-center text-text dark:text-natural-50"
                     >
@@ -1405,14 +1561,7 @@ function editJourney(journey: Journey, id: string) {
                 ref="menu"
                 :model="items"
                 popup
-                class="rounded-xl border-2 border-natural-200 bg-natural-50 dark:border-natural-900 dark:bg-natural-800"
-                :pt="{
-                    menuitem: {
-                        class: 'bg-natural-50 dark:bg-natural-800 hover:bg-dandelion-300 rounded-md',
-                    },
-                    content: { class: 'hover:bg-dandelion-300 rounded-md' },
-                    submenu: { class: 'bg-natural-50 dark:bg-natural-800' },
-                }"
+                class="rounded-xl border-2 border-natural-200 bg-natural-50 font-nunito dark:border-natural-900 dark:bg-natural-800"
             >
                 <template #start>
                     <h1
@@ -1433,6 +1582,7 @@ function editJourney(journey: Journey, id: string) {
                     <a
                         v-ripple
                         class="align-items-center flex rounded-md bg-natural-50 text-sm text-text hover:bg-dandelion-100 dark:bg-natural-800 dark:text-natural-50 dark:hover:bg-pesto-600"
+                        :class="item.class"
                         v-bind="props.action"
                     >
                         <span :class="item.icon" />

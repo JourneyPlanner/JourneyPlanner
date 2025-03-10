@@ -253,12 +253,15 @@ function changeRange(newRange: Date[]) {
                             @change-address="changeAddress"
                             @retrieved-address="retrievedAddress"
                         />
-                        <FormCalendar
-                            id="journey-range-calendar"
-                            name="journeyRange"
-                            translation-key="form.input.journey.dates"
-                            @change-input="changeRange"
-                        />
+                        <div class="w-full xs:w-5/6 xl:w-2/3">
+                            <FormCalendarSelect
+                                id="journey-range-calendar"
+                                name="journeyRange"
+                                class="w-full"
+                                translation-key="form.input.journey.dates"
+                                @change-input="changeRange"
+                            />
+                        </div>
                         <Divider
                             v-if="isAuthenticated"
                             type="solid"
