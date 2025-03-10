@@ -221,7 +221,6 @@ const {
     identifier: "business-templates",
     apiEndpoint: `/api/business/${slug.value}/templates`,
     params: {
-        private: true,
         per_page: 8,
     },
 });

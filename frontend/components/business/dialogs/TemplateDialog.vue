@@ -25,10 +25,11 @@ const {
     showMoreData: showMoreTemplates,
     showMoreDataText: "subdomain.templates.showMore",
     showLessDataText: "subdomain.templates.showLess",
-    identifier: "business-templates",
+    identifier: "business-templates-private",
     apiEndpoint: `/api/business/${props.businessSlug}/templates`,
     params: {
         per_page: 8,
+        private: 1,
     },
 });
 const checkedItems = ref(new Map());
