@@ -134,11 +134,4 @@ class Activity extends Model
     {
         return [$this->journey];
     }
-
-    public function broadcastWith()
-    {
-        $array = $this->toArray();
-        unset($array["journey"]);
-        return $array;
-    }
 }
