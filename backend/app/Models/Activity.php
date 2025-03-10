@@ -135,8 +135,10 @@ class Activity extends Model
         return [$this->journey];
     }
 
-    public function broadCastWith()
+    public function broadcastWith()
     {
-        return $this->toArray();
+        $array = $this->toArray();
+        unset($array["journey"]);
+        return $array;
     }
 }

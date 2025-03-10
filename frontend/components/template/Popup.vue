@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { T, useTranslate } from "@tolgee/vue";
 import { format, parse } from "date-fns";
 
 const props = defineProps({
@@ -23,10 +24,28 @@ const props = defineProps({
 const emit = defineEmits(["close", "opened-preview"]);
 
 const client = useSanctumClient();
+const { t } = useTranslate();
+const toast = useToast();
+const { isAuthenticated } = useSanctumAuth();
 
 const isVisible = ref(false);
+const isProfileDialogVisible = ref(false);
+const template = props.template;
 const activityCount = ref(null);
+const router = useRouter();
 const activities = ref();
+const numRating = ref(0);
+const rating = ref(0);
+const avgRating = ref(1);
+const isRatingVisible = ref(false);
+const store = useTemplateStore();
+const isSubmitting = ref(false);
+if (isAuthenticated.value) {
+    const { data } = await useAsyncData("userRating", () =>
+        client(`/api/template/${props.template.id}/rate`),
+    );
+    rating.value = data.value.rating;
+}
 
 watch(
     () => props.isTemplateDialogVisible,
@@ -41,6 +60,9 @@ watch(
                     }
                 },
             });
+            numRating.value = props.template.total_ratings;
+            avgRating.value =
+                Math.round(props.template.average_rating * 100) / 100;
         }
     },
     { immediate: true },
@@ -51,6 +73,66 @@ const close = (): void => {
     activityCount.value = null;
     emit("close");
 };
+
+async function changeRating() {
+    if (isSubmitting.value) return;
+    isSubmitting.value = true;
+    const userRating = {
+        rating: rating.value,
+    };
+    await client(`/api/template/${props.template.id}/rate`, {
+        method: "POST",
+        body: userRating,
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value(
+                        "form.template.rate.toast.success.heading",
+                    ),
+                    detail: t.value("form.template.rate.toast.success.detail"),
+                    life: 3000,
+                });
+                numRating.value =
+                    Math.round(response._data.total_ratings * 100) / 100;
+                avgRating.value =
+                    Math.round(response._data.average_rating * 100) / 100;
+                template.average_rating = response._data.average_rating;
+                template.total_ratings = response._data.total_ratings;
+                store.editedTemplate = template;
+                store.templateWasEdited = true;
+                isSubmitting.value = false;
+            }
+        },
+        async onRequestError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+            isSubmitting.value = false;
+        },
+    });
+}
+
+function removeRating() {
+    rating.value = 0;
+    changeRating();
+}
+
+function changeRatingMobile() {
+    isRatingVisible.value = false;
+    changeRating();
+}
+
+function handleUserClick() {
+    if (!template?.creator?.business) {
+        isProfileDialogVisible.value = true;
+    } else {
+        router.push(`/business/${template?.creator?.username}`);
+    }
+}
 </script>
 
 <template>
@@ -106,11 +188,34 @@ const close = (): void => {
                 id="template-content"
                 class="mx-4 -mb-2 mt-2 h-full xs:mx-8 sm:mx-12 md:mx-8"
             >
-                <div id="details" class="flex h-32 gap-x-4">
+                <div id="details" class="flex h-56 gap-x-4">
                     <div
                         id="facts"
-                        class="flex w-1/2 flex-col gap-y-3 text-text dark:text-natural-50"
+                        class="flex h-full w-1/2 flex-col gap-y-3 text-text dark:text-natural-50"
                     >
+                        <div
+                            id="user"
+                            v-tooltip.top="{
+                                value: template.creator.username,
+                                pt: { root: 'font-nunito' },
+                            }"
+                            class="flex flex-row items-center gap-x-1"
+                        >
+                            <i
+                                class="pi mr-2 text-xl text-calypso-600 dark:text-calypso-400"
+                                :class="
+                                    template.creator.business
+                                        ? 'pi-building'
+                                        : 'pi-user'
+                                "
+                            />
+                            <h5
+                                class="cursor-pointer truncate text-xl hover:underline"
+                                @click="handleUserClick"
+                            >
+                                {{ template.creator.username }}
+                            </h5>
+                        </div>
                         <div
                             id="destination"
                             v-tooltip.top="{
@@ -173,6 +278,78 @@ const close = (): void => {
                                 />
                             </span>
                         </div>
+                        <div
+                            id="rating"
+                            class="flex flex-row items-center gap-x-1"
+                        >
+                            <i
+                                class="pi pi-star mr-2 text-xl text-calypso-600 dark:text-calypso-400"
+                            />
+
+                            <span
+                                class="flex cursor-pointer flex-row items-center gap-x-1 truncate text-xl"
+                                @click="isRatingVisible = !isRatingVisible"
+                            >
+                                <Skeleton
+                                    v-if="activityCount === null"
+                                    width="1rem"
+                                    height="1.25rem"
+                                    class="dark:bg-natural-600"
+                                />
+                                <span v-else>
+                                    {{ avgRating }}
+                                </span>
+                                <T
+                                    :key-name="
+                                        avgRating === 1
+                                            ? 'template.rating.star'
+                                            : 'template.rating.stars'
+                                    "
+                                />
+                                ({{ numRating }})
+                                <button v-if="isAuthenticated">
+                                    <i
+                                        class="pi mr-2 text-xl text-natural-500 hover:text-natural-900 dark:text-natural-100 dark:hover:text-natural-400"
+                                        :class="
+                                            isRatingVisible
+                                                ? 'pi-angle-up'
+                                                : 'pi-angle-down'
+                                        "
+                                    />
+                                </button>
+                            </span>
+                        </div>
+                        <div
+                            class="-mt-2 ml-1 flex h-8 flex-row items-center gap-x-1"
+                        >
+                            <Rating
+                                v-if="isRatingVisible"
+                                v-model="rating"
+                                :disabled="isSubmitting"
+                                :pt="{
+                                    cancelItem: {
+                                        class: 'hidden',
+                                    },
+                                }"
+                                @change="changeRating"
+                            >
+                                <template #onicon>
+                                    <i
+                                        class="pi pi-star-fill -ml-1 mr-2 text-xl text-calypso-600 hover:text-2xl dark:text-calypso-400"
+                                    />
+                                </template>
+                                <template #officon>
+                                    <i
+                                        class="pi pi-star -ml-1 mr-2 text-xl text-calypso-600 hover:text-2xl dark:text-calypso-400"
+                                    />
+                                </template>
+                            </Rating>
+                            <i
+                                v-if="isRatingVisible"
+                                class="pi pi-times -ml-1 mt-0.5 cursor-pointer text-xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                                @click="removeRating"
+                            />
+                        </div>
                     </div>
                     <div
                         id="description"
@@ -186,7 +363,7 @@ const close = (): void => {
                         </span>
                     </div>
                 </div>
-                <div id="activities" class="mt-2.5">
+                <div id="activities">
                     <h3 class="text-lg text-text dark:text-natural-50">
                         <T :key-name="'template.activity.pool'" />
                     </h3>
@@ -282,7 +459,7 @@ const close = (): void => {
             position="bottom"
             :auto-z-index="true"
             :draggable="false"
-            class="z-50 mt-auto flex h-[85%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden"
+            class="z-50 mt-auto flex h-fit max-h-[85%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:hidden ',
@@ -319,7 +496,27 @@ const close = (): void => {
                 </div>
             </template>
             <div class="flex h-full flex-col gap-y-5 pl-6 pr-2">
-                <div id="details" class="flex h-32 w-full flex-col gap-x-4">
+                <div
+                    id="details"
+                    class="flex flex-col gap-y-3 text-text dark:text-natural-50"
+                >
+                    <div
+                        id="user"
+                        class="flex cursor-pointer flex-row items-center gap-x-1"
+                        @click="handleUserClick"
+                    >
+                        <i
+                            class="pi mr-2 text-calypso-600 dark:text-calypso-400"
+                            :class="
+                                template.creator.business
+                                    ? 'pi-building'
+                                    : 'pi-user'
+                            "
+                        />
+                        <h5 class="truncate text-base">
+                            {{ template.creator.username }}
+                        </h5>
+                    </div>
                     <div
                         id="facts"
                         class="flex flex-col gap-y-3 text-text dark:text-natural-50"
@@ -379,6 +576,49 @@ const close = (): void => {
                                             : 'template.activities'
                                     "
                                 />
+                            </span>
+                        </div>
+                        <div
+                            id="rating"
+                            class="flex flex-row items-center gap-x-1"
+                        >
+                            <i
+                                class="pi pi-star mr-2 text-base text-calypso-600 dark:text-calypso-400"
+                            />
+
+                            <span
+                                class="flex flex-row items-center gap-x-1 truncate text-base"
+                            >
+                                <Skeleton
+                                    v-if="activityCount === null"
+                                    width="1rem"
+                                    height="1.25rem"
+                                    class="dark:bg-natural-600"
+                                />
+                                <span v-else>
+                                    {{ avgRating }}
+                                </span>
+                                <T
+                                    :key-name="
+                                        avgRating === 1
+                                            ? 'template.rating.star'
+                                            : 'template.rating.stars'
+                                    "
+                                />
+                                ({{ numRating }})
+                                <button
+                                    v-if="isAuthenticated"
+                                    @click="isRatingVisible = !isRatingVisible"
+                                >
+                                    <i
+                                        class="pi mr-2 text-xl text-natural-500 hover:text-natural-900 dark:text-natural-100 dark:hover:text-natural-400"
+                                        :class="
+                                            isRatingVisible
+                                                ? 'pi-angle-up'
+                                                : 'pi-angle-down'
+                                        "
+                                    />
+                                </button>
                             </span>
                         </div>
                     </div>
@@ -484,5 +724,105 @@ const close = (): void => {
                 </div>
             </div>
         </Sidebar>
+        <Sidebar
+            v-model:visible="isRatingVisible"
+            modal
+            :show-close-icon="false"
+            :block-scroll="true"
+            position="bottom"
+            :auto-z-index="true"
+            :draggable="false"
+            class="z-50 mt-auto flex h-fit max-h-[45%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden"
+            :pt="{
+                root: {
+                    class: 'font-nunito bg-background dark:bg-background-dark z-10 lg:hidden ',
+                },
+                header: {
+                    class: 'flex justify-start pb-2 pl-9 font-nunito bg-background dark:bg-background-dark dark:text-natural-50 rounded-3xl',
+                },
+                title: {
+                    class: 'font-nunito text-4xl font-semibold',
+                },
+                content: {
+                    class: 'font-nunito bg-background dark:bg-background-dark px-0 -ml-2 sm:pr-12 h-full',
+                },
+                footer: { class: 'h-0' },
+                closeButton: {
+                    class: 'justify-start w-full h-full items-center collapse',
+                },
+                mask: {
+                    class: 'sm:collapse bg-natural-50',
+                },
+            }"
+            @hide="isRatingVisible = false"
+            ><template #header>
+                <button
+                    class="-ml-6 flex justify-center pr-4"
+                    @click="isRatingVisible = false"
+                >
+                    <span class="pi pi-angle-down text-3xl" />
+                </button>
+                <div class="w-full">
+                    <h1
+                        class="mr-3 truncate text-nowrap text-3xl font-medium text-text dark:text-natural-50"
+                    >
+                        <T key-name="template.rate" />
+                    </h1>
+                </div>
+            </template>
+            <div
+                class="flex w-full flex-col items-center justify-center overflow-hidden"
+            >
+                <p
+                    class="ml-11 w-full truncate text-nowrap text-left text-xl font-medium text-text dark:text-natural-50"
+                >
+                    <T key-name="template.rate.detail" />
+                </p>
+                <div
+                    class="mb-4 mt-4 flex h-8 flex-row items-center justify-center gap-x-1"
+                >
+                    <Rating
+                        v-if="isRatingVisible"
+                        v-model="rating"
+                        :disabled="isSubmitting"
+                        :pt="{
+                            cancelItem: {
+                                class: 'hidden',
+                            },
+                        }"
+                    >
+                        <template #onicon>
+                            <i
+                                class="pi pi-star-fill ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
+                            />
+                        </template>
+                        <template #officon>
+                            <i
+                                class="pi pi-star ml-1 mr-2 text-3xl text-calypso-600 dark:text-calypso-400"
+                            />
+                        </template>
+                    </Rating>
+                    <i
+                        v-if="isRatingVisible"
+                        class="pi pi-times -ml-1 mt-1 cursor-pointer text-2xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
+                        @click="rating = 0"
+                    />
+                </div>
+                <button
+                    class="ml-5 flex h-10 w-[90%] items-center justify-center rounded-xl border-[3px] border-dandelion-300 bg-natural-50 px-2 py-0.5 pl-2 text-center text-base font-semibold text-natural-900 hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-200 dark:hover:bg-pesto-600"
+                    @click="changeRatingMobile"
+                >
+                    <T key-name="common.save" />
+                </button>
+            </div>
+        </Sidebar>
+        <div class="dialogs">
+            <JourneyIdDialogsProfileDialog
+                :visible="isProfileDialogVisible"
+                :username="template?.creator?.username"
+                :displayname="template?.creator?.display_name"
+                @close="isProfileDialogVisible = false"
+            />
+        </div>
     </div>
 </template>

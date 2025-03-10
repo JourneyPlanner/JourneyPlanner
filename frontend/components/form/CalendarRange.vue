@@ -81,7 +81,7 @@ function handleSelect() {
                 'text-natural-600': !isFocused,
                 'dark:text-natural-200': !isFocused,
                 'text-calypso-600': isFocused,
-                '-translate-x-6 -translate-y-4 scale-75': isFocused || value,
+                '-translate-x-7 -translate-y-4 scale-75': isFocused || value,
                 'translate-y-0 scale-100': !isFocused && !value,
             }"
         >

@@ -35,7 +35,9 @@ if (error.value) {
 </script>
 
 <template>
-    <div class="flex h-screen items-center justify-center">
+    <div
+        class="flex h-screen items-center justify-center text-text dark:text-natural-50"
+    >
         <span class="text-3xl"><T key-name="invite.joining" /></span>
     </div>
 </template>

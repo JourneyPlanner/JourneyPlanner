@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Business\Business;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,6 +31,8 @@ class Journey extends Model
         "description",
         "is_template",
         "created_from",
+        "average_rating",
+        "total_ratings",
         "longitude",
         "latitude",
     ];
@@ -49,7 +52,31 @@ class Journey extends Model
      *
      * @var array<int, string>
      */
-    protected $hidden = ["pivot"];
+    protected $hidden = ["pivot", "users", "businesses"];
+
+    /**
+     * The attributes that should be appended to the model.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = ["creator"];
+
+    /**
+     * Bootstrap the model and its traits.
+     *
+     * @return void
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        // Update length if start or end has changed
+        static::saving(function ($journey) {
+            if ($journey->isDirty("from") || $journey->isDirty("to")) {
+                $journey->length = $journey->from->diffInDays($journey->to) + 1;
+            }
+        });
+    }
 
     /**
      * Get the channels that model events should broadcast on.
@@ -66,7 +93,18 @@ class Journey extends Model
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)
+            ->using(JourneyUser::class)
+            ->withTimestamps();
+    }
+
+    public function businesses(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Business::class,
+            "business_templates",
+            foreignPivotKey: "template_id"
+        );
     }
 
     /**
@@ -110,5 +148,37 @@ class Journey extends Model
     public function createdFrom(): BelongsTo
     {
         return $this->belongsTo(Journey::class, "created_from");
+    }
+
+    /**
+     * Get the creator of the template.
+     *
+     * This will return the business or user that created the template.
+     * @return array|null Returns null if neither users nor businesses relationships are loaded
+     */
+    public function getCreatorAttribute()
+    {
+        if (
+            $this->relationLoaded("businesses") &&
+            $this->businesses->isNotEmpty()
+        ) {
+            $business = $this->businesses->first();
+            return [
+                "business" => true,
+                "username" => $business->slug,
+                "display_name" => $business->name,
+            ];
+        } elseif (
+            $this->relationLoaded("users") &&
+            $this->users->isNotEmpty()
+        ) {
+            $user = $this->users->first();
+            return [
+                "business" => false,
+                "username" => $user->username,
+                "display_name" => $user->display_name,
+            ];
+        }
+        return null;
     }
 }

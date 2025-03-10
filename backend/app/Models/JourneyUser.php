@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class JourneyUser extends Model
+class JourneyUser extends Pivot
 {
     use HasFactory, BroadcastsEvents;
 
@@ -31,6 +32,6 @@ class JourneyUser extends Model
      */
     public function broadcastOn(string $event): array
     {
-        return [$this->journey];
+        return [new PrivateChannel("App.Models.Journey.{$this->journey_id}")];
     }
 }

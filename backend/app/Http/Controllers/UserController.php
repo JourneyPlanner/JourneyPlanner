@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Business\Business;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,11 +31,23 @@ class UserController extends Controller
                 ->where("username", "like", "%$search%")
                 ->orWhere("display_name", "like", "%$search%");
         })
-            ->orderBy("username", "asc")
-            ->simplePaginate($perPage, ["username", "display_name"])
+            ->select("username", "display_name")
+            ->orderBy("username", "asc");
+
+        $businesses = Business::when($search, function ($query) use ($search) {
+            $query
+                ->where("slug", "like", "%$search%")
+                ->orWhere("name", "like", "%$search%");
+        })
+            ->select("slug as username", "name as display_name")
+            ->orderBy("slug", "asc");
+
+        $results = $users
+            ->union($businesses)
+            ->simplePaginate($perPage)
             ->withQueryString();
 
-        return response()->json($users);
+        return response()->json($results);
     }
 
     /**
@@ -45,6 +58,7 @@ class UserController extends Controller
         $user = User::where("username", $username)->firstOrFail([
             "username",
             "display_name",
+            "email_hash",
             "created_at",
         ]);
 
@@ -85,7 +99,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             "password" => "string|nullable",
-            "email" => "required|email|unique:users",
+            "email" => "required|string|lowercase|email|max:255|unique:users",
         ]);
 
         $user = $request->user();

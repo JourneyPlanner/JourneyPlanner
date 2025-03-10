@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\Journey\Activity\ActivityController;
 use App\Http\Controllers\Journey\Activity\CalendarActivityController;
 use App\Http\Controllers\Journey\JourneyController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\Journey\JourneyUserController;
 use App\Http\Controllers\Journey\MediaController;
 use App\Http\Controllers\Journey\TemplateController;
 use App\Http\Controllers\Journey\UploadController;
+use App\Http\Controllers\Journey\TemplateRatingController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -61,7 +63,7 @@ Route::apiResource("journey", JourneyController::class);
 Route::apiResource("journey/{journey}/activity", ActivityController::class);
 
 Route::apiResource("journey/{journey}/user", JourneyUserController::class)
-    ->only("index", "update")
+    ->only("index", "update", "destroy")
     ->middleware("auth:sanctum");
 
 Route::delete("journey/{journey}/leave", [
@@ -112,6 +114,14 @@ Route::get("user/{username}/template", [
     TemplateController::class,
     "userTemplatesIndex",
 ]);
+Route::post("template/{journey}/rate", [
+    TemplateRatingController::class,
+    "rate",
+])->middleware("auth:sanctum");
+Route::get("template/{journey}/rate", [
+    TemplateRatingController::class,
+    "show",
+])->middleware("auth:sanctum");
 Route::get("me/template", [
     TemplateController::class,
     "currentUserTemplatesIndex",
@@ -146,3 +156,17 @@ Route::delete("user/delete-account", [
 
 Route::get("user/{username}", [UserController::class, "show"]);
 Route::get("user", [UserController::class, "index"]);
+
+Route::get("business/{slug}", [BusinessController::class, "show"]);
+Route::get("business/{slug}/image/{image}", [
+    BusinessController::class,
+    "showImage",
+]);
+Route::get("business/{slug}/templates", [
+    BusinessController::class,
+    "showTemplates",
+]);
+Route::get("business/{slug}/activities", [
+    BusinessController::class,
+    "showActivities",
+]);

@@ -98,16 +98,11 @@ onMounted(() => {
  * @param id - activity id
  * @param showOnly - if dialog should just display info or allow editing
  */
-function showInfo(id: string, showOnly: boolean = true) {
+function showInfo(id: string) {
     activities.value.forEach((activity: Activity) => {
         if (activity.id === id) {
-            if (!showOnly) {
-                update.value = true;
-            } else {
-                update.value = false;
-            }
-
-            onlyShow.value = showOnly;
+            onlyShow.value = false;
+            update.value = true;
             address.value = activity.address;
             cost.value = activity.cost;
             created_at.value = activity.created_at;
@@ -235,7 +230,7 @@ const itemsJourneyGuide = ref([
                 icon: "pi pi-pencil",
                 className: "text-dandelion-300",
                 command: () => {
-                    showInfo(activityId.value, false);
+                    showInfo(activityId.value);
                 },
             },
             {

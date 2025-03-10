@@ -126,7 +126,7 @@ const changeColorMode = () => {
                 </NuxtLink>
                 <nav class="flex flex-row items-center gap-4">
                     <ul
-                        class="hidden flex-row items-center gap-2 text-natural-500 dark:text-natural-600 sm:flex"
+                        class="hidden flex-row items-center gap-2 text-natural-500 dark:text-natural-400 sm:flex"
                     >
                         <li>
                             <button

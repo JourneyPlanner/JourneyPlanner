@@ -107,6 +107,14 @@ async function deleteTemplate(id: string) {
         },
     });
 }
+
+function handleUserClick() {
+    if (!props.displayedInProfile && !props.template?.creator?.business) {
+        isProfileDialogVisible.value = true;
+    } else if (props.template?.creator?.business) {
+        router.push(`/business/${props.template?.creator?.username}`);
+    }
+}
 </script>
 
 <template>
@@ -149,7 +157,7 @@ async function deleteTemplate(id: string) {
                         value: template.name,
                         pt: { root: 'font-nunito' },
                     }"
-                    class="w-full truncate text-xl font-medium"
+                    class="w-full truncate text-lg font-medium"
                 >
                     <div
                         class="block overflow-hidden overflow-ellipsis text-nowrap"
@@ -158,6 +166,18 @@ async function deleteTemplate(id: string) {
                         {{ template.name }}
                     </div>
                 </h3>
+                <div
+                    v-if="template?.creator?.business"
+                    class="flex items-center pl-2 pr-2"
+                >
+                    <span
+                        v-tooltip.top="{
+                            value: t('template.created.business'),
+                            pt: { root: 'font-nunito text-center' },
+                        }"
+                        class="pi pi-verified ml-auto justify-end text-lg text-calypso-600 dark:text-calypso-400"
+                    />
+                </div>
                 <Button
                     v-if="isCurrentUser"
                     type="button"
@@ -170,8 +190,8 @@ async function deleteTemplate(id: string) {
             </div>
             <h4
                 v-tooltip.top="{
-                    value: template.users[0].username,
-                    pt: { root: 'font-nunito' },
+                    value: template.creator.username,
+                    pt: { root: 'font-nunito ' },
                 }"
                 class="-mt-1 truncate text-base text-natural-600 dark:text-natural-300"
             >
@@ -181,12 +201,8 @@ async function deleteTemplate(id: string) {
                             ? 'cursor-pointer hover:text-calypso-600 hover:underline'
                             : ''
                     "
-                    @click.stop="
-                        !displayedInProfile
-                            ? (isProfileDialogVisible = true)
-                            : ''
-                    "
-                    >{{ template.users[0].username }}</span
+                    @click.stop="handleUserClick"
+                    >{{ template.creator.username }}</span
                 >
             </h4>
             <div id="template-details" class="mt-2">
@@ -216,14 +232,25 @@ async function deleteTemplate(id: string) {
                             "
                         />
                     </h5>
+                    <div class="ml-auto flex items-center gap-x-1">
+                        <i
+                            class="pi pi-star text-sm text-calypso-600 dark:text-calypso-400"
+                        />
+                        <h5 class="mr-2 truncate text-sm">
+                            {{
+                                Math.round(template.average_rating * 100) / 100
+                            }}
+                            ({{ template.total_ratings }})
+                        </h5>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="dialogs">
             <JourneyIdDialogsProfileDialog
                 :visible="isProfileDialogVisible"
-                :username="template.users[0].username"
-                :displayname="template.users[0].display_name"
+                :username="template.creator.username"
+                :displayname="template.creator.display_name"
                 @close="isProfileDialogVisible = false"
             />
             <JourneyIdDialogsCreateTemplateDialog
