@@ -51,10 +51,12 @@ class JourneyUser extends Pivot
     public function broadcastWith(): array
     {
         return [
-            "id" => $this->user_id,
-            "username" => $this->user->username,
-            "display_name" => $this->user->display_name,
-            "role" => $this->role,
+            "model" => [
+                "id" => $this->user_id,
+                "username" => $this->user->username,
+                "display_name" => $this->user->display_name,
+                "role" => $this->role,
+            ],
         ];
     }
 }
