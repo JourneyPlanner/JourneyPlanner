@@ -62,7 +62,7 @@ function subscribeToChannel() {
             journeyEdited(e.model as Journey),
         )
         .listen(".JourneyUserUpdated", (e: WebsocketEvent) =>
-            journeyEdited(e.model as Journey),
+            userEdited(e.model as User),
         )
         .listen(".ActivityUpdated", (e: WebsocketEvent) => activityUpdated(e))
         .listen(".ActivityCreated", (e: WebsocketEvent) => activityCreated(e))
@@ -198,6 +198,25 @@ if (isAuthenticated.value) {
     watch(data, () => {
         users.value = data?.value || [];
     });
+}
+
+function userEdited(user: User) {
+    console.log("userEdited -> user", user);
+
+    if (user.id === currUser.value?.id) {
+        currUser.value = user;
+    }
+
+    const index = users.value?.findIndex((u) => u.id === user.id);
+    console.log("userEdited -> index", index);
+
+    if (index !== undefined && index !== -1) {
+        console.log("userEdited -> user", user);
+        console.log("current user", users.value![index]);
+        console.log("userEdited -> users.value", users.value);
+
+        users.value![index] = user;
+    }
 }
 
 const colorMode = useColorMode();
