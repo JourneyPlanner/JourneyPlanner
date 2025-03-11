@@ -55,6 +55,7 @@ watch(
 watch(
     () => props.users,
     (value) => {
+        console.log(value);
         users.value = value;
     },
 );
