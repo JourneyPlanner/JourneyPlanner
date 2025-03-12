@@ -163,9 +163,13 @@ Route::get("business/{business:slug}/activities", [
     "showActivities",
 ]);
 Route::get("me/business", [BusinessController::class, "currentsUserIndex"]);
-Route::post("business/{business:slug}/uploadImage", [
+Route::post("business/{business:slug}/image", [
     BusinessController::class,
     "uploadImage",
+])->middleware("auth:sanctum");
+Route::delete("business/{business:slug}/image", [
+    BusinessController::class,
+    "deleteImage",
 ])->middleware("auth:sanctum");
 Route::post("business/{business:slug}/updateTexts", [
     BusinessController::class,

@@ -361,6 +361,31 @@ class BusinessController extends Controller
     }
 
     /**
+     * Delete an image of a business.
+     */
+    public function deleteImage(Business $business): Response
+    {
+        // Verify user business membership
+        Gate::authorize("update", $business);
+
+        $validated = request()->validate([
+            "type" => "required|string|in:image,banner",
+        ]);
+
+        $image = $business
+            ->images()
+            ->where("key", $validated["type"])
+            ->firstOrFail();
+
+        // Delete the image
+        Storage::delete($image->file_name);
+        $image->file_name = null;
+        $image->save();
+
+        return response()->noContent();
+    }
+
+    /**
      * Get the businesses of the authenticated user.
      */
     public function currentsUserIndex(Request $request): JsonResponse
