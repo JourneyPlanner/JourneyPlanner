@@ -171,11 +171,11 @@ Route::delete("business/{business:slug}/image", [
     BusinessController::class,
     "deleteImage",
 ])->middleware("auth:sanctum");
-Route::post("business/{business:slug}/updateTexts", [
+Route::post("business/{business:slug}/texts", [
     BusinessController::class,
     "updateTexts",
 ])->middleware("auth:sanctum");
-Route::post("business/{business:slug}/updateTemplates", [
+Route::post("business/{business:slug}/templates", [
     BusinessController::class,
     "updateTemplates",
 ])->middleware("auth:sanctum");
