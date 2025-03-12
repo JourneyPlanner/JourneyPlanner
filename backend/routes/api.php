@@ -175,6 +175,10 @@ Route::post("business/{business:slug}/texts", [
     BusinessController::class,
     "updateTexts",
 ])->middleware("auth:sanctum");
+Route::get("business/{business:slug}/texts", [
+    BusinessController::class,
+    "showTexts",
+])->middleware("auth:sanctum");
 Route::post("business/{business:slug}/templates", [
     BusinessController::class,
     "updateTemplates",

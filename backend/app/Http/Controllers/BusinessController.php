@@ -203,6 +203,33 @@ class BusinessController extends Controller
     }
 
     /**
+     * Get all texts in all languages of a business.
+     */
+    public function showTexts(Business $business): JsonResponse
+    {
+        // Verify user business membership
+        Gate::authorize("update", $business);
+
+        $textsByLanguage = [];
+
+        // Get all normal texts
+        $texts = BusinessText::where("business_id", $business->id)->get();
+        foreach ($texts as $text) {
+            $textsByLanguage[$text->language][$text->key] = $text->value;
+        }
+
+        // Get alt texts for images
+        foreach ($business->images()->get() as $image) {
+            foreach ($image->imageAltTexts()->get() as $altText) {
+                $textsByLanguage[$altText->language]["alt_texts"][$image->key] =
+                    $altText->alt_text;
+            }
+        }
+
+        return response()->json($textsByLanguage);
+    }
+
+    /**
      * Update the texts of a business.
      */
     public function updateTexts(Request $request, Business $business): Response
