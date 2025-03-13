@@ -346,7 +346,8 @@ const calendarOptions = reactive({
 }) as unknown as CalendarOptions;
 
 watch(addedActivity, () => {
-    addNewActivities(addedActivity.value);
+    console.log(addedActivity.value);
+    //addNewActivities(addedActivity.value);
 });
 
 watch(removedCalendarActivity, () => {
@@ -631,39 +632,6 @@ async function removeOldActivities(oldActivities: Activity[]) {
                     if (calApi.getEventById(calendar_activity.id) !== null) {
                         calApi.getEventById(calendar_activity.id).remove();
                     }
-                },
-            );
-        }
-    });
-}
-
-async function addNewActivities(activities: Activity[]) {
-    const calApi = fullCalendar.value.getApi();
-    const activity = Array.isArray(activities) ? activities : [activities];
-    activity.forEach((activity: Activity) => {
-        if (activity.calendar_activities != null) {
-            activity.calendar_activities.forEach(
-                (calendar_activity: CalendarActivity) => {
-                    if (calApi.getEventById(calendar_activity.id) !== null) {
-                        calApi.getEventById(calendar_activity.id).remove();
-                    }
-                    const newEnd = add(new UTCDate(calendar_activity.start), {
-                        hours: parseInt(
-                            activity.estimated_duration.split(":")[0],
-                        ),
-                        minutes: parseInt(
-                            activity.estimated_duration.split(":")[1],
-                        ),
-                    }).toISOString();
-                    calendar_activity.end = newEnd;
-                    calendar_activity.title = activity.name;
-                    if (calendar_activity.start.split(" ")[1] <= "06:00:00") {
-                        calApi.setOption("slotMinTime", "00:00:00");
-                        document.getElementsByClassName(
-                            "fc-showAllHours-button",
-                        )[0].innerHTML = "0:00 - 0:00";
-                    }
-                    calApi.addEvent(calendar_activity);
                 },
             );
         }

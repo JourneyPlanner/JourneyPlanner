@@ -1,5 +1,3 @@
-import { UTCDate } from "@date-fns/utc";
-import { add } from "date-fns";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
@@ -16,11 +14,21 @@ export const useActivityStore = defineStore("activities", () => {
     }
 
     function addActivity(activity) {
-        this.activityData.push(activity);
+        let activityIndex = activityData.value.findIndex(
+            (obj) => obj.id === activity.id,
+        );
+        if (activityIndex == -1) {
+            this.activityData.push(activity);
+        }
     }
 
     function setNewActivity(activity) {
-        this.addedActivity = activity;
+        let activityIndex = activityData.value.findIndex(
+            (obj) => obj.id === activity.id,
+        );
+        if (activityIndex == -1) {
+            this.addedActivity = activity;
+        }
     }
 
     function updateActivity(activity, shouldDelete = false) {
@@ -94,27 +102,18 @@ export const useActivityStore = defineStore("activities", () => {
             });
     }
 
-    function updateCalendarActivity(newCalendarActivity) {
-        const activityIndex = activityData.value.findIndex(
-            (obj) => obj.id === newCalendarActivity.activity.id,
-        );
-        activityData.value[activityIndex] = newCalendarActivity.activity;
-        activityData.value[activityIndex].calendar_activities.forEach(
-            (calendarActivity) => {
-                if (calendarActivity.id == newCalendarActivity.id) {
-                    const { activity, ...calendarActivityWithoutActivity } =
-                        newCalendarActivity;
-                    console.log(activity);
-                    calendarActivity = calendarActivityWithoutActivity;
-                }
-            },
-        );
-    }
-
     function createOrUpdateCalendarActivity(addCalendarActivity) {
-        const activityIndex = activityData.value.findIndex(
+        let activityIndex = activityData.value.findIndex(
             (obj) => obj.id === addCalendarActivity.activity_id,
         );
+        if (activityIndex == -1) {
+            activityData.value.push(addCalendarActivity.activity);
+            activityIndex = activityData.value.findIndex(
+                (obj) => obj.id === addCalendarActivity.activity_id,
+            );
+        }
+        console.log(activityIndex);
+
         if (!activityData.value[activityIndex].calendar_activities) {
             Object.assign(activityData.value[activityIndex], {
                 calendar_activities: [],
@@ -126,21 +125,22 @@ export const useActivityStore = defineStore("activities", () => {
             (obj) => obj.id === addCalendarActivity.id,
         );
 
-        const newEnd = add(new UTCDate(addCalendarActivity.start), {
+        console.log(calendarActivityIndex);
+        console.log(activityData.value[activityIndex].calendar_activities);
+
+        /* const newEnd = add(new UTCDate(addCalendarActivity.start), {
             hours: parseInt(
                 addCalendarActivity.activity.estimated_duration.split(":")[0],
             ),
             minutes: parseInt(
                 addCalendarActivity.activity.estimated_duration.split(":")[1],
             ),
-        }).toISOString();
-        addCalendarActivity.end = newEnd;
+        }).toISOString(); */
+        //addCalendarActivity.end = newEnd;
         addCalendarActivity.title = addCalendarActivity.activity.name;
         const { activity, ...calendarActivityWithoutMainActivity } =
             addCalendarActivity;
         console.log(activity);
-        console.log(calendarActivityWithoutMainActivity);
-        console.log(activityData.value[activityIndex]);
         if (calendarActivityIndex != -1) {
             activityData.value[activityIndex].calendar_activities[
                 calendarActivityIndex
@@ -151,6 +151,7 @@ export const useActivityStore = defineStore("activities", () => {
             );
         }
 
+        console.log(calendarActivityWithoutMainActivity);
         newCalendarActivity.value = calendarActivityWithoutMainActivity;
     }
 
@@ -195,7 +196,6 @@ export const useActivityStore = defineStore("activities", () => {
         removeActivity,
         createOrUpdateCalendarActivity,
         removeCalendarActivity,
-        updateCalendarActivity,
         newCalendarActivity,
         removedCalendarActivity,
     };

@@ -100,12 +100,11 @@ function activityDeleted(e: WebsocketEvent) {
 }
 
 function calendarActivityCreated(e: WebsocketEvent) {
-    console.log(e.model);
+    console.log(e);
     activityStore.createOrUpdateCalendarActivity(e.model);
 }
 
 function calendarActivityRemoved(e: WebsocketEvent) {
-    console.log(e.model);
     activityStore.removeCalendarActivity(e.model);
 }
 
