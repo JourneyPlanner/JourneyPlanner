@@ -115,7 +115,7 @@ function toggleTemplateAvailability(id: string) {
             :draggable="false"
             close-on-escape
             dismissable-mask
-            class="mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-2/3"
+            class="mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-full"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-10 max-sm:collapse',
@@ -160,7 +160,7 @@ function toggleTemplateAvailability(id: string) {
                 <TransitionGroup
                     name="fade"
                     tag="div"
-                    class="relative mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-1"
+                    class="relative mt-2 grid w-full grid-cols-2 gap-2 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-1 xl:grid-cols-4"
                 >
                     <div
                         v-for="(template, index) in templates"
@@ -201,7 +201,7 @@ function toggleTemplateAvailability(id: string) {
                             </div>
                         </label>
                         <TemplateCard
-                            class="hidden md:block"
+                            class="md:block"
                             :template="template"
                             :displayed-in-profile="false"
                             :opened-from-business="true"

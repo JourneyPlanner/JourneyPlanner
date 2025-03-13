@@ -110,7 +110,7 @@ await client(`/api/me/business`, {
     async onResponse({ response }) {
         if (response.ok) {
             console.log(response);
-            if (response._data) {
+            if (response._data[0]) {
                 console.log(response._data[0].slug);
                 console.log(response._data.id);
                 if (response._data[0].slug == slug.value) {
@@ -121,17 +121,19 @@ await client(`/api/me/business`, {
     },
 });
 
-await client(`/api/business/${slug.value}/texts`, {
-    async onResponse({ response }) {
-        if (response.ok) {
-            console.log(response);
-            if (response._data) {
-                console.log(response._data);
-                allTexts.value = response._data;
+if (partOfBusiness.value) {
+    await client(`/api/business/${slug.value}/texts`, {
+        async onResponse({ response }) {
+            if (response.ok) {
+                console.log(response);
+                if (response._data) {
+                    console.log(response._data);
+                    allTexts.value = response._data;
+                }
             }
-        }
-    },
-});
+        },
+    });
+}
 
 onMounted(async () => {
     const lastRoute = router.options.history.state.back as string;
@@ -373,7 +375,7 @@ const updatedImageUrl = computed(() => `${images.image.link}?t=${Date.now()}`);
             </div>
             <button
                 v-if="partOfBusiness"
-                class="absolute right-2.5 top-2.5 z-50 flex rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-text drop-shadow-lg backdrop-blur-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 lg:right-5 lg:top-5"
+                class="absolute right-2.5 top-2.5 z-50 hidden rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-text drop-shadow-lg backdrop-blur-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 lg:right-5 lg:top-5 lg:flex"
                 @click.stop="changeEditing"
             >
                 <SvgEdit v-if="!editingEnabled" class="w-4" />
@@ -650,7 +652,7 @@ const updatedImageUrl = computed(() => `${images.image.link}?t=${Date.now()}`);
                 "
             />
         </div>
-        <div>
+        <div v-if="partOfBusiness">
             <BusinessEditImageEditSidebar
                 :is-sidebar-visible="isImageEditSidebarVisible"
                 :edit-banner="editBanner"

@@ -49,6 +49,7 @@ const close = () => {
     altTextEnglish.value = "";
     altTextGerman.value = "";
     imageUrl.value = null;
+    fileName.value = null;
     emit("close");
 };
 
