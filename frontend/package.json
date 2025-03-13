@@ -27,7 +27,7 @@
         "@gravatar-com/quick-editor": "^0.6.0",
         "@mapbox/mapbox-gl-geocoder": "^5.0.3",
         "@mapbox/search-js-web": "^1.0.0",
-        "@nuxt/eslint": "^1.1.0",
+        "@nuxt/eslint": "^1.2.0",
         "@nuxt/image": "^1.9.0",
         "@pinia/nuxt": "^0.10.1",
         "@studiometa/vue-mapbox-gl": "^2.7.2",
