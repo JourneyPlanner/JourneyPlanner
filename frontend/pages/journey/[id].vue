@@ -61,8 +61,14 @@ function subscribeToChannel() {
         .listen(".JourneyUpdated", (e: WebsocketEvent) =>
             journeyEdited(e.model as Journey),
         )
+        .listen(".JourneyUserCreated", (e: WebsocketEvent) =>
+            userJoined(e.model as User),
+        )
         .listen(".JourneyUserUpdated", (e: WebsocketEvent) =>
             userEdited(e.model as User),
+        )
+        .listen(".JourneyUserDeleted", (e: WebsocketEvent) =>
+            userLeft(e.model as User),
         )
         .listen(".ActivityUpdated", (e: WebsocketEvent) => activityUpdated(e))
         .listen(".ActivityCreated", (e: WebsocketEvent) => activityCreated(e))
@@ -199,22 +205,40 @@ if (isAuthenticated.value) {
     });
 }
 
-function userEdited(user: User) {
-    console.log("userEdited -> user", user);
+function userJoined(user: User) {
+    if (users.value?.find((u) => u.id === user.id)) {
+        return;
+    }
+    users.value?.push(user);
+}
 
+function userEdited(user: User) {
     if (user.id === currUser.value?.id) {
         currUser.value = user;
     }
 
     const index = users.value?.findIndex((u) => u.id === user.id);
-    console.log("userEdited -> index", index);
 
     if (index !== undefined && index !== -1) {
-        console.log("userEdited -> user", user);
-        console.log("current user", users.value![index]);
-        console.log("userEdited -> users.value", users.value);
-
         users.value![index] = user;
+    }
+}
+
+function userLeft(user: User) {
+    if (currUser.value?.id === user.id) {
+        toast.add({
+            severity: "info",
+            summary: t.value("journey.kicked.toast.success"),
+            detail: t.value("journey.kicked.toast.detail"),
+            life: 3000,
+        });
+
+        navigateTo("/dashboard");
+    }
+
+    const index = users.value?.findIndex((u) => u.id === user.id);
+    if (index !== undefined && index !== -1) {
+        users.value!.splice(index, 1);
     }
 }
 

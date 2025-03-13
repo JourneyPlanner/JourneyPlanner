@@ -186,6 +186,7 @@ class JourneyUserController extends Controller
         Gate::authorize("update", [$journey, false]);
         JourneyUser::where("journey_id", $journey->id)
             ->where("user_id", $user)
+            ->firstOrFail()
             ->delete();
 
         return response()->json(
