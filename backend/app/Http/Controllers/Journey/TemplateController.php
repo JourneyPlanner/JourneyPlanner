@@ -11,7 +11,6 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class TemplateController extends Controller
@@ -68,7 +67,13 @@ class TemplateController extends Controller
 
         // Load the template creator
         $journey->load("users:id,display_name,username");
-        $journey->load("businesses:id,slug,name");
+        $journey->load([
+            "businesses" => function ($query) {
+                $query
+                    ->wherePivot("created_by_business", true)
+                    ->select("id", "slug", "name");
+            },
+        ]);
 
         return response()->json($journey);
     }
