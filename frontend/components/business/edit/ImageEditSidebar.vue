@@ -14,6 +14,10 @@ const props = defineProps({
         type: Boolean,
         required: true,
     },
+    texts: {
+        type: Object,
+        required: true,
+    },
 });
 
 const emit = defineEmits(["close", "updateImage"]);
@@ -23,21 +27,27 @@ const toast = useToast();
 const { t } = useTranslate();
 const client = useSanctumClient();
 const file = ref();
+const fileType = ref(props.editBanner ? "banner" : "image");
 const altTextGerman = ref();
 const altTextEnglish = ref();
 const route = useRoute();
+const confirmVisible = ref(false);
 
 watch(
     () => props.isSidebarVisible,
     (value) => {
         isVisible.value = value;
+        fileType.value = props.editBanner ? "banner" : "image";
+        console.log(props.texts.de.alt_texts[fileType.value]);
+        altTextGerman.value = props.texts.de.alt_texts[fileType.value];
+        altTextEnglish.value = props.texts.en.alt_texts[fileType.value];
     },
 );
 
 const close = () => {
     file.value = null;
-    altTextEnglish.value = null;
-    altTextGerman.value = null;
+    altTextEnglish.value = "";
+    altTextGerman.value = "";
     imageUrl.value = null;
     emit("close");
 };
@@ -108,9 +118,56 @@ async function handleSubmit() {
         formData.append(`alt_texts[${index}][alt_text]`, alt.alt_text);
     });
 
-    await client(`/api/business/${route.params.slug}/uploadImage`, {
+    await client(`/api/business/${route.params.slug}/image`, {
         method: "POST",
         body: formData,
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value(
+                        "form.input.activity.edit.toast.success.heading",
+                    ),
+                    detail: t.value(
+                        "form.input.activity.edit.toast.success.detail",
+                    ),
+                    life: 6000,
+                });
+                console.log(response._data.alt_texts);
+                emit(
+                    "updateImage",
+                    response._data.alt_texts,
+                    response._data.link,
+                );
+                close();
+            }
+        },
+        async onRequestError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+}
+
+async function deleteImage() {
+    const type = {
+        type: props.editBanner ? "banner" : "image",
+    };
+    await client(`/api/business/${route.params.slug}/image`, {
+        method: "Delete",
+        body: type,
         async onResponse({ response }) {
             if (response.ok) {
                 toast.add({
@@ -200,7 +257,10 @@ async function handleSubmit() {
                     </h1>
                 </div>
             </template>
-            <form class="flex h-full flex-col" @submit.prevent="handleSubmit">
+            <form
+                class="flex min-h-full flex-col"
+                @submit.prevent="handleSubmit"
+            >
                 <div class="flex items-center">
                     <div
                         class="flex flex-row justify-start pr-4 font-nunito text-xl font-medium text-text dark:text-natural-50"
@@ -233,7 +293,7 @@ async function handleSubmit() {
                     />
                 </div>
                 <div
-                    class="relative mt-6 flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-calypso-400 bg-natural-50 p-6 dark:border-calypso-600"
+                    class="relative mt-6 flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-calypso-400 bg-natural-100 p-6 dark:border-calypso-600 dark:bg-natural-900"
                     :class="file ? '' : 'py-16'"
                     @dragover.prevent
                     @drop="handleDrop"
@@ -246,9 +306,13 @@ async function handleSubmit() {
                         accept="image/*"
                         @change="handleFileUpload"
                     />
-                    <label for="upload" class="text-gray-500 cursor-pointer">{{
-                        fileName || "Dateien hier ablegen/einfügen"
-                    }}</label>
+                    <label
+                        for="upload"
+                        class="cursor-pointer text-natural-600 dark:text-natural-300"
+                        >{{
+                            fileName || "Dateien hier ablegen/einfügen"
+                        }}</label
+                    >
                     <img
                         v-if="imageUrl"
                         :src="imageUrl"
@@ -259,7 +323,10 @@ async function handleSubmit() {
                 <div
                     class="items-end-end flex w-full justify-end pt-1 text-mahagony-500 dark:text-mahagony-300"
                 >
-                    <div class="cursor-pointer hover:underline">
+                    <div
+                        class="cursor-pointer hover:underline"
+                        @click="confirmVisible = true"
+                    >
                         <T key-name="business.upload.current.image.remove" />
                     </div>
                     <p class="mx-1">|</p>
@@ -304,7 +371,7 @@ async function handleSubmit() {
                         /></label>
                         <textarea
                             v-model="altTextEnglish"
-                            class="h-32 w-full rounded-lg border-2 border-natural-300 bg-natural-50 p-3 text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
+                            class="mb-6 h-32 w-full rounded-lg border-2 border-natural-300 bg-natural-50 p-3 text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         ></textarea>
                     </div>
                 </div>
@@ -322,5 +389,13 @@ async function handleSubmit() {
                 />
             </form>
         </Sidebar>
+        <div>
+            <BusinessConfirmRemoveImage
+                :visible="confirmVisible"
+                :edit-banner="props.editBanner"
+                @close="confirmVisible = false"
+                @remove="deleteImage"
+            />
+        </div>
     </div>
 </template>

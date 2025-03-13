@@ -158,7 +158,9 @@ const onSubmit = handleSubmit(async (values) => {
                     });
                     console.log(response);
                     store.addJourney(response._data);
-                    await navigateTo("/template/" + response._data.id);
+                    await navigateTo(
+                        "/template/" + response._data.id + "/edit",
+                    );
                     loading.value = false;
                 }
             },

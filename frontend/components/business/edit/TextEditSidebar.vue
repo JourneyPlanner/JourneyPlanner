@@ -6,19 +6,27 @@ const props = defineProps({
         type: Boolean,
         required: true,
     },
+    texts: {
+        type: Object,
+        required: true,
+    },
+    link: {
+        type: String,
+        required: true,
+    },
 });
 
 const emit = defineEmits(["close", "updateTexts"]);
 
 const isVisible = ref(props.isSidebarVisible);
 const { t } = useTranslate();
-const textGerman = ref("");
-const textEnglish = ref("");
-const buttonTextGerman = ref("");
-const buttonTextEnglish = ref("");
-const headlineTextGerman = ref("");
-const headlineTextEnglish = ref("");
-const link = ref("");
+const textGerman = ref(props.texts.de?.text);
+const textEnglish = ref(props.texts.en?.text);
+const buttonTextGerman = ref(props.texts.de?.button);
+const buttonTextEnglish = ref(props.texts.en?.button);
+const headlineTextGerman = ref(props.texts.de?.company_name);
+const headlineTextEnglish = ref(props.texts.en?.company_name);
+const link = ref(props.link);
 const client = useSanctumClient();
 const route = useRoute();
 const toast = useToast();
@@ -27,6 +35,13 @@ watch(
     () => props.isSidebarVisible,
     (value) => {
         isVisible.value = value;
+        textGerman.value = props.texts.de?.text;
+        textEnglish.value = props.texts.en?.text;
+        buttonTextGerman.value = props.texts.de?.button;
+        buttonTextEnglish.value = props.texts.en?.button;
+        headlineTextGerman.value = props.texts.de?.company_name;
+        headlineTextEnglish.value = props.texts.en?.company_name;
+        link.value = props.link;
     },
 );
 
@@ -99,7 +114,7 @@ async function handleSubmit() {
         ],
     };
 
-    await client(`/api/business/${route.params.slug}/updateTexts `, {
+    await client(`/api/business/${route.params.slug}/texts `, {
         method: "POST",
         body: texts,
         async onResponse({ response }) {

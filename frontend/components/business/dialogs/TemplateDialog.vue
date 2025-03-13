@@ -23,8 +23,8 @@ const {
 } = await useInfiniteScroll<Template>({
     loader: templatesLoader,
     showMoreData: showMoreTemplates,
-    showMoreDataText: "subdomain.templates.showMore",
-    showLessDataText: "subdomain.templates.showLess",
+    showMoreDataText: t.value("subdomain.activities.showMore"),
+    showLessDataText: t.value("subdomain.activities.showLess"),
     identifier: "business-templates-private",
     apiEndpoint: `/api/business/${props.businessSlug}/templates`,
     params: {
@@ -32,7 +32,10 @@ const {
         private: 1,
     },
 });
+
 const checkedItems = ref(new Map());
+
+const changedItems = ref(new Map());
 
 watch(templates.value, (newTemplates) => {
     newTemplates.forEach((element) => {
@@ -59,7 +62,7 @@ async function changeVisibleTemplates() {
             visibleTemplates.templates.push(key);
         }
     });
-    await client(`/api/business/${route.params.slug}/updateTemplates `, {
+    await client(`/api/business/${route.params.slug}/templates `, {
         method: "POST",
         body: visibleTemplates,
         async onResponse({ response }) {
@@ -94,6 +97,12 @@ async function changeVisibleTemplates() {
             });
         },
     });
+}
+
+function toggleTemplateAvailability(id: string) {
+    checkedItems.value.set(id, !checkedItems.value.get(id));
+    changedItems.value.set(id, checkedItems.value.get(id));
+    console.log(changedItems);
 }
 </script>
 <template>
@@ -163,12 +172,7 @@ async function changeVisibleTemplates() {
                         :class="{
                             'bg-natural-100': checkedItems.get(template.id),
                         }"
-                        @click="
-                            checkedItems.set(
-                                template.id,
-                                !checkedItems.get(template.id),
-                            )
-                        "
+                        @click="toggleTemplateAvailability(template.id)"
                     >
                         <label
                             class="relative flex w-fit cursor-pointer items-center rounded-md p-1"
@@ -178,12 +182,6 @@ async function changeVisibleTemplates() {
                                 :checked="checkedItems.get(template.id)"
                                 type="checkbox"
                                 class="peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-calypso-400 bg-natural-50 transition-all checked:border-calypso-400 checked:bg-calypso-400 dark:bg-natural-800 checked:dark:bg-calypso-500"
-                                @change="
-                                    checkedItems.set(
-                                        template.id,
-                                        !checkedItems.get(template.id),
-                                    )
-                                "
                             />
                             <div
                                 class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-natural-50 opacity-0 transition-opacity peer-checked:opacity-100"

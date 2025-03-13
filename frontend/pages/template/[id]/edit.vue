@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const route = useRoute();
-const router = useRouter();
 
 const activityStore = useActivityStore();
 const journeyStore = useJourneyStore();
@@ -12,6 +11,7 @@ const activityDataLoaded = ref(false);
 
 const isCreateTemplateVisible = ref(false);
 const updateTemplate = ref(false);
+const businessSlug = ref();
 
 definePageMeta({
     middleware: ["sanctum:auth"],
@@ -21,6 +21,22 @@ const { data, error } = await useAsyncData("edit-template", () =>
     client(`/api/template/${templateID}`),
 );
 
+if (data.value?.creator.business) {
+    await client(`/api/me/business`, {
+        async onResponse({ response }) {
+            if (response.ok) {
+                console.log(response);
+                if (response._data) {
+                    console.log(response._data[0].slug);
+                    console.log(response._data.id);
+                    businessSlug.value = response._data[0].slug;
+                }
+            }
+        },
+    });
+}
+
+console.log(data);
 if (error.value?.statusCode === 404) {
     throw createError({
         statusCode: 404,
@@ -28,7 +44,10 @@ if (error.value?.statusCode === 404) {
         message: "error.template.notfound",
         fatal: true,
     });
-} else if (data.value?.users[0].id !== user?.value?.id) {
+} else if (
+    data.value?.creator.username !== user?.value?.username &&
+    !data.value?.creator.business
+) {
     throw createError({
         statusCode: 403,
         data: "isTolgeeKey",
@@ -81,8 +100,9 @@ function changeTemplateDetails(template: Template) {
         >
             <NuxtLink
                 :to="
-                    '/user/' + user?.username ||
-                    (router.options.history.state.back as string)
+                    data.creator.business
+                        ? '/business/' + businessSlug
+                        : '/user/' + user?.username
                 "
                 class="group flex items-center sm:ml-1 md:ml-2"
             >

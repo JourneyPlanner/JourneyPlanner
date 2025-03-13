@@ -104,6 +104,7 @@ const isactivityInfoDialogVisible = ref(false);
 const editBanner = ref(false);
 const editOtherImage = ref(false);
 const partOfBusiness = ref(false);
+const allTexts = ref();
 
 await client(`/api/me/business`, {
     async onResponse({ response }) {
@@ -115,6 +116,18 @@ await client(`/api/me/business`, {
                 if (response._data[0].slug == slug.value) {
                     partOfBusiness.value = true;
                 }
+            }
+        }
+    },
+});
+
+await client(`/api/business/${slug.value}/texts`, {
+    async onResponse({ response }) {
+        if (response.ok) {
+            console.log(response);
+            if (response._data) {
+                console.log(response._data);
+                allTexts.value = response._data;
             }
         }
     },
@@ -287,6 +300,8 @@ async function updateImage(altTexsts: AltTexte, link: string) {
         setTimeout(() => {
             images.banner.link = link;
         }, 50);
+        allTexts.value.de.alt_texts.banner = altTexsts.de;
+        allTexts.value.en.alt_texts.banner = altTexsts.en;
     } else {
         images.image.link = "";
         images.image.alt_text =
@@ -294,6 +309,8 @@ async function updateImage(altTexsts: AltTexte, link: string) {
         setTimeout(() => {
             images.image.link = link;
         }, 50);
+        allTexts.value.de.alt_texts.image = altTexsts.de;
+        allTexts.value.en.alt_texts.image = altTexsts.en;
     }
 }
 
@@ -316,6 +333,16 @@ function updateTexts(buisnessTexts: BusinessTexts) {
     texts.text = buisnessTexts.texts[index].text;
     texts.button = buisnessTexts.texts[index].button;
     texts.button_link = buisnessTexts.texts[index].button_link;
+
+    allTexts.value.de.company_name = buisnessTexts.texts[0].company_name;
+    allTexts.value.de.text = buisnessTexts.texts[0].text;
+    allTexts.value.de.button = buisnessTexts.texts[0].button;
+    allTexts.value.de.button_link = buisnessTexts.texts[0].button_link;
+
+    allTexts.value.en.company_name = buisnessTexts.texts[1].company_name;
+    allTexts.value.en.text = buisnessTexts.texts[1].text;
+    allTexts.value.en.button = buisnessTexts.texts[1].button;
+    allTexts.value.en.button_link = buisnessTexts.texts[1].button_link;
 }
 
 const updatedImageUrl = computed(() => `${images.image.link}?t=${Date.now()}`);
@@ -346,10 +373,11 @@ const updatedImageUrl = computed(() => `${images.image.link}?t=${Date.now()}`);
             </div>
             <button
                 v-if="partOfBusiness"
-                class="absolute right-2.5 top-2.5 z-50 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-text drop-shadow-lg backdrop-blur-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 lg:right-5 lg:top-5"
+                class="absolute right-2.5 top-2.5 z-50 flex rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-text drop-shadow-lg backdrop-blur-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 lg:right-5 lg:top-5"
                 @click.stop="changeEditing"
             >
-                <span class="pi pi-pencil mr-1 text-lg md:text-xl"></span>
+                <SvgEdit v-if="!editingEnabled" class="w-4" />
+                <SvgEditOff v-if="editingEnabled" class="w-[1.14rem]" />
                 <span class="ml-1.5 mt-0.5 text-xl md:text-2xl">
                     <T key-name="common.edit" />
                 </span>
@@ -627,11 +655,14 @@ const updatedImageUrl = computed(() => `${images.image.link}?t=${Date.now()}`);
                 :is-sidebar-visible="isImageEditSidebarVisible"
                 :edit-banner="editBanner"
                 :edit-other-image="editOtherImage"
+                :texts="allTexts"
                 @close="isImageEditSidebarVisible = false"
                 @update-image="updateImage"
             />
             <BusinessEditTextEditSidebar
                 :is-sidebar-visible="isTextEditSidebarVisible"
+                :texts="allTexts"
+                :link="texts.button_link"
                 @close="isTextEditSidebarVisible = false"
                 @update-texts="updateTexts"
             />
