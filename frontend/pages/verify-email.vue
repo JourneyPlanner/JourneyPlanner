@@ -11,6 +11,10 @@ useHead({
     title: `${t.value("email.verify.title")} | JourneyPlanner`,
 });
 
+defineRouteRules({
+    robots: false,
+});
+
 const route = useRoute();
 const loading = ref(true);
 const isConfirmEmailDialogVisible = ref<boolean>(false);
