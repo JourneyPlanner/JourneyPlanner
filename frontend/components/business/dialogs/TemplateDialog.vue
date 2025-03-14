@@ -56,12 +56,7 @@ const close = () => {
 };
 
 async function changeVisibleTemplates() {
-    const visibleTemplates: { templates: number[] } = { templates: [] };
-    checkedItems.value.forEach((value, key) => {
-        if (value) {
-            visibleTemplates.templates.push(key);
-        }
-    });
+    const visibleTemplates = Object.fromEntries(changedItems.value);
     await client(`/api/business/${route.params.slug}/templates `, {
         method: "POST",
         body: visibleTemplates,
