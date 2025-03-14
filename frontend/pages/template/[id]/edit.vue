@@ -25,10 +25,7 @@ if (data.value?.creator.business) {
     await client(`/api/me/business`, {
         async onResponse({ response }) {
             if (response.ok) {
-                console.log(response);
                 if (response._data) {
-                    console.log(response._data[0].slug);
-                    console.log(response._data.id);
                     businessSlug.value = response._data[0].slug;
                 }
             }
@@ -36,7 +33,6 @@ if (data.value?.creator.business) {
     });
 }
 
-console.log(data);
 if (error.value?.statusCode === 404) {
     throw createError({
         statusCode: 404,

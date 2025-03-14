@@ -38,7 +38,6 @@ watch(
     (value) => {
         isVisible.value = value;
         fileType.value = props.editBanner ? "banner" : "image";
-        console.log(props.texts.de.alt_texts[fileType.value]);
         altTextGerman.value = props.texts.de.alt_texts[fileType.value];
         altTextEnglish.value = props.texts.en.alt_texts[fileType.value];
     },
@@ -78,7 +77,7 @@ const handleFileUpload = (event: Event) => {
             return;
         }
         file.value = target.files[0];
-        console.log(file.value);
+
         fileName.value = file.value.name;
 
         if (file.value.type.startsWith("image/")) {
@@ -100,8 +99,6 @@ const removeImage = () => {
 };
 
 async function handleSubmit() {
-    console.log(route.params.slug);
-    console.log(file.value);
     const altTexts = [
         { language: "de", alt_text: altTextGerman.value },
         { language: "en", alt_text: altTextEnglish.value },
@@ -134,7 +131,6 @@ async function handleSubmit() {
                     ),
                     life: 6000,
                 });
-                console.log(response._data.alt_texts);
                 emit(
                     "updateImage",
                     response._data.alt_texts,
@@ -181,7 +177,6 @@ async function deleteImage() {
                     ),
                     life: 6000,
                 });
-                console.log(response._data.alt_texts);
                 emit(
                     "updateImage",
                     response._data.alt_texts,

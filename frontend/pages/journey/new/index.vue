@@ -13,8 +13,6 @@ const { isAuthenticated } = useSanctumAuth();
 const toast = useToast();
 const store = useJourneysStore();
 
-console.log(route.query.creationType);
-
 const cancel = ref("/dashboard");
 const journeyInvite = ref(uuidv4());
 const journeyInviteLink = ref("");
@@ -156,7 +154,6 @@ const onSubmit = handleSubmit(async (values) => {
                         detail: t.value("form.journey.toast.success"),
                         life: 3000,
                     });
-                    console.log(response);
                     store.addJourney(response._data);
                     await navigateTo(
                         "/template/" + response._data.id + "/edit",

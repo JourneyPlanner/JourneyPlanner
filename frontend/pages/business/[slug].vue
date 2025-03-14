@@ -105,14 +105,13 @@ const editBanner = ref(false);
 const editOtherImage = ref(false);
 const partOfBusiness = ref(false);
 const allTexts = ref();
+const reloadActivityData = ref(false);
+const reloadTemplateData = ref(false);
 
 await client(`/api/me/business`, {
     async onResponse({ response }) {
         if (response.ok) {
-            console.log(response);
             if (response._data[0]) {
-                console.log(response._data[0].slug);
-                console.log(response._data.id);
                 if (response._data[0].slug == slug.value) {
                     partOfBusiness.value = true;
                 }
@@ -125,9 +124,7 @@ if (partOfBusiness.value) {
     await client(`/api/business/${slug.value}/texts`, {
         async onResponse({ response }) {
             if (response.ok) {
-                console.log(response);
                 if (response._data) {
-                    console.log(response._data);
                     allTexts.value = response._data;
                 }
             }
@@ -213,6 +210,7 @@ const {
     toggleText: toggleTextActivities,
 } = await useInfiniteScroll<Activity>({
     loader: activityLoader,
+    reloadData: reloadActivityData,
     showMoreData: showMoreActivities,
     showMoreDataText: t.value("subdomain.activities.showMore"),
     showLessDataText: t.value("subdomain.activities.showLess"),
@@ -231,6 +229,7 @@ const {
 } = await useInfiniteScroll<Template>({
     loader: templatesLoader,
     showMoreData: showMoreTemplates,
+    reloadData: reloadTemplateData,
     showMoreDataText: t.value("subdomain.templates.showMore"),
     showLessDataText: t.value("subdomain.templates.showLess"),
     identifier: "business-templates",
@@ -267,9 +266,6 @@ function openActivityDialog(activity: Activity) {
 }
 
 function changeEditing() {
-    if (editingEnabled.value) {
-        console.log(editingEnabled.value);
-    }
     editingEnabled.value = !editingEnabled.value;
 }
 
@@ -292,9 +288,6 @@ interface AltTexte {
 }
 
 async function updateImage(altTexsts: AltTexte, link: string) {
-    console.log(altTexsts);
-    console.log(editBanner.value);
-    console.log(tolgee.value.getLanguage());
     if (editBanner.value) {
         images.banner.link = "";
         images.banner.alt_text =
@@ -348,6 +341,11 @@ function updateTexts(buisnessTexts: BusinessTexts) {
 }
 
 const updatedImageUrl = computed(() => `${images.image.link}?t=${Date.now()}`);
+
+function reloadData() {
+    reloadTemplateData.value = true;
+    reloadActivityData.value = true;
+}
 </script>
 
 <template>
@@ -676,6 +674,7 @@ const updatedImageUrl = computed(() => `${images.image.link}?t=${Date.now()}`);
                 :is-visible="isTemplateDialogVisible"
                 :business-slug="slug"
                 @close="isTemplateDialogVisible = false"
+                @changed-templates="reloadData"
             />
         </div>
     </div>

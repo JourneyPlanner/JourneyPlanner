@@ -638,9 +638,7 @@ const { data: user, refresh: refreshUser } = await useAsyncData(
 await client(`/api/me/business`, {
     async onResponse({ response }) {
         if (response.ok) {
-            console.log(response);
             if (response._data[0]) {
-                console.log(response._data.id);
                 businessSlug.value = response._data[0].slug;
             }
         }

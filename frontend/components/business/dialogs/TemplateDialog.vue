@@ -6,7 +6,7 @@ const props = defineProps({
     businessSlug: { type: String, required: true },
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "changedTemplates"]);
 const toast = useToast();
 const route = useRoute();
 const { t } = useTranslate();
@@ -14,6 +14,7 @@ const client = useSanctumClient();
 const visible = ref();
 const templatesLoader = ref<HTMLElement | undefined>();
 const showMoreTemplates = ref(false);
+const reloadData = ref(false);
 const maxDisplayedTemplates = 8;
 const {
     data: templates,
@@ -23,6 +24,7 @@ const {
 } = await useInfiniteScroll<Template>({
     loader: templatesLoader,
     showMoreData: showMoreTemplates,
+    reloadData: reloadData,
     showMoreDataText: t.value("subdomain.activities.showMore"),
     showLessDataText: t.value("subdomain.activities.showLess"),
     identifier: "business-templates-private",
@@ -41,7 +43,6 @@ watch(templates.value, (newTemplates) => {
     newTemplates.forEach((element) => {
         checkedItems.value.set(element.id, element.visible == 1 ? true : false);
     });
-    console.log(checkedItems);
 });
 
 watch(
@@ -56,7 +57,13 @@ const close = () => {
 };
 
 async function changeVisibleTemplates() {
-    const visibleTemplates = Object.fromEntries(changedItems.value);
+    const visibleTemplates: { templates: object[] } = { templates: [] };
+    changedItems.value.forEach((value, key) => {
+        visibleTemplates.templates.push({
+            template_id: key,
+            visible: value,
+        });
+    });
     await client(`/api/business/${route.params.slug}/templates `, {
         method: "POST",
         body: visibleTemplates,
@@ -72,6 +79,7 @@ async function changeVisibleTemplates() {
                     ),
                     life: 6000,
                 });
+                emit("changedTemplates");
                 close();
             }
         },
@@ -97,7 +105,6 @@ async function changeVisibleTemplates() {
 function toggleTemplateAvailability(id: string) {
     checkedItems.value.set(id, !checkedItems.value.get(id));
     changedItems.value.set(id, checkedItems.value.get(id));
-    console.log(changedItems);
 }
 </script>
 <template>
