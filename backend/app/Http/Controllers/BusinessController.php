@@ -244,7 +244,7 @@ class BusinessController extends Controller
             "texts.*.texts" => "required|array",
             "texts.*.texts.*.key" =>
                 "required|string|in:company_name,button,button_link,text",
-            "texts.*.texts.*.value" => "required|string",
+            "texts.*.texts.*.value" => "string",
         ]);
 
         // Update the texts
@@ -309,7 +309,8 @@ class BusinessController extends Controller
         // Validate the request
         $validated = $request->validate([
             "templates" => "nullable|array",
-            "templates.*" => "required|exists:journeys,id",
+            "templates.*.template_id" => "required|exists:journeys,id",
+            "templates.*.visible" => "required|boolean",
         ]);
 
         // Sometimes there is an issue with the request validation and the templates key is not set
@@ -318,11 +319,13 @@ class BusinessController extends Controller
         }
 
         // Update the templates
-        $business->templates()->update(["visible" => false]);
-        $business
-            ->templates()
-            ->whereIn("id", $validated["templates"])
-            ->update(["visible" => true]);
+        foreach ($validated["templates"] as $template) {
+            $business
+                ->templates()
+                ->updateExistingPivot($template["template_id"], [
+                    "visible" => $template["visible"],
+                ]);
+        }
 
         return response()->noContent();
     }
@@ -406,7 +409,7 @@ class BusinessController extends Controller
 
         // Delete the image
         Storage::delete($image->file_name);
-        $image->file_name = null;
+        $image->file_name = "";
         $image->save();
 
         return response()->noContent();
