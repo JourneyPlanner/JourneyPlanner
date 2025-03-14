@@ -48,13 +48,6 @@ class Business extends Model
             relatedPivotKey: "template_id"
         );
     }
-    /**
-     * The business's activities.
-     */
-    public function activities(): BelongsToMany
-    {
-        return $this->belongsToMany(Activity::class, "business_activities");
-    }
 
     /**
      * The users that are a part of the business.
