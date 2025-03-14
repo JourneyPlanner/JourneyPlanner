@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Journey;
 use App\Models\JourneyUser;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 class JourneyPolicy
 {
@@ -85,7 +86,22 @@ class JourneyPolicy
                     ->where("role", JourneyUser::JOURNEY_GUIDE_ROLE_ID)
                     ->orWhere("role", JourneyUser::TEMPLATE_CREATOR_ROLE_ID);
             })
-            ->exists();
+            ->exists() || $this->templateBusinessMember($journey);
+    }
+
+    /**
+     * Determine whether the user is a member of the business which owns the template.
+     */
+    private function templateBusinessMember(Journey $journey): bool
+    {
+        $business = $journey
+            ->businesses()
+            ->wherePivot("created_by_business", true)
+            ->first();
+        if (!$business) {
+            return false;
+        }
+        return Gate::allows("update", $business);
     }
 
     private function guestJourney(Journey $journey): bool

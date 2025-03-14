@@ -8,7 +8,7 @@ const client = useSanctumClient();
 const toast = useToast();
 const tolgee = useTolgee(["language"]);
 
-const slug = ref(route.params.slug);
+const slug = ref(route.params.slug as string);
 const screenWidth = ref(window.innerWidth);
 
 const images = reactive({
@@ -63,6 +63,7 @@ const backRoute = ref<string>("/dashboard?tab=templates");
 const ALLOWED_ROUTES = ["/journey", "/dashboard?tab=templates", "/user"];
 
 const showMoreTemplates = ref(false);
+const editingEnabled = ref(false);
 const openedTemplate = ref<Template | undefined>();
 const isTemplatePopupVisible = ref<boolean>(false);
 const templatesLoader = ref<HTMLElement | undefined>();
@@ -84,6 +85,7 @@ const activityLoader = ref<HTMLElement | undefined>();
 const showMoreActivities = ref<boolean>(false);
 
 const isActivityInfoVisible = ref<boolean>(false);
+const isTemplateDialogVisible = ref<boolean>(false);
 const activityId = ref<string | null>(null);
 const journeyId = ref<string | null>(null);
 const address = ref<string | null>(null);
@@ -96,6 +98,39 @@ const mapbox_id = ref<string | null>(null);
 const name = ref<string | null>(null);
 const opening_hours = ref<string | null>(null);
 const phone = ref<string | null>(null);
+const isImageEditSidebarVisible = ref(false);
+const isTextEditSidebarVisible = ref(false);
+const isactivityInfoDialogVisible = ref(false);
+const editBanner = ref(false);
+const editOtherImage = ref(false);
+const partOfBusiness = ref(false);
+const allTexts = ref();
+const reloadActivityData = ref(false);
+const reloadTemplateData = ref(false);
+
+await client(`/api/me/business`, {
+    async onResponse({ response }) {
+        if (response.ok) {
+            if (response._data[0]) {
+                if (response._data[0].slug == slug.value) {
+                    partOfBusiness.value = true;
+                }
+            }
+        }
+    },
+});
+
+if (partOfBusiness.value) {
+    await client(`/api/business/${slug.value}/texts`, {
+        async onResponse({ response }) {
+            if (response.ok) {
+                if (response._data) {
+                    allTexts.value = response._data;
+                }
+            }
+        },
+    });
+}
 
 onMounted(async () => {
     const lastRoute = router.options.history.state.back as string;
@@ -175,6 +210,7 @@ const {
     toggleText: toggleTextActivities,
 } = await useInfiniteScroll<Activity>({
     loader: activityLoader,
+    reloadData: reloadActivityData,
     showMoreData: showMoreActivities,
     showMoreDataText: t.value("subdomain.activities.showMore"),
     showLessDataText: t.value("subdomain.activities.showLess"),
@@ -193,6 +229,7 @@ const {
 } = await useInfiniteScroll<Template>({
     loader: templatesLoader,
     showMoreData: showMoreTemplates,
+    reloadData: reloadTemplateData,
     showMoreDataText: t.value("subdomain.templates.showMore"),
     showLessDataText: t.value("subdomain.templates.showLess"),
     identifier: "business-templates",
@@ -227,19 +264,102 @@ function openActivityDialog(activity: Activity) {
 
     isActivityInfoVisible.value = true;
 }
+
+function changeEditing() {
+    editingEnabled.value = !editingEnabled.value;
+}
+
+function editImage(whichImage: string) {
+    if (editingEnabled.value) {
+        if (whichImage == "banner") {
+            editOtherImage.value = false;
+            editBanner.value = true;
+        } else {
+            editBanner.value = false;
+            editOtherImage.value = true;
+        }
+        isImageEditSidebarVisible.value = true;
+    }
+}
+
+interface AltTexte {
+    de: string;
+    en: string;
+}
+
+async function updateImage(altTexsts: AltTexte, link: string) {
+    if (editBanner.value) {
+        images.banner.link = "";
+        images.banner.alt_text =
+            tolgee.value.getLanguage() == "de" ? altTexsts.de : altTexsts.en;
+        setTimeout(() => {
+            images.banner.link = link;
+        }, 50);
+        allTexts.value.de.alt_texts.banner = altTexsts.de;
+        allTexts.value.en.alt_texts.banner = altTexsts.en;
+    } else {
+        images.image.link = "";
+        images.image.alt_text =
+            tolgee.value.getLanguage() == "de" ? altTexsts.de : altTexsts.en;
+        setTimeout(() => {
+            images.image.link = link;
+        }, 50);
+        allTexts.value.de.alt_texts.image = altTexsts.de;
+        allTexts.value.en.alt_texts.image = altTexsts.en;
+    }
+}
+
+const updatedBannerUrl = computed(
+    () => `${images.banner.link}?t=${Date.now()}`,
+);
+
+interface BusinessTexts {
+    texts: {
+        company_name: string;
+        button_link: string;
+        button: string;
+        text: string;
+    }[];
+}
+
+function updateTexts(buisnessTexts: BusinessTexts) {
+    const index = tolgee.value.getLanguage() == "de" ? 0 : 1;
+    texts.company_name = buisnessTexts.texts[index].company_name;
+    texts.text = buisnessTexts.texts[index].text;
+    texts.button = buisnessTexts.texts[index].button;
+    texts.button_link = buisnessTexts.texts[index].button_link;
+
+    allTexts.value.de.company_name = buisnessTexts.texts[0].company_name;
+    allTexts.value.de.text = buisnessTexts.texts[0].text;
+    allTexts.value.de.button = buisnessTexts.texts[0].button;
+    allTexts.value.de.button_link = buisnessTexts.texts[0].button_link;
+
+    allTexts.value.en.company_name = buisnessTexts.texts[1].company_name;
+    allTexts.value.en.text = buisnessTexts.texts[1].text;
+    allTexts.value.en.button = buisnessTexts.texts[1].button;
+    allTexts.value.en.button_link = buisnessTexts.texts[1].button_link;
+}
+
+const updatedImageUrl = computed(() => `${images.image.link}?t=${Date.now()}`);
+
+function reloadData() {
+    reloadTemplateData.value = true;
+    reloadActivityData.value = true;
+}
 </script>
 
 <template>
     <div class="text-text dark:text-natural-50">
         <div
-            class="relative h-44 bg-cover bg-center lg:h-96"
-            :style="{ backgroundImage: `url(${images.banner.link})` }"
+            class="group relative h-44 bg-cover bg-center lg:h-96"
+            :style="{ backgroundImage: `url(${updatedBannerUrl})` }"
+            @click="editImage('banner')"
         >
             <div
-                class="absolute inset-0 top-20 bg-gradient-to-b from-natural-50/0 to-background dark:from-background-dark/0 dark:to-background-dark lg:top-48"
+                class="absolute inset-0 top-20 z-50 bg-gradient-to-b from-natural-50/0 to-background dark:from-background-dark/0 dark:to-background-dark lg:top-48"
             ></div>
             <div
-                class="absolute left-2.5 top-2.5 rounded-xl border-2 border-natural-400 bg-natural-50 text-text drop-shadow-lg backdrop-blur-xl hover:border-natural-400 hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-natural-600 dark:hover:bg-natural-950 lg:left-5 lg:top-5"
+                class="absolute left-2.5 top-2.5 z-50 rounded-xl border-2 border-natural-400 bg-natural-50 text-text drop-shadow-lg backdrop-blur-xl hover:border-natural-400 hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-natural-600 dark:hover:bg-natural-950 lg:left-5 lg:top-5"
             >
                 <NuxtLink
                     :to="backRoute"
@@ -251,11 +371,38 @@ function openActivityDialog(activity: Activity) {
                     </span>
                 </NuxtLink>
             </div>
+            <button
+                v-if="partOfBusiness"
+                class="absolute right-2.5 top-2.5 z-50 hidden rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-text drop-shadow-lg backdrop-blur-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 lg:right-5 lg:top-5 lg:flex"
+                @click.stop="changeEditing"
+            >
+                <SvgEdit v-if="!editingEnabled" class="w-4" />
+                <SvgEditOff v-if="editingEnabled" class="w-[1.14rem]" />
+                <span class="ml-1.5 mt-0.5 text-xl md:text-2xl">
+                    <T key-name="common.edit" />
+                </span>
+            </button>
             <img
-                :src="images.banner.link"
+                :key="updatedBannerUrl"
+                :src="updatedBannerUrl"
                 :alt="images.banner.alt_text"
                 class="sr-only"
+                :class="
+                    editingEnabled
+                        ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
+                        : ''
+                "
             />
+            <div
+                v-if="editingEnabled"
+                class="absolute inset-0 flex max-h-[320px] cursor-pointer items-center justify-center bg-background-dark bg-opacity-70 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            >
+                <span class="text-xl font-semibold text-natural-50"
+                    >[
+                    <T key-name="subdomain.change.image" />
+                    ]</span
+                >
+            </div>
         </div>
         <div class="flex flex-col gap-y-8 px-5 lg:px-16">
             <div
@@ -277,14 +424,41 @@ function openActivityDialog(activity: Activity) {
                                 texts.button
                             }}</a>
                         </button>
+                        <button
+                            v-if="editingEnabled"
+                            class="rounded-xlpy-1 mt-6 w-44 text-center text-lg font-semibold text-natural-950 hover:text-calypso-600 dark:text-natural-50 dark:hover:text-calypso-300 lg:w-48"
+                            @click="isTextEditSidebarVisible = true"
+                        >
+                            <T key-name="business.edit.text" />
+                        </button>
                     </div>
                 </div>
-                <div id="image" class="mt-2 flex justify-center lg:w-2/5">
+                <div
+                    id="image"
+                    class="group relative mt-2 flex justify-center lg:w-2/5"
+                    @click="editImage('image')"
+                >
                     <NuxtImg
-                        :src="images.image.link"
+                        :key="updatedImageUrl"
+                        :src="updatedImageUrl"
                         :alt="images.image.alt_text"
                         class="max-h-[320px] rounded-xl object-contain"
+                        :class="
+                            editingEnabled
+                                ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
+                                : ''
+                        "
                     />
+                    <div
+                        v-if="editingEnabled"
+                        class="absolute inset-0 flex max-h-[320px] cursor-pointer items-center justify-center rounded-xl bg-background-dark bg-opacity-70 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    >
+                        <span class="text-xl font-semibold text-natural-50"
+                            >[
+                            <T key-name="subdomain.change.image" />
+                            ]</span
+                        >
+                    </div>
                 </div>
                 <div class="mb-5 flex justify-center md:hidden">
                     <button
@@ -297,9 +471,15 @@ function openActivityDialog(activity: Activity) {
                 </div>
             </div>
             <div id="activity-section">
-                <h2 class="text-xl font-medium">
-                    <T key-name="subdomain.heading.activities" />
-                </h2>
+                <div class="flex w-full items-center">
+                    <h2 class="text-xl font-medium">
+                        <T key-name="subdomain.heading.activities" />
+                    </h2>
+                    <span
+                        class="pi pi-info-circle ml-auto cursor-pointer text-xl text-natural-500 hover:text-natural-950 dark:text-natural-400 hover:dark:text-natural-50"
+                        @click="isactivityInfoDialogVisible = true"
+                    ></span>
+                </div>
                 <TransitionGroup
                     id="activities"
                     name="fade"
@@ -352,9 +532,27 @@ function openActivityDialog(activity: Activity) {
                 </div>
             </div>
             <div id="template-section">
-                <h2 class="text-xl font-medium">
-                    <T key-name="subdomain.heading.templates" />
-                </h2>
+                <div class="flex w-full items-center">
+                    <h2 class="text-xl font-medium">
+                        <T key-name="subdomain.heading.templates" />
+                    </h2>
+                    <NuxtLink
+                        v-if="editingEnabled"
+                        :to="'/journey/new?creationType=template&slug=' + slug"
+                        class="ml-auto flex w-48 items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 py-1 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 lg:w-52"
+                    >
+                        <span class="pi pi-plus ml-1 mr-2 text-lg" />
+                        <T key-name="business.create.templates" />
+                    </NuxtLink>
+                    <button
+                        v-if="editingEnabled"
+                        class="ml-4 flex w-48 items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 py-1 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 lg:w-60"
+                        @click="isTemplateDialogVisible = true"
+                    >
+                        <span class="pi pi-pencil ml-1 mr-2 text-lg" />
+                        <T key-name="business.edit.templates" />
+                    </button>
+                </div>
                 <TransitionGroup
                     name="fade"
                     tag="div"
@@ -366,6 +564,7 @@ function openActivityDialog(activity: Activity) {
                             showMoreTemplates || index < maxDisplayedTemplates
                         "
                         :key="'template-card' + template.id"
+                        :v-if="template.visible = 1"
                         class="hidden md:block"
                         :template="template"
                         :displayed-in-profile="false"
@@ -449,6 +648,33 @@ function openActivityDialog(activity: Activity) {
                     isTemplatePopupVisible = false;
                     openedTemplate = undefined;
                 "
+            />
+        </div>
+        <div v-if="partOfBusiness">
+            <BusinessEditImageEditSidebar
+                :is-sidebar-visible="isImageEditSidebarVisible"
+                :edit-banner="editBanner"
+                :edit-other-image="editOtherImage"
+                :texts="allTexts"
+                @close="isImageEditSidebarVisible = false"
+                @update-image="updateImage"
+            />
+            <BusinessEditTextEditSidebar
+                :is-sidebar-visible="isTextEditSidebarVisible"
+                :texts="allTexts"
+                :link="texts.button_link"
+                @close="isTextEditSidebarVisible = false"
+                @update-texts="updateTexts"
+            />
+            <BusinessActivityInfoDialog
+                :is-visible="isactivityInfoDialogVisible"
+                @close="isactivityInfoDialogVisible = false"
+            />
+            <BusinessDialogsTemplateDialog
+                :is-visible="isTemplateDialogVisible"
+                :business-slug="slug"
+                @close="isTemplateDialogVisible = false"
+                @changed-templates="reloadData"
             />
         </div>
     </div>

@@ -155,5 +155,6 @@ declare global {
         to: string;
         average_rating: number;
         total_ratings: number;
+        visible: number;
     }
 }

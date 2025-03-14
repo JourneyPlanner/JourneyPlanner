@@ -24,6 +24,7 @@ const searchInputMobile = ref();
 const tabIndex = ref<number>(0);
 const menu = ref();
 const items = ref();
+const businessSlug = ref();
 
 //journeys
 const journeys = ref<Journey[]>([]);
@@ -34,7 +35,7 @@ const searchValueJourneys = ref<string>("");
 //user settings
 const isUserSettingsVisible = ref<boolean>(false);
 
-//templates
+//templatesf
 const openedTemplate = ref<Template>();
 const isTemplatePopupVisible = ref(false);
 const isFilterVisible = ref<boolean>(route.query.filter_open === "true");
@@ -633,6 +634,16 @@ const { data: user, refresh: refreshUser } = await useAsyncData(
         },
     },
 );
+
+await client(`/api/me/business`, {
+    async onResponse({ response }) {
+        if (response.ok) {
+            if (response._data[0]) {
+                businessSlug.value = response._data[0].slug;
+            }
+        }
+    },
+});
 
 /**
  * Searches for journeys based on the searchValueJourneys
@@ -1303,6 +1314,16 @@ function editJourney(journey: Journey, id: string) {
                     data-test="user-profile-button"
                 >
                     <SvgUserIcon class="mt-1 h-9 w-9" />
+                </NuxtLink>
+                <NuxtLink
+                    v-if="businessSlug"
+                    :to="'/business/' + businessSlug"
+                    class="mr-2.5"
+                    data-test="user-profile-button"
+                >
+                    <span
+                        class="pi pi-building mt-1 rounded-full border-2 border-dandelion-300 p-1.5 text-xl text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                    />
                 </NuxtLink>
                 <button
                     data-test="user-settings-button"

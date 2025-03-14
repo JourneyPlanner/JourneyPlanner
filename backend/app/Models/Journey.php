@@ -86,6 +86,9 @@ class Journey extends Model
         return $this->belongsToMany(User::class);
     }
 
+    /**
+     * The businesses that are a part of the journey.
+     */
     public function businesses(): BelongsToMany
     {
         return $this->belongsToMany(
