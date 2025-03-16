@@ -1,3 +1,5 @@
+import { UTCDate } from "@date-fns/utc";
+import { add } from "date-fns";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
@@ -31,30 +33,28 @@ export const useActivityStore = defineStore("activities", () => {
         }
     }
 
-    function updateActivity(activity, shouldDelete = false) {
-        oldActivity.value = [];
-        activity.forEach((element) => {
-            if (
-                element.parent_id == null &&
-                this.activityData.findIndex((obj) => obj.id === element.id) !=
-                    -1
-            ) {
-                const baseActivity = this.findBaseActivity(element);
-                const activities = this.getAllChildren(baseActivity.id);
-                activities.push(baseActivity);
-                activities.forEach((activity) => {
-                    const index = this.activityData.findIndex(
-                        (obj) => obj.id === activity.id,
-                    );
-                    oldActivity.value.push(this.activityData[index]);
-                    this.activityData = this.activityData
-                        .slice(0, index)
-                        .concat(this.activityData.slice(index + 1));
+    function updateActivity(activity) {
+        const basicActivity = activity;
+        let activityIndex = activityData.value.findIndex(
+            (obj) => obj.id === activity.id,
+        );
+        if (activityIndex == -1) {
+            this.activityData.push(activity);
+        } else {
+            Object.assign(activity, {
+                calendar_activities: [],
+            });
+            activity.calendar_activities =
+                this.activityData[activityIndex].calendar_activities;
+            this.activityData[activityIndex] = activity;
+            activity.calendar_activities?.forEach((calendarActivity) => {
+                Object.assign(calendarActivity, {
+                    activity: basicActivity,
                 });
-            }
-        });
-        if (!shouldDelete) {
-            this.activityData.push(...activity);
+                setTimeout(() => {
+                    createOrUpdateCalendarActivity(calendarActivity);
+                }, 50);
+            });
             this.setNewActivity(activity);
         }
     }
@@ -112,7 +112,6 @@ export const useActivityStore = defineStore("activities", () => {
                 (obj) => obj.id === addCalendarActivity.activity_id,
             );
         }
-        console.log(activityIndex);
 
         if (!activityData.value[activityIndex].calendar_activities) {
             Object.assign(activityData.value[activityIndex], {
@@ -125,18 +124,15 @@ export const useActivityStore = defineStore("activities", () => {
             (obj) => obj.id === addCalendarActivity.id,
         );
 
-        console.log(calendarActivityIndex);
-        console.log(activityData.value[activityIndex].calendar_activities);
-
-        /* const newEnd = add(new UTCDate(addCalendarActivity.start), {
+        const newEnd = add(new UTCDate(addCalendarActivity.start), {
             hours: parseInt(
                 addCalendarActivity.activity.estimated_duration.split(":")[0],
             ),
             minutes: parseInt(
                 addCalendarActivity.activity.estimated_duration.split(":")[1],
             ),
-        }).toISOString(); */
-        //addCalendarActivity.end = newEnd;
+        }).toISOString();
+        addCalendarActivity.end = newEnd;
         addCalendarActivity.title = addCalendarActivity.activity.name;
         const { activity, ...calendarActivityWithoutMainActivity } =
             addCalendarActivity;
@@ -151,7 +147,6 @@ export const useActivityStore = defineStore("activities", () => {
             );
         }
 
-        console.log(calendarActivityWithoutMainActivity);
         newCalendarActivity.value = calendarActivityWithoutMainActivity;
     }
 
@@ -169,15 +164,13 @@ export const useActivityStore = defineStore("activities", () => {
         ].calendar_activities.findIndex(
             (obj) => obj.id === rmdCalendarActivity.id,
         );
-
+        console.log(activity);
         const { activity, ...calendarActivityWithoutMainActivity } =
             rmdCalendarActivity;
-        console.log(activity);
-        console.log(calendarActivityWithoutMainActivity);
-        console.log(activityData.value[activityIndex]);
-        activityData.value[activityIndex].calendar_activities[
-            calendarActivityIndex
-        ] = calendarActivityWithoutMainActivity;
+        activityData.value[activityIndex].calendar_activities.splice(
+            calendarActivityIndex,
+            1,
+        );
 
         removedCalendarActivity.value = calendarActivityWithoutMainActivity;
     }

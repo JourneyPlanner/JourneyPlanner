@@ -44,7 +44,6 @@ const activities = computed(() => store.activityData as Activity[]);
 const client = useSanctumClient();
 const alreadyAdded = ref(false);
 const { t } = useTranslate();
-const { addedActivity } = storeToRefs(store);
 const { newCalendarActivity } = storeToRefs(store);
 const { removedCalendarActivity } = storeToRefs(store);
 const { oldActivity } = storeToRefs(store);
@@ -345,17 +344,11 @@ const calendarOptions = reactive({
     },
 }) as unknown as CalendarOptions;
 
-watch(addedActivity, () => {
-    console.log(addedActivity.value);
-    //addNewActivities(addedActivity.value);
-});
-
 watch(removedCalendarActivity, () => {
     removeActivity(removedCalendarActivity.value);
 });
 
 watch(newCalendarActivity, () => {
-    console.log(newCalendarActivity);
     addActivity(newCalendarActivity.value);
 });
 
@@ -639,7 +632,6 @@ async function removeOldActivities(oldActivities: Activity[]) {
 }
 
 function addActivity(addCalendarActivity: CalendarActivity) {
-    console.log(addCalendarActivity);
     const calApi = fullCalendar.value.getApi();
     if (calApi.getEventById(addCalendarActivity.id) !== null) {
         calApi.getEventById(addCalendarActivity.id).remove();

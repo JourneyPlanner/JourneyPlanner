@@ -385,7 +385,6 @@ async function editActivity(values: ActivityForm) {
             method: "POST",
             body: activity,
             async onResponse({ response }) {
-                console.log(response);
                 if (response.ok) {
                     toast.add({
                         severity: "success",

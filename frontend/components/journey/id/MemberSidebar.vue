@@ -41,10 +41,6 @@ const isEditEnabled = ref(false);
 const users = ref(props.users);
 const isVisible = ref(props.isMemberSidebarVisible);
 
-watch(isAuthenticated, (value) => {
-    console.log(value);
-});
-
 watch(
     () => props.isMemberSidebarVisible,
     (value) => {
@@ -55,7 +51,6 @@ watch(
 watch(
     () => props.users,
     (value) => {
-        console.log(value);
         users.value = value;
     },
 );

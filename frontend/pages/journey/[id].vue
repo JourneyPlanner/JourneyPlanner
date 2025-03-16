@@ -87,18 +87,16 @@ function subscribeToChannel() {
         });
 }
 
-function activityUpdated(e: object) {
-    console.log(e);
-    activityStore.updateActivity([e]);
+function activityUpdated(e: WebsocketEvent) {
+    activityStore.updateActivity(e.model);
 }
 
-function activityCreated(e: object) {
-    console.log(e);
+function activityCreated(e: WebsocketEvent) {
     const responseData = Array.isArray(e) ? e : [e];
-    activityStore.addActivity(e);
+    activityStore.addActivity(e.model);
     const activites = [] as Activity[];
     activites.push(...responseData);
-    activityStore.setNewActivity(e);
+    activityStore.setNewActivity(e.model);
 }
 
 function activityDeleted(e: WebsocketEvent) {
@@ -106,7 +104,6 @@ function activityDeleted(e: WebsocketEvent) {
 }
 
 function calendarActivityCreated(e: WebsocketEvent) {
-    console.log(e);
     activityStore.createOrUpdateCalendarActivity(e.model);
 }
 
