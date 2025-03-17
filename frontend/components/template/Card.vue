@@ -78,7 +78,7 @@ const confirmDelete = (event: Event) => {
                 detail: t.value("delete.template.toast.message"),
                 life: 3000,
             });
-            deleteTemplate(props.template.id);
+            deleteTemplate(props?.template?.id);
         },
     });
 };
@@ -107,11 +107,19 @@ async function deleteTemplate(id: string) {
         },
     });
 }
+
+function handleUserClick() {
+    if (!props.displayedInProfile && !props.template?.creator?.business) {
+        isProfileDialogVisible.value = true;
+    } else if (props.template?.creator?.business) {
+        router.push(`/business/${props.template?.creator?.username}`);
+    }
+}
 </script>
 
 <template>
     <div
-        class="rounded-xl border-2 border-natural-200 bg-natural-50 text-text hover:cursor-pointer hover:border-calypso-400 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400"
+        class="min-w-72 rounded-xl border-2 border-natural-200 bg-natural-50 text-text hover:cursor-pointer hover:border-calypso-400 dark:border-natural-800 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-calypso-400"
         role="button"
         tabindex="0"
         @click="$emit('openTemplate', template?.id)"
@@ -154,7 +162,7 @@ async function deleteTemplate(id: string) {
             <div class="flex">
                 <h3
                     v-tooltip.top="{
-                        value: template.name,
+                        value: template?.name,
                         pt: { root: 'font-nunito' },
                     }"
                     class="w-full truncate text-xl font-medium"
@@ -163,9 +171,19 @@ async function deleteTemplate(id: string) {
                         class="block overflow-hidden overflow-ellipsis text-nowrap"
                         :class="!isCurrentUser ? 'w-full' : 'w-11/12'"
                     >
-                        {{ template.name }}
+                        {{ template?.name }}
                     </div>
                 </h3>
+                <div class="flex items-center pl-2">
+                    <span
+                        v-if="template?.creator?.business"
+                        v-tooltip.top="{
+                            value: t('template.created.business'),
+                            pt: { root: 'font-nunito text-center' },
+                        }"
+                        class="pi pi-verified ml-auto justify-end text-xl text-calypso-600 dark:text-calypso-400"
+                    />
+                </div>
                 <Button
                     v-if="isCurrentUser"
                     type="button"
@@ -178,7 +196,7 @@ async function deleteTemplate(id: string) {
             </div>
             <h4
                 v-tooltip.top="{
-                    value: template?.users[0]?.username,
+                    value: template?.creator?.username,
                     pt: { root: 'font-nunito' },
                 }"
                 class="-mt-1 truncate text-xl text-natural-600 dark:text-natural-300"
@@ -189,29 +207,29 @@ async function deleteTemplate(id: string) {
                             ? 'cursor-pointer hover:text-calypso-600 hover:underline'
                             : ''
                     "
-                    @click.stop="
-                        !displayedInProfile
-                            ? (isProfileDialogVisible = true)
-                            : ''
-                    "
-                    >{{ template?.users[0]?.username }}</span
+                    @click.stop="handleUserClick"
+                    >{{ template?.creator?.username }}</span
                 >
             </h4>
             <div id="template-details" class="mt-2">
                 <div
                     v-tooltip.top="{
-                        value: template.destination,
+                        value: template?.destination,
                         pt: { root: 'font-nunito' },
                     }"
                     class="flex flex-row items-center gap-x-1"
                 >
-                    <i class="pi pi-map-marker text-lg text-calypso-600" />
+                    <i
+                        class="pi pi-map-marker text-lg text-calypso-600 dark:text-calypso-400"
+                    />
                     <h5 class="truncate text-lg">
                         {{ template?.destination }}
                     </h5>
                 </div>
                 <div class="flex flex-row items-center gap-x-1">
-                    <i class="pi pi-calendar text-lg text-calypso-600" />
+                    <i
+                        class="pi pi-calendar text-lg text-calypso-600 dark:text-calypso-400"
+                    />
                     <h5 class="truncate text-lg">
                         {{ template?.length }}
                         <T
@@ -223,12 +241,14 @@ async function deleteTemplate(id: string) {
                         />
                     </h5>
                     <div class="ml-auto flex items-center gap-x-1">
-                        <i class="pi pi-star text-lg text-calypso-600" />
+                        <i
+                            class="pi pi-star text-lg text-calypso-600 dark:text-calypso-400"
+                        />
                         <h5 class="truncate text-lg">
                             {{
-                                Math.round(template.average_rating * 100) / 100
+                                Math.round(template?.average_rating * 100) / 100
                             }}
-                            ({{ template.total_ratings }})
+                            ({{ template?.total_ratings }})
                         </h5>
                     </div>
                 </div>
@@ -237,8 +257,8 @@ async function deleteTemplate(id: string) {
         <div class="dialogs">
             <JourneyIdDialogsProfileDialog
                 :visible="isProfileDialogVisible"
-                :username="template?.users[0]?.username"
-                :displayname="template?.users[0]?.display_name"
+                :username="template?.creator?.username"
+                :displayname="template?.creator?.display_name"
                 @close="isProfileDialogVisible = false"
             />
             <JourneyIdDialogsCreateTemplateDialog

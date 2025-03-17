@@ -53,6 +53,14 @@ class TemplateRating extends Model
             $bayesianAverage =
                 ($average * $count + $weight * $globalAverage) /
                 ($count + $weight);
+            if (
+                $template
+                    ->businesses()
+                    ->wherePivot("created_by_business", true)
+                    ->count() > 0
+            ) {
+                $bayesianAverage = $bayesianAverage * 0.9 + 0.5; // 5 * 0.1 = 0.5; 10% are automatically 5 stars to ensure business templates have a slightly higher rating
+            }
         } else {
             $bayesianAverage = 0; // If no ratings, default to 0
         }
