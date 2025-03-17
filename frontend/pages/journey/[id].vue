@@ -223,12 +223,12 @@ function userEdited(user: User) {
 
 function userLeft(user: User) {
     if (currUser.value?.id === user.id) {
-        toast.add({
+        /* toast.add({
             severity: "info",
             summary: t.value("journey.kicked.toast.success"),
             detail: t.value("journey.kicked.toast.detail"),
             life: 3000,
-        });
+        }); */
 
         navigateTo("/dashboard");
     }
