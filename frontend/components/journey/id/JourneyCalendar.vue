@@ -169,7 +169,7 @@ async function deleteActivityCall(editType: string) {
         const activityToDelete = store.getActivity(
             activityId.value,
         ) as Activity;
-        store.updateActivity([activityToDelete], true);
+        store.updateActivity(activityToDelete);
     }
 
     await client(`/api/journey/${props.id}/activity/${activityId.value}`, {

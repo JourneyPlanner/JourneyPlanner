@@ -164,9 +164,9 @@ export const useActivityStore = defineStore("activities", () => {
         ].calendar_activities.findIndex(
             (obj) => obj.id === rmdCalendarActivity.id,
         );
-        console.log(activity);
         const { activity, ...calendarActivityWithoutMainActivity } =
             rmdCalendarActivity;
+        console.log(activity);
         activityData.value[activityIndex].calendar_activities.splice(
             calendarActivityIndex,
             1,
