@@ -564,7 +564,7 @@ function reloadData() {
                             showMoreTemplates || index < maxDisplayedTemplates
                         "
                         :key="'template-card' + template.id"
-                        :v-if="template.visible = 1"
+                        :v-if="template.visible == 1"
                         class="hidden md:block"
                         :template="template"
                         :displayed-in-profile="false"

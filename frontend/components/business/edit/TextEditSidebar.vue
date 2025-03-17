@@ -108,7 +108,7 @@ async function handleSubmit() {
             {
                 company_name: headlineTextEnglish.value,
                 button_link: link.value,
-                button: buttonTextGerman.value,
+                button: buttonTextEnglish.value,
                 text: textEnglish.value,
             },
         ],

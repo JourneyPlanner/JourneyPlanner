@@ -8,7 +8,6 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "changedTemplates"]);
 const toast = useToast();
-const route = useRoute();
 const { t } = useTranslate();
 const client = useSanctumClient();
 const visible = ref();
@@ -64,7 +63,7 @@ async function changeVisibleTemplates() {
             visible: value,
         });
     });
-    await client(`/api/business/${route.params.slug}/templates `, {
+    await client(`/api/business/${props.businessSlug}/templates`, {
         method: "POST",
         body: visibleTemplates,
         async onResponse({ response }) {
