@@ -9,6 +9,7 @@ export const useActivityStore = defineStore("activities", () => {
     const newCalendarActivity = ref();
     const removedCalendarActivity = ref();
     const oldActivity = ref([]);
+    const calendarActivityMap = ref(new Map());
 
     function setActivities(activityData) {
         this.activityData = [];
@@ -103,6 +104,7 @@ export const useActivityStore = defineStore("activities", () => {
     }
 
     function createOrUpdateCalendarActivity(addCalendarActivity) {
+        let oldCalendarActivity;
         let activityIndex = activityData.value.findIndex(
             (obj) => obj.id === addCalendarActivity.activity_id,
         );
@@ -112,6 +114,10 @@ export const useActivityStore = defineStore("activities", () => {
                 (obj) => obj.id === addCalendarActivity.activity_id,
             );
         }
+
+        oldCalendarActivity = calendarActivityMap.value.get(
+            addCalendarActivity.id,
+        );
 
         if (!activityData.value[activityIndex].calendar_activities) {
             Object.assign(activityData.value[activityIndex], {
@@ -147,11 +153,41 @@ export const useActivityStore = defineStore("activities", () => {
             );
         }
 
+        if (
+            oldCalendarActivity &&
+            oldCalendarActivity != addCalendarActivity.activity_id
+        ) {
+            activityIndex = activityData.value.findIndex(
+                (obj) => obj.id === oldCalendarActivity,
+            );
+
+            const calendarActivityIndex = activityData.value[
+                activityIndex
+            ].calendar_activities.findIndex(
+                (obj) => obj.id === addCalendarActivity.id,
+            );
+
+            activityData.value[activityIndex].calendar_activities.splice(
+                calendarActivityIndex,
+                1,
+            );
+
+            calendarActivityMap.value.set(
+                addCalendarActivity.id,
+                addCalendarActivity.activity_id,
+            );
+        } else {
+            calendarActivityMap.value.set(
+                addCalendarActivity.id,
+                addCalendarActivity.activity_id,
+            );
+        }
+
         newCalendarActivity.value = calendarActivityWithoutMainActivity;
     }
 
     function removeCalendarActivity(rmdCalendarActivity) {
-        const activityIndex = activityData.value.findIndex(
+        let activityIndex = activityData.value.findIndex(
             (obj) => obj.id === rmdCalendarActivity.activity_id,
         );
         if (!activityData.value[activityIndex].calendar_activities) {
@@ -159,6 +195,7 @@ export const useActivityStore = defineStore("activities", () => {
                 calendar_activities: [],
             });
         }
+
         const calendarActivityIndex = activityData.value[
             activityIndex
         ].calendar_activities.findIndex(
@@ -171,6 +208,27 @@ export const useActivityStore = defineStore("activities", () => {
             calendarActivityIndex,
             1,
         );
+
+        const oldCalendarActivity = calendarActivityMap.value.get(
+            rmdCalendarActivity.id,
+        );
+
+        if (oldCalendarActivity) {
+            activityIndex = activityData.value.findIndex(
+                (obj) => obj.id === oldCalendarActivity,
+            );
+
+            const calendarActivityIndex = activityData.value[
+                activityIndex
+            ].calendar_activities.findIndex(
+                (obj) => obj.id === rmdCalendarActivity.id,
+            );
+
+            activityData.value[activityIndex].calendar_activities.splice(
+                calendarActivityIndex,
+                1,
+            );
+        }
 
         removedCalendarActivity.value = calendarActivityWithoutMainActivity;
     }
