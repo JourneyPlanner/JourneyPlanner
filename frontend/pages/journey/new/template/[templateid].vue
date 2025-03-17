@@ -266,7 +266,7 @@ function changeDuration(range: Date[]) {
                                     '&quot; ' +
                                     t('template.by') +
                                     ' ' +
-                                    template.users[0].username,
+                                    template.creator.username,
                                 pt: { root: 'font-nunito' },
                             }"
                             class="col-span-2 mb-4 overflow-hidden overflow-ellipsis text-nowrap pl-1 text-sm text-natural-700 dark:text-natural-200 md:-mt-5 lg:pl-6"
@@ -275,8 +275,8 @@ function changeDuration(range: Date[]) {
                             "{{ template.name }}"
                             <T key-name="template.by" />
                             {{
-                                template.users && template.users[0]
-                                    ? template.users[0].username
+                                template.creator && template.creator
+                                    ? template.creator.username
                                     : ""
                             }}
                         </div>
