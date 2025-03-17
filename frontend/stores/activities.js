@@ -134,9 +134,9 @@ export const useActivityStore = defineStore("activities", () => {
         }).toISOString();
         addCalendarActivity.end = newEnd;
         addCalendarActivity.title = addCalendarActivity.activity.name;
+        // eslint-disable-next-line no-unused-vars
         const { activity, ...calendarActivityWithoutMainActivity } =
             addCalendarActivity;
-        console.log(activity);
         if (calendarActivityIndex != -1) {
             activityData.value[activityIndex].calendar_activities[
                 calendarActivityIndex
@@ -164,9 +164,9 @@ export const useActivityStore = defineStore("activities", () => {
         ].calendar_activities.findIndex(
             (obj) => obj.id === rmdCalendarActivity.id,
         );
+        // eslint-disable-next-line no-unused-vars
         const { activity, ...calendarActivityWithoutMainActivity } =
             rmdCalendarActivity;
-        console.log(activity);
         activityData.value[activityIndex].calendar_activities.splice(
             calendarActivityIndex,
             1,
