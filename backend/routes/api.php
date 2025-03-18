@@ -76,7 +76,7 @@ Route::get("journey/{journey}/user/me", [
     "currentUserDetails",
 ])->middleware("auth:sanctum");
 
-Route::post("journey/{journey}/regenerateInvite", [
+Route::post("journey/{journey}/regenerate-invite", [
     JourneyController::class,
     "regenerateInvite",
 ])->middleware("auth:sanctum");
