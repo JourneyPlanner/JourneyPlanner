@@ -1,0 +1,2268 @@
+openapi: 3.0.3
+info:
+  title: JourneyPlanner
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost:8000'
+paths:
+  /api/me:
+    get:
+      summary: ''
+      operationId: getApiMe
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  /api/me/requiresPassword:
+    get:
+      summary: ''
+      operationId: getApiMeRequiresPassword
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  /api/user/tokens/upload:
+    get:
+      summary: ''
+      operationId: getApiUserTokensUpload
+      description: ''
+      parameters: []
+      responses:
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Server Error'
+                properties:
+                  message:
+                    type: string
+                    example: 'Server Error'
+      tags:
+        - Endpoints
+      security: []
+  /api/journey:
+    get:
+      summary: 'Display all journeys of the authenticated user.'
+      operationId: displayAllJourneysOfTheAuthenticatedUser
+      description: ''
+      parameters: []
+      responses:
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'This action is unauthorized.'
+                properties:
+                  message:
+                    type: string
+                    example: 'This action is unauthorized.'
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: 'Store the new journey and add the authenticated user to it.'
+      operationId: storeTheNewJourneyAndAddTheAuthenticatedUserToIt
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: ''
+                  example: dolores
+                  nullable: false
+                destination:
+                  type: string
+                  description: ''
+                  example: ea
+                  nullable: false
+                from:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-01-28T15:43:27'
+                  nullable: false
+                to:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-01-28T15:43:27'
+                  nullable: false
+                invite:
+                  type: string
+                  description: 'Must be a valid UUID.'
+                  example: 1e4b0b86-7792-3d0a-a2aa-6de493c5b25b
+                  nullable: false
+                mapbox_id:
+                  type: string
+                  description: ''
+                  example: aliquam
+                  nullable: true
+                mapbox_full_address:
+                  type: string
+                  description: ''
+                  example: soluta
+                  nullable: true
+                template_id:
+                  type: string
+                  description: 'The <code>id</code> of an existing record in the journeys table.'
+                  example: null
+                  nullable: true
+                calendar_activity_insert_mode:
+                  type: string
+                  description: 'This field is required when <code>template_id</code> is present.'
+                  example: pool
+                  nullable: false
+                  enum:
+                    - direct
+                    - smart
+                    - pool
+              required:
+                - name
+                - destination
+                - from
+                - to
+      security: []
+  '/api/journey/{id}':
+    get:
+      summary: 'Show the requested journey.'
+      operationId: showTheRequestedJourney
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: 0023df66-7dfa-4009-afb0-57601eaa717c
+                  name: 'Persevering encompassing instruction set Adventure'
+                  destination: 'East Melissa'
+                  from: '2025-09-03T00:00:00.000000Z'
+                  to: '2025-09-12T00:00:00.000000Z'
+                  invite: 04c22506-58e8-4fbd-8fa9-1470580b8987
+                  created_at: '2024-11-15T13:11:07.000000Z'
+                  updated_at: '2024-11-15T13:11:07.000000Z'
+                  mapbox_id: mapbox-035
+                  mapbox_full_address: '5454 Maria Road, Chanstad, PR 05254'
+                  longitude: '-165.93923000'
+                  latitude: '81.77889200'
+                  description: 'Particular lawyer spring detail.'
+                  is_template: 1
+                  created_from: null
+                  is_guest: 0
+                properties:
+                  id:
+                    type: string
+                    example: 0023df66-7dfa-4009-afb0-57601eaa717c
+                  name:
+                    type: string
+                    example: 'Persevering encompassing instruction set Adventure'
+                  destination:
+                    type: string
+                    example: 'East Melissa'
+                  from:
+                    type: string
+                    example: '2025-09-03T00:00:00.000000Z'
+                  to:
+                    type: string
+                    example: '2025-09-12T00:00:00.000000Z'
+                  invite:
+                    type: string
+                    example: 04c22506-58e8-4fbd-8fa9-1470580b8987
+                  created_at:
+                    type: string
+                    example: '2024-11-15T13:11:07.000000Z'
+                  updated_at:
+                    type: string
+                    example: '2024-11-15T13:11:07.000000Z'
+                  mapbox_id:
+                    type: string
+                    example: mapbox-035
+                  mapbox_full_address:
+                    type: string
+                    example: '5454 Maria Road, Chanstad, PR 05254'
+                  longitude:
+                    type: string
+                    example: '-165.93923000'
+                  latitude:
+                    type: string
+                    example: '81.77889200'
+                  description:
+                    type: string
+                    example: 'Particular lawyer spring detail.'
+                  is_template:
+                    type: integer
+                    example: 1
+                  created_from:
+                    type: string
+                    example: null
+                  is_guest:
+                    type: integer
+                    example: 0
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: 'Update the specified journey.'
+      operationId: updateTheSpecifiedJourney
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: ''
+                  example: voluptas
+                  nullable: false
+                destination:
+                  type: string
+                  description: ''
+                  example: totam
+                  nullable: false
+                from:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-01-28T15:43:27'
+                  nullable: false
+                to:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-01-28T15:43:27'
+                  nullable: false
+                mapbox_id:
+                  type: string
+                  description: ''
+                  example: facere
+                  nullable: true
+                mapbox_full_address:
+                  type: string
+                  description: ''
+                  example: modi
+                  nullable: true
+                template_id:
+                  type: string
+                  description: 'The <code>id</code> of an existing record in the journeys table.'
+                  example: null
+                  nullable: true
+                calendar_activity_insert_mode:
+                  type: string
+                  description: 'This field is required when <code>template_id</code> is present.'
+                  example: direct
+                  nullable: false
+                  enum:
+                    - direct
+                    - smart
+                    - pool
+              required:
+                - name
+                - destination
+                - from
+                - to
+      security: []
+    delete:
+      summary: 'Remove the specified journey from the database.'
+      operationId: removeTheSpecifiedJourneyFromTheDatabase
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+  '/api/journey/{journey_id}/activity':
+    get:
+      summary: 'Get all activities of the specified journey.'
+      operationId: getAllActivitiesOfTheSpecifiedJourney
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  activities: []
+                  count: 0
+                properties:
+                  activities:
+                    type: array
+                    example: []
+                  count:
+                    type: integer
+                    example: 0
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: 'Store a newly created activity in storage.'
+      operationId: storeANewlyCreatedActivityInStorage
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: ''
+                  example: maiores
+                  nullable: false
+                estimated_duration:
+                  type: string
+                  description: 'Must be a valid date in the format <code>H:i:s</code>.'
+                  example: '15:43:27'
+                  nullable: false
+                mapbox_id:
+                  type: string
+                  description: ''
+                  example: cum
+                  nullable: true
+                mapbox_full_address:
+                  type: string
+                  description: ''
+                  example: ea
+                  nullable: true
+                address:
+                  type: string
+                  description: ''
+                  example: similique
+                  nullable: true
+                opening_hours:
+                  type: string
+                  description: ''
+                  example: ut
+                  nullable: true
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: ryan.kailee@example.net
+                  nullable: true
+                phone:
+                  type: string
+                  description: ''
+                  example: incidunt
+                  nullable: true
+                link:
+                  type: string
+                  description: 'Must be a valid URL.'
+                  example: 'http://jast.org/'
+                  nullable: true
+                cost:
+                  type: string
+                  description: ''
+                  example: in
+                  nullable: true
+                description:
+                  type: string
+                  description: ''
+                  example: 'Omnis a eveniet est minima qui atque ut aspernatur.'
+                  nullable: true
+                date:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-01-28T15:43:27'
+                  nullable: true
+                time:
+                  type: string
+                  description: 'Must be a valid date in the format <code>H:i</code>.'
+                  example: '15:43'
+                  nullable: true
+                repeat_type:
+                  type: string
+                  description: ''
+                  example: weekly
+                  nullable: true
+                  enum:
+                    - daily
+                    - weekly
+                    - custom
+                repeat_interval:
+                  type: integer
+                  description: 'This field is required when <code>repeat_type</code> is <code>custom</code>.'
+                  example: 14
+                  nullable: false
+                repeat_interval_unit:
+                  type: string
+                  description: 'This field is required when <code>repeat_type</code> is <code>custom</code>.'
+                  example: weeks
+                  nullable: false
+                  enum:
+                    - days
+                    - weeks
+                repeat_on:
+                  type: array
+                  description: ''
+                  example:
+                    - Fri
+                  items:
+                    type: string
+                    enum:
+                      - Mon
+                      - Tue
+                      - Wed
+                      - Thu
+                      - Fri
+                      - Sat
+                      - Sun
+                repeat_end_date:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-01-28T15:43:27'
+                  nullable: true
+                repeat_end_occurrences:
+                  type: integer
+                  description: ''
+                  example: 4
+                  nullable: true
+              required:
+                - name
+                - estimated_duration
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+  '/api/journey/{journey_id}/activity/{id}':
+    get:
+      summary: 'Display the specified activity.'
+      operationId: displayTheSpecifiedActivity
+      description: ''
+      parameters: []
+      responses:
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'This action is unauthorized.'
+                properties:
+                  message:
+                    type: string
+                    example: 'This action is unauthorized.'
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: 'Update the specified activity in storage.'
+      operationId: updateTheSpecifiedActivityInStorage
+      description: 'Do not remove the journey parameter, it is required for authorization.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: ''
+                  example: quia
+                  nullable: true
+                estimated_duration:
+                  type: string
+                  description: 'Must be a valid date in the format <code>H:i:s</code>.'
+                  example: '15:43:27'
+                  nullable: true
+                mapbox_id:
+                  type: string
+                  description: ''
+                  example: libero
+                  nullable: true
+                mapbox_full_address:
+                  type: string
+                  description: ''
+                  example: praesentium
+                  nullable: true
+                address:
+                  type: string
+                  description: ''
+                  example: aut
+                  nullable: true
+                opening_hours:
+                  type: string
+                  description: ''
+                  example: veniam
+                  nullable: true
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: mitchell.brendan@example.net
+                  nullable: true
+                phone:
+                  type: string
+                  description: ''
+                  example: dolorum
+                  nullable: true
+                link:
+                  type: string
+                  description: 'Must be a valid URL.'
+                  example: 'https://thompson.com/odio-consequatur-sequi-ipsum-eveniet-harum-commodi.html'
+                  nullable: true
+                cost:
+                  type: string
+                  description: ''
+                  example: quibusdam
+                  nullable: true
+                description:
+                  type: string
+                  description: ''
+                  example: 'Rem itaque sint nobis.'
+                  nullable: true
+                date:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-01-28T15:43:27'
+                  nullable: true
+                time:
+                  type: string
+                  description: 'Must be a valid date in the format <code>H:i</code>.'
+                  example: '15:43'
+                  nullable: true
+                repeat_type:
+                  type: string
+                  description: ''
+                  example: daily
+                  nullable: true
+                  enum:
+                    - daily
+                    - weekly
+                    - custom
+                repeat_interval:
+                  type: integer
+                  description: 'This field is required when <code>repeat_type</code> is <code>custom</code>.'
+                  example: 6
+                  nullable: false
+                repeat_interval_unit:
+                  type: string
+                  description: 'This field is required when <code>repeat_type</code> is <code>custom</code>.'
+                  example: weeks
+                  nullable: false
+                  enum:
+                    - days
+                    - weeks
+                repeat_on:
+                  type: array
+                  description: ''
+                  example:
+                    - Tue
+                  items:
+                    type: string
+                    enum:
+                      - Mon
+                      - Tue
+                      - Wed
+                      - Thu
+                      - Fri
+                      - Sat
+                      - Sun
+                repeat_end_date:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-01-28T15:43:27'
+                  nullable: true
+                repeat_end_occurrences:
+                  type: integer
+                  description: ''
+                  example: 15
+                  nullable: true
+                edit_type:
+                  type: string
+                  description: ''
+                  example: following
+                  nullable: false
+                  enum:
+                    - single
+                    - following
+                    - all
+                calendar_activity_id:
+                  type: string
+                  description: 'This field is required unless <code>edit_type</code> is in <code>all</code>.  The <code>id</code> of an existing record in the calendar_activities table.'
+                  example: null
+                  nullable: false
+              required:
+                - edit_type
+      security: []
+    delete:
+      summary: 'Delete the specified activity from storage.'
+      operationId: deleteTheSpecifiedActivityFromStorage
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                edit_type:
+                  type: string
+                  description: ''
+                  example: all
+                  nullable: false
+                  enum:
+                    - single
+                    - following
+                    - all
+                calendar_activity_id:
+                  type: string
+                  description: 'This field is required unless <code>edit_type</code> is in <code>all</code>.  The <code>id</code> of an existing record in the calendar_activities table.'
+                  example: null
+                  nullable: false
+              required:
+                - edit_type
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: id
+        description: 'The ID of the activity.'
+        example: 9be9cf99-e23d-476d-b79b-ea8ba8d7a5e5
+        required: true
+        schema:
+          type: string
+  '/api/journey/{journey_id}/user':
+    get:
+      summary: 'Get the users of the journey.'
+      operationId: getTheUsersOfTheJourney
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+  '/api/journey/{journey_id}/user/{id}':
+    put:
+      summary: 'Update the role of the specified user in the journey.'
+      operationId: updateTheRoleOfTheSpecifiedUserInTheJourney
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: number
+                  description: 'Must be between 0 and 1.'
+                  example: 0
+                  nullable: false
+              required:
+                - role
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: id
+        description: 'The ID of the user.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  '/api/journey/{journey_id}/leave':
+    delete:
+      summary: 'Leave the journey.'
+      operationId: leaveTheJourney
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+  '/api/journey/{journey_id}/user/me':
+    get:
+      summary: 'Get the role of the current user in the journey.'
+      operationId: getTheRoleOfTheCurrentUserInTheJourney
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+  '/api/journey/{journey_id}/activity/{activity_id}/calendarActivity/{id}':
+    delete:
+      summary: 'Remove the specified calendar activity from storage.'
+      operationId: removeTheSpecifiedCalendarActivityFromStorage
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                edit_type:
+                  type: string
+                  description: ''
+                  example: following
+                  nullable: false
+                  enum:
+                    - single
+                    - following
+                    - all
+              required:
+                - edit_type
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: activity_id
+        description: 'The ID of the activity.'
+        example: 9be9cf99-e23d-476d-b79b-ea8ba8d7a5e5
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: id
+        description: 'The ID of the calendarActivity.'
+        example: 9be9cf9a-4466-49b2-87e5-80de4f06f4e5
+        required: true
+        schema:
+          type: string
+  '/api/invite/{id}':
+    post:
+      summary: 'Join a journey with an invite code.'
+      operationId: joinAJourneyWithAnInviteCode
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the invite.'
+        example: et
+        required: true
+        schema:
+          type: string
+  /api/upload:
+    post:
+      summary: 'Handle an upload request.'
+      operationId: handleAnUploadRequest
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/journey/{journey_id}/media':
+    get:
+      summary: 'Get all media of the specified journey.'
+      operationId: getAllMediaOfTheSpecifiedJourney
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+  '/api/journey/{journey_id}/media/{media_id}':
+    get:
+      summary: 'Display the specified media.'
+      operationId: displayTheSpecifiedMedia
+      description: ''
+      parameters: []
+      responses:
+        404:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: ''
+                properties:
+                  message:
+                    type: string
+                    example: ''
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: media_id
+        description: 'The ID of the media.'
+        example: 9c5d67ca-2f08-4cae-aa16-4ebfd5d299a9
+        required: true
+        schema:
+          type: string
+  '/api/journey/{journey_id}/weather':
+    get:
+      summary: 'Get the weather data for the specified journey.'
+      operationId: getTheWeatherDataForTheSpecifiedJourney
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  current:
+                    temperature: -29.2
+                    weather_code: 2
+                  forecast:
+                    -
+                      date: '2025-01-28'
+                      temperature_max: -29
+                      temperature_min: -30
+                      weather_code: 2
+                    -
+                      date: '2025-01-29'
+                      temperature_max: -29.2
+                      temperature_min: -29.9
+                      weather_code: 3
+                    -
+                      date: '2025-01-30'
+                      temperature_max: -28.4
+                      temperature_min: -29.2
+                      weather_code: 3
+                    -
+                      date: '2025-01-31'
+                      temperature_max: -27.7
+                      temperature_min: -28.5
+                      weather_code: 3
+                properties:
+                  current:
+                    type: object
+                    properties:
+                      temperature:
+                        type: number
+                        example: -29.2
+                      weather_code:
+                        type: integer
+                        example: 2
+                  forecast:
+                    type: array
+                    example:
+                      -
+                        date: '2025-01-28'
+                        temperature_max: -29
+                        temperature_min: -30
+                        weather_code: 2
+                      -
+                        date: '2025-01-29'
+                        temperature_max: -29.2
+                        temperature_min: -29.9
+                        weather_code: 3
+                      -
+                        date: '2025-01-30'
+                        temperature_max: -28.4
+                        temperature_min: -29.2
+                        weather_code: 3
+                      -
+                        date: '2025-01-31'
+                        temperature_max: -27.7
+                        temperature_min: -28.5
+                        weather_code: 3
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2025-01-28'
+                        temperature_max:
+                          type: integer
+                          example: -29
+                        temperature_min:
+                          type: integer
+                          example: -30
+                        weather_code:
+                          type: integer
+                          example: 2
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+  /api/template:
+    post:
+      summary: 'Store a new template from the journey.'
+      operationId: storeANewTemplateFromTheJourney
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                journey_id:
+                  type: string
+                  description: 'Must be a valid UUID.'
+                  example: c5337433-28fa-3aad-a3ac-7cbd1bcd9d11
+                  nullable: false
+                name:
+                  type: string
+                  description: ''
+                  example: assumenda
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Dolor optio aliquam architecto magnam et voluptas.'
+                  nullable: false
+              required:
+                - journey_id
+                - name
+      security: []
+    get:
+      summary: 'Display all available templates.'
+      operationId: displayAllAvailableTemplates
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    -
+                      id: 0023df66-7dfa-4009-afb0-57601eaa717c
+                      name: 'Persevering encompassing instruction set Adventure'
+                      destination: 'East Melissa'
+                      from: '2025-09-03T00:00:00.000000Z'
+                      to: '2025-09-12T00:00:00.000000Z'
+                      description: 'Particular lawyer spring detail.'
+                      mapbox_full_address: '5454 Maria Road, Chanstad, PR 05254'
+                      length: 10
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 002cb297-1bd3-42d9-a1f8-4e52844d93ce
+                      name: 'Multi-tiered dedicated Graphical User Interface Adventure'
+                      destination: 'West Dwayne'
+                      from: '2026-01-16T00:00:00.000000Z'
+                      to: '2026-01-26T00:00:00.000000Z'
+                      description: 'Contain budget player style.'
+                      mapbox_full_address: '856 Michael Ways Suite 927, Lake Patrick, GA 04930'
+                      length: 11
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 00e635e8-e5bf-493d-bddc-a2f7646a1ad2
+                      name: 'Programmable global moratorium Adventure'
+                      destination: 'New Noah'
+                      from: '2025-05-08T00:00:00.000000Z'
+                      to: '2025-05-17T00:00:00.000000Z'
+                      description: 'Suffer six happen score feeling where leader benefit. Soldier interview enjoy decide almost debate.'
+                      mapbox_full_address: '0386 Melissa Overpass Suite 740, North Brandonfort, PA 58289'
+                      length: 10
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 017a2387-e56a-4381-a8f6-a969ac9c395a
+                      name: 'Extended client-driven process improvement Adventure'
+                      destination: 'West Ashleeburgh'
+                      from: '2025-11-28T00:00:00.000000Z'
+                      to: '2025-12-03T00:00:00.000000Z'
+                      description: 'Two assume certainly east meeting.'
+                      mapbox_full_address: 'Unit 1061 Box 8643, DPO AP 75013'
+                      length: 6
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 01ae5026-4132-43fd-a8cb-6c63ad34fe01
+                      name: 'Focused needs-based moratorium Adventure'
+                      destination: 'West Ashleyhaven'
+                      from: '2025-12-14T00:00:00.000000Z'
+                      to: '2025-12-18T00:00:00.000000Z'
+                      description: 'Which natural movement somebody rest.'
+                      mapbox_full_address: '95305 Daisy Points, East Joannabury, KS 20549'
+                      length: 5
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 05c04696-dd89-4c08-91cc-09b12c29478a
+                      name: 'Streamlined multi-tasking capacity Adventure'
+                      destination: Leahbury
+                      from: '2025-07-30T00:00:00.000000Z'
+                      to: '2025-08-05T00:00:00.000000Z'
+                      description: 'Full really chair cold enter medical sign.'
+                      mapbox_full_address: '29598 Moore Rest, Hardytown, VA 57658'
+                      length: 7
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 0800b3a5-8118-4bb6-a9df-b3a51f92510a
+                      name: 'Re-contextualized motivating hub Adventure'
+                      destination: Paulaside
+                      from: '2025-09-05T00:00:00.000000Z'
+                      to: '2025-09-10T00:00:00.000000Z'
+                      description: 'Early which evening cultural production like.'
+                      mapbox_full_address: '8057 Ruth Glen Apt. 244, Petersonburgh, MI 51767'
+                      length: 6
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 080f61b0-e5e6-4646-8ef5-6a52fc5551ba
+                      name: 'Managed impactful instruction set Adventure'
+                      destination: Sarahmouth
+                      from: '2026-03-31T00:00:00.000000Z'
+                      to: '2026-04-08T00:00:00.000000Z'
+                      description: 'Student game evidence participant fill.'
+                      mapbox_full_address: '91516 James Lane Apt. 486, Mitchellfort, ND 19162'
+                      length: 9
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 0bd6f438-010b-4728-8a32-b028b3a61109
+                      name: 'Inverse reciprocal framework Adventure'
+                      destination: 'Port Michael'
+                      from: '2025-03-06T00:00:00.000000Z'
+                      to: '2025-03-13T00:00:00.000000Z'
+                      description: 'Sure toward area.'
+                      mapbox_full_address: '969 Dalton Locks Suite 666, Huberfurt, NC 36840'
+                      length: 8
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 1174d22f-5133-4b5e-85c9-18e48aa62185
+                      name: 'Right-sized leadingedge synergy Adventure'
+                      destination: 'Port Steven'
+                      from: '2025-01-18T00:00:00.000000Z'
+                      to: '2025-01-28T00:00:00.000000Z'
+                      description: 'Note PM outside market. The understand new.'
+                      mapbox_full_address: '48036 Smith Groves, Kennethstad, OR 87391'
+                      length: 11
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 14d5a12b-0adc-4c38-846a-2ba9388e6e2a
+                      name: 'Devolved asynchronous flexibility Adventure'
+                      destination: 'South Danielleton'
+                      from: '2025-04-22T00:00:00.000000Z'
+                      to: '2025-04-25T00:00:00.000000Z'
+                      description: 'Anyone go low thus thus reflect over. Image list because should suffer leg.'
+                      mapbox_full_address: '5873 Chung Street Apt. 738, West Kelseyside, WA 75762'
+                      length: 4
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 16ab0040-add2-42a3-88d7-5d3df177e0e5
+                      name: 'Persevering analyzing initiative Adventure'
+                      destination: 'East Heather'
+                      from: '2026-02-25T00:00:00.000000Z'
+                      to: '2026-03-03T00:00:00.000000Z'
+                      description: 'Woman test continue situation day call garden. Itself outside pay teach.'
+                      mapbox_full_address: '131 Nguyen Square, Greenland, WA 26605'
+                      length: 7
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 16e7a201-e12b-47e6-a870-63083bce01f6
+                      name: 'Pre-emptive scalable artificial intelligence Adventure'
+                      destination: Martinbury
+                      from: '2026-08-11T00:00:00.000000Z'
+                      to: '2026-08-19T00:00:00.000000Z'
+                      description: 'Employee drop population idea. Both part machine story food then.'
+                      mapbox_full_address: '0381 Eric Walks Suite 076, New Lisaberg, AZ 48921'
+                      length: 9
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 19d3d9d5-4579-4e13-944a-fa0e3435b338
+                      name: 'Expanded scalable system engine Adventure'
+                      destination: 'West Seanside'
+                      from: '2025-04-07T00:00:00.000000Z'
+                      to: '2025-04-17T00:00:00.000000Z'
+                      description: 'Onto first support woman return want.'
+                      mapbox_full_address: '770 Cooper Alley, East Marissa, FM 25604'
+                      length: 11
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 1f3bfb90-21c0-41fd-86ff-093b42c43269
+                      name: 'Future-proofed grid-enabled definition Adventure'
+                      destination: 'South Holly'
+                      from: '2025-02-03T00:00:00.000000Z'
+                      to: '2025-02-12T00:00:00.000000Z'
+                      description: 'Enter book cost word popular order young. Brother wait particularly talk stop.'
+                      mapbox_full_address: '82994 Rush Islands, Port Glenshire, CT 80358'
+                      length: 10
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 224ceaac-deb0-43f2-ad3c-6022f34a4f81
+                      name: 'Organized dynamic service-desk Adventure'
+                      destination: 'New James'
+                      from: '2026-09-23T00:00:00.000000Z'
+                      to: '2026-09-28T00:00:00.000000Z'
+                      description: 'North computer process soon national.'
+                      mapbox_full_address: '14833 Nicole Canyon Suite 532, Port Joshuastad, CA 31156'
+                      length: 6
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 25a88508-9fb8-44e2-b99f-59dab96407cf
+                      name: 'Profit-focused bi-directional hub Adventure'
+                      destination: Garychester
+                      from: '2025-09-10T00:00:00.000000Z'
+                      to: '2025-09-13T00:00:00.000000Z'
+                      description: 'Effort continue man some leg they traditional lay. Strategy determine home cold.'
+                      mapbox_full_address: '19001 Perry Union Apt. 485, North Jacob, MI 62430'
+                      length: 4
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 26609aed-6490-407c-b73b-76d7e0ef6af3
+                      name: 'Multi-tiered web-enabled array Adventure'
+                      destination: 'North Maryburgh'
+                      from: '2026-07-10T00:00:00.000000Z'
+                      to: '2026-07-17T00:00:00.000000Z'
+                      description: 'Federal ready discuss president type smile. Place way edge go.'
+                      mapbox_full_address: '40716 Hunter Estates, Lake Justinmouth, FL 40166'
+                      length: 8
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 2a2e3db0-6e1f-4205-a38a-59abe050d2d1
+                      name: 'Monitored bottom-line superstructure Adventure'
+                      destination: 'East William'
+                      from: '2025-04-21T00:00:00.000000Z'
+                      to: '2025-04-28T00:00:00.000000Z'
+                      description: 'Growth improve concern laugh. Push pattern difference peace.'
+                      mapbox_full_address: '20765 Michael Light Suite 294, North Joshuaport, MH 05064'
+                      length: 8
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                    -
+                      id: 2d1e3363-2385-4abb-a348-cef743160769
+                      name: 'Enterprise-wide exuding customer loyalty Adventure'
+                      destination: Alisonfurt
+                      from: '2026-07-07T00:00:00.000000Z'
+                      to: '2026-07-16T00:00:00.000000Z'
+                      description: 'Check test weight fish ground above. Identify fall have although among.'
+                      mapbox_full_address: '66175 Devon Radial, Port Kimberlyshire, ME 95914'
+                      length: 10
+                      users:
+                        -
+                          id: 9bd2630b-2f67-418d-b578-f47824179f57
+                          username: test
+                          display_name: 'Test Account'
+                  path: 'http://localhost:8000/api/template'
+                  per_page: 20
+                  next_cursor: eyJpZCI6IjJkMWUzMzYzLTIzODUtNGFiYi1hMzQ4LWNlZjc0MzE2MDc2OSIsIl9wb2ludHNUb05leHRJdGVtcyI6dHJ1ZX0
+                  next_page_url: 'http://localhost:8000/api/template?cursor=eyJpZCI6IjJkMWUzMzYzLTIzODUtNGFiYi1hMzQ4LWNlZjc0MzE2MDc2OSIsIl9wb2ludHNUb05leHRJdGVtcyI6dHJ1ZX0'
+                  prev_cursor: null
+                  prev_page_url: null
+                properties:
+                  data:
+                    type: array
+                    example:
+                      -
+                        id: 0023df66-7dfa-4009-afb0-57601eaa717c
+                        name: 'Persevering encompassing instruction set Adventure'
+                        destination: 'East Melissa'
+                        from: '2025-09-03T00:00:00.000000Z'
+                        to: '2025-09-12T00:00:00.000000Z'
+                        description: 'Particular lawyer spring detail.'
+                        mapbox_full_address: '5454 Maria Road, Chanstad, PR 05254'
+                        length: 10
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 002cb297-1bd3-42d9-a1f8-4e52844d93ce
+                        name: 'Multi-tiered dedicated Graphical User Interface Adventure'
+                        destination: 'West Dwayne'
+                        from: '2026-01-16T00:00:00.000000Z'
+                        to: '2026-01-26T00:00:00.000000Z'
+                        description: 'Contain budget player style.'
+                        mapbox_full_address: '856 Michael Ways Suite 927, Lake Patrick, GA 04930'
+                        length: 11
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 00e635e8-e5bf-493d-bddc-a2f7646a1ad2
+                        name: 'Programmable global moratorium Adventure'
+                        destination: 'New Noah'
+                        from: '2025-05-08T00:00:00.000000Z'
+                        to: '2025-05-17T00:00:00.000000Z'
+                        description: 'Suffer six happen score feeling where leader benefit. Soldier interview enjoy decide almost debate.'
+                        mapbox_full_address: '0386 Melissa Overpass Suite 740, North Brandonfort, PA 58289'
+                        length: 10
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 017a2387-e56a-4381-a8f6-a969ac9c395a
+                        name: 'Extended client-driven process improvement Adventure'
+                        destination: 'West Ashleeburgh'
+                        from: '2025-11-28T00:00:00.000000Z'
+                        to: '2025-12-03T00:00:00.000000Z'
+                        description: 'Two assume certainly east meeting.'
+                        mapbox_full_address: 'Unit 1061 Box 8643, DPO AP 75013'
+                        length: 6
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 01ae5026-4132-43fd-a8cb-6c63ad34fe01
+                        name: 'Focused needs-based moratorium Adventure'
+                        destination: 'West Ashleyhaven'
+                        from: '2025-12-14T00:00:00.000000Z'
+                        to: '2025-12-18T00:00:00.000000Z'
+                        description: 'Which natural movement somebody rest.'
+                        mapbox_full_address: '95305 Daisy Points, East Joannabury, KS 20549'
+                        length: 5
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 05c04696-dd89-4c08-91cc-09b12c29478a
+                        name: 'Streamlined multi-tasking capacity Adventure'
+                        destination: Leahbury
+                        from: '2025-07-30T00:00:00.000000Z'
+                        to: '2025-08-05T00:00:00.000000Z'
+                        description: 'Full really chair cold enter medical sign.'
+                        mapbox_full_address: '29598 Moore Rest, Hardytown, VA 57658'
+                        length: 7
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 0800b3a5-8118-4bb6-a9df-b3a51f92510a
+                        name: 'Re-contextualized motivating hub Adventure'
+                        destination: Paulaside
+                        from: '2025-09-05T00:00:00.000000Z'
+                        to: '2025-09-10T00:00:00.000000Z'
+                        description: 'Early which evening cultural production like.'
+                        mapbox_full_address: '8057 Ruth Glen Apt. 244, Petersonburgh, MI 51767'
+                        length: 6
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 080f61b0-e5e6-4646-8ef5-6a52fc5551ba
+                        name: 'Managed impactful instruction set Adventure'
+                        destination: Sarahmouth
+                        from: '2026-03-31T00:00:00.000000Z'
+                        to: '2026-04-08T00:00:00.000000Z'
+                        description: 'Student game evidence participant fill.'
+                        mapbox_full_address: '91516 James Lane Apt. 486, Mitchellfort, ND 19162'
+                        length: 9
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 0bd6f438-010b-4728-8a32-b028b3a61109
+                        name: 'Inverse reciprocal framework Adventure'
+                        destination: 'Port Michael'
+                        from: '2025-03-06T00:00:00.000000Z'
+                        to: '2025-03-13T00:00:00.000000Z'
+                        description: 'Sure toward area.'
+                        mapbox_full_address: '969 Dalton Locks Suite 666, Huberfurt, NC 36840'
+                        length: 8
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 1174d22f-5133-4b5e-85c9-18e48aa62185
+                        name: 'Right-sized leadingedge synergy Adventure'
+                        destination: 'Port Steven'
+                        from: '2025-01-18T00:00:00.000000Z'
+                        to: '2025-01-28T00:00:00.000000Z'
+                        description: 'Note PM outside market. The understand new.'
+                        mapbox_full_address: '48036 Smith Groves, Kennethstad, OR 87391'
+                        length: 11
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 14d5a12b-0adc-4c38-846a-2ba9388e6e2a
+                        name: 'Devolved asynchronous flexibility Adventure'
+                        destination: 'South Danielleton'
+                        from: '2025-04-22T00:00:00.000000Z'
+                        to: '2025-04-25T00:00:00.000000Z'
+                        description: 'Anyone go low thus thus reflect over. Image list because should suffer leg.'
+                        mapbox_full_address: '5873 Chung Street Apt. 738, West Kelseyside, WA 75762'
+                        length: 4
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 16ab0040-add2-42a3-88d7-5d3df177e0e5
+                        name: 'Persevering analyzing initiative Adventure'
+                        destination: 'East Heather'
+                        from: '2026-02-25T00:00:00.000000Z'
+                        to: '2026-03-03T00:00:00.000000Z'
+                        description: 'Woman test continue situation day call garden. Itself outside pay teach.'
+                        mapbox_full_address: '131 Nguyen Square, Greenland, WA 26605'
+                        length: 7
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 16e7a201-e12b-47e6-a870-63083bce01f6
+                        name: 'Pre-emptive scalable artificial intelligence Adventure'
+                        destination: Martinbury
+                        from: '2026-08-11T00:00:00.000000Z'
+                        to: '2026-08-19T00:00:00.000000Z'
+                        description: 'Employee drop population idea. Both part machine story food then.'
+                        mapbox_full_address: '0381 Eric Walks Suite 076, New Lisaberg, AZ 48921'
+                        length: 9
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 19d3d9d5-4579-4e13-944a-fa0e3435b338
+                        name: 'Expanded scalable system engine Adventure'
+                        destination: 'West Seanside'
+                        from: '2025-04-07T00:00:00.000000Z'
+                        to: '2025-04-17T00:00:00.000000Z'
+                        description: 'Onto first support woman return want.'
+                        mapbox_full_address: '770 Cooper Alley, East Marissa, FM 25604'
+                        length: 11
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 1f3bfb90-21c0-41fd-86ff-093b42c43269
+                        name: 'Future-proofed grid-enabled definition Adventure'
+                        destination: 'South Holly'
+                        from: '2025-02-03T00:00:00.000000Z'
+                        to: '2025-02-12T00:00:00.000000Z'
+                        description: 'Enter book cost word popular order young. Brother wait particularly talk stop.'
+                        mapbox_full_address: '82994 Rush Islands, Port Glenshire, CT 80358'
+                        length: 10
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 224ceaac-deb0-43f2-ad3c-6022f34a4f81
+                        name: 'Organized dynamic service-desk Adventure'
+                        destination: 'New James'
+                        from: '2026-09-23T00:00:00.000000Z'
+                        to: '2026-09-28T00:00:00.000000Z'
+                        description: 'North computer process soon national.'
+                        mapbox_full_address: '14833 Nicole Canyon Suite 532, Port Joshuastad, CA 31156'
+                        length: 6
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 25a88508-9fb8-44e2-b99f-59dab96407cf
+                        name: 'Profit-focused bi-directional hub Adventure'
+                        destination: Garychester
+                        from: '2025-09-10T00:00:00.000000Z'
+                        to: '2025-09-13T00:00:00.000000Z'
+                        description: 'Effort continue man some leg they traditional lay. Strategy determine home cold.'
+                        mapbox_full_address: '19001 Perry Union Apt. 485, North Jacob, MI 62430'
+                        length: 4
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 26609aed-6490-407c-b73b-76d7e0ef6af3
+                        name: 'Multi-tiered web-enabled array Adventure'
+                        destination: 'North Maryburgh'
+                        from: '2026-07-10T00:00:00.000000Z'
+                        to: '2026-07-17T00:00:00.000000Z'
+                        description: 'Federal ready discuss president type smile. Place way edge go.'
+                        mapbox_full_address: '40716 Hunter Estates, Lake Justinmouth, FL 40166'
+                        length: 8
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 2a2e3db0-6e1f-4205-a38a-59abe050d2d1
+                        name: 'Monitored bottom-line superstructure Adventure'
+                        destination: 'East William'
+                        from: '2025-04-21T00:00:00.000000Z'
+                        to: '2025-04-28T00:00:00.000000Z'
+                        description: 'Growth improve concern laugh. Push pattern difference peace.'
+                        mapbox_full_address: '20765 Michael Light Suite 294, North Joshuaport, MH 05064'
+                        length: 8
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                      -
+                        id: 2d1e3363-2385-4abb-a348-cef743160769
+                        name: 'Enterprise-wide exuding customer loyalty Adventure'
+                        destination: Alisonfurt
+                        from: '2026-07-07T00:00:00.000000Z'
+                        to: '2026-07-16T00:00:00.000000Z'
+                        description: 'Check test weight fish ground above. Identify fall have although among.'
+                        mapbox_full_address: '66175 Devon Radial, Port Kimberlyshire, ME 95914'
+                        length: 10
+                        users:
+                          -
+                            id: 9bd2630b-2f67-418d-b578-f47824179f57
+                            username: test
+                            display_name: 'Test Account'
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 0023df66-7dfa-4009-afb0-57601eaa717c
+                        name:
+                          type: string
+                          example: 'Persevering encompassing instruction set Adventure'
+                        destination:
+                          type: string
+                          example: 'East Melissa'
+                        from:
+                          type: string
+                          example: '2025-09-03T00:00:00.000000Z'
+                        to:
+                          type: string
+                          example: '2025-09-12T00:00:00.000000Z'
+                        description:
+                          type: string
+                          example: 'Particular lawyer spring detail.'
+                        mapbox_full_address:
+                          type: string
+                          example: '5454 Maria Road, Chanstad, PR 05254'
+                        length:
+                          type: integer
+                          example: 10
+                        users:
+                          type: array
+                          example:
+                            -
+                              id: 9bd2630b-2f67-418d-b578-f47824179f57
+                              username: test
+                              display_name: 'Test Account'
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: 9bd2630b-2f67-418d-b578-f47824179f57
+                              username:
+                                type: string
+                                example: test
+                              display_name:
+                                type: string
+                                example: 'Test Account'
+                  path:
+                    type: string
+                    example: 'http://localhost:8000/api/template'
+                  per_page:
+                    type: integer
+                    example: 20
+                  next_cursor:
+                    type: string
+                    example: eyJpZCI6IjJkMWUzMzYzLTIzODUtNGFiYi1hMzQ4LWNlZjc0MzE2MDc2OSIsIl9wb2ludHNUb05leHRJdGVtcyI6dHJ1ZX0
+                  next_page_url:
+                    type: string
+                    example: 'http://localhost:8000/api/template?cursor=eyJpZCI6IjJkMWUzMzYzLTIzODUtNGFiYi1hMzQ4LWNlZjc0MzE2MDc2OSIsIl9wb2ludHNUb05leHRJdGVtcyI6dHJ1ZX0'
+                  prev_cursor:
+                    type: string
+                    example: null
+                  prev_page_url:
+                    type: string
+                    example: null
+      tags:
+        - Endpoints
+      security: []
+  '/api/template/{journey_id}':
+    get:
+      summary: 'Show the requested template.'
+      operationId: showTheRequestedTemplate
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: 0023df66-7dfa-4009-afb0-57601eaa717c
+                  name: 'Persevering encompassing instruction set Adventure'
+                  destination: 'East Melissa'
+                  from: '2025-09-03T00:00:00.000000Z'
+                  to: '2025-09-12T00:00:00.000000Z'
+                  invite: 04c22506-58e8-4fbd-8fa9-1470580b8987
+                  created_at: '2024-11-15T13:11:07.000000Z'
+                  updated_at: '2024-11-15T13:11:07.000000Z'
+                  mapbox_id: mapbox-035
+                  mapbox_full_address: '5454 Maria Road, Chanstad, PR 05254'
+                  longitude: '-165.93923000'
+                  latitude: '81.77889200'
+                  description: 'Particular lawyer spring detail.'
+                  is_template: 1
+                  created_from: null
+                  is_guest: 0
+                  users:
+                    -
+                      id: 9bd2630b-2f67-418d-b578-f47824179f57
+                      display_name: 'Test Account'
+                      username: test
+                properties:
+                  id:
+                    type: string
+                    example: 0023df66-7dfa-4009-afb0-57601eaa717c
+                  name:
+                    type: string
+                    example: 'Persevering encompassing instruction set Adventure'
+                  destination:
+                    type: string
+                    example: 'East Melissa'
+                  from:
+                    type: string
+                    example: '2025-09-03T00:00:00.000000Z'
+                  to:
+                    type: string
+                    example: '2025-09-12T00:00:00.000000Z'
+                  invite:
+                    type: string
+                    example: 04c22506-58e8-4fbd-8fa9-1470580b8987
+                  created_at:
+                    type: string
+                    example: '2024-11-15T13:11:07.000000Z'
+                  updated_at:
+                    type: string
+                    example: '2024-11-15T13:11:07.000000Z'
+                  mapbox_id:
+                    type: string
+                    example: mapbox-035
+                  mapbox_full_address:
+                    type: string
+                    example: '5454 Maria Road, Chanstad, PR 05254'
+                  longitude:
+                    type: string
+                    example: '-165.93923000'
+                  latitude:
+                    type: string
+                    example: '81.77889200'
+                  description:
+                    type: string
+                    example: 'Particular lawyer spring detail.'
+                  is_template:
+                    type: integer
+                    example: 1
+                  created_from:
+                    type: string
+                    example: null
+                  is_guest:
+                    type: integer
+                    example: 0
+                  users:
+                    type: array
+                    example:
+                      -
+                        id: 9bd2630b-2f67-418d-b578-f47824179f57
+                        display_name: 'Test Account'
+                        username: test
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 9bd2630b-2f67-418d-b578-f47824179f57
+                        display_name:
+                          type: string
+                          example: 'Test Account'
+                        username:
+                          type: string
+                          example: test
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+  '/api/template/{journey_id}/activity':
+    get:
+      summary: 'Get all activities of the specified journey.'
+      operationId: getAllActivitiesOfTheSpecifiedJourney
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  activities: []
+                  count: 0
+                properties:
+                  activities:
+                    type: array
+                    example: []
+                  count:
+                    type: integer
+                    example: 0
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: journey_id
+        description: 'The ID of the journey.'
+        example: 0023df66-7dfa-4009-afb0-57601eaa717c
+        required: true
+        schema:
+          type: string
+  '/api/user/{username}/template':
+    get:
+      summary: 'Display all templates created by the user.'
+      operationId: displayAllTemplatesCreatedByTheUser
+      description: ''
+      parameters: []
+      responses:
+        404:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'No query results for model [App\Models\User].'
+                properties:
+                  message:
+                    type: string
+                    example: 'No query results for model [App\Models\User].'
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: username
+        description: ''
+        example: 9bd2630b-2f67-418d-b578-f47824179f57
+        required: true
+        schema:
+          type: string
+  /api/project:
+    get:
+      summary: ''
+      operationId: getApiProject
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  time: 638
+                  sprints: 5
+                  user_stories: 20
+                properties:
+                  time:
+                    type: integer
+                    example: 638
+                  sprints:
+                    type: integer
+                    example: 5
+                  user_stories:
+                    type: integer
+                    example: 20
+      tags:
+        - Endpoints
+      security: []
+  /api/user/change-password:
+    put:
+      summary: 'Change the password of the authenticated user.'
+      operationId: changeThePasswordOfTheAuthenticatedUser
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: ''
+                  example: eE8(w10
+                  nullable: true
+                new_password:
+                  type: string
+                  description: ''
+                  example: possimus
+                  nullable: false
+              required:
+                - new_password
+      security: []
+  /api/user/change-email:
+    put:
+      summary: 'Change the email of the authenticated user.'
+      operationId: changeTheEmailOfTheAuthenticatedUser
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: ''
+                  example: 'Z8)VCy&_'
+                  nullable: true
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: pollich.anais@example.net
+                  nullable: false
+              required:
+                - email
+      security: []
+  /api/user/change-display-name:
+    put:
+      summary: 'Change the display name of the authenticated user.'
+      operationId: changeTheDisplayNameOfTheAuthenticatedUser
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                display_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: pevbetx
+                  nullable: false
+              required:
+                - display_name
+      security: []
+  /api/user/change-username:
+    put:
+      summary: 'Change the username of the authenticated user.'
+      operationId: changeTheUsernameOfTheAuthenticatedUser
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: 'Must contain only letters, numbers, dashes and underscores. Must not be greater than 255 characters.'
+                  example: rbw
+                  nullable: false
+              required:
+                - username
+      security: []
+  /api/user/delete-account:
+    delete:
+      summary: 'Delete the account of the authenticated user.'
+      operationId: deleteTheAccountOfTheAuthenticatedUser
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: ''
+                  example: 'w(^LQ59j.:|VQ>_'
+                  nullable: true
+      security: []
+  '/api/user/{username}':
+    get:
+      summary: 'Get a user by username.'
+      operationId: getAUserByUsername
+      description: ''
+      parameters: []
+      responses:
+        404:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'No query results for model [App\Models\User].'
+                properties:
+                  message:
+                    type: string
+                    example: 'No query results for model [App\Models\User].'
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: username
+        description: ''
+        example: 9bd2630b-2f67-418d-b578-f47824179f57
+        required: true
+        schema:
+          type: string
+  /api/user:
+    get:
+      summary: 'Get all users.'
+      operationId: getAllUsers
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  current_page: 1
+                  data:
+                    -
+                      username: a_a
+                      display_name: 'a a'
+                    -
+                      username: aaaa
+                      display_name: aaaa
+                    -
+                      username: findstef
+                      display_name: 'Stefania Manastirska'
+                    -
+                      username: jost
+                      display_name: jost
+                    -
+                      username: raven
+                      display_name: 'Raven '
+                    -
+                      username: raven5ijd
+                      display_name: Raven
+                    -
+                      username: ravenc5xg
+                      display_name: Raven
+                    -
+                      username: ravend2cb
+                      display_name: Raven
+                    -
+                      username: ravene6gu
+                      display_name: Raven
+                    -
+                      username: ravenimfl
+                      display_name: Raven
+                  first_page_url: 'http://localhost:8000/api/user?page=1'
+                  from: 1
+                  next_page_url: 'http://localhost:8000/api/user?page=2'
+                  path: 'http://localhost:8000/api/user'
+                  per_page: 10
+                  prev_page_url: null
+                  to: 10
+                properties:
+                  current_page:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    example:
+                      -
+                        username: a_a
+                        display_name: 'a a'
+                      -
+                        username: aaaa
+                        display_name: aaaa
+                      -
+                        username: findstef
+                        display_name: 'Stefania Manastirska'
+                      -
+                        username: jost
+                        display_name: jost
+                      -
+                        username: raven
+                        display_name: 'Raven '
+                      -
+                        username: raven5ijd
+                        display_name: Raven
+                      -
+                        username: ravenc5xg
+                        display_name: Raven
+                      -
+                        username: ravend2cb
+                        display_name: Raven
+                      -
+                        username: ravene6gu
+                        display_name: Raven
+                      -
+                        username: ravenimfl
+                        display_name: Raven
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                          example: a_a
+                        display_name:
+                          type: string
+                          example: 'a a'
+                  first_page_url:
+                    type: string
+                    example: 'http://localhost:8000/api/user?page=1'
+                  from:
+                    type: integer
+                    example: 1
+                  next_page_url:
+                    type: string
+                    example: 'http://localhost:8000/api/user?page=2'
+                  path:
+                    type: string
+                    example: 'http://localhost:8000/api/user'
+                  per_page:
+                    type: integer
+                    example: 10
+                  prev_page_url:
+                    type: string
+                    example: null
+                  to:
+                    type: integer
+                    example: 10
+      tags:
+        - Endpoints
+      security: []
+tags:
+  -
+    name: Endpoints
+    description: ''
