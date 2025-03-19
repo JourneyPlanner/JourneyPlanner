@@ -28,8 +28,8 @@ const { t } = useTranslate();
 const client = useSanctumClient();
 const file = ref();
 const fileType = ref(props.editBanner ? "banner" : "image");
-const altTextGerman = ref();
-const altTextEnglish = ref();
+const altTextGerman = ref("");
+const altTextEnglish = ref("");
 const route = useRoute();
 const confirmVisible = ref(false);
 
@@ -123,12 +123,16 @@ async function handleSubmit() {
             if (response.ok) {
                 toast.add({
                     severity: "success",
-                    summary: t.value(
-                        "form.input.activity.edit.toast.success.heading",
-                    ),
-                    detail: t.value(
-                        "form.input.activity.edit.toast.success.detail",
-                    ),
+                    summary: t.value("business.upload.image.success", {
+                        image: props.editBanner
+                            ? t.value("business.banner")
+                            : t.value("business.image"),
+                    }),
+                    detail: t.value("business.upload.image.success.detail", {
+                        image: props.editBanner
+                            ? t.value("business.banner")
+                            : t.value("business.image"),
+                    }),
                     life: 6000,
                 });
                 emit(
@@ -159,6 +163,7 @@ async function handleSubmit() {
 }
 
 async function deleteImage() {
+    confirmVisible.value = false;
     const type = {
         type: props.editBanner ? "banner" : "image",
     };
@@ -169,19 +174,19 @@ async function deleteImage() {
             if (response.ok) {
                 toast.add({
                     severity: "success",
-                    summary: t.value(
-                        "form.input.activity.edit.toast.success.heading",
-                    ),
-                    detail: t.value(
-                        "form.input.activity.edit.toast.success.detail",
-                    ),
+                    summary: t.value("business.delete.image", {
+                        image: props.editBanner
+                            ? t.value("business.banner")
+                            : t.value("business.image"),
+                    }),
+                    detail: t.value("business.delete.image.detail", {
+                        image: props.editBanner
+                            ? t.value("business.banner")
+                            : t.value("business.image"),
+                    }),
                     life: 6000,
                 });
-                emit(
-                    "updateImage",
-                    response._data.alt_texts,
-                    response._data.link,
-                );
+                emit("updateImage");
                 close();
             }
         },
@@ -207,7 +212,7 @@ async function deleteImage() {
 <template>
     <div>
         <Sidebar
-            id="member-sidebar"
+            id="image-edit-sidebar"
             v-model:visible="isVisible"
             position="right"
             :block-scroll="true"
@@ -305,14 +310,12 @@ async function deleteImage() {
                     <label
                         for="upload"
                         class="cursor-pointer text-natural-600 dark:text-natural-300"
-                        >{{
-                            fileName || "Dateien hier ablegen/einfügen"
-                        }}</label
+                        >{{ fileName || t("business.upload.file") }}</label
                     >
                     <img
                         v-if="imageUrl"
                         :src="imageUrl"
-                        alt="Uploaded Image"
+                        :alt="t('business.input.uploaded.image')"
                         class="max-h-40 object-contain"
                     />
                 </div>
@@ -325,8 +328,9 @@ async function deleteImage() {
                     >
                         <T key-name="business.upload.current.image.remove" />
                     </div>
-                    <p class="mx-1">|</p>
+                    <span v-if="imageUrl" class="mx-1">|</span>
                     <div
+                        v-if="imageUrl"
                         class="cursor-pointer hover:underline"
                         @click="removeImage"
                     >

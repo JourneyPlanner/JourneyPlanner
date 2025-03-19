@@ -34,14 +34,16 @@ const toast = useToast();
 watch(
     () => props.isSidebarVisible,
     (value) => {
-        isVisible.value = value;
-        textGerman.value = props.texts.de?.text;
-        textEnglish.value = props.texts.en?.text;
-        buttonTextGerman.value = props.texts.de?.button;
-        buttonTextEnglish.value = props.texts.en?.button;
-        headlineTextGerman.value = props.texts.de?.company_name;
-        headlineTextEnglish.value = props.texts.en?.company_name;
-        link.value = props.link;
+        if (value) {
+            isVisible.value = value;
+            textGerman.value = props.texts.de?.text;
+            textEnglish.value = props.texts.en?.text;
+            buttonTextGerman.value = props.texts.de?.button;
+            buttonTextEnglish.value = props.texts.en?.button;
+            headlineTextGerman.value = props.texts.de?.company_name;
+            headlineTextEnglish.value = props.texts.en?.company_name;
+            link.value = props.link;
+        }
     },
 );
 
@@ -97,7 +99,7 @@ async function handleSubmit() {
         ],
     };
 
-    const buisnessTexts = {
+    const businessTexts = {
         texts: [
             {
                 company_name: headlineTextGerman.value,
@@ -121,15 +123,11 @@ async function handleSubmit() {
             if (response.ok) {
                 toast.add({
                     severity: "success",
-                    summary: t.value(
-                        "form.input.activity.edit.toast.success.heading",
-                    ),
-                    detail: t.value(
-                        "form.input.activity.edit.toast.success.detail",
-                    ),
+                    summary: t.value("business.change.text"),
+                    detail: t.value("business.change.text.detail"),
                     life: 6000,
                 });
-                emit("updateTexts", buisnessTexts);
+                emit("updateTexts", businessTexts);
                 close();
             }
         },
@@ -155,7 +153,7 @@ async function handleSubmit() {
 <template>
     <div>
         <Sidebar
-            id="member-sidebar"
+            id="text-edit-sidebar"
             v-model:visible="isVisible"
             position="right"
             :block-scroll="true"

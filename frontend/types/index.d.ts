@@ -157,4 +157,29 @@ declare global {
         total_ratings: number;
         visible: number;
     }
+
+    interface VisibleTemplate {
+        template_id: string;
+        visible: string;
+    }
+
+    interface Business {
+        id: string;
+        name: string;
+        slug: string;
+    }
+
+    interface AltTexts {
+        de: string;
+        en: string;
+    }
+
+    interface BusinessTexts {
+        texts: {
+            company_name: string;
+            button_link: string;
+            button: string;
+            text: string;
+        }[];
+    }
 }

@@ -27,10 +27,18 @@ const journeyRange = ref();
 const creationType = ref();
 const slug = ref();
 
-if (route.query.creationType == "template") {
-    creationType.value = route.query.creationType;
-    cancel.value = router.options.history.state.back as string;
-    slug.value = route.query.slug;
+if (route.query.creationType === "template") {
+    slug.value = route.query.slug as string;
+    if (router.options.history.state.back) {
+        creationType.value = route.query.creationType;
+        cancel.value = router.options.history.state.back as string;
+    } else {
+        cancel.value = "business/" + slug.value;
+    }
+
+    useHead({
+        title: t.value("title.journey.create"),
+    });
 }
 
 const title = t.value("title.journey.create");
@@ -142,7 +150,7 @@ const onSubmit = handleSubmit(async (values) => {
         role: 1,
     };
 
-    if (creationType.value == "template") {
+    if (creationType.value == "template" && slug.value) {
         await client(`/api/business/${slug.value}/createTemplate`, {
             method: "POST",
             body: journey,
@@ -277,7 +285,7 @@ function changeRange(newRange: Date[]) {
                     >
                         <T
                             :key-name="
-                                creationType != 'template'
+                                creationType !== 'template'
                                     ? 'form.header.journey.create'
                                     : 'form.header.template.create'
                             "
@@ -288,7 +296,7 @@ function changeRange(newRange: Date[]) {
                             id="journey-name"
                             name="journeyName"
                             :translation-key="
-                                creationType != 'template'
+                                creationType !== 'template'
                                     ? 'form.input.journey.name'
                                     : 'form.input.template.name'
                             "
@@ -298,7 +306,7 @@ function changeRange(newRange: Date[]) {
                             id="journey-destination"
                             name="journeyDestination"
                             :placeholder="
-                                creationType != 'template'
+                                creationType !== 'template'
                                     ? t('form.input.journey.destination')
                                     : t('form.input.template.destination')
                             "
@@ -312,18 +320,26 @@ function changeRange(newRange: Date[]) {
                                 id="journey-range-calendar"
                                 name="journeyRange"
                                 class="w-full"
-                                translation-key="form.input.journey.dates"
+                                :translation-key="
+                                    creationType !== 'template'
+                                        ? t('form.input.journey.dates')
+                                        : t('form.input.dates')
+                                "
                                 @change-input="changeRange"
                             />
                         </div>
                         <Divider
-                            v-if="isAuthenticated && creationType != 'template'"
+                            v-if="
+                                isAuthenticated && creationType !== 'template'
+                            "
                             type="solid"
                             class="border-10 mt-2 border pt-0 text-calypso-300 dark:text-calypso-400"
                         />
 
                         <div
-                            v-if="isAuthenticated && creationType != 'template'"
+                            v-if="
+                                isAuthenticated && creationType !== 'template'
+                            "
                             class="relative my-2 flex"
                         >
                             <input
@@ -380,7 +396,7 @@ function changeRange(newRange: Date[]) {
                 </fieldset>
             </div>
             <div
-                v-if="creationType != 'template'"
+                v-if="creationType !== 'template'"
                 class="mt-2 flex items-center justify-center px-4 font-nunito"
             >
                 <div

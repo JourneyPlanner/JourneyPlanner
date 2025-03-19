@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { BusinessActivityCard } from "#components";
 import { useTolgee, useTranslate } from "@tolgee/vue";
 
 const route = useRoute();
@@ -100,7 +101,7 @@ const opening_hours = ref<string | null>(null);
 const phone = ref<string | null>(null);
 const isImageEditSidebarVisible = ref(false);
 const isTextEditSidebarVisible = ref(false);
-const isactivityInfoDialogVisible = ref(false);
+const isActivityInfoDialogVisible = ref(false);
 const editBanner = ref(false);
 const editOtherImage = ref(false);
 const partOfBusiness = ref(false);
@@ -112,9 +113,11 @@ await client(`/api/me/business`, {
     async onResponse({ response }) {
         if (response.ok) {
             if (response._data[0]) {
-                if (response._data[0].slug == slug.value) {
-                    partOfBusiness.value = true;
-                }
+                response._data.forEach((element: Business) => {
+                    if (element.slug === slug.value) {
+                        partOfBusiness.value = true;
+                    }
+                });
             }
         }
     },
@@ -124,9 +127,7 @@ if (partOfBusiness.value) {
     await client(`/api/business/${slug.value}/texts`, {
         async onResponse({ response }) {
             if (response.ok) {
-                if (response._data) {
-                    allTexts.value = response._data;
-                }
+                allTexts.value = response?._data;
             }
         },
     });
@@ -265,13 +266,13 @@ function openActivityDialog(activity: Activity) {
     isActivityInfoVisible.value = true;
 }
 
-function changeEditing() {
+function toggleEditing() {
     editingEnabled.value = !editingEnabled.value;
 }
 
 function editImage(whichImage: string) {
     if (editingEnabled.value) {
-        if (whichImage == "banner") {
+        if (whichImage === "banner") {
             editOtherImage.value = false;
             editBanner.value = true;
         } else {
@@ -282,12 +283,7 @@ function editImage(whichImage: string) {
     }
 }
 
-interface AltTexte {
-    de: string;
-    en: string;
-}
-
-async function updateImage(altTexsts: AltTexte, link: string) {
+async function updateImage(altTexsts: AltTexts, link: string) {
     if (editBanner.value) {
         images.banner.link = "";
         images.banner.alt_text =
@@ -313,31 +309,25 @@ const updatedBannerUrl = computed(
     () => `${images.banner.link}?t=${Date.now()}`,
 );
 
-interface BusinessTexts {
-    texts: {
-        company_name: string;
-        button_link: string;
-        button: string;
-        text: string;
-    }[];
-}
-
-function updateTexts(buisnessTexts: BusinessTexts) {
+function updateTexts(businessTexts: BusinessTexts) {
     const index = tolgee.value.getLanguage() == "de" ? 0 : 1;
-    texts.company_name = buisnessTexts.texts[index].company_name;
-    texts.text = buisnessTexts.texts[index].text;
-    texts.button = buisnessTexts.texts[index].button;
-    texts.button_link = buisnessTexts.texts[index].button_link;
+    texts.company_name = businessTexts.texts[index].company_name;
+    texts.text = businessTexts.texts[index].text;
+    texts.button = businessTexts.texts[index].button;
+    texts.button_link = businessTexts.texts[index].button_link;
 
-    allTexts.value.de.company_name = buisnessTexts.texts[0].company_name;
-    allTexts.value.de.text = buisnessTexts.texts[0].text;
-    allTexts.value.de.button = buisnessTexts.texts[0].button;
-    allTexts.value.de.button_link = buisnessTexts.texts[0].button_link;
+    allTexts.value.de.company_name = businessTexts.texts[0].company_name;
+    allTexts.value.de.text = businessTexts.texts[0].text;
+    allTexts.value.de.button = businessTexts.texts[0].button;
+    allTexts.value.de.button_link = businessTexts.texts[0].button_link;
 
-    allTexts.value.en.company_name = buisnessTexts.texts[1].company_name;
-    allTexts.value.en.text = buisnessTexts.texts[1].text;
-    allTexts.value.en.button = buisnessTexts.texts[1].button;
-    allTexts.value.en.button_link = buisnessTexts.texts[1].button_link;
+    allTexts.value.en.company_name = businessTexts.texts[1].company_name;
+    allTexts.value.en.text = businessTexts.texts[1].text;
+    allTexts.value.en.button = businessTexts.texts[1].button;
+    allTexts.value.en.button_link = businessTexts.texts[1].button_link;
+    useHead({
+        title: businessTexts.texts[index].company_name,
+    });
 }
 
 const updatedImageUrl = computed(() => `${images.image.link}?t=${Date.now()}`);
@@ -357,6 +347,7 @@ function reloadData() {
         >
             <div
                 class="absolute inset-0 top-20 z-50 bg-gradient-to-b from-natural-50/0 to-background dark:from-background-dark/0 dark:to-background-dark lg:top-48"
+                :class="editingEnabled ? 'cursor-pointer' : ''"
             ></div>
             <div
                 class="absolute left-2.5 top-2.5 z-50 rounded-xl border-2 border-natural-400 bg-natural-50 text-text drop-shadow-lg backdrop-blur-xl hover:border-natural-400 hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-natural-600 dark:hover:bg-natural-950 lg:left-5 lg:top-5"
@@ -373,8 +364,8 @@ function reloadData() {
             </div>
             <button
                 v-if="partOfBusiness"
-                class="absolute right-2.5 top-2.5 z-50 hidden rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-text drop-shadow-lg backdrop-blur-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 lg:right-5 lg:top-5 lg:flex"
-                @click.stop="changeEditing"
+                class="absolute right-2.5 top-2.5 z-[49] hidden rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-text drop-shadow-lg backdrop-blur-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 lg:right-5 lg:top-5 lg:flex"
+                @click.stop="toggleEditing"
             >
                 <SvgEdit v-if="!editingEnabled" class="w-4" />
                 <SvgEditOff v-if="editingEnabled" class="w-[1.14rem]" />
@@ -477,7 +468,7 @@ function reloadData() {
                     </h2>
                     <span
                         class="pi pi-info-circle ml-auto cursor-pointer text-xl text-natural-500 hover:text-natural-950 dark:text-natural-400 hover:dark:text-natural-50"
-                        @click="isactivityInfoDialogVisible = true"
+                        @click="isActivityInfoDialogVisible = true"
                     ></span>
                 </div>
                 <TransitionGroup
@@ -539,14 +530,14 @@ function reloadData() {
                     <NuxtLink
                         v-if="editingEnabled"
                         :to="'/journey/new?creationType=template&slug=' + slug"
-                        class="ml-auto flex w-48 items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 py-1 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 lg:w-52"
+                        class="ml-auto flex w-48 items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 py-1 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 max-lg:hidden lg:w-52"
                     >
                         <span class="pi pi-plus ml-1 mr-2 text-lg" />
                         <T key-name="business.create.templates" />
                     </NuxtLink>
                     <button
                         v-if="editingEnabled"
-                        class="ml-4 flex w-48 items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 py-1 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 lg:w-60"
+                        class="ml-4 flex w-48 items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 py-1 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 max-lg:hidden lg:w-60"
                         @click="isTemplateDialogVisible = true"
                     >
                         <span class="pi pi-pencil ml-1 mr-2 text-lg" />
@@ -564,7 +555,7 @@ function reloadData() {
                             showMoreTemplates || index < maxDisplayedTemplates
                         "
                         :key="'template-card' + template.id"
-                        :v-if="template.visible == 1"
+                        :v-if="template.visible === 1"
                         class="hidden md:block"
                         :template="template"
                         :displayed-in-profile="false"
@@ -649,8 +640,36 @@ function reloadData() {
                     openedTemplate = undefined;
                 "
             />
+            <ConfirmDialog
+                :draggable="false"
+                group="username"
+                class="z-[1000]"
+                :pt="{
+                    root: {
+                        class: 'z-[1000] bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    header: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    content: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    footer: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
+                    },
+                    closeButton: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
+                    },
+                    closeButtonIcon: {
+                        class: 'h-5 w-5',
+                    },
+                    mask: {
+                        class: 'z-[1000] ',
+                    },
+                }"
+            />
         </div>
-        <div v-if="partOfBusiness">
+        <div v-if="partOfBusiness" id="extra-dialogs">
             <BusinessEditImageEditSidebar
                 :is-sidebar-visible="isImageEditSidebarVisible"
                 :edit-banner="editBanner"
@@ -667,8 +686,8 @@ function reloadData() {
                 @update-texts="updateTexts"
             />
             <BusinessActivityInfoDialog
-                :is-visible="isactivityInfoDialogVisible"
-                @close="isactivityInfoDialogVisible = false"
+                :is-visible="isActivityInfoDialogVisible"
+                @close="isActivityInfoDialogVisible = false"
             />
             <BusinessDialogsTemplateDialog
                 :is-visible="isTemplateDialogVisible"

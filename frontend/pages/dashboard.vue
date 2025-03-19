@@ -35,7 +35,7 @@ const searchValueJourneys = ref<string>("");
 //user settings
 const isUserSettingsVisible = ref<boolean>(false);
 
-//templatesf
+//templates
 const openedTemplate = ref<Template>();
 const isTemplatePopupVisible = ref(false);
 const isFilterVisible = ref<boolean>(route.query.filter_open === "true");
@@ -1319,7 +1319,6 @@ function editJourney(journey: Journey, id: string) {
                     v-if="businessSlug"
                     :to="'/business/' + businessSlug"
                     class="mr-2.5"
-                    data-test="user-profile-button"
                 >
                     <span
                         class="pi pi-building mt-1 rounded-full border-2 border-dandelion-300 p-1.5 text-xl text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"

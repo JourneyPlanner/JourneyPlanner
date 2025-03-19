@@ -24,8 +24,8 @@ const {
     loader: templatesLoader,
     showMoreData: showMoreTemplates,
     reloadData: reloadData,
-    showMoreDataText: t.value("subdomain.activities.showMore"),
-    showLessDataText: t.value("subdomain.activities.showLess"),
+    showMoreDataText: t.value("business.templates.showMore"),
+    showLessDataText: t.value("business.templates.showLess"),
     identifier: "business-templates-private",
     apiEndpoint: `/api/business/${props.businessSlug}/templates`,
     params: {
@@ -39,7 +39,7 @@ const checkedItems = ref(new Map());
 const changedItems = ref(new Map());
 
 watch(templates.value, (newTemplates) => {
-    newTemplates.forEach((element) => {
+    newTemplates.forEach((element: Template) => {
         checkedItems.value.set(element.id, element.visible == 1 ? true : false);
     });
 });
@@ -56,7 +56,9 @@ const close = () => {
 };
 
 async function changeVisibleTemplates() {
-    const visibleTemplates: { templates: object[] } = { templates: [] };
+    const visibleTemplates: { templates: VisibleTemplate[] } = {
+        templates: [],
+    };
     changedItems.value.forEach((value, key) => {
         visibleTemplates.templates.push({
             template_id: key,
