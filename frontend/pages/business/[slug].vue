@@ -99,15 +99,15 @@ const mapbox_id = ref<string | null>(null);
 const name = ref<string | null>(null);
 const opening_hours = ref<string | null>(null);
 const phone = ref<string | null>(null);
-const isImageEditSidebarVisible = ref(false);
-const isTextEditSidebarVisible = ref(false);
-const isActivityInfoDialogVisible = ref(false);
-const editBanner = ref(false);
-const editOtherImage = ref(false);
-const partOfBusiness = ref(false);
+const isImageEditSidebarVisible = ref<boolean>(false);
+const isTextEditSidebarVisible = ref<boolean>(false);
+const isActivityInfoDialogVisible = ref<boolean>(false);
+const editBanner = ref<boolean>(false);
+const editOtherImage = ref<boolean>(false);
+const partOfBusiness = ref<boolean>(false);
 const allTexts = ref();
-const reloadActivityData = ref(false);
-const reloadTemplateData = ref(false);
+const reloadActivityData = ref<boolean>(false);
+const reloadTemplateData = ref<boolean>(false);
 
 await client(`/api/me/business`, {
     async onResponse({ response }) {
@@ -288,18 +288,14 @@ async function updateImage(altTexsts: AltTexts, link: string) {
         images.banner.link = "";
         images.banner.alt_text =
             tolgee.value.getLanguage() == "de" ? altTexsts.de : altTexsts.en;
-        setTimeout(() => {
-            images.banner.link = link;
-        }, 50);
+        images.banner.link = `${link}?forceRefresh=${Date.now()}`;
         allTexts.value.de.alt_texts.banner = altTexsts.de;
         allTexts.value.en.alt_texts.banner = altTexsts.en;
     } else {
         images.image.link = "";
         images.image.alt_text =
             tolgee.value.getLanguage() == "de" ? altTexsts.de : altTexsts.en;
-        setTimeout(() => {
-            images.image.link = link;
-        }, 50);
+        images.image.link = `${link}?forceRefresh=${Date.now()}`;
         allTexts.value.de.alt_texts.image = altTexsts.de;
         allTexts.value.en.alt_texts.image = altTexsts.en;
     }

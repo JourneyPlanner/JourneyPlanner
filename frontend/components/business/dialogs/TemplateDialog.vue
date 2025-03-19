@@ -107,6 +107,13 @@ function toggleTemplateAvailability(id: string) {
     checkedItems.value.set(id, !checkedItems.value.get(id));
     changedItems.value.set(id, checkedItems.value.get(id));
 }
+
+function removeTemplate(id: string) {
+    templates.value.splice(
+        templates.value.findIndex((obj) => obj.id === id),
+        1,
+    );
+}
 </script>
 <template>
     <div>
@@ -208,6 +215,7 @@ function toggleTemplateAvailability(id: string) {
                             :template="template"
                             :displayed-in-profile="false"
                             :opened-from-business="true"
+                            @template-deleted="removeTemplate"
                         />
                     </div>
                 </TransitionGroup>

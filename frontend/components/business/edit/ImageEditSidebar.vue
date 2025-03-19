@@ -22,7 +22,7 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "updateImage"]);
 
-const isVisible = ref(props.isSidebarVisible);
+const isVisible = ref<boolean>(props.isSidebarVisible);
 const toast = useToast();
 const { t } = useTranslate();
 const client = useSanctumClient();
@@ -38,8 +38,8 @@ watch(
     (value) => {
         isVisible.value = value;
         fileType.value = props.editBanner ? "banner" : "image";
-        altTextGerman.value = props.texts.de.alt_texts[fileType.value];
-        altTextEnglish.value = props.texts.en.alt_texts[fileType.value];
+        altTextGerman.value = props.texts.de?.alt_texts[fileType.value];
+        altTextEnglish.value = props.texts.en?.alt_texts[fileType.value];
     },
 );
 

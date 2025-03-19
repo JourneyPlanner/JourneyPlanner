@@ -160,7 +160,7 @@ declare global {
 
     interface VisibleTemplate {
         template_id: string;
-        visible: string;
+        visible: number;
     }
 
     interface Business {

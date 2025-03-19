@@ -151,15 +151,15 @@ const onSubmit = handleSubmit(async (values) => {
     };
 
     if (creationType.value == "template" && slug.value) {
-        await client(`/api/business/${slug.value}/createTemplate`, {
+        await client(`/api/business/${slug.value}/templates/create`, {
             method: "POST",
             body: journey,
             async onResponse({ response }) {
                 if (response.ok) {
                     toast.add({
                         severity: "success",
-                        summary: t.value("form.journey.toast.success.heading"),
-                        detail: t.value("form.journey.toast.success"),
+                        summary: t.value("form.template.toast.success.heading"),
+                        detail: t.value("form.template.toast.success"),
                         life: 3000,
                     });
                     store.addJourney(response._data);
