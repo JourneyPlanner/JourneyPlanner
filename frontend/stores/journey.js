@@ -26,6 +26,10 @@ export const useJourneyStore = defineStore("journey", () => {
         return this.journey.invite;
     }
 
+    function setInvite(invite) {
+        this.journey.invite = invite;
+    }
+
     function getDestination() {
         return this.journey.destination;
     }
@@ -83,6 +87,7 @@ export const useJourneyStore = defineStore("journey", () => {
         getID,
         getName,
         getInvite,
+        setInvite,
         getDestination,
         getMapboxFullAddress,
         getMapboxID,
