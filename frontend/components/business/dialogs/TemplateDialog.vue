@@ -12,8 +12,11 @@ const { t } = useTranslate();
 const client = useSanctumClient();
 const visible = ref();
 const templatesLoader = ref<HTMLElement | undefined>();
-const showMoreTemplates = ref(false);
-const reloadData = ref(false);
+const showMoreTemplates = ref<boolean>(false);
+const reloadData = ref<boolean>(false);
+const loadingEdit = ref<boolean>(false);
+const openedTemplate = ref<Template | undefined>();
+const isTemplatePopupVisible = ref<boolean>(false);
 const maxDisplayedTemplates = 8;
 const {
     data: templates,
@@ -56,6 +59,7 @@ const close = () => {
 };
 
 async function changeVisibleTemplates() {
+    loadingEdit.value = true;
     const visibleTemplates: { templates: VisibleTemplate[] } = {
         templates: [],
     };
@@ -69,6 +73,7 @@ async function changeVisibleTemplates() {
         method: "POST",
         body: visibleTemplates,
         async onResponse({ response }) {
+            loadingEdit.value = false;
             if (response.ok) {
                 toast.add({
                     severity: "success",
@@ -108,11 +113,9 @@ function toggleTemplateAvailability(id: string) {
     changedItems.value.set(id, checkedItems.value.get(id));
 }
 
-function removeTemplate(id: string) {
-    templates.value.splice(
-        templates.value.findIndex((obj) => obj.id === id),
-        1,
-    );
+function openTemplateDialog(template: Template) {
+    openedTemplate.value = template;
+    isTemplatePopupVisible.value = true;
 }
 </script>
 <template>
@@ -125,10 +128,10 @@ function removeTemplate(id: string) {
             :draggable="false"
             close-on-escape
             dismissable-mask
-            class="mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-full"
+            class="z-[60] mx-5 flex w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark max-sm:collapse sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-full"
             :pt="{
                 root: {
-                    class: 'font-nunito bg-background dark:bg-background-dark z-10 max-sm:collapse',
+                    class: 'z-[60] font-nunito bg-background dark:bg-background-dark z-10 max-sm:collapse',
                 },
                 header: {
                     class: 'flex gap-x-3 pb-2 font-nunito bg-background dark:bg-background-dark px-4 sm:px-7',
@@ -147,7 +150,7 @@ function removeTemplate(id: string) {
                     class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10 ',
                 },
                 mask: {
-                    class: 'max-sm:collapse bg-natural-50',
+                    class: 'max-sm:collapse bg-natural-50 z-[60] ',
                 },
             }"
             @hide="close"
@@ -215,7 +218,8 @@ function removeTemplate(id: string) {
                             :template="template"
                             :displayed-in-profile="false"
                             :opened-from-business="true"
-                            @template-deleted="removeTemplate"
+                            @template-deleted="reloadData = true"
+                            @open-template="openTemplateDialog(template)"
                         />
                     </div>
                 </TransitionGroup>
@@ -259,6 +263,7 @@ function removeTemplate(id: string) {
                         type="button"
                         :label="t('common.save')"
                         icon="pi pi-save"
+                        :loading="loadingEdit"
                         :pt="{
                             root: {
                                 class: 'flex items-center justify-center',
@@ -273,5 +278,14 @@ function removeTemplate(id: string) {
                 </div>
             </div>
         </Dialog>
+        <TemplatePopup
+            v-if="openedTemplate"
+            :template="openedTemplate"
+            :is-template-dialog-visible="isTemplatePopupVisible"
+            @close="
+                isTemplatePopupVisible = false;
+                openedTemplate = undefined;
+            "
+        />
     </div>
 </template>

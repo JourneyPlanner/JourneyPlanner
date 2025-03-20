@@ -182,4 +182,29 @@ declare global {
             text: string;
         }[];
     }
+
+    interface InternationalBusinessSiteTexts {
+        de: {
+            company_name: string;
+            button_link: string;
+            button: string;
+            text: string;
+            alt_texts: {
+                banner: string;
+                image: string;
+            };
+        };
+        en: {
+            company_name: string;
+            button_link: string;
+            button: string;
+            text: string;
+            alt_texts: {
+                banner: string;
+                image: string;
+            };
+        };
+    }
+
+    type ImageEditFileType = "banner" | "image";
 }

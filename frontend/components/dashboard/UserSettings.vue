@@ -14,10 +14,13 @@ const props = defineProps({
         default: "",
     },
     propId: { type: String, required: true },
+    requiresPassword: {
+        type: Boolean,
+        required: true,
+    },
 });
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "refresh"]);
 
-const nuxtApp = useNuxtApp();
 const isVisible = ref(props.visible);
 const { t } = useTranslate();
 const colorScheme = ref("");
@@ -85,13 +88,6 @@ onMounted(() => {
         language.value = "Deutsch";
     }
 });
-
-const { data: requiresPassword, refresh: refreshRequiresPassword } =
-    await useAsyncData("reqpw", () => client(`/api/me/`), {
-        getCachedData(key) {
-            return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
-        },
-    });
 
 const close = () => {
     emit("close");
@@ -845,9 +841,7 @@ function blur(e: Event) {
                             :visible="isEmailChangeDialogVisible"
                             :curr-email="currEmail"
                             :user-id="propId"
-                            :requires-password="
-                                requiresPassword.requiresPassword
-                            "
+                            :requires-password="props.requiresPassword"
                             @close="isEmailChangeDialogVisible = false"
                             @change-email="changeEmail"
                         />
@@ -877,11 +871,9 @@ function blur(e: Event) {
                         </button>
                         <SettingsPasswordChange
                             :visible="isPasswordChangeDialogVisible"
-                            :requires-password="
-                                requiresPassword.requiresPassword
-                            "
+                            :requires-password="props.requiresPassword"
                             @close="isPasswordChangeDialogVisible = false"
-                            @changed-password="refreshRequiresPassword"
+                            @changed-password="emit('refresh')"
                         />
                     </div>
                 </div>
@@ -1069,9 +1061,7 @@ function blur(e: Event) {
                         </button>
                         <SettingsDeleteAccount
                             :visible="isDeleteAccountDialogVisible"
-                            :requires-password="
-                                requiresPassword.requiresPassword
-                            "
+                            :requires-password="props.requiresPassword"
                             @close="isDeleteAccountDialogVisible = false"
                         />
                     </div>

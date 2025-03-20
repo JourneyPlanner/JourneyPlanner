@@ -10,7 +10,7 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    link: {
+    linkProp: {
         type: String,
         required: true,
     },
@@ -20,29 +20,30 @@ const emit = defineEmits(["close", "updateTexts"]);
 
 const isVisible = ref(props.isSidebarVisible);
 const { t } = useTranslate();
-const textGerman = ref(props.texts.de?.text);
-const textEnglish = ref(props.texts.en?.text);
-const buttonTextGerman = ref(props.texts.de?.button);
-const buttonTextEnglish = ref(props.texts.en?.button);
-const headlineTextGerman = ref(props.texts.de?.company_name);
-const headlineTextEnglish = ref(props.texts.en?.company_name);
-const link = ref(props.link);
+const textGerman = ref<string>("");
+const textEnglish = ref<string>("");
+const buttonTextGerman = ref<string>("");
+const buttonTextEnglish = ref<string>("");
+const headlineTextGerman = ref<string>("");
+const headlineTextEnglish = ref<string>("");
+const link = ref<string>();
 const client = useSanctumClient();
 const route = useRoute();
 const toast = useToast();
+const loadingEdit = ref<boolean>(false);
 
 watch(
     () => props.isSidebarVisible,
     (value) => {
+        isVisible.value = value;
         if (value) {
-            isVisible.value = value;
             textGerman.value = props.texts.de?.text;
             textEnglish.value = props.texts.en?.text;
             buttonTextGerman.value = props.texts.de?.button;
             buttonTextEnglish.value = props.texts.en?.button;
             headlineTextGerman.value = props.texts.de?.company_name;
             headlineTextEnglish.value = props.texts.en?.company_name;
-            link.value = props.link;
+            link.value = props.linkProp;
         }
     },
 );
@@ -52,6 +53,7 @@ const close = () => {
 };
 
 async function handleSubmit() {
+    loadingEdit.value = true;
     const texts = {
         texts: [
             {
@@ -120,6 +122,7 @@ async function handleSubmit() {
         method: "POST",
         body: texts,
         async onResponse({ response }) {
+            loadingEdit.value = false;
             if (response.ok) {
                 toast.add({
                     severity: "success",
@@ -385,6 +388,7 @@ async function handleSubmit() {
                     type="submit"
                     :label="t('common.save')"
                     icon="pi pi-save"
+                    :loading="loadingEdit"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
                         label: {

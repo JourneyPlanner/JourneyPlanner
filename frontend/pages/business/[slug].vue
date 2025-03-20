@@ -102,10 +102,10 @@ const phone = ref<string | null>(null);
 const isImageEditSidebarVisible = ref<boolean>(false);
 const isTextEditSidebarVisible = ref<boolean>(false);
 const isActivityInfoDialogVisible = ref<boolean>(false);
-const editBanner = ref<boolean>(false);
+const imageEditType = ref<string>("");
 const editOtherImage = ref<boolean>(false);
 const partOfBusiness = ref<boolean>(false);
-const allTexts = ref();
+const allTexts = ref<InternationalBusinessSiteTexts>();
 const reloadActivityData = ref<boolean>(false);
 const reloadTemplateData = ref<boolean>(false);
 
@@ -274,9 +274,9 @@ function editImage(whichImage: string) {
     if (editingEnabled.value) {
         if (whichImage === "banner") {
             editOtherImage.value = false;
-            editBanner.value = true;
+            imageEditType.value = "banner";
         } else {
-            editBanner.value = false;
+            imageEditType.value = "image";
             editOtherImage.value = true;
         }
         isImageEditSidebarVisible.value = true;
@@ -284,20 +284,20 @@ function editImage(whichImage: string) {
 }
 
 async function updateImage(altTexsts: AltTexts, link: string) {
-    if (editBanner.value) {
+    if (imageEditType.value === "banner") {
         images.banner.link = "";
         images.banner.alt_text =
             tolgee.value.getLanguage() == "de" ? altTexsts.de : altTexsts.en;
         images.banner.link = `${link}?forceRefresh=${Date.now()}`;
-        allTexts.value.de.alt_texts.banner = altTexsts.de;
-        allTexts.value.en.alt_texts.banner = altTexsts.en;
+        allTexts.value!.de.alt_texts.banner = altTexsts.de;
+        allTexts.value!.en.alt_texts.banner = altTexsts.en;
     } else {
         images.image.link = "";
         images.image.alt_text =
             tolgee.value.getLanguage() == "de" ? altTexsts.de : altTexsts.en;
         images.image.link = `${link}?forceRefresh=${Date.now()}`;
-        allTexts.value.de.alt_texts.image = altTexsts.de;
-        allTexts.value.en.alt_texts.image = altTexsts.en;
+        allTexts.value!.de.alt_texts.image = altTexsts.de;
+        allTexts.value!.en.alt_texts.image = altTexsts.en;
     }
 }
 
@@ -312,15 +312,15 @@ function updateTexts(businessTexts: BusinessTexts) {
     texts.button = businessTexts.texts[index].button;
     texts.button_link = businessTexts.texts[index].button_link;
 
-    allTexts.value.de.company_name = businessTexts.texts[0].company_name;
-    allTexts.value.de.text = businessTexts.texts[0].text;
-    allTexts.value.de.button = businessTexts.texts[0].button;
-    allTexts.value.de.button_link = businessTexts.texts[0].button_link;
+    allTexts.value!.de.company_name = businessTexts.texts[0].company_name;
+    allTexts.value!.de.text = businessTexts.texts[0].text;
+    allTexts.value!.de.button = businessTexts.texts[0].button;
+    allTexts.value!.de.button_link = businessTexts.texts[0].button_link;
 
-    allTexts.value.en.company_name = businessTexts.texts[1].company_name;
-    allTexts.value.en.text = businessTexts.texts[1].text;
-    allTexts.value.en.button = businessTexts.texts[1].button;
-    allTexts.value.en.button_link = businessTexts.texts[1].button_link;
+    allTexts.value!.en.company_name = businessTexts.texts[1].company_name;
+    allTexts.value!.en.text = businessTexts.texts[1].text;
+    allTexts.value!.en.button = businessTexts.texts[1].button;
+    allTexts.value!.en.button_link = businessTexts.texts[1].button_link;
     useHead({
         title: businessTexts.texts[index].company_name,
     });
@@ -347,6 +347,7 @@ function reloadData() {
             ></div>
             <div
                 class="absolute left-2.5 top-2.5 z-50 rounded-xl border-2 border-natural-400 bg-natural-50 text-text drop-shadow-lg backdrop-blur-xl hover:border-natural-400 hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-natural-600 dark:hover:bg-natural-950 lg:left-5 lg:top-5"
+                @click.stop
             >
                 <NuxtLink
                     :to="backRoute"
@@ -668,16 +669,16 @@ function reloadData() {
         <div v-if="partOfBusiness" id="extra-dialogs">
             <BusinessEditImageEditSidebar
                 :is-sidebar-visible="isImageEditSidebarVisible"
-                :edit-banner="editBanner"
+                :image-edit-type="imageEditType"
                 :edit-other-image="editOtherImage"
-                :texts="allTexts"
+                :texts="allTexts!"
                 @close="isImageEditSidebarVisible = false"
                 @update-image="updateImage"
             />
             <BusinessEditTextEditSidebar
                 :is-sidebar-visible="isTextEditSidebarVisible"
-                :texts="allTexts"
-                :link="texts.button_link"
+                :texts="allTexts!"
+                :link-prop="texts.button_link"
                 @close="isTextEditSidebarVisible = false"
                 @update-texts="updateTexts"
             />

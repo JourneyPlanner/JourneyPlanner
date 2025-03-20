@@ -1617,6 +1617,7 @@ function editJourney(journey: Journey, id: string) {
             <DashboardUserSettings
                 :visible="isUserSettingsVisible"
                 :prop-username="user.username"
+                :requires-password="user.requiresPassword"
                 :prop-displayname="user.display_name"
                 :prop-email="user.email"
                 :prop-new-email-needing-verification="
@@ -1627,6 +1628,7 @@ function editJourney(journey: Journey, id: string) {
                     isUserSettingsVisible = false;
                     refreshUser();
                 "
+                @refresh="refreshUser()"
             />
             <ConfirmDialog
                 :draggable="false"

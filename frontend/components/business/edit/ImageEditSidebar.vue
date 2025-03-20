@@ -6,16 +6,12 @@ const props = defineProps({
         type: Boolean,
         required: true,
     },
-    editBanner: {
-        type: Boolean,
-        required: true,
-    },
-    editOtherImage: {
-        type: Boolean,
+    imageEditType: {
+        type: String,
         required: true,
     },
     texts: {
-        type: Object,
+        type: Object as PropType<InternationalBusinessSiteTexts>,
         required: true,
     },
 });
@@ -27,17 +23,20 @@ const toast = useToast();
 const { t } = useTranslate();
 const client = useSanctumClient();
 const file = ref();
-const fileType = ref(props.editBanner ? "banner" : "image");
-const altTextGerman = ref("");
-const altTextEnglish = ref("");
+const fileType = ref<ImageEditFileType>(
+    props.imageEditType as ImageEditFileType,
+);
+const altTextGerman = ref<string>("");
+const altTextEnglish = ref<string>("");
 const route = useRoute();
-const confirmVisible = ref(false);
+const confirmVisible = ref<boolean>(false);
+const loadingEdit = ref<boolean>(false);
 
 watch(
     () => props.isSidebarVisible,
     (value) => {
         isVisible.value = value;
-        fileType.value = props.editBanner ? "banner" : "image";
+        fileType.value = props.imageEditType as ImageEditFileType;
         altTextGerman.value = props.texts.de?.alt_texts[fileType.value];
         altTextEnglish.value = props.texts.en?.alt_texts[fileType.value];
     },
@@ -99,6 +98,7 @@ const removeImage = () => {
 };
 
 async function handleSubmit() {
+    loadingEdit.value = true;
     const altTexts = [
         { language: "de", alt_text: altTextGerman.value },
         { language: "en", alt_text: altTextEnglish.value },
@@ -109,7 +109,7 @@ async function handleSubmit() {
         formData.append("image", file.value);
     }
 
-    formData.append("type", props.editBanner ? "banner" : "image");
+    formData.append("type", props.imageEditType);
 
     altTexts.forEach((alt, index) => {
         formData.append(`alt_texts[${index}][language]`, alt.language);
@@ -120,18 +120,21 @@ async function handleSubmit() {
         method: "POST",
         body: formData,
         async onResponse({ response }) {
+            loadingEdit.value = false;
             if (response.ok) {
                 toast.add({
                     severity: "success",
                     summary: t.value("business.upload.image.success", {
-                        image: props.editBanner
-                            ? t.value("business.banner")
-                            : t.value("business.image"),
+                        image:
+                            props.imageEditType === "banner"
+                                ? t.value("business.banner")
+                                : t.value("business.image"),
                     }),
                     detail: t.value("business.upload.image.success.detail", {
-                        image: props.editBanner
-                            ? t.value("business.banner")
-                            : t.value("business.image"),
+                        image:
+                            props.imageEditType === "banner"
+                                ? t.value("business.banner")
+                                : t.value("business.image"),
                     }),
                     life: 6000,
                 });
@@ -165,7 +168,7 @@ async function handleSubmit() {
 async function deleteImage() {
     confirmVisible.value = false;
     const type = {
-        type: props.editBanner ? "banner" : "image",
+        type: props.imageEditType,
     };
     await client(`/api/business/${route.params.slug}/image`, {
         method: "Delete",
@@ -175,14 +178,16 @@ async function deleteImage() {
                 toast.add({
                     severity: "success",
                     summary: t.value("business.delete.image", {
-                        image: props.editBanner
-                            ? t.value("business.banner")
-                            : t.value("business.image"),
+                        image:
+                            props.imageEditType === "banner"
+                                ? t.value("business.banner")
+                                : t.value("business.image"),
                     }),
                     detail: t.value("business.delete.image.detail", {
-                        image: props.editBanner
-                            ? t.value("business.banner")
-                            : t.value("business.image"),
+                        image:
+                            props.imageEditType === "banner"
+                                ? t.value("business.banner")
+                                : t.value("business.image"),
                     }),
                     life: 6000,
                 });
@@ -250,9 +255,10 @@ async function deleteImage() {
                         <T
                             key-name="business.edit.image"
                             :params="{
-                                image: props.editBanner
-                                    ? t('business.banner')
-                                    : t('business.image'),
+                                image:
+                                    props.imageEditType === 'banner'
+                                        ? t('business.banner')
+                                        : t('business.image'),
                             }"
                         />
                     </h1>
@@ -270,9 +276,10 @@ async function deleteImage() {
                             <T
                                 key-name="business.choose.image"
                                 :params="{
-                                    image: props.editBanner
-                                        ? t('business.banner')
-                                        : t('business.image'),
+                                    image:
+                                        props.imageEditType === 'banner'
+                                            ? t('business.banner')
+                                            : t('business.image'),
                                 }"
                             />
                         </h3>
@@ -287,9 +294,10 @@ async function deleteImage() {
                     <T
                         key-name="business.upload.image.detail"
                         :params="{
-                            image: props.editBanner
-                                ? t('business.banner')
-                                : t('business.image'),
+                            image:
+                                props.imageEditType === 'banner'
+                                    ? t('business.banner')
+                                    : t('business.image'),
                         }"
                     />
                 </div>
@@ -379,6 +387,7 @@ async function deleteImage() {
                     type="submit"
                     :label="t('common.save')"
                     icon="pi pi-save"
+                    :loading="loadingEdit"
                     :pt="{
                         root: { class: 'flex items-center justify-center' },
                         label: {
@@ -392,7 +401,7 @@ async function deleteImage() {
         <div>
             <BusinessConfirmRemoveImage
                 :visible="confirmVisible"
-                :edit-banner="props.editBanner"
+                :image-edit-type="props.imageEditType"
                 @close="confirmVisible = false"
                 @remove="deleteImage"
             />

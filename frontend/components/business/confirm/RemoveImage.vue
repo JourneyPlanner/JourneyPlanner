@@ -3,8 +3,8 @@ import { useTranslate } from "@tolgee/vue";
 
 const props = defineProps({
     visible: { type: Boolean, required: true },
-    editBanner: {
-        type: Boolean,
+    imageEditType: {
+        type: String,
         required: true,
     },
 });
@@ -71,9 +71,10 @@ const remove = () => {
                         <T
                             key-name="business.remove.image"
                             :params="{
-                                image: props.editBanner
-                                    ? t('business.banner')
-                                    : t('business.image'),
+                                image:
+                                    props.imageEditType === 'banner'
+                                        ? t('business.banner')
+                                        : t('business.image'),
                             }"
                         />
                     </div>
@@ -87,9 +88,10 @@ const remove = () => {
                     <T
                         key-name="business.remove.image.detail"
                         :params="{
-                            image: props.editBanner
-                                ? t('business.banner')
-                                : t('business.image'),
+                            image:
+                                props.imageEditType === 'banner'
+                                    ? t('business.banner')
+                                    : t('business.image'),
                         }"
                     />
                 </div>
@@ -108,9 +110,10 @@ const remove = () => {
                         <T
                             key-name="business.remove.image"
                             :params="{
-                                image: props.editBanner
-                                    ? t('business.banner')
-                                    : t('business.image'),
+                                image:
+                                    props.imageEditType === 'banner'
+                                        ? t('business.banner')
+                                        : t('business.image'),
                             }"
                         />
                     </button>

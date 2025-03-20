@@ -63,6 +63,39 @@ const templateItems = ref([
     },
 ]);
 
+const businessTemplateItems = ref([
+    {
+        label: t.value("dashboard.options.header"),
+        items: [
+            {
+                label: t.value("dashboard.options.edit"),
+                icon: "pi pi-pencil",
+                className: "text-natural-50",
+                command: () => {
+                    router.push({
+                        path: `/template/${props.template.id}/edit`,
+                    });
+                },
+            },
+            {
+                label: t.value("dashboard.options.delete"),
+                icon: "pi pi-trash",
+                command: ($event: MenuItemCommandEvent) => {
+                    confirmDelete($event.originalEvent);
+                },
+            },
+            {
+                label: t.value("business.template.show"),
+                icon: "pi pi-eye",
+                className: "text-natural-50",
+                command: () => {
+                    emit("openTemplate", props.template.id);
+                },
+            },
+        ],
+    },
+]);
+
 const confirmDelete = (event: Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
@@ -132,7 +165,7 @@ function handleUserClick() {
         <Menu
             id="overlay_menu"
             ref="menu"
-            :model="templateItems"
+            :model="openedFromBusiness ? businessTemplateItems : templateItems"
             class="z-[502] bg-natural-50 dark:bg-natural-800"
             :popup="true"
             :pt="{
