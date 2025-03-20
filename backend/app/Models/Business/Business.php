@@ -14,6 +14,8 @@ class Business extends Model
 {
     use HasFactory, HasUuids;
 
+    public const AVAILABLE_LANGUAGES = "de,en";
+
     /**
      * The attributes that are mass assignable.
      *

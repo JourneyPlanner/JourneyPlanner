@@ -183,7 +183,7 @@ Route::post("business/{business:slug}/templates", [
     BusinessController::class,
     "updateTemplates",
 ])->middleware("auth:sanctum");
-Route::post("business/{business:slug}/createTemplate", [
+Route::post("business/{business:slug}/templates/create", [
     BusinessController::class,
     "createTemplate",
 ])->middleware("auth:sanctum");

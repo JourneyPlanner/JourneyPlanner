@@ -38,7 +38,7 @@ class BusinessController extends Controller
     public function show(Business $business, Request $request): JsonResponse
     {
         $validated = $request->validate([
-            "language" => "required|string|in:en,de",
+            "language" => "required|string|in:" . Business::AVAILABLE_LANGUAGES,
         ]);
 
         // Load images and texts for the specified language
@@ -134,7 +134,7 @@ class BusinessController extends Controller
     ): JsonResponse {
         $validated = $request->validate([
             "per_page" => "nullable|integer|min:1|max:100",
-            "private" => "nullable|boolean",
+            "private" => "nullable|boolean", // Includes business templates which are not set to visible
         ]);
         $perPage = $validated["per_page"] ?? TemplateController::$perPage;
         $includePrivate = $validated["private"] ?? false;
@@ -240,7 +240,7 @@ class BusinessController extends Controller
         // Validate the request
         $validated = $request->validate([
             "texts" => "required|array",
-            "texts.*.language" => "in:de,en",
+            "texts.*.language" => "in:" . Business::AVAILABLE_LANGUAGES,
             "texts.*.texts" => "required|array",
             "texts.*.texts.*.key" =>
                 "required|string|in:company_name,button,button_link,text",
@@ -289,9 +289,10 @@ class BusinessController extends Controller
         $template->save();
 
         // Set the visibility
-        $business
-            ->templates()
-            ->attach($template->id, ["created_by_business" => true]);
+        $business->templates()->attach($template->id, [
+            "created_by_business" => true,
+            "visible" => false,
+        ]);
 
         return response()->json($template, 201);
     }
@@ -344,7 +345,8 @@ class BusinessController extends Controller
             "image" => "nullable|image",
             "type" => "required|string|in:image,banner",
             "alt_texts" => "required|array",
-            "alt_texts.*.language" => "required|string|in:en,de",
+            "alt_texts.*.language" =>
+                "required|string|in:" . Business::AVAILABLE_LANGUAGES,
             "alt_texts.*.alt_text" => "required|string|max:255",
         ]);
 
@@ -366,7 +368,10 @@ class BusinessController extends Controller
                 ["file_name" => $fileName]
             );
         } elseif (!$businessImage) {
-            return response()->json(["error" => "No image provided"], 400);
+            $businessImage = new BusinessImage([
+                "business_id" => $business->id,
+                "key" => $validated["type"],
+            ]);
         }
 
         // Save alt texts
