@@ -187,12 +187,24 @@ async function handleSubmit() {
                         class="pi pi-times text-2xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
                     />
                 </button>
-                <div class="w-full">
+                <div class="flex w-full">
                     <h1
                         class="mr-3 truncate text-nowrap text-2xl font-semibold text-text dark:text-natural-50"
                     >
                         <T key-name="business.edit.text" />
                     </h1>
+                    <Button
+                        icon="pi pi-save"
+                        :loading="loadingEdit"
+                        :pt="{
+                            root: { class: 'flex items-center justify-center' },
+                            label: {
+                                class: 'display-block flex-none font-nunito',
+                            },
+                        }"
+                        class="ml-auto mt-auto flex h-9 flex-row justify-center rounded-xl border-2 border-atlantis-400 bg-natural-50 text-center text-text hover:bg-atlantis-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-atlantis-30040"
+                        @click="handleSubmit"
+                    />
                 </div>
             </template>
             <form class="flex flex-col" @submit.prevent="handleSubmit">

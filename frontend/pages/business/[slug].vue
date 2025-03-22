@@ -60,8 +60,8 @@ if (error.value) {
     });
 }
 
-const backRoute = ref<string>("/dashboard?tab=templates");
-const ALLOWED_ROUTES = ["/journey", "/dashboard?tab=templates", "/user"];
+const backRoute = ref<string>("/dashboard");
+const ALLOWED_ROUTES = ["/journey", "/dashboard", "/user"];
 
 const showMoreTemplates = ref(false);
 const editingEnabled = ref(false);
@@ -135,16 +135,22 @@ if (partOfBusiness.value) {
 
 onMounted(async () => {
     const lastRoute = router.options.history.state.back as string;
+    console.log(lastRoute);
 
     if (
         (lastRoute &&
             lastRoute !== "" &&
-            ALLOWED_ROUTES.some((route) => lastRoute.startsWith(route))) ||
+            ALLOWED_ROUTES.some(
+                (route) =>
+                    lastRoute.startsWith(route) &&
+                    lastRoute !==
+                        "/journey/new?creationType=template&slug=demo",
+            )) ||
         lastRoute === "/"
     ) {
         backRoute.value = lastRoute;
     } else {
-        backRoute.value = "/dashboard?tab=templates";
+        backRoute.value = "/dashboard";
     }
 
     window.addEventListener("resize", updateScreenWidth);
@@ -283,21 +289,29 @@ function editImage(whichImage: string) {
     }
 }
 
-async function updateImage(altTexsts: AltTexts, link: string) {
+async function updateImage(altTexsts: AltTexts | null = null, link: string) {
     if (imageEditType.value === "banner") {
         images.banner.link = "";
-        images.banner.alt_text =
-            tolgee.value.getLanguage() == "de" ? altTexsts.de : altTexsts.en;
-        images.banner.link = `${link}?forceRefresh=${Date.now()}`;
-        allTexts.value!.de.alt_texts.banner = altTexsts.de;
-        allTexts.value!.en.alt_texts.banner = altTexsts.en;
+        if (altTexsts) {
+            images.banner.alt_text =
+                tolgee.value.getLanguage() == "de"
+                    ? altTexsts.de
+                    : altTexsts.en;
+            images.banner.link = `${link}?forceRefresh=${Date.now()}`;
+            allTexts.value!.de.alt_texts.banner = altTexsts.de;
+            allTexts.value!.en.alt_texts.banner = altTexsts.en;
+        }
     } else {
         images.image.link = "";
-        images.image.alt_text =
-            tolgee.value.getLanguage() == "de" ? altTexsts.de : altTexsts.en;
-        images.image.link = `${link}?forceRefresh=${Date.now()}`;
-        allTexts.value!.de.alt_texts.image = altTexsts.de;
-        allTexts.value!.en.alt_texts.image = altTexsts.en;
+        if (altTexsts) {
+            images.image.alt_text =
+                tolgee.value.getLanguage() == "de"
+                    ? altTexsts.de
+                    : altTexsts.en;
+            images.image.link = `${link}?forceRefresh=${Date.now()}`;
+            allTexts.value!.de.alt_texts.image = altTexsts.de;
+            allTexts.value!.en.alt_texts.image = altTexsts.en;
+        }
     }
 }
 
@@ -361,7 +375,7 @@ function reloadData() {
             </div>
             <button
                 v-if="partOfBusiness"
-                class="absolute right-2.5 top-2.5 z-[49] hidden rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-0.5 text-text drop-shadow-lg backdrop-blur-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 lg:right-5 lg:top-5 lg:flex"
+                class="absolute right-2.5 top-2.5 z-[49] hidden rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 text-text drop-shadow-lg backdrop-blur-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 lg:right-5 lg:top-5 lg:flex"
                 @click.stop="toggleEditing"
             >
                 <SvgEdit v-if="!editingEnabled" class="w-4" />
@@ -414,7 +428,7 @@ function reloadData() {
                         </button>
                         <button
                             v-if="editingEnabled"
-                            class="rounded-xlpy-1 mt-6 w-44 text-center text-lg font-semibold text-natural-950 hover:text-calypso-600 dark:text-natural-50 dark:hover:text-calypso-300 lg:w-48"
+                            class="rounded-xlpy-1 mt-6 w-44 text-center text-lg font-semibold text-natural-950 hover:text-calypso-600 hover:underline dark:text-natural-50 dark:hover:text-calypso-300 lg:w-48"
                             @click="isTextEditSidebarVisible = true"
                         >
                             <T key-name="business.edit.text" />

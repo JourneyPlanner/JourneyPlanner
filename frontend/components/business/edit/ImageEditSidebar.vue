@@ -29,20 +29,23 @@ const fileType = ref<ImageEditFileType>(
 const altTextGerman = ref<string>("");
 const altTextEnglish = ref<string>("");
 const route = useRoute();
-const confirmVisible = ref<boolean>(false);
+const confirmRemoveVisible = ref<boolean>(false);
+const confirmSaveVisible = ref<boolean>(false);
 const loadingEdit = ref<boolean>(false);
+const shouldClose = ref<boolean>(false);
 
 watch(
     () => props.isSidebarVisible,
     (value) => {
         isVisible.value = value;
         fileType.value = props.imageEditType as ImageEditFileType;
-        altTextGerman.value = props.texts.de?.alt_texts[fileType.value];
-        altTextEnglish.value = props.texts.en?.alt_texts[fileType.value];
+        altTextGerman.value = props.texts.de?.alt_texts[fileType.value] ?? "";
+        altTextEnglish.value = props.texts.en?.alt_texts[fileType.value] ?? "";
     },
 );
 
 const close = () => {
+    shouldClose.value = true;
     file.value = null;
     altTextEnglish.value = "";
     altTextGerman.value = "";
@@ -166,7 +169,7 @@ async function handleSubmit() {
 }
 
 async function deleteImage() {
-    confirmVisible.value = false;
+    confirmRemoveVisible.value = false;
     const type = {
         type: props.imageEditType,
     };
@@ -213,6 +216,15 @@ async function deleteImage() {
         },
     });
 }
+
+function handleHide() {
+    if (shouldClose.value) {
+        shouldClose.value = false;
+    } else {
+        isVisible.value = true;
+        confirmSaveVisible.value = true;
+    }
+}
 </script>
 <template>
     <div>
@@ -240,15 +252,18 @@ async function deleteImage() {
                     class: 'justify-start w-full h-full items-center collapse',
                 },
             }"
-            @hide="close"
+            @hide="handleHide"
         >
             <template #header>
-                <button class="-ml-6 flex justify-center pr-4" @click="close">
+                <button
+                    class="-ml-6 flex justify-center pr-4"
+                    @click="confirmSaveVisible = true"
+                >
                     <span
                         class="pi pi-times text-2xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
                     />
                 </button>
-                <div class="w-full">
+                <div class="flex w-full">
                     <h1
                         class="mr-3 truncate text-nowrap text-2xl font-semibold text-text dark:text-natural-50"
                     >
@@ -262,6 +277,18 @@ async function deleteImage() {
                             }"
                         />
                     </h1>
+                    <Button
+                        icon="pi pi-save"
+                        :loading="loadingEdit"
+                        :pt="{
+                            root: { class: 'flex items-center justify-center' },
+                            label: {
+                                class: 'display-block flex-none font-nunito',
+                            },
+                        }"
+                        class="ml-auto mt-auto flex h-9 flex-row justify-center rounded-xl border-2 border-atlantis-400 bg-natural-50 text-center text-text hover:bg-atlantis-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-atlantis-30040"
+                        @click="handleSubmit"
+                    />
                 </div>
             </template>
             <form
@@ -332,7 +359,7 @@ async function deleteImage() {
                 >
                     <div
                         class="cursor-pointer hover:underline"
-                        @click="confirmVisible = true"
+                        @click="confirmRemoveVisible = true"
                     >
                         <T key-name="business.upload.current.image.remove" />
                     </div>
@@ -400,10 +427,15 @@ async function deleteImage() {
         </Sidebar>
         <div>
             <BusinessConfirmRemoveImage
-                :visible="confirmVisible"
+                :visible="confirmRemoveVisible"
                 :image-edit-type="props.imageEditType"
-                @close="confirmVisible = false"
+                @close="confirmRemoveVisible = false"
                 @remove="deleteImage"
+            />
+            <BusinessConfirmSaveData
+                :visible="confirmSaveVisible"
+                @close="confirmSaveVisible = false"
+                @remove="close"
             />
         </div>
     </div>

@@ -169,77 +169,79 @@ function openTemplateDialog(template: Template) {
                     <div class="h-0.5 flex-grow bg-calypso-400" />
                 </div>
             </template>
+
             <div id="template-section">
-                <TransitionGroup
-                    name="fade"
-                    tag="div"
-                    class="relative mt-2 grid w-full grid-cols-2 gap-2 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-1 xl:grid-cols-4"
-                >
-                    <div
-                        v-for="(template, index) in templates"
-                        v-show="
-                            showMoreTemplates || index < maxDisplayedTemplates
-                        "
-                        :key="template.id"
-                        class="cursor-pointer rounded-xl px-2 py-2"
-                        :class="{
-                            'bg-natural-100': checkedItems.get(template.id),
-                        }"
-                        @click="toggleTemplateAvailability(template.id)"
+                <ScrollPanel class="h-[30rem] w-full">
+                    <TransitionGroup
+                        name="fade"
+                        tag="div"
+                        class="relative mt-2 grid w-full grid-cols-2 gap-2 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-1 xl:grid-cols-4"
                     >
-                        <label
-                            class="relative flex w-fit cursor-pointer items-center rounded-md p-1"
+                        <div
+                            v-for="(template, index) in templates"
+                            v-show="
+                                showMoreTemplates ||
+                                index < maxDisplayedTemplates
+                            "
+                            :key="template.id"
+                            class="cursor-pointer rounded-xl px-2 py-2"
+                            :class="{
+                                'bg-natural-100': checkedItems.get(template.id),
+                            }"
+                            @click="toggleTemplateAvailability(template.id)"
                         >
-                            <input
-                                :id="index.toString()"
-                                :checked="checkedItems.get(template.id)"
-                                type="checkbox"
-                                class="peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-calypso-400 bg-natural-50 transition-all checked:border-calypso-400 checked:bg-calypso-400 dark:bg-natural-800 checked:dark:bg-calypso-500"
-                            />
-                            <div
-                                class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-natural-50 opacity-0 transition-opacity peer-checked:opacity-100"
+                            <label
+                                class="relative flex w-fit cursor-pointer items-center rounded-md p-1"
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-3.5 w-3.5 fill-natural-50"
-                                    viewBox="0 0 20 20"
-                                    stroke-width="1"
+                                <input
+                                    :id="index.toString()"
+                                    :checked="checkedItems.get(template.id)"
+                                    type="checkbox"
+                                    class="peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-calypso-400 bg-natural-50 transition-all checked:border-calypso-400 checked:bg-calypso-400 dark:bg-natural-800 checked:dark:bg-calypso-500"
+                                />
+                                <div
+                                    class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-natural-50 opacity-0 transition-opacity peer-checked:opacity-100"
                                 >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-3.5 w-3.5 fill-natural-50"
+                                        viewBox="0 0 20 20"
+                                        stroke-width="1"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                </div>
+                            </label>
+                            <TemplateCard
+                                class="md:block"
+                                :template="template"
+                                :displayed-in-profile="false"
+                                :opened-from-business="true"
+                                @template-deleted="reloadData = true"
+                                @open-template="openTemplateDialog(template)"
+                            />
+                        </div>
+                    </TransitionGroup>
+
+                    <div v-if="templates.length === 0" class="col-span-full">
+                        <T key-name="subdomain.template.none" />
+                    </div>
+                    <div ref="templatesLoader" class="col-span-full">
+                        <div v-if="moreTemplatesAvailable && showMoreTemplates">
+                            <div class="flex justify-center">
+                                <ProgressSpinner class="w-10" />
                             </div>
-                        </label>
-                        <TemplateCard
-                            class="md:block"
-                            :template="template"
-                            :displayed-in-profile="false"
-                            :opened-from-business="true"
-                            @template-deleted="reloadData = true"
-                            @open-template="openTemplateDialog(template)"
-                        />
-                    </div>
-                </TransitionGroup>
-                <div v-if="templates.length === 0" class="col-span-full">
-                    <T key-name="subdomain.template.none" />
-                </div>
-                <div ref="templatesLoader" class="col-span-full">
-                    <div v-if="moreTemplatesAvailable && showMoreTemplates">
-                        <div class="flex justify-center">
-                            <ProgressSpinner class="w-10" />
-                        </div>
-                        <div class="flex justify-center italic">
-                            <T key-name="subdomain.templates.loading" />
+                            <div class="flex justify-center italic">
+                                <T key-name="subdomain.templates.loading" />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div
-                    v-if="templates.length > 0"
-                    class="mt-4 flex justify-center"
-                >
+                </ScrollPanel>
+                <div v-if="templates.length > 0" class="flex justify-center">
                     <button
                         class="flex flex-col items-center justify-center text-text dark:text-natural-50"
                         @click="toggleTemplates"
