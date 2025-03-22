@@ -19,10 +19,15 @@ class JourneyPolicy
     /**
      * Determine whether the user can view the journey.
      */
-    public function view(?User $user, Journey $journey, bool $allowGuests): bool
-    {
+    public function view(
+        ?User $user,
+        Journey $journey,
+        bool $allowGuests,
+        ?string $share_id = null
+    ): bool {
         return ($allowGuests && $this->guestJourney($journey)) ||
             $this->journeyTemplate($user, $journey) ||
+            ($share_id && $journey->share_id == $share_id) ||
             ($user && $this->journeyMember($user, $journey));
     }
 

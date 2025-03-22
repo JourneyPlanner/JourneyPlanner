@@ -12,6 +12,7 @@ use App\Models\JourneyUser;
 use App\Services\MapboxService;
 use App\Services\WeatherService;
 use DateInterval;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -79,6 +80,7 @@ class JourneyController extends Controller
         $validated = $this->mapboxService->fetchAddressDetails($validated);
 
         $journey = new Journey($validated);
+        $journey->share_id = Str::uuid();
 
         // Assign UUID and guest mode if applicable
         if (!$journey->invite) {
@@ -201,10 +203,16 @@ class JourneyController extends Controller
     /**
      * Show the requested journey.
      */
-    public function show(Journey $journey)
+    public function show(Journey $journey, Request $request)
     {
+        $share_id = $request->string("share_id");
+
         // Check if the authenticated user is a member of the requested journey
-        Gate::authorize("view", [$journey, true]);
+        Gate::authorize("view", [$journey, true, $share_id]);
+
+        if ($share_id) {
+            unset($journey->invite);
+        }
 
         return response()->json($journey);
     }
@@ -316,7 +324,11 @@ class JourneyController extends Controller
      */
     public function getWeather(Journey $journey)
     {
-        Gate::authorize("view", [$journey, true]);
+        Gate::authorize("view", [
+            $journey,
+            true,
+            request()->string("share_id"),
+        ]);
 
         $weatherDataResponse = $this->weatherService->getWeatherData($journey);
 

@@ -16,7 +16,11 @@ class MediaController extends Controller
      */
     public function index(Journey $journey): JsonResponse
     {
-        Gate::authorize("view", [$journey, false]);
+        Gate::authorize("view", [
+            $journey,
+            false,
+            request()->string("share_id"),
+        ]);
 
         $media = $journey->media->map(function ($media) {
             return [

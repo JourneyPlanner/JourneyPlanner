@@ -28,9 +28,15 @@ class ActivityPolicy
     public function viewAny(
         ?User $user,
         Journey $journey,
-        bool $allowGuests
+        bool $allowGuests,
+        ?string $share_id = null
     ): bool {
-        return $this->journeyPolicy->view($user, $journey, $allowGuests);
+        return $this->journeyPolicy->view(
+            $user,
+            $journey,
+            $allowGuests,
+            $share_id
+        );
     }
 
     /**
@@ -40,9 +46,17 @@ class ActivityPolicy
         ?User $user,
         Activity $activity,
         Journey $journey,
-        bool $allowGuests
+        bool $allowGuests,
+        ?string $share_id = null
     ): bool {
-        if (!$this->journeyPolicy->view($user, $journey, $allowGuests)) {
+        if (
+            !$this->journeyPolicy->view(
+                $user,
+                $journey,
+                $allowGuests,
+                $share_id
+            )
+        ) {
             return false;
         }
 
