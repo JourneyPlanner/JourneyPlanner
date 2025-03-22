@@ -128,6 +128,15 @@ if (partOfBusiness.value) {
         async onResponse({ response }) {
             if (response.ok) {
                 allTexts.value = response?._data;
+                allTexts.value!.de.alt_texts = allTexts.value?.de.alt_texts ?? {
+                    banner: "",
+                    image: "",
+                };
+
+                allTexts.value!.en.alt_texts = allTexts.value?.en.alt_texts ?? {
+                    banner: "",
+                    image: "",
+                };
             }
         },
     });
@@ -135,7 +144,6 @@ if (partOfBusiness.value) {
 
 onMounted(async () => {
     const lastRoute = router.options.history.state.back as string;
-    console.log(lastRoute);
 
     if (
         (lastRoute &&
@@ -289,28 +297,24 @@ function editImage(whichImage: string) {
     }
 }
 
-async function updateImage(altTexsts: AltTexts | null = null, link: string) {
+async function updateImage(altTexts: AltTexts | null = null, link: string) {
     if (imageEditType.value === "banner") {
         images.banner.link = "";
-        if (altTexsts) {
+        if (altTexts) {
             images.banner.alt_text =
-                tolgee.value.getLanguage() == "de"
-                    ? altTexsts.de
-                    : altTexsts.en;
+                tolgee.value.getLanguage() == "de" ? altTexts.de : altTexts.en;
             images.banner.link = `${link}?forceRefresh=${Date.now()}`;
-            allTexts.value!.de.alt_texts.banner = altTexsts.de;
-            allTexts.value!.en.alt_texts.banner = altTexsts.en;
+            allTexts.value!.de.alt_texts.banner = altTexts.de;
+            allTexts.value!.en.alt_texts.banner = altTexts.en;
         }
     } else {
         images.image.link = "";
-        if (altTexsts) {
+        if (altTexts) {
             images.image.alt_text =
-                tolgee.value.getLanguage() == "de"
-                    ? altTexsts.de
-                    : altTexsts.en;
+                tolgee.value.getLanguage() == "de" ? altTexts.de : altTexts.en;
             images.image.link = `${link}?forceRefresh=${Date.now()}`;
-            allTexts.value!.de.alt_texts.image = altTexsts.de;
-            allTexts.value!.en.alt_texts.image = altTexsts.en;
+            allTexts.value!.de.alt_texts.image = altTexts.de;
+            allTexts.value!.en.alt_texts.image = altTexts.en;
         }
     }
 }
