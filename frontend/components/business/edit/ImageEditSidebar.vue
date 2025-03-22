@@ -39,8 +39,9 @@ watch(
     (value) => {
         isVisible.value = value;
         fileType.value = props.imageEditType as ImageEditFileType;
-        altTextGerman.value = props.texts.de?.alt_texts[fileType.value] ?? "";
-        altTextEnglish.value = props.texts.en?.alt_texts[fileType.value] ?? "";
+        altTextGerman.value = props.texts.de?.alt_texts?.[fileType.value] ?? "";
+        altTextEnglish.value =
+            props.texts.en?.alt_texts?.[fileType.value] ?? "";
     },
 );
 
