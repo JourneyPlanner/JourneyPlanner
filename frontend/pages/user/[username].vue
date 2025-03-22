@@ -28,6 +28,7 @@ const showMoreTemplates = ref<boolean>(false);
 const openedTemplate = ref<Template | undefined>();
 const isTemplatePopupVisible = ref<boolean>(false);
 const templatesLoader = ref<HTMLElement | undefined>();
+const reloadData = ref(false);
 
 const maxDisplayedTemplates = computed(() => {
     if (screenWidth.value >= 1280) return 6;
@@ -113,6 +114,7 @@ const {
 } = await useInfiniteScroll<Template>({
     loader: templatesLoader,
     showMoreData: showMoreTemplates,
+    reloadData: reloadData,
     showMoreDataText: t.value("profile.showMore", {
         username: isCurrentUser.value
             ? t.value("profile.templates.created.by.you")

@@ -145,7 +145,7 @@ function handleUserClick() {
             :draggable="false"
             dismissable-mask
             close-on-escape
-            class="collapse z-50 w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:visible sm:flex sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-6/12 xl:w-6/12"
+            class="collapse z-[1000] w-full flex-col rounded-lg bg-background font-nunito dark:bg-background-dark sm:visible sm:flex sm:w-9/12 md:w-8/12 md:rounded-xl lg:w-6/12 xl:w-6/12"
             :pt="{
                 root: {
                     class: 'font-nunito bg-background dark:bg-background-dark z-50 px-0',
@@ -159,6 +159,9 @@ function handleUserClick() {
                 footer: { class: 'h-0' },
                 closeButtonIcon: {
                     class: 'z-20 text-natural-500 hover:text-text dark:text-natural-400 dark:hover:text-natural-50 h-10 w-10',
+                },
+                mask: {
+                    class: 'z-[1000]',
                 },
             }"
             @hide="close"

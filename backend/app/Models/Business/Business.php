@@ -3,6 +3,7 @@
 namespace App\Models\Business;
 
 use App\Models\Journey;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Business extends Model
 {
     use HasFactory, HasUuids;
+
+    public const AVAILABLE_LANGUAGES = "de,en";
 
     /**
      * The attributes that are mass assignable.
@@ -46,5 +49,13 @@ class Business extends Model
             "business_templates",
             relatedPivotKey: "template_id"
         );
+    }
+
+    /**
+     * The users that are a part of the business.
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
     }
 }
