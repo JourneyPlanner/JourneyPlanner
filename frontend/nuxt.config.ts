@@ -71,6 +71,7 @@ export default defineNuxtConfig({
             unstyled: false,
             zIndex: {
                 modal: 500,
+                overlay: 501,
             },
         },
         components: {

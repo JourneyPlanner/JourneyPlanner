@@ -15,6 +15,7 @@ const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 const { t } = useTranslate();
 const fullConfig = resolveConfig(tailwindConfig);
+const colorMode = useColorMode();
 
 const journeyId = route.params.id;
 const activityDataLoaded = ref(false);
@@ -47,6 +48,9 @@ onMounted(() => {
     if (route.query.username) {
         isMemberSidebarVisible.value = true;
     }
+
+    calculateDays(journeyData.value.from, journeyData.value.to);
+    updateInvite();
 });
 
 const { data, error } = await useAsyncData("journey", () =>
@@ -107,8 +111,6 @@ const journeyData = data as Ref<Journey>;
 journeyStore.setJourney(journeyData);
 
 const title = journeyData.value.name;
-journeyData.value.invite =
-    window.location.origin + "/invite/" + journeyData.value.invite;
 useHead({
     title: `${title} | JourneyPlanner`,
 });
@@ -141,29 +143,33 @@ if (isAuthenticated.value) {
     });
 }
 
-const colorMode = useColorMode();
-const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-let darkColor = fullConfig.theme.accentColor["text"] as string;
-let lightColor = fullConfig.theme.accentColor["background"] as string;
+function updateInvite() {
+    const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+    let darkColor = fullConfig.theme.accentColor["text"] as string;
+    let lightColor = fullConfig.theme.accentColor["background"] as string;
 
-if (
-    colorMode.preference === "dark" ||
-    (darkThemeMq.matches && colorMode.preference === "system")
-) {
-    darkColor = fullConfig.theme.accentColor["background"] as string;
-    lightColor = fullConfig.theme.accentColor["text"] as string;
+    if (
+        colorMode.preference === "dark" ||
+        (darkThemeMq.matches && colorMode.preference === "system")
+    ) {
+        darkColor = fullConfig.theme.accentColor["background"] as string;
+        lightColor = fullConfig.theme.accentColor["text"] as string;
+    }
+
+    const opts = {
+        margin: 0,
+        color: {
+            dark: darkColor,
+            light: lightColor,
+        },
+    };
+
+    journeyData.value.invite =
+        window.location.origin + "/invite/" + journeyStore.getInvite();
+    QRCode.toDataURL(journeyStore.getInvite(), opts, function (error, url) {
+        qrcode.value = url;
+    });
 }
-
-const opts = {
-    margin: 0,
-    color: {
-        dark: darkColor,
-        light: lightColor,
-    },
-};
-QRCode.toDataURL(journeyStore.getInvite(), opts, function (error, url) {
-    qrcode.value = url;
-});
 
 const fromDate = ref(new Date(journeyData.value.from.split("T")[0]));
 const toDate = ref(new Date(journeyData.value.to.split("T")[0]));
@@ -175,10 +181,6 @@ const days = ref(
 const daystoEnd = ref(
     Math.ceil(differenceInHours(toDate.value, currentDate) / 24),
 );
-
-onMounted(() => {
-    calculateDays(journeyData.value.from, journeyData.value.to);
-});
 
 const confirmLeave = (event: Event) => {
     isMemberSidebarVisible.value = false;
@@ -345,6 +347,7 @@ function scrollToTarget(target: string) {
             @open-qrcode="openQRCode"
             @open-unlock-dialog="isUnlockDialogVisible = true"
             @kick="refreshUsers"
+            @regenerated-invite="updateInvite"
         />
         <JourneyIdMenuSidebar
             :is-menu-sidebar-visible="isMenuSidebarVisible"

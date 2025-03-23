@@ -71,17 +71,23 @@ const kick = () => {
                 <div
                     class="-ml-8 w-[110%] overflow-hidden overflow-ellipsis text-natural-700 dark:text-natural-300"
                 >
-                    <T key-name="journey.kick.member.confirm.part1" />
-                    <b class="text-natural-700 dark:text-natural-50">
+                    <p>
+                        <T key-name="journey.kick.member.confirm.part1" />
+                        <b class="text-natural-700 dark:text-natural-50">
+                            <T
+                                key-name="journey.kick.member.confirm.part2"
+                                :params="{ name: name }"
+                            />
+                        </b>
+
+                        <T key-name="journey.kick.member.confirm.part3" />
+                    </p>
+                    <p>
                         <T
-                            key-name="journey.kick.member.confirm.part2"
-                            :params="{ name: name }"
+                            key-name="journey.kick.member.confirm.info.regenerate"
                         />
-                    </b>
-
-                    <T key-name="journey.kick.member.confirm.part3" />
+                    </p>
                 </div>
-
                 <div class="flex w-full justify-center pb-1 pt-7">
                     <button
                         class="ml-2 w-40 rounded-md bg-natural-50 px-2 pr-5 text-xl text-text hover:underline dark:bg-background-dark dark:text-natural-50"
@@ -141,17 +147,22 @@ const kick = () => {
                 <div
                     class="-pt-4 w-11/12 overflow-hidden overflow-ellipsis text-base text-natural-700 dark:text-natural-200"
                 >
-                    <T key-name="journey.kick.member.confirm.part1" />
-                    <b class="text-natural-700 dark:text-natural-50">
+                    <p>
+                        <T key-name="journey.kick.member.confirm.part1" />
+                        <b class="text-natural-700 dark:text-natural-50">
+                            <T
+                                key-name="journey.kick.member.confirm.part2"
+                                :params="{ name: name }"
+                            />
+                        </b>
+                        <T key-name="journey.kick.member.confirm.part3" />
+                    </p>
+                    <p class="mt-1">
                         <T
-                            key-name="journey.kick.member.confirm.part2"
-                            :params="{ name: name }"
+                            key-name="journey.kick.member.confirm.info.regenerate"
                         />
-                    </b>
-
-                    <T key-name="journey.kick.member.confirm.part3" />
+                    </p>
                 </div>
-
                 <div class="mt-auto flex w-full flex-col justify-center">
                     <div class="-ml-2 mb-4 mt-5 flex w-full justify-center">
                         <button
