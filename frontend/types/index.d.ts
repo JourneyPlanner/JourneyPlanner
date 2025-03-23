@@ -11,6 +11,7 @@ declare global {
         from: string;
         to: string;
         role: number;
+        share_id: string;
     }
 
     interface Feature {

@@ -138,7 +138,7 @@ function leave(event: Event) {
 }
 
 function openQRCode(tolgeeKey: string) {
-    emit("open-qrcode", tolgeeKey);
+    emit("open-qrcode", tolgeeKey, "invite");
 }
 
 function openUnlockDialog() {

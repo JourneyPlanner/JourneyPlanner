@@ -10,6 +10,10 @@ const props = defineProps({
         type: Object as PropType<User>,
         required: true,
     },
+    shareId: {
+        type: String,
+        default: "",
+    },
     journeyId: {
         type: String,
         required: true,
@@ -24,6 +28,7 @@ const emit = defineEmits([
     "leave-journey",
     "journey-edited",
     "close",
+    "open-qrcode",
     "open-unlock-dialog",
 ]);
 
@@ -31,6 +36,7 @@ const journeyStore = useJourneyStore();
 const { t } = useTranslate();
 const { isAuthenticated } = useSanctumAuth();
 const currentTemplate = ref(props.template);
+const toast = useToast();
 
 const isVisible = ref(props.isMenuSidebarVisible);
 const isJourneyEditMenuVisible = ref(false);
@@ -72,6 +78,20 @@ function closeTemplateDialog() {
 
 function changeToUpdate(template: Template) {
     currentTemplate.value = template;
+}
+
+function copyToClipboard() {
+    navigator.clipboard.writeText(props.shareId);
+    toast.add({
+        severity: "info",
+        summary: t.value("common.toast.info.heading"),
+        detail: t.value("common.invite.toast.info"),
+        life: 2000,
+    });
+}
+
+function openQRCode(tolgeeKey: string) {
+    emit("open-qrcode", tolgeeKey, "share");
 }
 </script>
 
@@ -178,10 +198,12 @@ function changeToUpdate(template: Template) {
                                 <input
                                     class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
                                     disabled
+                                    :value="props.shareId"
                                 />
                                 <div class="flex w-1/5 justify-end">
                                     <button
                                         class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                                        @click="copyToClipboard"
                                     >
                                         <SvgCopy class="w-4" />
                                     </button>
@@ -189,6 +211,9 @@ function changeToUpdate(template: Template) {
                                 <div class="flex w-1/5 justify-end">
                                     <button
                                         class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                                        @click="
+                                            openQRCode('journey.share.qrcode')
+                                        "
                                     >
                                         <span
                                             class="pi pi-qrcode text-text dark:text-natural-50"

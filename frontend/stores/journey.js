@@ -26,6 +26,10 @@ export const useJourneyStore = defineStore("journey", () => {
         return this.journey.invite;
     }
 
+    function getShareLink() {
+        return this.journey.share_id;
+    }
+
     function getDestination() {
         return this.journey.destination;
     }
@@ -83,6 +87,7 @@ export const useJourneyStore = defineStore("journey", () => {
         getID,
         getName,
         getInvite,
+        getShareLink,
         getDestination,
         getMapboxFullAddress,
         getMapboxID,
