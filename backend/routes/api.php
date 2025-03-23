@@ -34,19 +34,11 @@ Route::middleware(["auth:sanctum"])->get("/me", function (Request $request) {
         "username" => $user->username,
         "display_name" => $user->display_name,
         "email_needs_verification" => $user->getPendingEmail(),
-        "created_at" => $user->created_at,
-        "updated_at" => $user->updated_at,
-    ]);
-});
-
-Route::middleware(["auth:sanctum"])->get("/me/requiresPassword", function (
-    Request $request
-) {
-    $user = $request->user();
-    return response()->json([
         "requiresPassword" => !(
             !$user->password || Hash::check("", $user->password)
         ),
+        "created_at" => $user->created_at,
+        "updated_at" => $user->updated_at,
     ]);
 });
 
@@ -74,6 +66,11 @@ Route::delete("journey/{journey}/leave", [
 Route::get("journey/{journey}/user/me", [
     JourneyUserController::class,
     "currentUserDetails",
+])->middleware("auth:sanctum");
+
+Route::post("journey/{journey}/regenerate-invite", [
+    JourneyController::class,
+    "regenerateInvite",
 ])->middleware("auth:sanctum");
 
 Route::apiResource(
@@ -157,16 +154,41 @@ Route::delete("user/delete-account", [
 Route::get("user/{username}", [UserController::class, "show"]);
 Route::get("user", [UserController::class, "index"]);
 
-Route::get("business/{slug}", [BusinessController::class, "show"]);
-Route::get("business/{slug}/image/{image}", [
+Route::get("business/{business:slug}", [BusinessController::class, "show"]);
+Route::get("business/{business:slug}/image/{image}", [
     BusinessController::class,
     "showImage",
 ]);
-Route::get("business/{slug}/templates", [
+Route::get("business/{business:slug}/templates", [
     BusinessController::class,
     "showTemplates",
 ]);
-Route::get("business/{slug}/activities", [
+Route::get("business/{business:slug}/activities", [
     BusinessController::class,
     "showActivities",
 ]);
+Route::get("me/business", [BusinessController::class, "currentsUserIndex"]);
+Route::post("business/{business:slug}/image", [
+    BusinessController::class,
+    "uploadImage",
+])->middleware("auth:sanctum");
+Route::delete("business/{business:slug}/image", [
+    BusinessController::class,
+    "deleteImage",
+])->middleware("auth:sanctum");
+Route::post("business/{business:slug}/texts", [
+    BusinessController::class,
+    "updateTexts",
+])->middleware("auth:sanctum");
+Route::get("business/{business:slug}/texts", [
+    BusinessController::class,
+    "showTexts",
+])->middleware("auth:sanctum");
+Route::post("business/{business:slug}/templates", [
+    BusinessController::class,
+    "updateTemplates",
+])->middleware("auth:sanctum");
+Route::post("business/{business:slug}/templates/create", [
+    BusinessController::class,
+    "createTemplate",
+])->middleware("auth:sanctum");

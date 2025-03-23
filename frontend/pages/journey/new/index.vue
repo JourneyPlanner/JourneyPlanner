@@ -6,6 +6,8 @@ import { useForm } from "vee-validate";
 import * as yup from "yup";
 
 const { t } = useTranslate();
+const route = useRoute();
+const router = useRouter();
 const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 const toast = useToast();
@@ -22,8 +24,24 @@ const templateDestinationName = ref("");
 const suggestions = ref<Template[]>([]);
 const journeyName = ref();
 const journeyRange = ref();
+const creationType = ref();
+const slug = ref();
+let title;
 
-const title = t.value("title.journey.create");
+if (route.query.creationType === "template") {
+    slug.value = route.query.slug as string;
+    creationType.value = route.query.creationType;
+    if (router.options.history.state.back) {
+        cancel.value = router.options.history.state.back as string;
+    } else {
+        cancel.value = "business/" + slug.value;
+    }
+
+    title = t.value("title.template.create");
+} else {
+    title = t.value("title.journey.create");
+}
+
 useHead({
     title: `${title} | JourneyPlanner`,
 });
@@ -121,7 +139,6 @@ const onSubmit = handleSubmit(async (values) => {
     const invite = journeyInvite.value;
     const mapbox_full_address = values.mapbox?.properties.full_address;
     const mapbox_id = values.mapbox?.properties.mapbox_id;
-
     const journey = {
         name,
         destination,
@@ -133,39 +150,70 @@ const onSubmit = handleSubmit(async (values) => {
         role: 1,
     };
 
-    await client("/api/journey", {
-        method: "POST",
-        body: journey,
-        async onResponse({ response }) {
-            if (response.ok) {
-                toast.add({
-                    severity: "success",
-                    summary: t.value("form.journey.toast.success.heading"),
-                    detail: t.value("form.journey.toast.success"),
-                    life: 3000,
-                });
-                response._data.journey.role = 1;
-                store.addJourney(response._data.journey);
-                if (!isAuthenticated.value) {
-                    localStorage.setItem(
-                        "JP_guest_journey_id",
-                        response._data.journey.id,
+    if (creationType.value === "template" && slug.value) {
+        await client(`/api/business/${slug.value}/templates/create`, {
+            method: "POST",
+            body: journey,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value("form.template.toast.success.heading"),
+                        detail: t.value("form.template.toast.success"),
+                        life: 3000,
+                    });
+                    store.addJourney(response._data);
+                    await navigateTo(
+                        "/template/" + response._data.id + "/edit",
                     );
+                    loading.value = false;
                 }
-                await navigateTo("/journey/" + response._data.journey.id);
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
                 loading.value = false;
-            }
-        },
-        async onResponseError() {
-            toast.add({
-                severity: "error",
-                summary: t.value("common.toast.error.heading"),
-                detail: t.value("common.error.unknown"),
-                life: 6000,
-            });
-            loading.value = false;
-        },
-    });
+            },
+        });
+    } else {
+        await client("/api/journey", {
+            method: "POST",
+            body: journey,
+            async onResponse({ response }) {
+                if (response.ok) {
+                    toast.add({
+                        severity: "success",
+                        summary: t.value("form.journey.toast.success.heading"),
+                        detail: t.value("form.journey.toast.success"),
+                        life: 3000,
+                    });
+                    response._data.journey.role = 1;
+                    store.addJourney(response._data.journey);
+                    if (!isAuthenticated.value) {
+                        localStorage.setItem(
+                            "JP_guest_journey_id",
+                            response._data.journey.id,
+                        );
+                    }
+                    await navigateTo("/journey/" + response._data.journey.id);
+                    loading.value = false;
+                }
+            },
+            async onResponseError() {
+                toast.add({
+                    severity: "error",
+                    summary: t.value("common.toast.error.heading"),
+                    detail: t.value("common.error.unknown"),
+                    life: 6000,
+                });
+                loading.value = false;
+            },
+        });
+    }
 });
 
 function copyToClipboard() {
@@ -235,19 +283,33 @@ function changeRange(newRange: Date[]) {
                         for="create-journey"
                         class="text-center text-2xl font-bold text-text dark:text-natural-50 md:mb-5 lg:text-3xl xl:ml-4 xl:px-2 xl:text-left"
                     >
-                        <T key-name="form.header.journey.create" />
+                        <T
+                            :key-name="
+                                creationType !== 'template'
+                                    ? 'form.header.journey.create'
+                                    : 'form.header.template.create'
+                            "
+                        />
                     </legend>
                     <form class="px-1 lg:px-5" @submit="onSubmit">
                         <FormInput
                             id="journey-name"
                             name="journeyName"
-                            translation-key="form.input.journey.name"
+                            :translation-key="
+                                creationType !== 'template'
+                                    ? 'form.input.journey.name'
+                                    : 'form.input.template.name'
+                            "
                             @change-input="changeName"
                         />
                         <FormAddressInput
                             id="journey-destination"
                             name="journeyDestination"
-                            :placeholder="t('form.input.journey.destination')"
+                            :placeholder="
+                                creationType !== 'template'
+                                    ? t('form.input.journey.destination')
+                                    : t('form.input.template.destination')
+                            "
                             class="relative mb-4"
                             custom-class=".SearchIcon {visibility: hidden;} .Input {height: fit-content; font-weight: 700; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 0.625rem;} .Input::placeholder {font-family: Nunito; font-weight: 400; font-size: 0.875rem; line-height: 1.25rem;}"
                             @change-address="changeAddress"
@@ -258,17 +320,28 @@ function changeRange(newRange: Date[]) {
                                 id="journey-range-calendar"
                                 name="journeyRange"
                                 class="w-full"
-                                translation-key="form.input.journey.dates"
+                                :translation-key="
+                                    creationType !== 'template'
+                                        ? t('form.input.journey.dates')
+                                        : t('form.input.dates')
+                                "
                                 @change-input="changeRange"
                             />
                         </div>
                         <Divider
-                            v-if="isAuthenticated"
+                            v-if="
+                                isAuthenticated && creationType !== 'template'
+                            "
                             type="solid"
                             class="border-10 mt-2 border pt-0 text-calypso-300 dark:text-calypso-400"
                         />
 
-                        <div v-if="isAuthenticated" class="relative my-2 flex">
+                        <div
+                            v-if="
+                                isAuthenticated && creationType !== 'template'
+                            "
+                            class="relative my-2 flex"
+                        >
                             <input
                                 id="journey-invite"
                                 v-model="journeyInviteLink"
@@ -322,7 +395,10 @@ function changeRange(newRange: Date[]) {
                     </form>
                 </fieldset>
             </div>
-            <div class="mt-2 flex items-center justify-center px-4 font-nunito">
+            <div
+                v-if="creationType !== 'template'"
+                class="mt-2 flex items-center justify-center px-4 font-nunito"
+            >
                 <div
                     id="template-section"
                     class="w-full rounded-xl border-2 border-natural-300 bg-natural-50 dark:border-natural-800 dark:bg-natural-900 sm:w-2/4 md:w-2/5"

@@ -339,4 +339,22 @@ class JourneyController extends Controller
 
         return response()->json($weatherDataResponse);
     }
+
+    /**
+     * Regenerate the invite code for the specified journey.
+     */
+    public function regenerateInvite(Journey $journey)
+    {
+        Gate::authorize("update", [$journey, false]);
+
+        $journey->invite = Str::uuid();
+        $journey->save();
+
+        return response()->json(
+            [
+                "invite" => $journey->invite,
+            ],
+            200
+        );
+    }
 }

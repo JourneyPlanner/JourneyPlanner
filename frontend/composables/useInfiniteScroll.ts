@@ -13,11 +13,12 @@
 export async function useInfiniteScroll<T>(options: {
     loader: Ref<HTMLElement | undefined>;
     showMoreData: Ref<boolean>;
+    reloadData: Ref<boolean>;
     showMoreDataText: string;
     showLessDataText: string;
     identifier: string;
     apiEndpoint: string;
-    params: { [key: string]: string | number };
+    params: { [key: string]: string | number | boolean };
 }) {
     const client = useSanctumClient();
     const observer = ref<IntersectionObserver | null>(null);
@@ -49,6 +50,17 @@ export async function useInfiniteScroll<T>(options: {
             if (options.loader.value) {
                 observer.value.observe(options.loader.value);
             }
+        }
+    });
+
+    watch(options.reloadData, () => {
+        if (options.reloadData.value) {
+            cursor.value = null;
+            allData.value = [];
+            nextCursor.value = null;
+            moreDataAvailable.value = false;
+            refresh();
+            options.reloadData.value = false;
         }
     });
 
