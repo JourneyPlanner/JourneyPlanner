@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { BusinessActivityCard } from "#components";
 import { useTolgee, useTranslate } from "@tolgee/vue";
 
 const route = useRoute();
@@ -361,7 +360,11 @@ function reloadData() {
         >
             <div
                 class="absolute inset-0 top-20 z-50 bg-gradient-to-b from-natural-50/0 to-background dark:from-background-dark/0 dark:to-background-dark lg:top-48"
-                :class="editingEnabled ? 'cursor-pointer' : ''"
+                :class="
+                    editingEnabled
+                        ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
+                        : ''
+                "
             ></div>
             <div
                 class="absolute left-2.5 top-2.5 z-50 rounded-xl border-2 border-natural-400 bg-natural-50 text-text drop-shadow-lg backdrop-blur-xl hover:border-natural-400 hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-natural-600 dark:hover:bg-natural-950 lg:left-5 lg:top-5"
@@ -401,7 +404,7 @@ function reloadData() {
             />
             <div
                 v-if="editingEnabled"
-                class="absolute inset-0 flex max-h-[320px] cursor-pointer items-center justify-center bg-background-dark bg-opacity-70 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                class="absolute inset-0 flex max-h-[500px] cursor-pointer items-center justify-center bg-background-dark bg-opacity-70 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
             >
                 <span class="text-xl font-semibold text-natural-50"
                     >[

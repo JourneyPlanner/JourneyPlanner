@@ -76,13 +76,13 @@ const remove = () => {
 
                 <div class="flex w-full justify-center pb-1 pt-7">
                     <button
-                        class="ml-1 mr-auto mt-auto w-[30%] text-nowrap rounded-xl border-[2.5px] border-mahagony-500 bg-natural-50 px-2 py-1 pl-2 text-base font-semibold text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
+                        class="ml-1 mr-auto mt-auto w-[30%] text-nowrap rounded-xl border-[2.5px] border-atlantis-400 bg-natural-50 py-1 text-center text-text hover:bg-atlantis-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-atlantis-30040"
                         @click="close"
                     >
                         <T key-name="common.no" />
                     </button>
                     <button
-                        class="ml-1 mr-6 mt-auto w-[30%] text-nowrap rounded-xl border-[2.5px] border-atlantis-400 bg-natural-50 py-1 text-center text-text hover:bg-atlantis-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-atlantis-30040"
+                        class="ml-1 mr-6 mt-auto w-[30%] text-nowrap rounded-xl border-[2.5px] border-mahagony-500 bg-natural-50 px-2 py-1 pl-2 text-base font-semibold text-text hover:bg-mahagony-300 dark:border-mahagony-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
                         @click="remove"
                     >
                         <T key-name="common.yes" />

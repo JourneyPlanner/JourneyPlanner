@@ -169,6 +169,9 @@ function openTemplateDialog(template: Template) {
                     <div class="h-0.5 flex-grow bg-calypso-400" />
                 </div>
             </template>
+            <div class="text-xl text-text dark:text-natural-50">
+                <T key-name="business.edit.choose.templates.detail" />
+            </div>
 
             <div id="template-section">
                 <ScrollPanel class="h-[30rem] w-full">
@@ -217,7 +220,7 @@ function openTemplateDialog(template: Template) {
                                 </div>
                             </label>
                             <TemplateCard
-                                class="md:block"
+                                class="font-nunito md:block"
                                 :template="template"
                                 :displayed-in-profile="false"
                                 :opened-from-business="true"

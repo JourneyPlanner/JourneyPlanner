@@ -20,13 +20,19 @@ const emit = defineEmits(["close", "updateTexts"]);
 
 const isVisible = ref(props.isSidebarVisible);
 const { t } = useTranslate();
-const textGerman = ref<string>("");
-const textEnglish = ref<string>("");
-const buttonTextGerman = ref<string>("");
-const buttonTextEnglish = ref<string>("");
-const headlineTextGerman = ref<string>("");
-const headlineTextEnglish = ref<string>("");
-const link = ref<string>();
+const changesOccured = ref<boolean>(false);
+const changesDueToProps = ref<boolean>(false);
+const confirmSaveVisible = ref<boolean>(false);
+const shouldClose = ref<boolean>(false);
+const textForm = ref({
+    textGerman: "" as string,
+    textEnglish: "" as string,
+    buttonTextGerman: "" as string,
+    buttonTextEnglish: "" as string,
+    headlineTextGerman: "" as string,
+    headlineTextEnglish: "" as string,
+    link: "" as string,
+});
 const client = useSanctumClient();
 const route = useRoute();
 const toast = useToast();
@@ -37,18 +43,34 @@ watch(
     (value) => {
         isVisible.value = value;
         if (value) {
-            textGerman.value = props.texts.de?.text;
-            textEnglish.value = props.texts.en?.text;
-            buttonTextGerman.value = props.texts.de?.button;
-            buttonTextEnglish.value = props.texts.en?.button;
-            headlineTextGerman.value = props.texts.de?.company_name;
-            headlineTextEnglish.value = props.texts.en?.company_name;
-            link.value = props.linkProp;
+            changesDueToProps.value = true;
+            textForm.value.textGerman = props.texts.de?.text;
+            textForm.value.textEnglish = props.texts.en?.text;
+            textForm.value.buttonTextGerman = props.texts.de?.button;
+            textForm.value.buttonTextEnglish = props.texts.en?.button;
+            textForm.value.headlineTextGerman = props.texts.de?.company_name;
+            textForm.value.headlineTextEnglish = props.texts.en?.company_name;
+            textForm.value.link = props.linkProp;
+            shouldClose.value = false;
         }
     },
 );
 
+watch(
+    textForm,
+    () => {
+        if (changesDueToProps.value) {
+            changesDueToProps.value = false;
+        } else {
+            changesOccured.value = true;
+        }
+    },
+    { deep: true },
+);
+
 const close = () => {
+    shouldClose.value = true;
+    changesOccured.value = false;
     emit("close");
 };
 
@@ -61,19 +83,19 @@ async function handleSubmit() {
                 texts: [
                     {
                         key: "text",
-                        value: textGerman.value,
+                        value: textForm.value.textGerman,
                     },
                     {
                         key: "button",
-                        value: buttonTextGerman.value,
+                        value: textForm.value.buttonTextGerman,
                     },
                     {
                         key: "button_link",
-                        value: link.value,
+                        value: textForm.value.link,
                     },
                     {
                         key: "company_name",
-                        value: headlineTextGerman.value,
+                        value: textForm.value.headlineTextGerman,
                     },
                 ],
             },
@@ -82,19 +104,19 @@ async function handleSubmit() {
                 texts: [
                     {
                         key: "text",
-                        value: textEnglish.value,
+                        value: textForm.value.textEnglish,
                     },
                     {
                         key: "button",
-                        value: buttonTextEnglish.value,
+                        value: textForm.value.buttonTextEnglish,
                     },
                     {
                         key: "button_link",
-                        value: link.value,
+                        value: textForm.value.link,
                     },
                     {
                         key: "company_name",
-                        value: headlineTextEnglish.value,
+                        value: textForm.value.headlineTextEnglish,
                     },
                 ],
             },
@@ -104,16 +126,16 @@ async function handleSubmit() {
     const businessTexts = {
         texts: [
             {
-                company_name: headlineTextGerman.value,
-                button_link: link.value,
-                button: buttonTextGerman.value,
-                text: textGerman.value,
+                company_name: textForm.value.headlineTextGerman,
+                button_link: textForm.value.link,
+                button: textForm.value.buttonTextGerman,
+                text: textForm.value.textGerman,
             },
             {
-                company_name: headlineTextEnglish.value,
-                button_link: link.value,
-                button: buttonTextEnglish.value,
-                text: textEnglish.value,
+                company_name: textForm.value.headlineTextEnglish,
+                button_link: textForm.value.link,
+                button: textForm.value.buttonTextEnglish,
+                text: textForm.value.textEnglish,
             },
         ],
     };
@@ -152,6 +174,19 @@ async function handleSubmit() {
         },
     });
 }
+
+function handleHide() {
+    if (!changesOccured.value) {
+        close();
+    } else {
+        if (shouldClose.value) {
+            shouldClose.value = false;
+        } else {
+            isVisible.value = true;
+            confirmSaveVisible.value = true;
+        }
+    }
+}
 </script>
 <template>
     <div>
@@ -179,10 +214,13 @@ async function handleSubmit() {
                     class: 'justify-start w-full h-full items-center collapse',
                 },
             }"
-            @hide="close"
+            @hide="handleHide"
         >
             <template #header>
-                <button class="-ml-6 flex justify-center pr-4" @click="close">
+                <button
+                    class="-ml-6 flex justify-center pr-4"
+                    @click="handleHide"
+                >
                     <span
                         class="pi pi-times text-2xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"
                     />
@@ -233,7 +271,7 @@ async function handleSubmit() {
                     </div>
                     <input
                         id="german-headline-text"
-                        v-model="headlineTextGerman"
+                        v-model="textForm.headlineTextGerman"
                         type="text"
                         maxlength="50"
                         class="w-full rounded-lg border-2 border-natural-300 bg-natural-50 px-2.5 py-0.5 text-lg font-medium text-text placeholder:text-natural-500 hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
@@ -241,7 +279,7 @@ async function handleSubmit() {
                     <div
                         class="items-end-end flex w-full justify-end pt-1 text-natural-500 dark:text-natural-300"
                     >
-                        {{ headlineTextGerman.length }}/50
+                        {{ textForm.headlineTextGerman.length }}/50
                         <T key-name="business.edit.text.characters" />
                     </div>
 
@@ -252,7 +290,7 @@ async function handleSubmit() {
                     </div>
                     <input
                         id="english-headline-text"
-                        v-model="headlineTextEnglish"
+                        v-model="textForm.headlineTextEnglish"
                         type="text"
                         maxlength="50"
                         class="w-full rounded-lg border-2 border-natural-300 bg-natural-50 px-2.5 py-0.5 text-lg font-medium text-text placeholder:text-natural-500 hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
@@ -260,7 +298,7 @@ async function handleSubmit() {
                     <div
                         class="items-end-end mb-6 flex w-full justify-end pt-1 text-natural-500 dark:text-natural-300"
                     >
-                        {{ headlineTextEnglish.length }}/50
+                        {{ textForm.headlineTextEnglish.length }}/50
                         <T key-name="business.edit.text.characters" />
                     </div>
                 </div>
@@ -286,14 +324,14 @@ async function handleSubmit() {
                             ><T key-name="common.deutsch"
                         /></label>
                         <textarea
-                            v-model="textGerman"
+                            v-model="textForm.textGerman"
                             maxlength="600"
                             class="h-32 w-full rounded-lg border-2 border-natural-300 bg-natural-50 p-3 text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         ></textarea>
                         <div
                             class="items-end-end flex w-full justify-end pt-1 text-natural-500 dark:text-natural-300"
                         >
-                            {{ textGerman.length }}/600
+                            {{ textForm.textGerman.length }}/600
                             <T key-name="business.edit.text.characters" />
                         </div>
                     </div>
@@ -304,14 +342,14 @@ async function handleSubmit() {
                             ><T key-name="common.english"
                         /></label>
                         <textarea
-                            v-model="textEnglish"
+                            v-model="textForm.textEnglish"
                             maxlength="600"
                             class="h-32 w-full rounded-lg border-2 border-natural-300 bg-natural-50 p-3 text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         ></textarea>
                         <div
                             class="items-end-end flex w-full justify-end pt-1 text-natural-500 dark:text-natural-300"
                         >
-                            {{ textEnglish.length }}/600
+                            {{ textForm.textEnglish.length }}/600
                             <T key-name="business.edit.text.characters" />
                         </div>
                     </div>
@@ -334,7 +372,7 @@ async function handleSubmit() {
                 <div class="max-w-lg pt-6">
                     <input
                         id="link"
-                        v-model="link"
+                        v-model="textForm.link"
                         type="text"
                         placeholder="www.journeyplanner.io"
                         class="w-full rounded-lg border-2 border-natural-300 bg-natural-50 px-2.5 py-0.5 text-lg font-medium text-text placeholder:text-natural-500 hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
@@ -363,7 +401,7 @@ async function handleSubmit() {
                     </div>
                     <input
                         id="german-button-text"
-                        v-model="buttonTextGerman"
+                        v-model="textForm.buttonTextGerman"
                         type="text"
                         maxlength="25"
                         placeholder="Besuche unsere Webseite"
@@ -372,7 +410,7 @@ async function handleSubmit() {
                     <div
                         class="items-end-end flex w-full justify-end pt-1 text-natural-500 dark:text-natural-300"
                     >
-                        {{ buttonTextGerman.length }}/25
+                        {{ textForm.buttonTextGerman.length }}/25
                         <T key-name="business.edit.text.characters" />
                     </div>
 
@@ -383,7 +421,7 @@ async function handleSubmit() {
                     </div>
                     <input
                         id="english-button-text"
-                        v-model="buttonTextEnglish"
+                        v-model="textForm.buttonTextEnglish"
                         type="text"
                         maxlength="25"
                         placeholder="Visit our site"
@@ -392,7 +430,7 @@ async function handleSubmit() {
                     <div
                         class="items-end-end mb-6 flex w-full justify-end pt-1 text-natural-500 dark:text-natural-300"
                     >
-                        {{ buttonTextEnglish.length }}/25
+                        {{ textForm.buttonTextEnglish.length }}/25
                         <T key-name="business.edit.text.characters" />
                     </div>
                 </div>
@@ -411,5 +449,10 @@ async function handleSubmit() {
                 />
             </form>
         </Sidebar>
+        <BusinessConfirmSaveData
+            :visible="confirmSaveVisible"
+            @close="confirmSaveVisible = false"
+            @remove="close"
+        />
     </div>
 </template>

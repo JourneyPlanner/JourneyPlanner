@@ -196,7 +196,7 @@ function handleUserClick() {
             />
         </div>
         <div class="px-2.5 pb-2 pt-2">
-            <div class="flex">
+            <div class="flex font-nunito">
                 <h3
                     v-tooltip.top="{
                         value: template?.name,
@@ -205,7 +205,7 @@ function handleUserClick() {
                     class="w-full truncate text-xl font-medium"
                 >
                     <div
-                        class="block overflow-hidden overflow-ellipsis text-nowrap"
+                        class="block overflow-hidden overflow-ellipsis text-nowrap font-nunito"
                         :class="!isCurrentUser ? 'w-full' : 'w-11/12'"
                     >
                         {{ template?.name }}
@@ -236,7 +236,7 @@ function handleUserClick() {
                     value: template?.creator?.username,
                     pt: { root: 'font-nunito' },
                 }"
-                class="-mt-1 truncate text-xl text-natural-600 dark:text-natural-300"
+                class="-mt-1 truncate font-nunito text-xl text-natural-600 dark:text-natural-300"
             >
                 <T key-name="template.by" /><span
                     :class="
@@ -257,13 +257,13 @@ function handleUserClick() {
                     class="flex flex-row items-center gap-x-1"
                 >
                     <i class="pi pi-map-marker text-lg text-calypso-600" />
-                    <h5 class="truncate text-lg">
+                    <h5 class="truncate font-nunito text-lg">
                         {{ template?.destination }}
                     </h5>
                 </div>
                 <div class="flex flex-row items-center gap-x-1">
                     <i class="pi pi-calendar text-lg text-calypso-600" />
-                    <h5 class="truncate text-lg">
+                    <h5 class="truncate font-nunito text-lg">
                         {{ template?.length }}
                         <T
                             :key-name="
@@ -275,7 +275,7 @@ function handleUserClick() {
                     </h5>
                     <div class="ml-auto flex items-center gap-x-1">
                         <i class="pi pi-star text-lg text-calypso-600" />
-                        <h5 class="truncate text-lg">
+                        <h5 class="truncate font-nunito text-lg">
                             {{
                                 Math.round(template?.average_rating * 100) / 100
                             }}

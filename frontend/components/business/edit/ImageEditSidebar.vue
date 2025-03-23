@@ -28,6 +28,7 @@ const fileType = ref<ImageEditFileType>(
 );
 const altTextGerman = ref<string>("");
 const altTextEnglish = ref<string>("");
+const changesOccured = ref<boolean>(false);
 const route = useRoute();
 const confirmRemoveVisible = ref<boolean>(false);
 const confirmSaveVisible = ref<boolean>(false);
@@ -42,10 +43,12 @@ watch(
         altTextGerman.value = props.texts.de?.alt_texts?.[fileType.value] ?? "";
         altTextEnglish.value =
             props.texts.en?.alt_texts?.[fileType.value] ?? "";
+        shouldClose.value = false;
     },
 );
 
 const close = () => {
+    changesOccured.value = false;
     shouldClose.value = true;
     file.value = null;
     altTextEnglish.value = "";
@@ -68,6 +71,7 @@ const handleDrop = (event: DragEvent) => {
 };
 
 const handleFileUpload = (event: Event) => {
+    changesOccured.value = true;
     const target = event.target as HTMLInputElement;
     if (target?.files?.length) {
         if (!target.files[0].type.startsWith("image/")) {
@@ -96,6 +100,7 @@ const handleFileUpload = (event: Event) => {
 };
 
 const removeImage = () => {
+    changesOccured.value = false;
     imageUrl.value = null;
     file.value = null;
     fileName.value = null;
@@ -219,11 +224,19 @@ async function deleteImage() {
 }
 
 function handleHide() {
-    if (shouldClose.value) {
-        shouldClose.value = false;
+    if (
+        props.texts.de?.alt_texts?.[fileType.value] === altTextGerman.value &&
+        props.texts.en?.alt_texts?.[fileType.value] === altTextEnglish.value &&
+        !changesOccured.value
+    ) {
+        close();
     } else {
-        isVisible.value = true;
-        confirmSaveVisible.value = true;
+        if (shouldClose.value) {
+            shouldClose.value = false;
+        } else {
+            isVisible.value = true;
+            confirmSaveVisible.value = true;
+        }
     }
 }
 </script>
@@ -258,7 +271,7 @@ function handleHide() {
             <template #header>
                 <button
                     class="-ml-6 flex justify-center pr-4"
-                    @click="confirmSaveVisible = true"
+                    @click="handleHide"
                 >
                     <span
                         class="pi pi-times text-2xl text-natural-500 hover:text-natural-900 dark:text-natural-400 dark:hover:text-natural-100"

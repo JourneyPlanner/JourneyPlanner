@@ -26,22 +26,22 @@ const journeyName = ref();
 const journeyRange = ref();
 const creationType = ref();
 const slug = ref();
+let title;
 
 if (route.query.creationType === "template") {
     slug.value = route.query.slug as string;
+    creationType.value = route.query.creationType;
     if (router.options.history.state.back) {
-        creationType.value = route.query.creationType;
         cancel.value = router.options.history.state.back as string;
     } else {
         cancel.value = "business/" + slug.value;
     }
 
-    useHead({
-        title: t.value("title.journey.create"),
-    });
+    title = t.value("title.template.create");
+} else {
+    title = t.value("title.journey.create");
 }
 
-const title = t.value("title.journey.create");
 useHead({
     title: `${title} | JourneyPlanner`,
 });
@@ -150,7 +150,7 @@ const onSubmit = handleSubmit(async (values) => {
         role: 1,
     };
 
-    if (creationType.value == "template" && slug.value) {
+    if (creationType.value === "template" && slug.value) {
         await client(`/api/business/${slug.value}/templates/create`, {
             method: "POST",
             body: journey,
