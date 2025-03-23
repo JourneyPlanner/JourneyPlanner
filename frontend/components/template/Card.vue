@@ -245,13 +245,17 @@ function handleUserClick() {
                     }"
                     class="flex flex-row items-center gap-x-1"
                 >
-                    <i class="pi pi-map-marker text-lg text-calypso-600" />
+                    <i
+                        class="pi pi-map-marker text-lg text-calypso-600 dark:text-calypso-400"
+                    />
                     <h5 class="truncate font-nunito text-lg">
                         {{ template?.destination }}
                     </h5>
                 </div>
                 <div class="flex flex-row items-center gap-x-1">
-                    <i class="pi pi-calendar text-lg text-calypso-600" />
+                    <i
+                        class="pi pi-calendar text-lg text-calypso-600 dark:text-calypso-400"
+                    />
                     <h5 class="truncate font-nunito text-lg">
                         {{ template?.length }}
                         <T
@@ -263,7 +267,9 @@ function handleUserClick() {
                         />
                     </h5>
                     <div class="ml-auto flex items-center gap-x-1">
-                        <i class="pi pi-star text-lg text-calypso-600" />
+                        <i
+                            class="pi pi-star text-lg text-calypso-600 dark:text-calypso-400"
+                        />
                         <h5 class="truncate font-nunito text-lg">
                             {{
                                 Math.round(template?.average_rating * 100) / 100

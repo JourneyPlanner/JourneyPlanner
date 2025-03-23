@@ -1339,7 +1339,7 @@ function editJourney(journey: Journey, id: string) {
                 position="bottom"
                 :auto-z-index="true"
                 :draggable="false"
-                :block-scroll="true"
+                :block-scroll="false"
                 :show-close-icon="false"
                 class="z-50 mt-auto flex h-fit max-h-[90%] flex-col rounded-t-md bg-background font-nunito dark:bg-background-dark sm:hidden lg:-z-10"
                 :pt="{

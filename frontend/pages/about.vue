@@ -11,7 +11,7 @@ useHead({
     title: `JourneyPlanner | ${title}`,
 });
 
-const END_DATE = new Date("2025-03-28T12:00:00");
+const END_DATE = new Date("2025-03-25T12:00:00");
 
 const idea = ref();
 const facts = ref();
