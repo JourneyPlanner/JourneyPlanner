@@ -596,7 +596,9 @@ function reloadData() {
                         <div class="flex justify-center">
                             <ProgressSpinner class="w-10" />
                         </div>
-                        <div class="flex justify-center italic">
+                        <div
+                            class="flex justify-center font-nunito italic text-text dark:text-natural-50"
+                        >
                             <T key-name="subdomain.templates.loading" />
                         </div>
                     </div>
@@ -613,7 +615,10 @@ function reloadData() {
                         class="flex flex-col items-center justify-center text-text dark:text-natural-50"
                         @click="toggleTemplates"
                     >
-                        <span>{{ toggleTextTemplates }}</span>
+                        <span
+                            class="font-nunito text-text dark:text-natural-50"
+                            >{{ toggleTextTemplates }}</span
+                        >
                         <span
                             class="pi mt-1"
                             :class="

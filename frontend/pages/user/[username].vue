@@ -297,6 +297,7 @@ const locale = computed(() => {
                         class="hidden lg:block"
                         :template="template"
                         :displayed-in-profile="true"
+                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
                     />
                     <TemplateCardSmall
@@ -308,6 +309,7 @@ const locale = computed(() => {
                         class="lg:hidden"
                         :template="template"
                         :displayed-in-profile="true"
+                        :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
                     />
                 </TransitionGroup>
