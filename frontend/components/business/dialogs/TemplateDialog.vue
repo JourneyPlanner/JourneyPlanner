@@ -189,7 +189,8 @@ function openTemplateDialog(template: Template) {
                             :key="template.id"
                             class="cursor-pointer rounded-xl px-2 py-2"
                             :class="{
-                                'bg-natural-100': checkedItems.get(template.id),
+                                'bg-natural-100 dark:bg-natural-700':
+                                    checkedItems.get(template.id),
                             }"
                             @click="toggleTemplateAvailability(template.id)"
                         >
