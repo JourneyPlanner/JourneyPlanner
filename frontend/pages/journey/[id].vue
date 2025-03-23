@@ -424,7 +424,7 @@ function scrollToTarget(target: string) {
         >
             <button
                 to="/journey/new"
-                class="ml-5 mr-4 flex items-center text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-md:w-full max-md:justify-center sm:ml-1 md:ml-2 md:text-base"
+                class="mx-1 flex items-center text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-md:w-full max-md:justify-center sm:ml-1 md:ml-2 md:text-base"
                 @click="router.push('/journey/new')"
             >
                 <p class="text-lg">
