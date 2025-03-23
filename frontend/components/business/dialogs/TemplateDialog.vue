@@ -230,7 +230,10 @@ function openTemplateDialog(template: Template) {
                         </div>
                     </TransitionGroup>
 
-                    <div v-if="templates.length === 0" class="col-span-full">
+                    <div
+                        v-if="templates.length === 0"
+                        class="col-span-full font-nunito text-text dark:text-natural-50"
+                    >
                         <T key-name="subdomain.template.none" />
                     </div>
                     <div ref="templatesLoader" class="col-span-full">
@@ -238,7 +241,9 @@ function openTemplateDialog(template: Template) {
                             <div class="flex justify-center">
                                 <ProgressSpinner class="w-10" />
                             </div>
-                            <div class="flex justify-center italic">
+                            <div
+                                class="flex justify-center font-nunito italic text-text dark:text-natural-50"
+                            >
                                 <T key-name="subdomain.templates.loading" />
                             </div>
                         </div>

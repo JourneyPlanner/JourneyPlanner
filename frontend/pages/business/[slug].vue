@@ -591,7 +591,10 @@ function reloadData() {
                         @open-template="openTemplateDialog(template)"
                     />
                 </TransitionGroup>
-                <div v-if="templates.length === 0" class="col-span-full">
+                <div
+                    v-if="templates.length === 0"
+                    class="col-span-full font-nunito text-text dark:text-natural-50"
+                >
                     <T key-name="subdomain.template.none" />
                 </div>
                 <div ref="templatesLoader" class="col-span-full">
