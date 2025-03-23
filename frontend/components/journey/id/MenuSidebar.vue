@@ -201,11 +201,14 @@ function openQRCode(tolgeeKey: string) {
                                     <input
                                         class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
                                         disabled
-                                        :value="props.shareId"
+                                        :value="
+                                            isAuthenticated ? props.shareId : ''
+                                        "
                                     />
                                     <div class="flex w-1/5 justify-end">
                                         <button
-                                            class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                                            :disabled="!isAuthenticated"
+                                            class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 disabled:hover:bg-natural-50 dark:bg-natural-800 dark:hover:bg-pesto-600 disabled:hover:dark:bg-natural-800"
                                             @click="copyToClipboard"
                                         >
                                             <SvgCopy class="w-4" />
@@ -213,7 +216,8 @@ function openQRCode(tolgeeKey: string) {
                                     </div>
                                     <div class="flex w-1/5 justify-end">
                                         <button
-                                            class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                                            :disabled="!isAuthenticated"
+                                            class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 disabled:hover:bg-natural-50 dark:bg-natural-800 dark:hover:bg-pesto-600 disabled:hover:dark:bg-natural-800"
                                             @click="
                                                 openQRCode(
                                                     'journey.share.qrcode',
