@@ -24,6 +24,7 @@ const searchInputMobile = ref();
 const tabIndex = ref<number>(0);
 const menu = ref();
 const items = ref();
+const businessSlug = ref();
 
 //journeys
 const journeys = ref<Journey[]>([]);
@@ -633,6 +634,16 @@ const { data: user, refresh: refreshUser } = await useAsyncData(
         },
     },
 );
+
+await client(`/api/me/business`, {
+    async onResponse({ response }) {
+        if (response.ok) {
+            if (response._data[0]) {
+                businessSlug.value = response._data[0].slug;
+            }
+        }
+    },
+});
 
 /**
  * Searches for journeys based on the searchValueJourneys
@@ -1304,6 +1315,15 @@ function editJourney(journey: Journey, id: string) {
                 >
                     <SvgUserIcon class="mt-1 h-9 w-9" />
                 </NuxtLink>
+                <NuxtLink
+                    v-if="businessSlug"
+                    :to="'/business/' + businessSlug"
+                    class="mr-2.5"
+                >
+                    <span
+                        class="pi pi-building mt-1 rounded-full border-2 border-dandelion-300 p-1.5 text-xl text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                    />
+                </NuxtLink>
                 <button
                     data-test="user-settings-button"
                     @click="isUserSettingsVisible = !isUserSettingsVisible"
@@ -1597,6 +1617,7 @@ function editJourney(journey: Journey, id: string) {
             <DashboardUserSettings
                 :visible="isUserSettingsVisible"
                 :prop-username="user.username"
+                :requires-password="user.requiresPassword"
                 :prop-displayname="user.display_name"
                 :prop-email="user.email"
                 :prop-new-email-needing-verification="
@@ -1607,6 +1628,7 @@ function editJourney(journey: Journey, id: string) {
                     isUserSettingsVisible = false;
                     refreshUser();
                 "
+                @refresh="refreshUser()"
             />
             <ConfirmDialog
                 :draggable="false"
