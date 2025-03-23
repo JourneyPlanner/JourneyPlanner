@@ -174,52 +174,69 @@ function openQRCode(tolgeeKey: string) {
                                 class: 'border-b-2 border-natural-300 dark:border-natural-700',
                             },
                             headerAction: {
-                                class: 'pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                                class: `pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50 ${!isAuthenticated ? 'blur-[1.75px]' : ''}`,
                             },
                             content: {
                                 class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
                             },
                         }"
                     >
-                        <div>
-                            <p
-                                class="text-base font-medium text-natural-600 dark:text-natural-300"
-                            >
-                                <T key-name="journey.share.detail" />
-                            </p>
-                            <h2
-                                class="mt-3 text-xl text-text dark:text-natural-50"
-                            >
-                                <T key-name="journey.share.link" />
-                            </h2>
+                        <div class="relative">
                             <div
-                                class="flex items-center border-b-2 border-natural-200 pb-4 dark:border-natural-900"
+                                :class="!isAuthenticated ? 'blur-[1.75px]' : ''"
                             >
-                                <input
-                                    class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
-                                    disabled
-                                    :value="props.shareId"
-                                />
-                                <div class="flex w-1/5 justify-end">
-                                    <button
-                                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                                        @click="copyToClipboard"
-                                    >
-                                        <SvgCopy class="w-4" />
-                                    </button>
+                                <p
+                                    class="text-base font-medium text-natural-600 dark:text-natural-300"
+                                >
+                                    <T key-name="journey.share.detail" />
+                                </p>
+                                <h2
+                                    class="mt-3 text-xl text-text dark:text-natural-50"
+                                >
+                                    <T key-name="journey.share.link" />
+                                </h2>
+                                <div
+                                    class="flex items-center border-b-2 border-natural-200 pb-4 dark:border-natural-900"
+                                >
+                                    <input
+                                        class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
+                                        disabled
+                                        :value="props.shareId"
+                                    />
+                                    <div class="flex w-1/5 justify-end">
+                                        <button
+                                            class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                                            @click="copyToClipboard"
+                                        >
+                                            <SvgCopy class="w-4" />
+                                        </button>
+                                    </div>
+                                    <div class="flex w-1/5 justify-end">
+                                        <button
+                                            class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
+                                            @click="
+                                                openQRCode(
+                                                    'journey.share.qrcode',
+                                                )
+                                            "
+                                        >
+                                            <span
+                                                class="pi pi-qrcode text-text dark:text-natural-50"
+                                            />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="flex w-1/5 justify-end">
-                                    <button
-                                        class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                                        @click="
-                                            openQRCode('journey.share.qrcode')
-                                        "
-                                    >
-                                        <span
-                                            class="pi pi-qrcode text-text dark:text-natural-50"
-                                        />
-                                    </button>
-                                </div>
+                            </div>
+                            <div
+                                v-if="!isAuthenticated"
+                                class="absolute top-0 flex w-full items-center justify-center"
+                            >
+                                <button
+                                    class="mt-10 flex w-32 justify-center rounded-md border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 text-base font-medium text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                    @click="openUnlockDialog"
+                                >
+                                    <T key-name="journey.unlock.button" />
+                                </button>
                             </div>
                         </div>
                     </AccordionTab>
