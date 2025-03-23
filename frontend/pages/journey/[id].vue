@@ -471,6 +471,7 @@ function scrollToTarget(target: string) {
                 :during-journey="duringJourney"
                 :journey-startdate="journeyData.from"
                 :journey-enddate="journeyData.to"
+                :is-shared-site="isSharedSite"
                 :clear="clearCalendar"
             />
         </div>

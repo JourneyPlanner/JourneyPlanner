@@ -76,6 +76,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    isSharedSite: {
+        type: Boolean,
+        default: false,
+    },
 });
 const activity = ref();
 const activityId = ref("");
@@ -738,6 +742,7 @@ function call(editType: string) {
                 :repeat-interval="repeatInterval"
                 :repeat-interval-unit="repeatIntervalUnit"
                 :repeat-on="repeatOn"
+                :is-shared-site="props.isSharedSite"
                 @close="isActivityInfoVisible = false"
                 @delete-activity="deleteActivity"
                 @remove-from-calendar="removeFromCalendar"

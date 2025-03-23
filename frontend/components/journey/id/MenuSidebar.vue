@@ -195,9 +195,7 @@ function openQRCode(tolgeeKey: string) {
                                 >
                                     <T key-name="journey.share.link" />
                                 </h2>
-                                <div
-                                    class="flex items-center border-b-2 border-natural-200 pb-4 dark:border-natural-900"
-                                >
+                                <div class="flex items-center">
                                     <input
                                         class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
                                         disabled
