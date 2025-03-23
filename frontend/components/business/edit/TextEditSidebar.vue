@@ -76,6 +76,20 @@ const close = () => {
 
 async function handleSubmit() {
     loadingEdit.value = true;
+    const textsByLanguage = {
+        de: {
+            company_name: textForm.value.headlineTextGerman,
+            button_link: textForm.value.link,
+            button: textForm.value.buttonTextGerman,
+            text: textForm.value.textGerman,
+        },
+        en: {
+            company_name: textForm.value.headlineTextEnglish,
+            button_link: textForm.value.link,
+            button: textForm.value.buttonTextEnglish,
+            text: textForm.value.textEnglish,
+        },
+    };
     const texts = {
         texts: [
             {
@@ -124,20 +138,7 @@ async function handleSubmit() {
     };
 
     const businessTexts = {
-        texts: [
-            {
-                company_name: textForm.value.headlineTextGerman,
-                button_link: textForm.value.link,
-                button: textForm.value.buttonTextGerman,
-                text: textForm.value.textGerman,
-            },
-            {
-                company_name: textForm.value.headlineTextEnglish,
-                button_link: textForm.value.link,
-                button: textForm.value.buttonTextEnglish,
-                text: textForm.value.textEnglish,
-            },
-        ],
+        texts: [textsByLanguage.de, textsByLanguage.en],
     };
 
     await client(`/api/business/${route.params.slug}/texts `, {

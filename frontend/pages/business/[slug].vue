@@ -102,7 +102,6 @@ const isImageEditSidebarVisible = ref<boolean>(false);
 const isTextEditSidebarVisible = ref<boolean>(false);
 const isActivityInfoDialogVisible = ref<boolean>(false);
 const imageEditType = ref<string>("");
-const editOtherImage = ref<boolean>(false);
 const partOfBusiness = ref<boolean>(false);
 const allTexts = ref<InternationalBusinessSiteTexts>();
 const reloadActivityData = ref<boolean>(false);
@@ -111,13 +110,10 @@ const reloadTemplateData = ref<boolean>(false);
 await client(`/api/me/business`, {
     async onResponse({ response }) {
         if (response.ok) {
-            if (response._data[0]) {
-                response._data.forEach((element: Business) => {
-                    if (element.slug === slug.value) {
-                        partOfBusiness.value = true;
-                    }
-                });
-            }
+            partOfBusiness.value =
+                response._data?.some(
+                    (business: Business) => business.slug === slug.value,
+                ) || false;
         }
     },
 });
@@ -286,11 +282,9 @@ function toggleEditing() {
 function editImage(whichImage: string) {
     if (editingEnabled.value) {
         if (whichImage === "banner") {
-            editOtherImage.value = false;
             imageEditType.value = "banner";
         } else {
             imageEditType.value = "image";
-            editOtherImage.value = true;
         }
         isImageEditSidebarVisible.value = true;
     }
@@ -694,7 +688,6 @@ function reloadData() {
             <BusinessEditImageEditSidebar
                 :is-sidebar-visible="isImageEditSidebarVisible"
                 :image-edit-type="imageEditType"
-                :edit-other-image="editOtherImage"
                 :texts="allTexts!"
                 @close="isImageEditSidebarVisible = false"
                 @update-image="updateImage"

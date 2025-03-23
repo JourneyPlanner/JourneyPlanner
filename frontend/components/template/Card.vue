@@ -38,52 +38,41 @@ const toggle = (event: Event) => {
 };
 const emit = defineEmits(["templateDeleted", "templateEdited", "openTemplate"]);
 
-const templateItems = ref([
+// Base menu items that are common to both contexts
+const baseMenuItems = ref([
     {
-        label: t.value("dashboard.options.header"),
-        items: [
-            {
-                label: t.value("dashboard.options.edit"),
-                icon: "pi pi-pencil",
-                className: "text-natural-50",
-                command: () => {
-                    router.push({
-                        path: `/template/${props.template.id}/edit`,
-                    });
-                },
-            },
-            {
-                label: t.value("dashboard.options.delete"),
-                icon: "pi pi-trash",
-                command: ($event: MenuItemCommandEvent) => {
-                    confirmDelete($event.originalEvent);
-                },
-            },
-        ],
+        label: t.value("dashboard.options.edit"),
+        icon: "pi pi-pencil",
+        className: "text-natural-50",
+        command: () => {
+            router.push({
+                path: `/template/${props.template.id}/edit`,
+            });
+        },
+    },
+    {
+        label: t.value("dashboard.options.delete"),
+        icon: "pi pi-trash",
+        command: ($event: MenuItemCommandEvent) => {
+            confirmDelete($event.originalEvent);
+        },
     },
 ]);
 
+// Regular template menu items
+const templateItems = ref([
+    {
+        label: t.value("dashboard.options.header"),
+        items: baseMenuItems.value,
+    },
+]);
+
+// Business template menu items with additional "show" option
 const businessTemplateItems = ref([
     {
         label: t.value("dashboard.options.header"),
         items: [
-            {
-                label: t.value("dashboard.options.edit"),
-                icon: "pi pi-pencil",
-                className: "text-natural-50",
-                command: () => {
-                    router.push({
-                        path: `/template/${props.template.id}/edit`,
-                    });
-                },
-            },
-            {
-                label: t.value("dashboard.options.delete"),
-                icon: "pi pi-trash",
-                command: ($event: MenuItemCommandEvent) => {
-                    confirmDelete($event.originalEvent);
-                },
-            },
+            ...baseMenuItems.value,
             {
                 label: t.value("business.template.show"),
                 icon: "pi pi-eye",
