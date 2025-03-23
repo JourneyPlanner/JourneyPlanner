@@ -248,26 +248,30 @@ function openTemplateDialog(template: Template) {
                             </div>
                         </div>
                     </div>
-                </ScrollPanel>
-                <div v-if="templates.length > 0" class="flex justify-center">
-                    <button
-                        class="flex flex-col items-center justify-center text-text dark:text-natural-50"
-                        @click="toggleTemplates"
+
+                    <div
+                        v-if="templates.length > 0"
+                        class="flex justify-center"
                     >
-                        <span>{{ toggleTextTemplates }}</span>
-                        <span
-                            class="pi mt-1"
-                            :class="
-                                showMoreTemplates
-                                    ? 'pi-chevron-up order-first mb-1'
-                                    : 'pi-chevron-down'
-                            "
-                        />
-                    </button>
-                </div>
+                        <button
+                            class="flex flex-col items-center justify-center text-text dark:text-natural-50"
+                            @click="toggleTemplates"
+                        >
+                            <span>{{ toggleTextTemplates }}</span>
+                            <span
+                                class="pi mt-1"
+                                :class="
+                                    showMoreTemplates
+                                        ? 'pi-chevron-up order-first mb-1'
+                                        : 'pi-chevron-down'
+                                "
+                            />
+                        </button>
+                    </div>
+                </ScrollPanel>
                 <div
                     class="flex justify-end"
-                    :class="showMoreTemplates ? '-mt-7' : '-mt-11'"
+                    :class="showMoreTemplates ? 'mt-4' : ''"
                 >
                     <Button
                         type="button"
