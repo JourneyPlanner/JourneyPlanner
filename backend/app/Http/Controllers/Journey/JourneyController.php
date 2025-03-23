@@ -23,6 +23,7 @@ class JourneyController extends Controller
      * The Mapbox service.
      */
     protected $mapboxService;
+
     /**
      * The Weather service.
      */
@@ -212,6 +213,10 @@ class JourneyController extends Controller
 
         if ($share_id) {
             unset($journey->invite);
+        }
+
+        if ($journey->is_guest) {
+            unset($journey->share_id);
         }
 
         return response()->json($journey);
