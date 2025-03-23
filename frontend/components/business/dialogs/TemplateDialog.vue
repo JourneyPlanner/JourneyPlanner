@@ -255,10 +255,13 @@ function openTemplateDialog(template: Template) {
                         class="flex justify-center"
                     >
                         <button
-                            class="flex flex-col items-center justify-center text-text dark:text-natural-50"
+                            class="flex flex-col items-center justify-center font-nunito text-text dark:text-natural-50"
                             @click="toggleTemplates"
                         >
-                            <span>{{ toggleTextTemplates }}</span>
+                            <span
+                                class="font-nunito text-text dark:text-natural-50"
+                                >{{ toggleTextTemplates }}</span
+                            >
                             <span
                                 class="pi mt-1"
                                 :class="
