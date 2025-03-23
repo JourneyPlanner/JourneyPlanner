@@ -211,7 +211,7 @@ function handleHide() {
                 },
                 footer: { class: 'h-0' },
                 closeButton: {
-                    class: 'justify-start w-full h-full items-center collapse',
+                    class: 'justify-start w-full h-full items-center hidden collapse',
                 },
             }"
             @hide="handleHide"
