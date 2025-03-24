@@ -326,13 +326,13 @@ function handleHide() {
                         /></label>
                         <textarea
                             v-model="textForm.textGerman"
-                            maxlength="600"
+                            maxlength="800"
                             class="h-32 w-full rounded-lg border-2 border-natural-300 bg-natural-50 p-3 text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         ></textarea>
                         <div
                             class="items-end-end flex w-full justify-end pt-1 text-natural-500 dark:text-natural-300"
                         >
-                            {{ textForm.textGerman.length }}/600
+                            {{ textForm.textGerman.length }}/800
                             <T key-name="business.edit.text.characters" />
                         </div>
                     </div>
@@ -344,13 +344,13 @@ function handleHide() {
                         /></label>
                         <textarea
                             v-model="textForm.textEnglish"
-                            maxlength="600"
+                            maxlength="800"
                             class="h-32 w-full rounded-lg border-2 border-natural-300 bg-natural-50 p-3 text-text hover:border-calypso-400 focus:border-calypso-400 focus:outline-none dark:border-natural-800 dark:bg-natural-700 dark:text-natural-50 dark:hover:border-calypso-400 dark:focus:border-calypso-400"
                         ></textarea>
                         <div
                             class="items-end-end flex w-full justify-end pt-1 text-natural-500 dark:text-natural-300"
                         >
-                            {{ textForm.textEnglish.length }}/600
+                            {{ textForm.textEnglish.length }}/800
                             <T key-name="business.edit.text.characters" />
                         </div>
                     </div>
