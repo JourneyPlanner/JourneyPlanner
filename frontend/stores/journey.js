@@ -23,7 +23,7 @@ export const useJourneyStore = defineStore("journey", () => {
     }
 
     function getInvite() {
-        return this.journey.invite;
+        return window.location.origin + "/invite/" + this.journey.invite;
     }
 
     function getShareLink() {
