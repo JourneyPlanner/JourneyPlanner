@@ -1,0 +1,19 @@
+{
+	"message": "Journey created successfully",
+	"journey": {
+		"name": "Seine-sational trip",
+		"destination": "Paris",
+		"from": "2025-03-23T00:00:00.000000Z",
+		"to": "2025-03-30T00:00:00.000000Z",
+		"mapbox_full_address": "Paris, France",
+		"mapbox_id": "1234567890abcdefghij",
+		"invite": "bf74e3c0-35d0-4854-9335-6ac6b9ce8956",
+		"longitude": 2.348392,
+		"latitude": 48.853495,
+		"length": 8,
+		"id": "9e807de1-4b8e-4cbd-9dc5-cf2addb6a89a",
+		"updated_at": "2025-03-23T16:24:09.000000Z",
+		"created_at": "2025-03-23T16:24:09.000000Z",
+		"creator": null
+	}
+}

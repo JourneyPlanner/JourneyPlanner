@@ -17,8 +17,8 @@ pipeline {
             steps {
                 dir('backend') {
                     script {
-                        sh 'npm install'
-                        sh 'npx prettier . --check'
+                        sh 'composer install'
+                        sh './vendor/bin/pint --test'
                     }
                 }
             }

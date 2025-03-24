@@ -1,0 +1,8 @@
+{
+    "message": "The role field is required.",
+    "errors": {
+        "role": [
+            "The role field is required."
+        ]
+    }
+}

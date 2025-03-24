@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,8 +14,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get("/", function () {
-    return ["Laravel" => app()->version()];
+Route::get('/', function () {
+    return ['Laravel' => app()->version()];
 });
 
-require __DIR__ . "/auth.php";
+Route::get('token', function () {
+    return view('create-token');
+})->middleware('localOnly');
+
+Route::post('/token', function (\Illuminate\Http\Request $request) {
+    $email = $request->input('email');
+    $user = User::where('email', $email)->first();
+
+    if (! $user) {
+        return view('create-token', ['error' => 'User not found']);
+    }
+
+    $token = $user->createToken('api_token');
+
+    return view('create-token', ['token' => $token->plainTextToken]);
+})->name('create-token')->middleware('localOnly');
+
+require __DIR__.'/auth.php';

@@ -38,7 +38,7 @@ class BusinessPolicy
     {
         return $business
             ->users()
-            ->where("id", $user->id)
+            ->where('id', $user->id)
             ->exists();
     }
 

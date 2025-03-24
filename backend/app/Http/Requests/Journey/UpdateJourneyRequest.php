@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Journey;
 
-use App\Http\Requests\Journey\StoreJourneyRequest;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 
@@ -13,7 +12,7 @@ class UpdateJourneyRequest extends StoreJourneyRequest
      */
     public function authorize(): Response
     {
-        return Gate::authorize("update", [$this->journey, true]);
+        return Gate::authorize('update', [$this->journey, true]);
     }
 
     /**
@@ -27,7 +26,9 @@ class UpdateJourneyRequest extends StoreJourneyRequest
         $rules = parent::rules();
 
         // Remove the invite rule as invites should not be updated
-        unset($rules["invite"]);
+        unset($rules['invite']);
+        unset($rules['calendar_activity_insert_mode']);
+        unset($rules['template_id']);
 
         return $rules;
     }

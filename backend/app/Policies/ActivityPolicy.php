@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\Activity;
 use App\Models\Journey;
 use App\Models\User;
-use App\Policies\JourneyPolicy;
 
 class ActivityPolicy
 {
@@ -50,7 +49,7 @@ class ActivityPolicy
         ?string $share_id = null
     ): bool {
         if (
-            !$this->journeyPolicy->view(
+            ! $this->journeyPolicy->view(
                 $user,
                 $journey,
                 $allowGuests,
@@ -83,7 +82,7 @@ class ActivityPolicy
         Journey $journey,
         bool $allowGuests
     ): bool {
-        if (!$this->journeyPolicy->update($user, $journey, $allowGuests)) {
+        if (! $this->journeyPolicy->update($user, $journey, $allowGuests)) {
             return false;
         }
 
@@ -99,7 +98,7 @@ class ActivityPolicy
         Journey $journey,
         bool $allowGuests
     ): bool {
-        if (!$this->journeyPolicy->update($user, $journey, $allowGuests)) {
+        if (! $this->journeyPolicy->update($user, $journey, $allowGuests)) {
             return false;
         }
 

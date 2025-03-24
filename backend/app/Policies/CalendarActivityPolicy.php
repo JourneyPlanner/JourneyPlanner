@@ -50,7 +50,7 @@ class CalendarActivityPolicy
         bool $allowGuests
     ): bool {
         if (
-            !$this->activityPolicy->update(
+            ! $this->activityPolicy->update(
                 $user,
                 $activity,
                 $journey,
@@ -78,7 +78,7 @@ class CalendarActivityPolicy
         bool $allowGuests
     ): bool {
         if (
-            !$this->activityPolicy->update(
+            ! $this->activityPolicy->update(
                 $user,
                 $activity,
                 $journey,
@@ -104,7 +104,7 @@ class CalendarActivityPolicy
         CalendarActivity $calendarActivity
     ): bool {
         if (
-            !$this->activityPolicy->activityBelongsToJourney(
+            ! $this->activityPolicy->activityBelongsToJourney(
                 $journey,
                 $activity
             )

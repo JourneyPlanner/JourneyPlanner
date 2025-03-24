@@ -3,14 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Business\Business;
+use App\Models\Journey;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use App\Models\Journey;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @group User
+ *
+ * APIs for managing users.
+ */
 class UserController extends Controller
 {
     /**
@@ -19,28 +24,28 @@ class UserController extends Controller
     public function index()
     {
         $validated = request()->validate([
-            "per_page" => "nullable|integer|min:1|max:100",
-            "search" => "nullable|string",
+            'per_page' => 'nullable|integer|min:1|max:100',
+            'search' => 'nullable|string',
         ]);
 
-        $perPage = $validated["per_page"] ?? 10;
-        $search = $validated["search"] ?? "";
+        $perPage = $validated['per_page'] ?? 10;
+        $search = $validated['search'] ?? '';
 
         $users = User::when($search, function ($query) use ($search) {
             $query
-                ->where("username", "like", "%$search%")
-                ->orWhere("display_name", "like", "%$search%");
+                ->where('username', 'like', "%$search%")
+                ->orWhere('display_name', 'like', "%$search%");
         })
-            ->select("username", "display_name")
-            ->orderBy("username", "asc");
+            ->select('username', 'display_name')
+            ->orderBy('username', 'asc');
 
         $businesses = Business::when($search, function ($query) use ($search) {
             $query
-                ->where("slug", "like", "%$search%")
-                ->orWhere("name", "like", "%$search%");
+                ->where('slug', 'like', "%$search%")
+                ->orWhere('name', 'like', "%$search%");
         })
-            ->select("slug as username", "name as display_name")
-            ->orderBy("slug", "asc");
+            ->select('slug as username', 'name as display_name')
+            ->orderBy('slug', 'asc');
 
         $results = $users
             ->union($businesses)
@@ -55,11 +60,11 @@ class UserController extends Controller
      */
     public function show(string $username)
     {
-        $user = User::where("username", $username)->firstOrFail([
-            "username",
-            "display_name",
-            "email_hash",
-            "created_at",
+        $user = User::where('username', $username)->firstOrFail([
+            'username',
+            'display_name',
+            'email_hash',
+            'created_at',
         ]);
 
         return response()->json($user);
@@ -71,25 +76,25 @@ class UserController extends Controller
     public function changePassword(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            "password" => "string|nullable",
-            "new_password" => [
-                "required",
-                "confirmed",
+            'password' => 'string|nullable',
+            'new_password' => [
+                'required',
+                'confirmed',
                 Rules\Password::defaults(),
             ],
         ]);
 
         $user = $request->user();
-        $password = $validated["password"] ?? "";
+        $password = $validated['password'] ?? '';
 
-        if ($user->password && !Hash::check($password, $user->password)) {
-            return response()->json(["message" => "Invalid password"], 401);
+        if ($user->password && ! Hash::check($password, $user->password)) {
+            return response()->json(['message' => 'Invalid password'], 401);
         }
 
-        $user->password = Hash::make($validated["new_password"]);
+        $user->password = Hash::make($validated['new_password']);
         $user->save();
 
-        return response()->json(["message" => "Password changed"]);
+        return response()->json(['message' => 'Password changed']);
     }
 
     /**
@@ -98,20 +103,20 @@ class UserController extends Controller
     public function changeEmail(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            "password" => "string|nullable",
-            "email" => "required|string|lowercase|email|max:255|unique:users",
+            'password' => 'string|nullable',
+            'email' => 'required|email|unique:users',
         ]);
 
         $user = $request->user();
-        $password = $validated["password"] ?? "";
+        $password = $validated['password'] ?? '';
 
-        if ($user->password && !Hash::check($password, $user->password)) {
-            return response()->json(["message" => "Invalid password"], 401);
+        if ($user->password && ! Hash::check($password, $user->password)) {
+            return response()->json(['message' => 'Invalid password'], 401);
         }
 
-        $user->newEmail($validated["email"]);
+        $user->newEmail($validated['email']);
 
-        return response()->json(["message" => "Email changed"]);
+        return response()->json(['message' => 'Email changed']);
     }
 
     /**
@@ -120,16 +125,16 @@ class UserController extends Controller
     public function changeDisplayName(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            "display_name" => "required|string|max:255",
+            'display_name' => 'required|string|max:255',
         ]);
 
         $user = $request->user();
-        $user->display_name = trim($validated["display_name"]);
+        $user->display_name = trim($validated['display_name']);
         $user->save();
 
         return response()->json([
-            "message" => "Display name changed",
-            "display_name" => $user->display_name,
+            'message' => 'Display name changed',
+            'display_name' => $user->display_name,
         ]);
     }
 
@@ -139,17 +144,16 @@ class UserController extends Controller
     public function changeUsername(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            "username" =>
-                "required|string|alpha_dash|lowercase|max:255|unique:users",
+            'username' => 'required|string|alpha_dash|lowercase|max:255|unique:users',
         ]);
 
         $user = $request->user();
-        $user->username = $validated["username"];
+        $user->username = $validated['username'];
         $user->save();
 
         return response()->json([
-            "message" => "Username changed",
-            "username" => $user->username,
+            'message' => 'Username changed',
+            'username' => $user->username,
         ]);
     }
 
@@ -159,14 +163,14 @@ class UserController extends Controller
     public function deleteAccount(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            "password" => "string|nullable",
+            'password' => 'string|nullable',
         ]);
 
         $user = $request->user();
-        $password = $validated["password"] ?? "";
+        $password = $validated['password'] ?? '';
 
-        if ($user->password && !Hash::check($password, $user->password)) {
-            return response()->json(["message" => "Invalid password"], 401);
+        if ($user->password && ! Hash::check($password, $user->password)) {
+            return response()->json(['message' => 'Invalid password'], 401);
         }
 
         // Delete images
@@ -181,11 +185,11 @@ class UserController extends Controller
         $user->delete();
 
         // Delete all journeys which don't have at least one journey guide and which are not in guest mode
-        Journey::whereDoesntHave("users", function (Builder $query) {
-            $query->whereIn("role", [1, 2]);
-            $query->where("is_guest", false);
+        Journey::whereDoesntHave('users', function (Builder $query) {
+            $query->whereIn('role', [1, 2]);
+            $query->where('is_guest', false);
         })->delete();
 
-        return response()->json(["message" => "Account deleted"]);
+        return response()->json(['message' => 'Account deleted']);
     }
 }

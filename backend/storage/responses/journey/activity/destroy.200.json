@@ -1,0 +1,102 @@
+[
+    {
+        "id": "9d041be9-a28b-47d9-a78d-09ffcddbc9ac",
+        "journey_id": "9bec3dfc-c5e4-4605-851d-28f93e0b939c",
+        "name": "Hi",
+        "estimated_duration": "00:30:00",
+        "opening_hours": null,
+        "email": null,
+        "phone": null,
+        "link": null,
+        "cost": null,
+        "description": null,
+        "mapbox_id": null,
+        "mapbox_full_address": null,
+        "address": null,
+        "longitude": null,
+        "latitude": null,
+        "created_at": "2024-09-15T14:15:38.000000Z",
+        "updated_at": "2025-03-23T10:16:18.000000Z",
+        "repeat_type": "daily",
+        "repeat_interval": null,
+        "repeat_interval_unit": null,
+        "repeat_on": [
+            ""
+        ],
+        "repeat_end_date": null,
+        "repeat_end_occurrences": null,
+        "parent_id": null,
+        "calendar_activities": [
+            {
+                "id": "9e7ffa49-dd65-48f4-96d6-423ba543e041",
+                "activity_id": "9d041be9-a28b-47d9-a78d-09ffcddbc9ac",
+                "start": "2024-04-17T07:00:00.000000Z",
+                "created_at": "2025-03-23T10:16:11.000000Z",
+                "updated_at": "2025-03-23T10:16:11.000000Z"
+            },
+            {
+                "id": "9e7ffa53-635b-4094-9dc0-5adec6fda3ac",
+                "activity_id": "9d041be9-a28b-47d9-a78d-09ffcddbc9ac",
+                "start": "2024-04-18T07:00:00.000000Z",
+                "created_at": "2025-03-23T10:16:18.000000Z",
+                "updated_at": "2025-03-23T10:16:18.000000Z"
+            },
+            {
+                "id": "9e7ffa53-6572-44df-88b9-7c4119e357df",
+                "activity_id": "9d041be9-a28b-47d9-a78d-09ffcddbc9ac",
+                "start": "2024-04-20T07:00:00.000000Z",
+                "created_at": "2025-03-23T10:16:18.000000Z",
+                "updated_at": "2025-03-23T10:16:18.000000Z"
+            },
+            {
+                "id": "9e7ffa53-65c4-4698-b171-949eb4ed699f",
+                "activity_id": "9d041be9-a28b-47d9-a78d-09ffcddbc9ac",
+                "start": "2024-04-21T07:00:00.000000Z",
+                "created_at": "2025-03-23T10:16:18.000000Z",
+                "updated_at": "2025-03-23T10:16:18.000000Z"
+            },
+            {
+                "id": "9e7ffa53-661d-40b9-889b-a1311280653d",
+                "activity_id": "9d041be9-a28b-47d9-a78d-09ffcddbc9ac",
+                "start": "2024-04-22T07:00:00.000000Z",
+                "created_at": "2025-03-23T10:16:18.000000Z",
+                "updated_at": "2025-03-23T10:16:18.000000Z"
+            },
+            {
+                "id": "9e7ffa53-666d-49c3-b5ed-515747b37702",
+                "activity_id": "9d041be9-a28b-47d9-a78d-09ffcddbc9ac",
+                "start": "2024-04-23T07:00:00.000000Z",
+                "created_at": "2025-03-23T10:16:18.000000Z",
+                "updated_at": "2025-03-23T10:16:18.000000Z"
+            },
+            {
+                "id": "9e7ffa53-66ab-498a-9d51-eb23bdd0909f",
+                "activity_id": "9d041be9-a28b-47d9-a78d-09ffcddbc9ac",
+                "start": "2024-04-24T07:00:00.000000Z",
+                "created_at": "2025-03-23T10:16:18.000000Z",
+                "updated_at": "2025-03-23T10:16:18.000000Z"
+            },
+            {
+                "id": "9e7ffa53-66e7-4abc-9566-2c00c2a306d7",
+                "activity_id": "9d041be9-a28b-47d9-a78d-09ffcddbc9ac",
+                "start": "2024-04-25T07:00:00.000000Z",
+                "created_at": "2025-03-23T10:16:18.000000Z",
+                "updated_at": "2025-03-23T10:16:18.000000Z"
+            },
+            {
+                "id": "9e7ffa53-671c-4bec-8a15-16cff67e8928",
+                "activity_id": "9d041be9-a28b-47d9-a78d-09ffcddbc9ac",
+                "start": "2024-04-26T07:00:00.000000Z",
+                "created_at": "2025-03-23T10:16:18.000000Z",
+                "updated_at": "2025-03-23T10:16:18.000000Z"
+            },
+            {
+                "id": "9e7ffa53-6755-4132-987d-997abe2cb503",
+                "activity_id": "9d041be9-a28b-47d9-a78d-09ffcddbc9ac",
+                "start": "2024-04-27T07:00:00.000000Z",
+                "created_at": "2025-03-23T10:16:18.000000Z",
+                "updated_at": "2025-03-23T10:16:18.000000Z"
+            }
+        ]
+    }
+]

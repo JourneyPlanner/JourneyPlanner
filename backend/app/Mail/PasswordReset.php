@@ -21,7 +21,7 @@ class PasswordReset extends Mailable
     {
         $email = urlencode($notifiable->getEmailForPasswordReset());
         $this->url =
-            config("app.frontend_url") .
+            config('app.frontend_url').
             "/reset-password?token=$token&email=$email";
     }
 
@@ -30,7 +30,7 @@ class PasswordReset extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope(subject: "Reset password");
+        return new Envelope(subject: 'Reset password');
     }
 
     /**
@@ -39,9 +39,9 @@ class PasswordReset extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: "maizzle.emails.reset-password",
+            view: 'maizzle.emails.reset-password',
             with: [
-                "verificationUrl" => $this->url,
+                'verificationUrl' => $this->url,
             ]
         );
     }

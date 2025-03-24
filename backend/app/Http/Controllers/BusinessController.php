@@ -2,21 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Journey\TemplateController;
+use App\Http\Controllers\Template\TemplateController;
 use App\Http\Requests\Journey\StoreJourneyRequest;
 use App\Models\Activity;
 use App\Models\Business\Business;
 use App\Models\Business\BusinessImage;
 use App\Models\Business\BusinessImageAltText;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use App\Models\Business\BusinessText;
 use App\Models\Journey;
 use App\Services\MapboxService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @group Business
+ *
+ * APIs for managing businesses.
+ */
 class BusinessController extends Controller
 {
     /**
@@ -38,38 +43,38 @@ class BusinessController extends Controller
     public function show(Business $business, Request $request): JsonResponse
     {
         $validated = $request->validate([
-            "language" => "required|string|in:" . Business::AVAILABLE_LANGUAGES,
+            'language' => 'required|string|in:'.Business::AVAILABLE_LANGUAGES,
         ]);
 
         // Load images and texts for the specified language
         $business->load([
-            "images" => function ($query) {
-                $query->select("business_id", "key", "id");
+            'images' => function ($query) {
+                $query->select('business_id', 'key', 'id');
             },
-            "images.imageAltTexts" => function ($query) use ($validated) {
+            'images.imageAltTexts' => function ($query) use ($validated) {
                 $query
-                    ->select("business_image_id", "alt_text")
-                    ->where("language", $validated["language"]);
+                    ->select('business_image_id', 'alt_text')
+                    ->where('language', $validated['language']);
             },
-            "texts" => function ($query) use ($validated) {
+            'texts' => function ($query) use ($validated) {
                 $query
-                    ->select("business_id", "key", "value")
-                    ->where("language", $validated["language"]);
+                    ->select('business_id', 'key', 'value')
+                    ->where('language', $validated['language']);
             },
         ]);
 
         // Load default language texts for all keys
-        $defaultTexts = BusinessText::select("business_id", "key", "value")
-            ->where("business_id", $business->id)
-            ->where("language", $business->default_language)
+        $defaultTexts = BusinessText::select('business_id', 'key', 'value')
+            ->where('business_id', $business->id)
+            ->where('language', $business->default_language)
             ->get();
 
         // Determine which keys from the default texts are missing in the translated texts
-        $translatedKeys = $business->texts->pluck("key")->all();
+        $translatedKeys = $business->texts->pluck('key')->all();
         $missingDefaultTexts = $defaultTexts->filter(function ($text) use (
             $translatedKeys
         ) {
-            return !in_array($text->key, $translatedKeys);
+            return ! in_array($text->key, $translatedKeys);
         });
 
         // Merge missing default texts to ensure all keys are present
@@ -81,10 +86,10 @@ class BusinessController extends Controller
         foreach ($business->images as $image) {
             if ($image->imageAltTexts->isEmpty()) {
                 $image->load([
-                    "imageAltTexts" => function ($query) use ($business) {
+                    'imageAltTexts' => function ($query) use ($business) {
                         $query
-                            ->select("business_image_id", "alt_text")
-                            ->where("language", $business->default_language);
+                            ->select('business_image_id', 'alt_text')
+                            ->where('language', $business->default_language);
                     },
                 ]);
             }
@@ -92,21 +97,21 @@ class BusinessController extends Controller
 
         // Prepare the response
         $businessToReturn = [];
-        $businessToReturn["name"] = $business->name;
+        $businessToReturn['name'] = $business->name;
 
-        $businessToReturn["images"] = [];
+        $businessToReturn['images'] = [];
         foreach ($business->images as $image) {
             $imageToReturn = [];
-            $imageToReturn["link"] = $image->getLink();
+            $imageToReturn['link'] = $image->getLink();
             $imageToReturn[
-                "alt_text"
+                'alt_text'
             ] = $image->imageAltTexts->first()->alt_text;
-            $businessToReturn["images"][$image->key] = $imageToReturn;
+            $businessToReturn['images'][$image->key] = $imageToReturn;
         }
 
-        $businessToReturn["texts"] = [];
+        $businessToReturn['texts'] = [];
         foreach ($business->texts as $text) {
-            $businessToReturn["texts"][$text->key] = $text->value;
+            $businessToReturn['texts'][$text->key] = $text->value;
         }
 
         return response()->json($businessToReturn);
@@ -133,29 +138,29 @@ class BusinessController extends Controller
         Request $request
     ): JsonResponse {
         $validated = $request->validate([
-            "per_page" => "nullable|integer|min:1|max:100",
-            "private" => "nullable|boolean", // Includes business templates which are not set to visible
+            'per_page' => 'nullable|integer|min:1|max:100',
+            'private' => 'nullable|boolean', // Includes business templates which are not set to visible
         ]);
-        $perPage = $validated["per_page"] ?? TemplateController::$perPage;
-        $includePrivate = $validated["private"] ?? false;
+        $perPage = $validated['per_page'] ?? TemplateController::$perPage;
+        $includePrivate = $validated['private'] ?? false;
 
         $templates = $business->templates();
 
         if ($includePrivate) {
-            Gate::authorize("update", $business);
+            Gate::authorize('update', $business);
         } else {
-            $templates = $templates->wherePivot("visible", true);
+            $templates = $templates->wherePivot('visible', true);
         }
 
         $templates = $templates
             ->with([
-                "users" => function ($query) {
-                    $query->select("id", "username", "display_name");
+                'users' => function ($query) {
+                    $query->select('id', 'username', 'display_name');
                 },
-                "businesses" => function ($query) {
+                'businesses' => function ($query) {
                     $query
-                        ->select("id", "slug", "name")
-                        ->wherePivot("created_by_business", true);
+                        ->select('id', 'slug', 'name')
+                        ->wherePivot('created_by_business', true);
                 },
             ])
             ->cursorPaginate($perPage, static::getColumns())
@@ -169,7 +174,7 @@ class BusinessController extends Controller
      */
     private static function getColumns(): array
     {
-        return array_merge(TemplateController::getColumns(), ["visible"]);
+        return array_merge(TemplateController::getColumns(), ['visible']);
     }
 
     /**
@@ -180,22 +185,22 @@ class BusinessController extends Controller
         Request $request
     ): JsonResponse {
         $validated = $request->validate([
-            "per_page" => "nullable|integer|min:1|max:100",
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $activities = Activity::query()
-            ->join("journeys", "activities.journey_id", "=", "journeys.id")
+            ->join('journeys', 'activities.journey_id', '=', 'journeys.id')
             ->join(
-                "business_templates",
-                "journeys.id",
-                "=",
-                "business_templates.template_id"
+                'business_templates',
+                'journeys.id',
+                '=',
+                'business_templates.template_id'
             )
-            ->where("business_templates.business_id", $business->id)
-            ->where("business_templates.visible", true)
-            ->select("activities.*")
+            ->where('business_templates.business_id', $business->id)
+            ->where('business_templates.visible', true)
+            ->select('activities.*')
             ->cursorPaginate(
-                $validated["per_page"] ?? TemplateController::$perPage
+                $validated['per_page'] ?? TemplateController::$perPage
             )
             ->withQueryString();
 
@@ -208,12 +213,12 @@ class BusinessController extends Controller
     public function showTexts(Business $business): JsonResponse
     {
         // Verify user business membership
-        Gate::authorize("update", $business);
+        Gate::authorize('update', $business);
 
         $textsByLanguage = [];
 
         // Get all normal texts
-        $texts = BusinessText::where("business_id", $business->id)->get();
+        $texts = BusinessText::where('business_id', $business->id)->get();
         foreach ($texts as $text) {
             $textsByLanguage[$text->language][$text->key] = $text->value;
         }
@@ -221,7 +226,7 @@ class BusinessController extends Controller
         // Get alt texts for images
         foreach ($business->images()->get() as $image) {
             foreach ($image->imageAltTexts()->get() as $altText) {
-                $textsByLanguage[$altText->language]["alt_texts"][$image->key] =
+                $textsByLanguage[$altText->language]['alt_texts'][$image->key] =
                     $altText->alt_text;
             }
         }
@@ -235,28 +240,27 @@ class BusinessController extends Controller
     public function updateTexts(Request $request, Business $business): Response
     {
         // Verify user business membership
-        Gate::authorize("update", $business);
+        Gate::authorize('update', $business);
 
         // Validate the request
         $validated = $request->validate([
-            "texts" => "required|array",
-            "texts.*.language" => "in:" . Business::AVAILABLE_LANGUAGES,
-            "texts.*.texts" => "required|array",
-            "texts.*.texts.*.key" =>
-                "required|string|in:company_name,button,button_link,text",
-            "texts.*.texts.*.value" => "string",
+            'texts' => 'required|array',
+            'texts.*.language' => 'in:'.Business::AVAILABLE_LANGUAGES,
+            'texts.*.texts' => 'required|array',
+            'texts.*.texts.*.key' => 'required|string|in:company_name,button,button_link,text',
+            'texts.*.texts.*.value' => 'string',
         ]);
 
         // Update the texts
-        foreach ($validated["texts"] as $text) {
-            foreach ($text["texts"] as $textValue) {
+        foreach ($validated['texts'] as $text) {
+            foreach ($text['texts'] as $textValue) {
                 BusinessText::updateOrCreate(
                     [
-                        "business_id" => $business->id,
-                        "key" => $textValue["key"],
-                        "language" => $text["language"],
+                        'business_id' => $business->id,
+                        'key' => $textValue['key'],
+                        'language' => $text['language'],
                     ],
-                    ["value" => $textValue["value"]]
+                    ['value' => $textValue['value']]
                 );
             }
         }
@@ -272,7 +276,7 @@ class BusinessController extends Controller
         StoreJourneyRequest $request
     ): JsonResponse {
         // Verify user business membership
-        Gate::authorize("update", $business);
+        Gate::authorize('update', $business);
 
         // Validate the request
         $validated = $request->validated();
@@ -290,8 +294,8 @@ class BusinessController extends Controller
 
         // Set the visibility
         $business->templates()->attach($template->id, [
-            "created_by_business" => true,
-            "visible" => false,
+            'created_by_business' => true,
+            'visible' => false,
         ]);
 
         return response()->json($template, 201);
@@ -305,26 +309,26 @@ class BusinessController extends Controller
         Business $business
     ): Response {
         // Verify user business membership
-        Gate::authorize("update", $business);
+        Gate::authorize('update', $business);
 
         // Validate the request
         $validated = $request->validate([
-            "templates" => "nullable|array",
-            "templates.*.template_id" => "required|exists:journeys,id",
-            "templates.*.visible" => "required|boolean",
+            'templates' => 'nullable|array',
+            'templates.*.template_id' => 'required|exists:journeys,id',
+            'templates.*.visible' => 'required|boolean',
         ]);
 
         // Sometimes there is an issue with the request validation and the templates key is not set
-        if (!isset($validated["templates"])) {
-            $validated["templates"] = [];
+        if (! isset($validated['templates'])) {
+            $validated['templates'] = [];
         }
 
         // Update the templates
-        foreach ($validated["templates"] as $template) {
+        foreach ($validated['templates'] as $template) {
             $business
                 ->templates()
-                ->updateExistingPivot($template["template_id"], [
-                    "visible" => $template["visible"],
+                ->updateExistingPivot($template['template_id'], [
+                    'visible' => $template['visible'],
                 ]);
         }
 
@@ -339,22 +343,21 @@ class BusinessController extends Controller
         Request $request
     ): JsonResponse {
         // Verify user business membership
-        Gate::authorize("update", $business);
+        Gate::authorize('update', $business);
 
         $validated = $request->validate([
-            "image" => "nullable|image",
-            "type" => "required|string|in:image,banner",
-            "alt_texts" => "required|array",
-            "alt_texts.*.language" =>
-                "required|string|in:" . Business::AVAILABLE_LANGUAGES,
-            "alt_texts.*.alt_text" => "required|string|max:255",
+            'image' => 'nullable|image',
+            'type' => 'required|string|in:image,banner',
+            'alt_texts' => 'required|array',
+            'alt_texts.*.language' => 'required|string|in:'.Business::AVAILABLE_LANGUAGES,
+            'alt_texts.*.alt_text' => 'required|string|max:255',
         ]);
 
         $businessImage = $business
             ->images()
-            ->where("key", $validated["type"])
+            ->where('key', $validated['type'])
             ->first();
-        $image = $request->file("image");
+        $image = $request->file('image');
 
         // Save the image
         if ($image) {
@@ -364,34 +367,35 @@ class BusinessController extends Controller
 
             $fileName = $image->store("business_images/{$business->slug}");
             $businessImage = BusinessImage::updateOrCreate(
-                ["business_id" => $business->id, "key" => $validated["type"]],
-                ["file_name" => $fileName]
+                ['business_id' => $business->id, 'key' => $validated['type']],
+                ['file_name' => $fileName]
             );
-        } elseif (!$businessImage) {
+        } elseif (! $businessImage) {
             $businessImage = new BusinessImage([
-                "business_id" => $business->id,
-                "key" => $validated["type"],
+                'business_id' => $business->id,
+                'key' => $validated['type'],
             ]);
         }
 
         // Save alt texts
-        foreach ($validated["alt_texts"] as $altText) {
+        foreach ($validated['alt_texts'] as $altText) {
             BusinessImageAltText::updateOrCreate(
                 [
-                    "business_image_id" => $businessImage->id,
-                    "language" => $altText["language"],
+                    'business_image_id' => $businessImage->id,
+                    'language' => $altText['language'],
                 ],
-                ["alt_text" => $altText["alt_text"]]
+                ['alt_text' => $altText['alt_text']]
             );
         }
 
         // Prepare the response
-        $businessImage->load("imageAltTexts");
+        $businessImage->load('imageAltTexts');
         $response = [];
-        $response["link"] = $businessImage->getLink();
+        $response['link'] = $businessImage->getLink();
         foreach ($businessImage->imageAltTexts as $altText) {
-            $response["alt_texts"][$altText->language] = $altText->alt_text;
+            $response['alt_texts'][$altText->language] = $altText->alt_text;
         }
+
         return response()->json($response, 201);
     }
 
@@ -401,20 +405,20 @@ class BusinessController extends Controller
     public function deleteImage(Business $business): Response
     {
         // Verify user business membership
-        Gate::authorize("update", $business);
+        Gate::authorize('update', $business);
 
         $validated = request()->validate([
-            "type" => "required|string|in:image,banner",
+            'type' => 'required|string|in:image,banner',
         ]);
 
         $image = $business
             ->images()
-            ->where("key", $validated["type"])
+            ->where('key', $validated['type'])
             ->firstOrFail();
 
         // Delete the image
         Storage::delete($image->file_name);
-        $image->file_name = "";
+        $image->file_name = '';
         $image->save();
 
         return response()->noContent();
@@ -426,11 +430,11 @@ class BusinessController extends Controller
     public function currentsUserIndex(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user) {
+        if (! $user) {
             return response()->json([]);
         }
 
-        $businesses = $user->businesses()->select("id", "name", "slug")->get();
+        $businesses = $user->businesses()->select('id', 'name', 'slug')->get();
 
         return response()->json($businesses);
     }

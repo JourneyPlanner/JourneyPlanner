@@ -16,7 +16,7 @@ class BusinessText extends Model
      *
      * @var string[]
      */
-    protected $fillable = ["key", "value", "language", "business_id"];
+    protected $fillable = ['key', 'value', 'language', 'business_id'];
 
     /**
      * The business that this text belongs to.

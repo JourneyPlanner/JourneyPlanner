@@ -1,0 +1,11 @@
+{
+    "message": "The edit type field is required. (and 1 more error)",
+    "errors": {
+        "edit_type": [
+            "The edit type field is required."
+        ],
+        "calendar_activity_id": [
+            "The calendar activity id field is required unless edit type is in all."
+        ]
+    }
+}

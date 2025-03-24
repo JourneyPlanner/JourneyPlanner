@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use App\Models\Journey;
+use Illuminate\Support\Facades\Http;
 
 class WeatherService
 {
     /**
      * Get the weather data for the journey.
-     * @param Journey $journey The journey to get weather data for.
+     *
+     * @param  Journey  $journey  The journey to get weather data for.
      * @return array The weather data.
      */
     public function getWeatherData(Journey $journey): array
@@ -20,24 +21,21 @@ class WeatherService
 
         $weatherData = $response->json();
 
-        if (!isset($weatherData["current"]) || !isset($weatherData["daily"])) {
-            return ["error" => "Weather data not available"];
+        if (! isset($weatherData['current']) || ! isset($weatherData['daily'])) {
+            return ['error' => 'Weather data not available'];
         }
 
         return [
-            "current" => [
-                "temperature" => $weatherData["current"]["temperature_2m"],
-                "weather_code" => $weatherData["current"]["weather_code"],
+            'current' => [
+                'temperature' => $weatherData['current']['temperature_2m'],
+                'weather_code' => $weatherData['current']['weather_code'],
             ],
-            "forecast" => array_map(function ($index) use ($weatherData) {
+            'forecast' => array_map(function ($index) use ($weatherData) {
                 return [
-                    "date" => $weatherData["daily"]["time"][$index],
-                    "temperature_max" =>
-                        $weatherData["daily"]["temperature_2m_max"][$index],
-                    "temperature_min" =>
-                        $weatherData["daily"]["temperature_2m_min"][$index],
-                    "weather_code" =>
-                        $weatherData["daily"]["weather_code"][$index],
+                    'date' => $weatherData['daily']['time'][$index],
+                    'temperature_max' => $weatherData['daily']['temperature_2m_max'][$index],
+                    'temperature_min' => $weatherData['daily']['temperature_2m_min'][$index],
+                    'weather_code' => $weatherData['daily']['weather_code'][$index],
                 ];
             }, range(0, 3)),
         ];

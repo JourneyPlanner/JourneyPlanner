@@ -23,25 +23,25 @@ class VerifyEmailController extends Controller
         $user = User::find($id);
 
         if (
-            !$user ||
-            !hash_equals(sha1($user->getEmailForVerification()), (string) $hash)
+            ! $user ||
+            ! hash_equals(sha1($user->getEmailForVerification()), (string) $hash)
         ) {
             return response()->json(
                 [
-                    "message" => "Invalid verification URL.",
+                    'message' => 'Invalid verification URL.',
                 ],
                 400
             );
         }
 
-        if (!$user->hasVerifiedEmail()) {
+        if (! $user->hasVerifiedEmail()) {
             if ($user->markEmailAsVerified()) {
                 event(new Verified($user));
             }
         }
 
         return response()->json([
-            "message" => "Your email address has been verified.",
+            'message' => 'Your email address has been verified.',
         ]);
     }
 
@@ -50,26 +50,26 @@ class VerifyEmailController extends Controller
      */
     public function verifyPending(Request $request, string $token): JsonResponse
     {
-        $user = app(config("verify-new-email.model"))
+        $user = app(config('verify-new-email.model'))
             ->whereToken($token)
-            ->firstOr(["*"], function () {
+            ->firstOr(['*'], function () {
                 throw new InvalidVerificationLinkException(
-                    __("The verification link is not valid anymore.")
+                    __('The verification link is not valid anymore.')
                 );
             })
             ->tap(function ($pendingUserEmail) {
                 $pendingUserEmail->activate();
             })->user;
 
-        if (config("verify-new-email.login_after_verification")) {
+        if (config('verify-new-email.login_after_verification')) {
             Auth::guard()->login(
                 $user,
-                config("verify-new-email.login_remember")
+                config('verify-new-email.login_remember')
             );
         }
 
         return response()->json([
-            "message" => "Your email address has been verified.",
+            'message' => 'Your email address has been verified.',
         ]);
     }
 }

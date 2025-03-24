@@ -24,7 +24,7 @@ class CalendarActivity extends Model
      *
      * @var string[]
      */
-    protected $fillable = ["activity_id", "start"];
+    protected $fillable = ['activity_id', 'start'];
 
     /**
      * The attributes that should be cast.
@@ -32,6 +32,6 @@ class CalendarActivity extends Model
      * @var array
      */
     protected $casts = [
-        "start" => "datetime",
+        'start' => 'datetime',
     ];
 }

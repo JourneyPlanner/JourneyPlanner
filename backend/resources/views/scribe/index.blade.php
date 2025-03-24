@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>JourneyPlanner Documentation</title>
+    <title>JourneyPlanner API Documentation</title>
     <meta charset="utf-8"/>
     <meta
         name="viewport"

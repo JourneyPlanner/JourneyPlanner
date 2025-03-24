@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Journey;
+namespace App\Http\Controllers\Template;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Journey\JourneyController;
 use App\Http\Requests\Journey\UpdateTemplateRequest;
 use App\Models\Journey;
 use App\Models\JourneyUser;
@@ -13,6 +14,11 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
+/**
+ * @group Template
+ *
+ * APIs for managing templates.
+ */
 class TemplateController extends Controller
 {
     public static int $perPage = 20;
@@ -21,32 +27,32 @@ class TemplateController extends Controller
      * The columns to exclude when cloning a journey for creating/updating a template.
      */
     private static array $columnsToExcludeFromClone = [
-        "id",
-        "created_at",
-        "updated_at",
-        "name",
-        "description",
-        "invite",
-        "is_template",
-        "created_from",
-        "average_rating",
-        "total_ratings",
-        "share_id",
+        'id',
+        'created_at',
+        'updated_at',
+        'name',
+        'description',
+        'invite',
+        'is_template',
+        'created_from',
+        'average_rating',
+        'total_ratings',
+        'share_id',
     ];
 
     public static function getColumns()
     {
         return [
-            "id",
-            "name",
-            "destination",
-            "from",
-            "to",
-            "description",
-            "mapbox_full_address",
-            "average_rating",
-            "total_ratings",
-            "length",
+            'id',
+            'name',
+            'destination',
+            'from',
+            'to',
+            'description',
+            'mapbox_full_address',
+            'average_rating',
+            'total_ratings',
+            'length',
         ];
     }
 
@@ -64,15 +70,15 @@ class TemplateController extends Controller
     public function show(Journey $journey)
     {
         // Check if the requested journey is a template
-        Gate::authorize("journeyTemplate", $journey);
+        Gate::authorize('journeyTemplate', $journey);
 
         // Load the template creator
-        $journey->load("users:id,display_name,username");
+        $journey->load('users:id,display_name,username');
         $journey->load([
-            "businesses" => function ($query) {
+            'businesses' => function ($query) {
                 $query
-                    ->wherePivot("created_by_business", true)
-                    ->select("id", "slug", "name");
+                    ->wherePivot('created_by_business', true)
+                    ->select('id', 'slug', 'name');
             },
         ]);
 
@@ -89,7 +95,6 @@ class TemplateController extends Controller
 
     /**
      * Get all templates by the current user.
-     *
      */
     public function currentUserTemplatesIndex()
     {
@@ -103,54 +108,52 @@ class TemplateController extends Controller
     {
         // Validate the request
         $validated = request()->validate([
-            "sort_by" =>
-                "nullable|string|in:id,name,destination,length,average_rating",
-            "filter_by_rating" => "nullable|integer|min:0|max:5",
-            "order" => "nullable|string|in:asc,desc",
-            "per_page" => "nullable|integer|min:1|max:100",
-            "template_name" => "nullable|string",
-            "template_journey_length_min" => "nullable|integer|min:1",
-            "template_journey_length_max" => [
-                "nullable",
-                "integer",
-                "min:1",
+            'sort_by' => 'nullable|string|in:id,name,destination,length,average_rating',
+            'filter_by_rating' => 'nullable|integer|min:0|max:5',
+            'order' => 'nullable|string|in:asc,desc',
+            'per_page' => 'nullable|integer|min:1|max:100',
+            'template_name' => 'nullable|string',
+            'template_journey_length_min' => 'nullable|integer|min:1',
+            'template_journey_length_max' => [
+                'nullable',
+                'integer',
+                'min:1',
                 function (string $attribute, mixed $value, Closure $fail) {
                     $minLength = request()->input(
-                        "template_journey_length_min"
+                        'template_journey_length_min'
                     );
                     if ($minLength && $value < $minLength) {
                         $fail(
-                            "The maximum length must be greater than or equal to the minimum length."
+                            'The maximum length must be greater than or equal to the minimum length.'
                         );
                     }
                 },
             ],
-            "template_journey_length_max_const" =>
-                "required_with:template_journey_length_max|min:1",
-            "template_destination_input" => "nullable|string",
-            "template_destination_name" => "nullable|string",
-            "template_creator" => "nullable|string",
-            "journey_id" => "nullable|uuid|exists:journeys,id",
+            'template_journey_length_max_const' => 'required_with:template_journey_length_max|min:1',
+            'template_destination_input' => 'nullable|string',
+            'template_destination_name' => 'nullable|string',
+            'template_creator' => 'nullable|string',
+            'journey_id' => 'nullable|uuid|exists:journeys,id',
         ]);
 
         // Get the validated values or use the default values
-        $sortBy = $validated["sort_by"] ?? "average_rating";
-        $order = $validated["order"] ?? "desc";
-        $perPage = $validated["per_page"] ?? static::$perPage;
-        $filterByRating = $validated["filter_by_rating"] ?? null;
+        $sortBy = $validated['sort_by'] ?? 'average_rating';
+        $order = $validated['order'] ?? 'desc';
+        $perPage = $validated['per_page'] ?? static::$perPage;
+        $filterByRating = $validated['filter_by_rating'] ?? null;
 
-        $name = $validated["template_name"] ?? null;
-        $lengthMin = $validated["template_journey_length_min"] ?? null;
-        $lengthMax = $validated["template_journey_length_max"] ?? null;
+        $name = $validated['template_name'] ?? null;
+        $lengthMin = $validated['template_journey_length_min'] ?? null;
+        $lengthMax = $validated['template_journey_length_max'] ?? null;
         $lengthMaxConst =
-            $validated["template_journey_length_max_const"] ?? null;
-        $destination = $validated["template_destination_input"] ?? null;
-        $destinationName = $validated["template_destination_name"] ?? null;
-        $creator = $validated["template_creator"] ?? null;
-        $journey_id = $validated["journey_id"] ?? null;
+            $validated['template_journey_length_max_const'] ?? null;
+        $destination = $validated['template_destination_input'] ?? null;
+        $destinationName = $validated['template_destination_name'] ?? null;
+        $creator = $validated['template_creator'] ?? null;
+        $journey_id = $validated['journey_id'] ?? null;
 
         // Select all templates that match the search criteria
-        $templates = Journey::where("is_template", true)
+        $templates = Journey::where('is_template', true)
             ->when($destination, function ($query) use (
                 $destination,
                 $destinationName
@@ -160,10 +163,10 @@ class TemplateController extends Controller
                     $destinationName
                 ) {
                     $query
-                        ->where("destination", "like", "%$destination%")
+                        ->where('destination', 'like', "%$destination%")
                         ->orWhere(
-                            "mapbox_full_address",
-                            "like",
+                            'mapbox_full_address',
+                            'like',
                             "%$destination%"
                         )
                         ->when($destinationName, function ($query) use (
@@ -171,23 +174,23 @@ class TemplateController extends Controller
                         ) {
                             $query
                                 ->orWhere(
-                                    "destination",
-                                    "like",
+                                    'destination',
+                                    'like',
                                     "%$destinationName%"
                                 )
                                 ->orWhere(
-                                    "mapbox_full_address",
-                                    "like",
+                                    'mapbox_full_address',
+                                    'like',
                                     "%$destinationName%"
                                 );
                         });
                 });
             })
             ->when($name, function ($query) use ($name) {
-                $query->where("name", "like", "%$name%");
+                $query->where('name', 'like', "%$name%");
             })
             ->when($lengthMin, function ($query) use ($lengthMin) {
-                $query->where("length", ">=", $lengthMin);
+                $query->where('length', '>=', $lengthMin);
             })
             ->when($lengthMax, function ($query) use (
                 $lengthMax,
@@ -196,70 +199,70 @@ class TemplateController extends Controller
                 if ($lengthMax >= $lengthMaxConst) {
                     $lengthMax = PHP_INT_MAX;
                 }
-                $query->where("length", "<=", $lengthMax);
+                $query->where('length', '<=', $lengthMax);
             })
             ->when(
                 $username,
                 function ($query) use ($username) {
-                    $user = User::where("username", $username)->firstOrFail();
-                    $query->whereHas("users", function ($query) use ($user) {
-                        $query->where("users.id", $user->id);
+                    $user = User::where('username', $username)->firstOrFail();
+                    $query->whereHas('users', function ($query) use ($user) {
+                        $query->where('users.id', $user->id);
                     });
                 },
                 function ($query) use ($creator) {
                     $query->when($creator, function ($query) use ($creator) {
                         $query
-                            ->whereHas("users", function ($query) use (
+                            ->whereHas('users', function ($query) use (
                                 $creator
                             ) {
                                 $query
-                                    ->where("username", "like", "%$creator%")
+                                    ->where('username', 'like', "%$creator%")
                                     ->orWhere(
-                                        "display_name",
-                                        "like",
+                                        'display_name',
+                                        'like',
                                         "%$creator%"
                                     );
                             })
-                            ->orWhereHas("businesses", function ($query) use (
+                            ->orWhereHas('businesses', function ($query) use (
                                 $creator
                             ) {
                                 $query
                                     ->where(function ($query) use ($creator) {
                                         $query
                                             ->where(
-                                                "slug",
-                                                "like",
+                                                'slug',
+                                                'like',
                                                 "%$creator%"
                                             )
                                             ->orWhere(
-                                                "name",
-                                                "like",
+                                                'name',
+                                                'like',
                                                 "%$creator%"
                                             );
                                     })
-                                    ->where("created_by_business", true);
+                                    ->where('created_by_business', true);
                             });
                     });
                 }
             )
             ->when($filterByRating, function ($query) use ($filterByRating) {
-                $query->where("average_rating", ">=", $filterByRating);
+                $query->where('average_rating', '>=', $filterByRating);
             })
             ->when($journey_id, function ($query) use ($journey_id) {
-                $query->where("created_from", $journey_id);
+                $query->where('created_from', $journey_id);
             })
             ->with([
-                "users" => function ($query) {
-                    $query->select("id", "username", "display_name");
+                'users' => function ($query) {
+                    $query->select('id', 'username', 'display_name');
                 },
-                "businesses" => function ($query) {
+                'businesses' => function ($query) {
                     $query
-                        ->select("id", "slug", "name")
-                        ->wherePivot("created_by_business", true);
+                        ->select('id', 'slug', 'name')
+                        ->wherePivot('created_by_business', true);
                 },
             ])
             ->orderBy($sortBy, $order)
-            ->orderBy("id", "asc")
+            ->orderBy('id', 'asc')
             ->cursorPaginate($perPage, static::getColumns())
             ->withQueryString();
 
@@ -272,18 +275,17 @@ class TemplateController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            "journey_id" => "required|uuid|exists:journeys,id",
-            "name" => "required|string",
-            "description" => "nullable|string",
+            'journey_id' => 'required|uuid|exists:journeys,id',
+            'name' => 'required|string',
+            'description' => 'nullable|string',
         ]);
-        $journey = Journey::findOrFail($validated["journey_id"]);
-        Gate::authorize("update", [$journey, false]);
+        $journey = Journey::findOrFail($validated['journey_id']);
+        Gate::authorize('update', [$journey, false]);
 
-        if ($request->user()->can("journeyTemplateCreator", $journey)) {
+        if ($request->user()->can('journeyTemplateCreator', $journey)) {
             return response()->json(
                 [
-                    "message" =>
-                        "You have already created a template from this journey.",
+                    'message' => 'You have already created a template from this journey.',
                 ],
                 409
             );
@@ -292,18 +294,18 @@ class TemplateController extends Controller
         $journeyTemplate = $journey
             ->replicate(static::$columnsToExcludeFromClone)
             ->fill([
-                "name" => $validated["name"],
-                "invite" => "",
-                "description" => $validated["description"] ?? "",
-                "is_template" => true,
-                "created_from" => $journey->id,
+                'name' => $validated['name'],
+                'invite' => '',
+                'description' => $validated['description'] ?? '',
+                'is_template' => true,
+                'created_from' => $journey->id,
             ]);
         $journeyTemplate->save();
 
         $journeyTemplate = $this->cloneActivities($journey, $journeyTemplate);
 
         $journeyTemplate->users()->attach(Auth::id(), [
-            "role" => JourneyUser::TEMPLATE_CREATOR_ROLE_ID,
+            'role' => JourneyUser::TEMPLATE_CREATOR_ROLE_ID,
         ]);
 
         return response()->json($journeyTemplate);
@@ -317,9 +319,9 @@ class TemplateController extends Controller
         $validated = $request->validated();
         $template = $journey;
 
-        if (isset($validated["journey_id"])) {
-            $journey = Journey::findOrFail($validated["journey_id"]);
-            Gate::authorize("update", [$journey, false]);
+        if (isset($validated['journey_id'])) {
+            $journey = Journey::findOrFail($validated['journey_id']);
+            Gate::authorize('update', [$journey, false]);
 
             $template->fill(
                 Arr::except(
@@ -335,8 +337,8 @@ class TemplateController extends Controller
 
         return response()->json(
             [
-                "message" => "Template updated successfully",
-                "journey" => $template,
+                'message' => 'Template updated successfully',
+                'journey' => $template,
             ],
             200
         );
@@ -348,23 +350,34 @@ class TemplateController extends Controller
     private function cloneActivities($journey, $journeyTemplate)
     {
         foreach ($journey->activities()->get() as $activity) {
-            $activityTemplate = $activity->replicate(["journey_id"]);
+            $activityTemplate = $activity->replicate(['journey_id']);
             $activityTemplate->journey_id = $journeyTemplate->id;
             $activityTemplate->save();
 
             foreach (
-                $activity->calendarActivities()->get()
-                as $calendarActivity
+                $activity->calendarActivities()->get() as $calendarActivity
             ) {
                 $calendarActivityTemplate = $calendarActivity
-                    ->replicate(["activity_id"])
+                    ->replicate(['activity_id'])
                     ->fill([
-                        "activity_id" => $activityTemplate->id,
+                        'activity_id' => $activityTemplate->id,
                     ]);
                 $calendarActivityTemplate->save();
             }
         }
 
         return $journeyTemplate;
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Journey $journey)
+    {
+        Gate::authorize('delete', [$journey, true]);
+
+        JourneyController::deleteJourney($journey);
+
+        return response()->noContent();
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Journey\Activity\CalendarActivity;
 
+use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Auth\Access\Response;
 
 class DeleteCalendarActivityRequest extends FormRequest
 {
@@ -13,7 +13,7 @@ class DeleteCalendarActivityRequest extends FormRequest
      */
     public function authorize(): Response
     {
-        return Gate::authorize("delete", [
+        return Gate::authorize('delete', [
             $this->calendarActivity,
             $this->activity,
             $this->journey,
@@ -29,7 +29,17 @@ class DeleteCalendarActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "edit_type" => "required|in:single,following,all",
+            'edit_type' => 'required|in:single,following,all',
+        ];
+    }
+
+    public function bodyParameters(): array
+    {
+        return [
+            'edit_type' => [
+                'description' => 'The type of delete to perform. single: only this activity, following: this and all following activities, all: all activities',
+                'example' => 'single',
+            ],
         ];
     }
 }

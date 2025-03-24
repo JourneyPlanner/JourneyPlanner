@@ -73,7 +73,7 @@ class JourneyPolicy
     {
         return $journey
             ->users()
-            ->where("user_id", $user->id)
+            ->where('user_id', $user->id)
             ->exists();
     }
 
@@ -85,11 +85,11 @@ class JourneyPolicy
     {
         return $journey
             ->users()
-            ->where("user_id", $user->id)
+            ->where('user_id', $user->id)
             ->where(function ($query) {
                 $query
-                    ->where("role", JourneyUser::JOURNEY_GUIDE_ROLE_ID)
-                    ->orWhere("role", JourneyUser::TEMPLATE_CREATOR_ROLE_ID);
+                    ->where('role', JourneyUser::JOURNEY_GUIDE_ROLE_ID)
+                    ->orWhere('role', JourneyUser::TEMPLATE_CREATOR_ROLE_ID);
             })
             ->exists() || $this->templateBusinessMember($journey);
     }
@@ -101,12 +101,13 @@ class JourneyPolicy
     {
         $business = $journey
             ->businesses()
-            ->wherePivot("created_by_business", true)
+            ->wherePivot('created_by_business', true)
             ->first();
-        if (!$business) {
+        if (! $business) {
             return false;
         }
-        return Gate::allows("update", $business);
+
+        return Gate::allows('update', $business);
     }
 
     private function guestJourney(Journey $journey): bool
@@ -129,13 +130,14 @@ class JourneyPolicy
             if (
                 $template
                     ->users()
-                    ->where("user_id", $user->id)
-                    ->wherePivot("role", 2)
+                    ->where('user_id', $user->id)
+                    ->wherePivot('role', 2)
                     ->exists()
             ) {
                 return true;
             }
         }
+
         return false;
     }
 }

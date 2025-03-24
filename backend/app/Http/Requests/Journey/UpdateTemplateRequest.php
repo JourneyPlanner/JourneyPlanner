@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Journey;
 
-use App\Http\Requests\Journey\UpdateJourneyRequest;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -14,7 +13,7 @@ class UpdateTemplateRequest extends UpdateJourneyRequest
      */
     public function authorize(): Response
     {
-        return Gate::authorize("update", [$this->journey, false, true]);
+        return Gate::authorize('update', [$this->journey, false, true]);
     }
 
     /**
@@ -26,19 +25,20 @@ class UpdateTemplateRequest extends UpdateJourneyRequest
     {
         $rules = parent::rules();
         foreach ($rules as $key => $rule) {
-            if (Str::contains($rule, "required_with")) {
-            } elseif (Str::contains($rule, "required")) {
+            if (Str::contains($rule, 'required_with')) {
+            } elseif (Str::contains($rule, 'required')) {
                 $rules[$key] = str_replace(
-                    "required",
-                    "required_without:journey_id",
+                    'required',
+                    'required_without:journey_id',
                     $rule
                 );
             } else {
-                $rules[$key] = $rule . "|required_without:journey_id";
+                $rules[$key] = $rule.'|required_without:journey_id';
             }
         }
-        $rules["journey_id"] = "nullable|uuid|exists:journeys,id";
-        $rules["description"] = "nullable|string";
+        $rules['journey_id'] = 'nullable|uuid|exists:journeys,id';
+        $rules['description'] = 'nullable|string';
+
         return $rules;
     }
 }

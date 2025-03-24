@@ -1,0 +1,20 @@
+[
+    {
+        "id": "8b04c991-13db-4e11-944d-e5e1d3c762f3",
+        "user_id": "295f37ad-935c-4331-a4e5-d5c45cfa28ac",
+        "user_display_name": "Severin",
+        "user_username": "severin",
+        "name": "2012217284335680_DSC00230.jpg",
+        "link": "https:\/\/api.journeyplanner.io\/api\/journey\/acc92fc1-123a-4f04-a83a-c95b00aec99c\/media\/8b04c991-13db-4e11-944d-e5e1d3c762f3",
+        "type": "image\/jpeg"
+    },
+    {
+        "id": "494b4186-1ec3-43eb-ade9-f60d59e77322",
+        "user_id": "5ae626ba-f1c8-4075-a488-ee0b731dbc4a",
+        "user_display_name": "Raven",
+        "user_username": "raven",
+        "name": "2025070284335680_DSC00231.jpg",
+        "link": "https:\/\/api.journeyplanner.io\/api\/journey\/acc92fc1-123a-4f04-a83a-c95b00aec99c\/media\/494b4186-1ec3-43eb-ade9-f60d59e77322",
+        "type": "image\/jpeg"
+    }
+]

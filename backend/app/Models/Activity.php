@@ -19,24 +19,24 @@ class Activity extends Model
      * @var string[]
      */
     protected $fillable = [
-        "name",
-        "estimated_duration",
-        "mapbox_id",
-        "mapbox_full_address",
-        "address",
-        "opening_hours",
-        "email",
-        "phone",
-        "link",
-        "cost",
-        "description",
-        "location",
-        "repeat_type",
-        "repeat_interval",
-        "repeat_interval_unit",
-        "repeat_on",
-        "repeat_end_date",
-        "repeat_end_occurrences",
+        'name',
+        'estimated_duration',
+        'mapbox_id',
+        'mapbox_full_address',
+        'address',
+        'opening_hours',
+        'email',
+        'phone',
+        'link',
+        'cost',
+        'description',
+        'location',
+        'repeat_type',
+        'repeat_interval',
+        'repeat_interval_unit',
+        'repeat_on',
+        'repeat_end_date',
+        'repeat_end_occurrences',
     ];
 
     /**
@@ -60,7 +60,7 @@ class Activity extends Model
      */
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(Activity::class, "parent_id");
+        return $this->belongsTo(Activity::class, 'parent_id');
     }
 
     /**
@@ -78,7 +78,7 @@ class Activity extends Model
      */
     public function children(): HasMany
     {
-        return $this->hasMany(Activity::class, "parent_id");
+        return $this->hasMany(Activity::class, 'parent_id');
     }
 
     /**
@@ -87,7 +87,7 @@ class Activity extends Model
     public function hasSameAttributesAs(Activity $other): bool
     {
         foreach ($this->attributes as $key => $value) {
-            if ($key != "id") {
+            if ($key != 'id') {
                 if ($this->$key != $other->$key) {
                     return false;
                 }
@@ -103,8 +103,8 @@ class Activity extends Model
      * @var array
      */
     protected $casts = [
-        "estimated_duration" => "datetime:H:i:s",
-        "repeat_end_date" => "datetime",
+        'estimated_duration' => 'datetime:H:i:s',
+        'repeat_end_date' => 'datetime',
     ];
 
     /**
@@ -112,8 +112,8 @@ class Activity extends Model
      */
     public function setRepeatOnAttribute($value)
     {
-        $this->attributes["repeat_on"] = is_array($value)
-            ? implode(",", $value)
+        $this->attributes['repeat_on'] = is_array($value)
+            ? implode(',', $value)
             : $value;
     }
 
@@ -122,6 +122,6 @@ class Activity extends Model
      */
     public function getRepeatOnAttribute($value)
     {
-        return explode(",", $value);
+        return explode(',', $value);
     }
 }

@@ -14,14 +14,14 @@ class Business extends Model
 {
     use HasFactory, HasUuids;
 
-    public const AVAILABLE_LANGUAGES = "de,en";
+    public const AVAILABLE_LANGUAGES = 'de,en';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
-    protected $fillable = ["name", "slug", "default_language"];
+    protected $fillable = ['name', 'slug', 'default_language'];
 
     /**
      * The business's images.
@@ -46,8 +46,8 @@ class Business extends Model
     {
         return $this->belongsToMany(
             Journey::class,
-            "business_templates",
-            relatedPivotKey: "template_id"
+            'business_templates',
+            relatedPivotKey: 'template_id'
         );
     }
 

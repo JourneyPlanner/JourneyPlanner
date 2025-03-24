@@ -11,5 +11,5 @@ return [
     |
     */
 
-    "mapbox_api_key" => env("MAPBOX_API_KEY"),
+    'mapbox_api_key' => env('MAPBOX_API_KEY'),
 ];
