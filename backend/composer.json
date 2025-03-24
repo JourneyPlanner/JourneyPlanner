@@ -10,6 +10,7 @@
         "php": "^8.2",
         "google/apiclient-services": "^0.396.0",
         "guzzlehttp/guzzle": "^7.9",
+        "knuckleswtf/scribe": "^5.1",
         "laravel/framework": "^11.41",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.18",
@@ -21,7 +22,6 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.24.1",
-        "knuckleswtf/scribe": "^5.1",
         "laravel/breeze": "^2.3",
         "laravel/pint": "^1.21",
         "laravel/sail": "^1.41",
