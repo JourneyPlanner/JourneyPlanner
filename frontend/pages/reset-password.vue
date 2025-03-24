@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { useTranslate } from "@tolgee/vue";
+import { useTolgee, useTranslate } from "@tolgee/vue";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import * as yup from "yup";
 
 const toast = useToast();
 const { t } = useTranslate();
+const tolgee = useTolgee(["language"]);
 const client = useSanctumClient();
 
-useHead({
-    title: `${t.value("password.reset.title")} | JourneyPlanner`,
+const title = t.value("password.reset.title");
+
+useSeoMeta({
+    title: () => `${title} | JourneyPlanner`,
+    description: () => t.value("startpage.text"),
+    ogImage: () => `/og/index/${tolgee.value?.getLanguage() || "en"}.png`,
 });
 
 definePageMeta({

@@ -31,24 +31,13 @@ export default defineNuxtConfig({
                 },
                 { rel: "manifest", href: "/site.webmanifest" },
             ],
-            meta: [
-                {
-                    name: "description",
-                    content: "JourneyPlanner - Travel planning made easy",
-                },
-                { property: "og:site_name", content: "JourneyPlanner" },
-                { property: "og:url", content: process.env.NUXT_FRONTEND_URL },
-                { property: "og:type", content: "website" },
-                { property: "og:title", content: "JourneyPlanner" },
-                {
-                    property: "og:description",
-                    content: "Travel planning made easy",
-                },
-            ],
         },
     },
     ogImage: {
         enabled: false,
+    },
+    seo: {
+        fallbackTitle: false,
     },
     linkChecker: {
         failOnError: true,

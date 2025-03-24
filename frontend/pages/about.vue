@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { T, useTranslate } from "@tolgee/vue";
+import { T, useTolgee, useTranslate } from "@tolgee/vue";
 
 import scroll from "../utils/scroll";
 
 const { t } = useTranslate();
+const tolgee = useTolgee(["language"]);
 
-const title = t.value("startpage.subheading");
-
-useHead({
-    title: `JourneyPlanner | ${title}`,
+useSeoMeta({
+    title: () => `${t.value("about.us")} | JourneyPlanner`,
+    description: () => t.value("startpage.text"),
+    ogImage: () => `/og/index/${tolgee.value?.getLanguage() || "en"}.png`,
 });
 
 const END_DATE = new Date("2025-03-28T12:00:00");
