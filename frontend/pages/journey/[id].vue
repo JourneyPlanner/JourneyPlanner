@@ -180,8 +180,6 @@ function updateInvite() {
         },
     };
 
-    journeyData.value.invite =
-        window.location.origin + "/invite/" + journeyStore.getInvite();
     QRCode.toDataURL(journeyStore.getInvite(), opts, function (error, url) {
         qrcodeInvite.value = url;
     });
