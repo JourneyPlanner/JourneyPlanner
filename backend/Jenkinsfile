@@ -14,6 +14,7 @@ pipeline {
             }
         }
         stage('Check Backend Code') {
+            agent { docker { image 'composer:lts' } }
             steps {
                 dir('backend') {
                     script {
