@@ -279,15 +279,6 @@ const locale = computed(() => {
                     tag="div"
                     class="relative mt-2 grid w-full grid-cols-2 gap-2 sm:grid-cols-3 md:gap-4 lg:grid-cols-2 lg:gap-4 xl:grid-cols-3"
                 >
-                    <Skeleton
-                        v-for="index in maxDisplayedTemplates"
-                        v-show="
-                            templatesStatus === 'pending' && !showMoreTemplates
-                        "
-                        :key="index"
-                        class="w-16"
-                        height="10rem"
-                    />
                     <TemplateCard
                         v-for="(template, index) in templates"
                         v-show="
@@ -299,6 +290,7 @@ const locale = computed(() => {
                         :displayed-in-profile="true"
                         :is-current-user="isCurrentUser"
                         @open-template="openTemplateDialog(template)"
+                        @template-deleted="reloadData = true"
                     />
                     <TemplateCardSmall
                         v-for="(template, index) in templates"
@@ -310,7 +302,15 @@ const locale = computed(() => {
                         :template="template"
                         :displayed-in-profile="true"
                         :is-current-user="isCurrentUser"
+                        @template-deleted="reloadData = true"
                         @open-template="openTemplateDialog(template)"
+                    />
+                    <Skeleton
+                        v-for="index in maxDisplayedTemplates"
+                        v-show="templatesStatus === 'pending'"
+                        :key="index"
+                        class="w-16"
+                        height="10rem"
                     />
                 </TransitionGroup>
                 <div
@@ -367,6 +367,34 @@ const locale = computed(() => {
                     isTemplatePopupVisible = false;
                     openedTemplate = undefined;
                 "
+            />
+            <ConfirmDialog
+                :draggable="false"
+                group="username"
+                class="z-[1000]"
+                :pt="{
+                    root: {
+                        class: 'z-[1000] bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    header: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    content: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    footer: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
+                    },
+                    closeButton: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
+                    },
+                    closeButtonIcon: {
+                        class: 'h-5 w-5',
+                    },
+                    mask: {
+                        class: 'z-[1000] ',
+                    },
+                }"
             />
         </div>
     </div>
