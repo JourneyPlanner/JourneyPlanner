@@ -41,7 +41,7 @@ class ActivityController extends Controller
             Activity::class,
             $journey,
             true,
-            request()->string("share_id"),
+            request()->input("share_id"),
         ]);
 
         $activities = $journey->activities()->with("calendarActivities")->get();
@@ -81,6 +81,7 @@ class ActivityController extends Controller
         // Create the calendar activity if the date is provided
         if (!static::createCalendarActivityIfNeeded($validated, $activity)) {
             $activity["calendar_activities"] = [];
+
             return response()->json($activity, 201);
         }
 
@@ -108,7 +109,7 @@ class ActivityController extends Controller
             $activity,
             $journey,
             true,
-            request()->string("share_id"),
+            request()->input("share_id"),
         ]);
 
         return response()->json($activity->load("calendarActivities"));
@@ -441,6 +442,7 @@ class ActivityController extends Controller
             ...$baseActivity->children()->with("calendarActivities")->get()
         );
         $activities[] = $baseActivity->load("calendarActivities");
+
         return response()->json($activities, 200);
     }
 
@@ -489,6 +491,7 @@ class ActivityController extends Controller
             ->with("calendarActivities")
             ->get();
         $activities[] = $baseActivity->load("calendarActivities");
+
         return response()->json($activities, 200);
     }
 
@@ -505,6 +508,7 @@ class ActivityController extends Controller
             "repeat_end_date" => null,
             "repeat_end_occurrences" => null,
         ]);
+
         return $activity;
     }
 

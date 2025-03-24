@@ -21,7 +21,7 @@ class JourneyUserController extends Controller
         Gate::authorize("view", [
             $journey,
             false,
-            request()->string("share_id"),
+            request()->input("share_id"),
         ]);
 
         // return the users of the journey in json format
