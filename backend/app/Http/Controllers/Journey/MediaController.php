@@ -19,7 +19,7 @@ class MediaController extends Controller
         Gate::authorize("view", [
             $journey,
             false,
-            request()->string("share_id"),
+            request()->input("share_id"),
         ]);
 
         $media = $journey->media->map(function ($media) {

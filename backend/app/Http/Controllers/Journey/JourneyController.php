@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Journey;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Journey\Activity\ActivityController;
-use App\Models\Journey;
-use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Journey\StoreJourneyRequest;
 use App\Http\Requests\Journey\UpdateJourneyRequest;
+use App\Models\Journey;
 use App\Models\JourneyUser;
 use App\Services\MapboxService;
 use App\Services\WeatherService;
 use DateInterval;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -206,7 +206,7 @@ class JourneyController extends Controller
      */
     public function show(Journey $journey, Request $request)
     {
-        $share_id = $request->string("share_id");
+        $share_id = $request->input("share_id");
 
         // Check if the authenticated user is a member of the requested journey
         Gate::authorize("view", [$journey, true, $share_id]);
@@ -329,11 +329,7 @@ class JourneyController extends Controller
      */
     public function getWeather(Journey $journey)
     {
-        Gate::authorize("view", [
-            $journey,
-            true,
-            request()->string("share_id"),
-        ]);
+        Gate::authorize("view", [$journey, true, request()->input("share_id")]);
 
         $weatherDataResponse = $this->weatherService->getWeatherData($journey);
 
