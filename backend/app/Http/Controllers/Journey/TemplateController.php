@@ -31,6 +31,7 @@ class TemplateController extends Controller
         "created_from",
         "average_rating",
         "total_ratings",
+        "share_id",
     ];
 
     public static function getColumns()

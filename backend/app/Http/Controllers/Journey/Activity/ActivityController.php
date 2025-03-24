@@ -13,6 +13,7 @@ use App\Services\MapboxService;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
@@ -34,9 +35,14 @@ class ActivityController extends Controller
     /**
      * Get all activities of the specified journey.
      */
-    public function index(Journey $journey)
+    public function index(Journey $journey, Request $request)
     {
-        Gate::authorize("viewAny", [Activity::class, $journey, true]);
+        Gate::authorize("viewAny", [
+            Activity::class,
+            $journey,
+            true,
+            request()->string("share_id"),
+        ]);
 
         $activities = $journey->activities()->with("calendarActivities")->get();
 
@@ -98,7 +104,12 @@ class ActivityController extends Controller
      */
     public function show(Journey $journey, Activity $activity)
     {
-        Gate::authorize("view", [$activity, $journey, true]);
+        Gate::authorize("view", [
+            $activity,
+            $journey,
+            true,
+            request()->string("share_id"),
+        ]);
 
         return response()->json($activity->load("calendarActivities"));
     }
