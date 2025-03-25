@@ -162,7 +162,6 @@ const onSubmit = handleSubmit(async (values) => {
                         detail: t.value("form.template.toast.success"),
                         life: 3000,
                     });
-                    store.addJourney(response._data);
                     await navigateTo(
                         "/template/" + response._data.id + "/edit",
                     );
