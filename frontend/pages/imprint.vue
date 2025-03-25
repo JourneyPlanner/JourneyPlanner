@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { useTranslate } from "@tolgee/vue";
+import { useTolgee, useTranslate } from "@tolgee/vue";
 import { useRouter } from "vue-router";
 
 const { t } = useTranslate();
+const tolgee = useTolgee(["language"]);
 const title = t.value("common.imprint");
 const router = useRouter();
 
-useHead({
-    title: `${title} | JourneyPlanner`,
+useSeoMeta({
+    title: () => `${title} | JourneyPlanner`,
+    description: () => t.value("startpage.text"),
+    ogImage: () => `/og/index/${tolgee.value?.getLanguage() || "en"}.png`,
 });
 </script>
 

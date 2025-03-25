@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { useTranslate } from "@tolgee/vue";
+import { useTolgee, useTranslate } from "@tolgee/vue";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 
 const { t } = useTranslate();
+const tolgee = useTolgee(["language"]);
 const route = useRoute();
 const router = useRouter();
 const client = useSanctumClient();
@@ -42,8 +43,10 @@ if (route.query.creationType === "template") {
     title = t.value("title.journey.create");
 }
 
-useHead({
-    title: `${title} | JourneyPlanner`,
+useSeoMeta({
+    title: () => `${title} | JourneyPlanner`,
+    description: () => t.value("startpage.text"),
+    ogImage: () => `/og/index/${tolgee.value?.getLanguage() || "en"}.png`,
 });
 
 if (!isAuthenticated.value) {

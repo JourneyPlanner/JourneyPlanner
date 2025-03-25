@@ -8,6 +8,10 @@ definePageMeta({
     middleware: ["sanctum:auth"],
 });
 
+defineRouteRules({
+    robots: false,
+});
+
 const { t } = useTranslate();
 const router = useRouter();
 const route = useRoute();
