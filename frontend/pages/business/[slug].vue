@@ -8,7 +8,7 @@ const client = useSanctumClient();
 const toast = useToast();
 const tolgee = useTolgee(["language"]);
 
-const slug = ref(route.params.slug);
+const slug = ref(route.params.slug as string);
 const screenWidth = ref(window.innerWidth);
 
 const images = reactive({
@@ -59,10 +59,11 @@ if (error.value) {
     });
 }
 
-const backRoute = ref<string>("/dashboard?tab=templates");
-const ALLOWED_ROUTES = ["/journey", "/dashboard?tab=templates", "/user"];
+const backRoute = ref<string>("/dashboard");
+const ALLOWED_ROUTES = ["/journey", "/dashboard", "/user"];
 
 const showMoreTemplates = ref(false);
+const editingEnabled = ref(false);
 const openedTemplate = ref<Template | undefined>();
 const isTemplatePopupVisible = ref<boolean>(false);
 const templatesLoader = ref<HTMLElement | undefined>();
@@ -84,6 +85,7 @@ const activityLoader = ref<HTMLElement | undefined>();
 const showMoreActivities = ref<boolean>(false);
 
 const isActivityInfoVisible = ref<boolean>(false);
+const isTemplateDialogVisible = ref<boolean>(false);
 const activityId = ref<string | null>(null);
 const journeyId = ref<string | null>(null);
 const address = ref<string | null>(null);
@@ -96,6 +98,44 @@ const mapbox_id = ref<string | null>(null);
 const name = ref<string | null>(null);
 const opening_hours = ref<string | null>(null);
 const phone = ref<string | null>(null);
+const isImageEditSidebarVisible = ref<boolean>(false);
+const isTextEditSidebarVisible = ref<boolean>(false);
+const isActivityInfoDialogVisible = ref<boolean>(false);
+const imageEditType = ref<string>("");
+const partOfBusiness = ref<boolean>(false);
+const allTexts = ref<InternationalBusinessSiteTexts>();
+const reloadActivityData = ref<boolean>(false);
+const reloadTemplateData = ref<boolean>(false);
+
+await client(`/api/me/business`, {
+    async onResponse({ response }) {
+        if (response.ok) {
+            partOfBusiness.value =
+                response._data?.some(
+                    (business: Business) => business.slug === slug.value,
+                ) || false;
+        }
+    },
+});
+
+if (partOfBusiness.value) {
+    await client(`/api/business/${slug.value}/texts`, {
+        async onResponse({ response }) {
+            if (response.ok) {
+                allTexts.value = response?._data;
+                allTexts.value!.de.alt_texts = allTexts.value?.de.alt_texts ?? {
+                    banner: "",
+                    image: "",
+                };
+
+                allTexts.value!.en.alt_texts = allTexts.value?.en.alt_texts ?? {
+                    banner: "",
+                    image: "",
+                };
+            }
+        },
+    });
+}
 
 onMounted(async () => {
     const lastRoute = router.options.history.state.back as string;
@@ -103,12 +143,17 @@ onMounted(async () => {
     if (
         (lastRoute &&
             lastRoute !== "" &&
-            ALLOWED_ROUTES.some((route) => lastRoute.startsWith(route))) ||
+            ALLOWED_ROUTES.some(
+                (route) =>
+                    lastRoute.startsWith(route) &&
+                    lastRoute !==
+                        "/journey/new?creationType=template&slug=demo",
+            )) ||
         lastRoute === "/"
     ) {
         backRoute.value = lastRoute;
     } else {
-        backRoute.value = "/dashboard?tab=templates";
+        backRoute.value = "/dashboard";
     }
 
     window.addEventListener("resize", updateScreenWidth);
@@ -175,6 +220,7 @@ const {
     toggleText: toggleTextActivities,
 } = await useInfiniteScroll<Activity>({
     loader: activityLoader,
+    reloadData: reloadActivityData,
     showMoreData: showMoreActivities,
     showMoreDataText: t.value("subdomain.activities.showMore"),
     showLessDataText: t.value("subdomain.activities.showLess"),
@@ -193,6 +239,7 @@ const {
 } = await useInfiniteScroll<Template>({
     loader: templatesLoader,
     showMoreData: showMoreTemplates,
+    reloadData: reloadTemplateData,
     showMoreDataText: t.value("subdomain.templates.showMore"),
     showLessDataText: t.value("subdomain.templates.showLess"),
     identifier: "business-templates",
@@ -227,19 +274,95 @@ function openActivityDialog(activity: Activity) {
 
     isActivityInfoVisible.value = true;
 }
+
+function toggleEditing() {
+    editingEnabled.value = !editingEnabled.value;
+}
+
+function editImage(whichImage: string) {
+    if (editingEnabled.value) {
+        if (whichImage === "banner") {
+            imageEditType.value = "banner";
+        } else {
+            imageEditType.value = "image";
+        }
+        isImageEditSidebarVisible.value = true;
+    }
+}
+
+async function updateImage(altTexts: AltTexts | null = null, link: string) {
+    if (imageEditType.value === "banner") {
+        images.banner.link = "";
+        if (altTexts) {
+            images.banner.alt_text =
+                tolgee.value.getLanguage() == "de" ? altTexts.de : altTexts.en;
+            images.banner.link = `${link}?forceRefresh=${Date.now()}`;
+            allTexts.value!.de.alt_texts.banner = altTexts.de;
+            allTexts.value!.en.alt_texts.banner = altTexts.en;
+        }
+    } else {
+        images.image.link = "";
+        if (altTexts) {
+            images.image.alt_text =
+                tolgee.value.getLanguage() == "de" ? altTexts.de : altTexts.en;
+            images.image.link = `${link}?forceRefresh=${Date.now()}`;
+            allTexts.value!.de.alt_texts.image = altTexts.de;
+            allTexts.value!.en.alt_texts.image = altTexts.en;
+        }
+    }
+}
+
+const updatedBannerUrl = computed(
+    () => `${images.banner.link}?t=${Date.now()}`,
+);
+
+function updateTexts(businessTexts: BusinessTexts) {
+    const index = tolgee.value.getLanguage() == "de" ? 0 : 1;
+    texts.company_name = businessTexts.texts[index].company_name;
+    texts.text = businessTexts.texts[index].text;
+    texts.button = businessTexts.texts[index].button;
+    texts.button_link = businessTexts.texts[index].button_link;
+
+    allTexts.value!.de.company_name = businessTexts.texts[0].company_name;
+    allTexts.value!.de.text = businessTexts.texts[0].text;
+    allTexts.value!.de.button = businessTexts.texts[0].button;
+    allTexts.value!.de.button_link = businessTexts.texts[0].button_link;
+
+    allTexts.value!.en.company_name = businessTexts.texts[1].company_name;
+    allTexts.value!.en.text = businessTexts.texts[1].text;
+    allTexts.value!.en.button = businessTexts.texts[1].button;
+    allTexts.value!.en.button_link = businessTexts.texts[1].button_link;
+    useHead({
+        title: businessTexts.texts[index].company_name,
+    });
+}
+
+const updatedImageUrl = computed(() => `${images.image.link}?t=${Date.now()}`);
+
+function reloadData() {
+    reloadTemplateData.value = true;
+    reloadActivityData.value = true;
+}
 </script>
 
 <template>
     <div class="text-text dark:text-natural-50">
         <div
-            class="relative h-44 bg-cover bg-center lg:h-96"
-            :style="{ backgroundImage: `url(${images.banner.link})` }"
+            class="group relative h-44 bg-cover bg-center lg:h-96"
+            :style="{ backgroundImage: `url(${updatedBannerUrl})` }"
+            @click="editImage('banner')"
         >
             <div
-                class="absolute inset-0 top-20 bg-gradient-to-b from-natural-50/0 to-background dark:from-background-dark/0 dark:to-background-dark lg:top-48"
+                class="absolute inset-0 top-20 z-50 bg-gradient-to-b from-natural-50/0 to-background dark:from-background-dark/0 dark:to-background-dark lg:top-48"
+                :class="
+                    editingEnabled
+                        ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
+                        : ''
+                "
             ></div>
             <div
-                class="absolute left-2.5 top-2.5 rounded-xl border-2 border-natural-400 bg-natural-50 text-text drop-shadow-lg backdrop-blur-xl hover:border-natural-400 hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-natural-600 dark:hover:bg-natural-950 lg:left-5 lg:top-5"
+                class="absolute left-2.5 top-2.5 z-50 rounded-xl border-2 border-natural-400 bg-natural-50 text-text drop-shadow-lg backdrop-blur-xl hover:border-natural-400 hover:bg-natural-200 dark:border-natural-500 dark:bg-natural-900 dark:text-natural-50 dark:hover:border-natural-600 dark:hover:bg-natural-950 lg:left-5 lg:top-5"
+                @click.stop
             >
                 <NuxtLink
                     :to="backRoute"
@@ -251,11 +374,38 @@ function openActivityDialog(activity: Activity) {
                     </span>
                 </NuxtLink>
             </div>
+            <button
+                v-if="partOfBusiness"
+                class="absolute right-2.5 top-2.5 z-[49] hidden rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 text-text drop-shadow-lg backdrop-blur-xl hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600 lg:right-5 lg:top-5 lg:flex"
+                @click.stop="toggleEditing"
+            >
+                <SvgEdit v-if="!editingEnabled" class="w-4" />
+                <SvgEditOff v-if="editingEnabled" class="w-[1.14rem]" />
+                <span class="ml-1.5 mt-0.5 text-xl md:text-2xl">
+                    <T key-name="common.edit" />
+                </span>
+            </button>
             <img
-                :src="images.banner.link"
+                :key="updatedBannerUrl"
+                :src="updatedBannerUrl"
                 :alt="images.banner.alt_text"
                 class="sr-only"
+                :class="
+                    editingEnabled
+                        ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
+                        : ''
+                "
             />
+            <div
+                v-if="editingEnabled"
+                class="absolute inset-0 flex max-h-[500px] cursor-pointer items-center justify-center bg-background-dark bg-opacity-70 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            >
+                <span class="text-xl font-semibold text-natural-50"
+                    >[
+                    <T key-name="subdomain.change.image" />
+                    ]</span
+                >
+            </div>
         </div>
         <div class="flex flex-col gap-y-8 px-5 lg:px-16">
             <div
@@ -277,14 +427,41 @@ function openActivityDialog(activity: Activity) {
                                 texts.button
                             }}</a>
                         </button>
+                        <button
+                            v-if="editingEnabled"
+                            class="rounded-xlpy-1 mt-6 w-44 text-center text-lg font-semibold text-natural-950 hover:text-calypso-600 hover:underline dark:text-natural-50 dark:hover:text-calypso-300 lg:w-48"
+                            @click="isTextEditSidebarVisible = true"
+                        >
+                            <T key-name="business.edit.text" />
+                        </button>
                     </div>
                 </div>
-                <div id="image" class="mt-2 flex justify-center lg:w-2/5">
+                <div
+                    id="image"
+                    class="group relative mt-2 flex justify-center lg:w-2/5"
+                    @click="editImage('image')"
+                >
                     <NuxtImg
-                        :src="images.image.link"
+                        :key="updatedImageUrl"
+                        :src="updatedImageUrl"
                         :alt="images.image.alt_text"
                         class="max-h-[320px] rounded-xl object-contain"
+                        :class="
+                            editingEnabled
+                                ? 'cursor-pointer group-hover:opacity-80 group-hover:blur-sm'
+                                : ''
+                        "
                     />
+                    <div
+                        v-if="editingEnabled"
+                        class="absolute inset-0 flex max-h-[320px] cursor-pointer items-center justify-center rounded-xl bg-background-dark bg-opacity-70 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    >
+                        <span class="text-xl font-semibold text-natural-50"
+                            >[
+                            <T key-name="subdomain.change.image" />
+                            ]</span
+                        >
+                    </div>
                 </div>
                 <div class="mb-5 flex justify-center md:hidden">
                     <button
@@ -297,9 +474,15 @@ function openActivityDialog(activity: Activity) {
                 </div>
             </div>
             <div id="activity-section">
-                <h2 class="text-xl font-medium">
-                    <T key-name="subdomain.heading.activities" />
-                </h2>
+                <div class="flex w-full items-center">
+                    <h2 class="text-xl font-medium">
+                        <T key-name="subdomain.heading.activities" />
+                    </h2>
+                    <span
+                        class="pi pi-info-circle ml-auto cursor-pointer text-xl text-natural-500 hover:text-natural-950 dark:text-natural-400 hover:dark:text-natural-50"
+                        @click="isActivityInfoDialogVisible = true"
+                    ></span>
+                </div>
                 <TransitionGroup
                     id="activities"
                     name="fade"
@@ -352,9 +535,27 @@ function openActivityDialog(activity: Activity) {
                 </div>
             </div>
             <div id="template-section">
-                <h2 class="text-xl font-medium">
-                    <T key-name="subdomain.heading.templates" />
-                </h2>
+                <div class="flex w-full items-center">
+                    <h2 class="text-xl font-medium">
+                        <T key-name="subdomain.heading.templates" />
+                    </h2>
+                    <NuxtLink
+                        v-if="editingEnabled"
+                        :to="'/journey/new?creationType=template&slug=' + slug"
+                        class="ml-auto flex w-48 items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 py-1 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 max-lg:hidden lg:w-52"
+                    >
+                        <span class="pi pi-plus ml-1 mr-2 text-lg" />
+                        <T key-name="business.create.templates" />
+                    </NuxtLink>
+                    <button
+                        v-if="editingEnabled"
+                        class="ml-4 flex w-48 items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 py-1 text-center text-lg hover:bg-dandelion-200 dark:border-dandelion-300 dark:bg-natural-900 dark:hover:bg-pesto-600 max-lg:hidden lg:w-60"
+                        @click="isTemplateDialogVisible = true"
+                    >
+                        <span class="pi pi-pencil ml-1 mr-2 text-lg" />
+                        <T key-name="business.edit.templates" />
+                    </button>
+                </div>
                 <TransitionGroup
                     name="fade"
                     tag="div"
@@ -366,6 +567,7 @@ function openActivityDialog(activity: Activity) {
                             showMoreTemplates || index < maxDisplayedTemplates
                         "
                         :key="'template-card' + template.id"
+                        :v-if="template.visible === 1"
                         class="hidden md:block"
                         :template="template"
                         :displayed-in-profile="false"
@@ -383,7 +585,10 @@ function openActivityDialog(activity: Activity) {
                         @open-template="openTemplateDialog(template)"
                     />
                 </TransitionGroup>
-                <div v-if="templates.length === 0" class="col-span-full">
+                <div
+                    v-if="templates.length === 0"
+                    class="col-span-full font-nunito text-text dark:text-natural-50"
+                >
                     <T key-name="subdomain.template.none" />
                 </div>
                 <div ref="templatesLoader" class="col-span-full">
@@ -391,7 +596,9 @@ function openActivityDialog(activity: Activity) {
                         <div class="flex justify-center">
                             <ProgressSpinner class="w-10" />
                         </div>
-                        <div class="flex justify-center italic">
+                        <div
+                            class="flex justify-center font-nunito italic text-text dark:text-natural-50"
+                        >
                             <T key-name="subdomain.templates.loading" />
                         </div>
                     </div>
@@ -408,7 +615,10 @@ function openActivityDialog(activity: Activity) {
                         class="flex flex-col items-center justify-center text-text dark:text-natural-50"
                         @click="toggleTemplates"
                     >
-                        <span>{{ toggleTextTemplates }}</span>
+                        <span
+                            class="font-nunito text-text dark:text-natural-50"
+                            >{{ toggleTextTemplates }}</span
+                        >
                         <span
                             class="pi mt-1"
                             :class="
@@ -449,6 +659,60 @@ function openActivityDialog(activity: Activity) {
                     isTemplatePopupVisible = false;
                     openedTemplate = undefined;
                 "
+            />
+            <ConfirmDialog
+                :draggable="false"
+                group="username"
+                class="z-[1000]"
+                :pt="{
+                    root: {
+                        class: 'z-[1000] bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    header: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    content: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito',
+                    },
+                    footer: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-text dark:text-natural-50 font-nunito gap-x-5',
+                    },
+                    closeButton: {
+                        class: 'bg-natural-50 dark:bg-natural-900 text-natural-500 hover:text-text dark:text-natural-400 hover:dark:text-natural-50 font-nunito',
+                    },
+                    closeButtonIcon: {
+                        class: 'h-5 w-5',
+                    },
+                    mask: {
+                        class: 'z-[1000] ',
+                    },
+                }"
+            />
+        </div>
+        <div v-if="partOfBusiness" id="extra-dialogs">
+            <BusinessEditImageEditSidebar
+                :is-sidebar-visible="isImageEditSidebarVisible"
+                :image-edit-type="imageEditType"
+                :texts="allTexts!"
+                @close="isImageEditSidebarVisible = false"
+                @update-image="updateImage"
+            />
+            <BusinessEditTextEditSidebar
+                :is-sidebar-visible="isTextEditSidebarVisible"
+                :texts="allTexts!"
+                :link-prop="texts.button_link"
+                @close="isTextEditSidebarVisible = false"
+                @update-texts="updateTexts"
+            />
+            <BusinessActivityInfoDialog
+                :is-visible="isActivityInfoDialogVisible"
+                @close="isActivityInfoDialogVisible = false"
+            />
+            <BusinessDialogsTemplateDialog
+                :is-visible="isTemplateDialogVisible"
+                :business-slug="slug"
+                @close="isTemplateDialogVisible = false"
+                @changed-templates="reloadData"
             />
         </div>
     </div>

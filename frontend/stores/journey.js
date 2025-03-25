@@ -23,7 +23,15 @@ export const useJourneyStore = defineStore("journey", () => {
     }
 
     function getInvite() {
-        return this.journey.invite;
+        return window.location.origin + "/invite/" + this.journey.invite;
+    }
+
+    function getShareLink() {
+        return this.journey.share_id;
+    }
+
+    function setInvite(invite) {
+        this.journey.invite = invite;
     }
 
     function getDestination() {
@@ -83,6 +91,8 @@ export const useJourneyStore = defineStore("journey", () => {
         getID,
         getName,
         getInvite,
+        getShareLink,
+        setInvite,
         getDestination,
         getMapboxFullAddress,
         getMapboxID,

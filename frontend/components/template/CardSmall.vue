@@ -233,7 +233,9 @@ function handleUserClick() {
                         />
                     </h5>
                     <div class="ml-auto flex items-center gap-x-1">
-                        <i class="pi pi-star text-sm text-calypso-600" />
+                        <i
+                            class="pi pi-star text-sm text-calypso-600 dark:text-calypso-400"
+                        />
                         <h5 class="mr-2 truncate text-sm">
                             {{
                                 Math.round(template.average_rating * 100) / 100

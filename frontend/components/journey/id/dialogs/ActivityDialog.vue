@@ -40,6 +40,10 @@ const props = defineProps({
     repeatEndOccurencesPrefill: { type: Number, default: 1 },
     repeatIntervalUnitPrefill: { type: String, default: "" },
     repeatEndDatePrefill: { type: String, default: "" },
+    isSharedSite: {
+        type: Boolean,
+        default: false,
+    },
 });
 const noSingle = ref(false);
 const onlyShowRef = ref(props.onlyShow);
@@ -856,7 +860,7 @@ function changeCustomRepeat(
                 class="mx-5 flex h-full flex-row justify-between gap-1.5 bg-background align-bottom font-nunito dark:bg-background-dark"
             >
                 <Button
-                    v-if="calendarActivity"
+                    v-if="calendarActivity && !props.isSharedSite"
                     type="button"
                     :label="t('calendar.options.remove')"
                     class="mt-auto h-9 w-40 rounded-xl border-2 border-mahagony-400 bg-natural-50 px-2 font-bold text-text hover:bg-mahagony-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-mahagony-500030"
@@ -870,6 +874,7 @@ function changeCustomRepeat(
                     @click="confirmRemoveFromCalendar"
                 />
                 <Button
+                    v-if="!props.isSharedSite"
                     type="button"
                     :label="t('dashboard.options.edit')"
                     class="mt-auto h-9 w-40 rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 font-bold text-text hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"

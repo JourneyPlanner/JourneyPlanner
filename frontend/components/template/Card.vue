@@ -17,6 +17,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    openedFromBusiness: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const { t } = useTranslate();
@@ -34,25 +38,47 @@ const toggle = (event: Event) => {
 };
 const emit = defineEmits(["templateDeleted", "templateEdited", "openTemplate"]);
 
+// Base menu items that are common to both contexts
+const baseMenuItems = ref([
+    {
+        label: t.value("dashboard.options.edit"),
+        icon: "pi pi-pencil",
+        className: "text-natural-50",
+        command: () => {
+            router.push({
+                path: `/template/${props.template.id}/edit`,
+            });
+        },
+    },
+    {
+        label: t.value("dashboard.options.delete"),
+        icon: "pi pi-trash",
+        command: ($event: MenuItemCommandEvent) => {
+            confirmDelete($event.originalEvent);
+        },
+    },
+]);
+
+// Regular template menu items
 const templateItems = ref([
     {
         label: t.value("dashboard.options.header"),
+        items: baseMenuItems.value,
+    },
+]);
+
+// Business template menu items with additional "show" option
+const businessTemplateItems = ref([
+    {
+        label: t.value("dashboard.options.header"),
         items: [
+            ...baseMenuItems.value,
             {
-                label: t.value("dashboard.options.edit"),
-                icon: "pi pi-pencil",
+                label: t.value("business.template.show"),
+                icon: "pi pi-eye",
                 className: "text-natural-50",
                 command: () => {
-                    router.push({
-                        path: `/template/${props.template.id}/edit`,
-                    });
-                },
-            },
-            {
-                label: t.value("dashboard.options.delete"),
-                icon: "pi pi-trash",
-                command: ($event: MenuItemCommandEvent) => {
-                    confirmDelete($event.originalEvent);
+                    emit("openTemplate", props.template.id);
                 },
             },
         ],
@@ -128,8 +154,8 @@ function handleUserClick() {
         <Menu
             id="overlay_menu"
             ref="menu"
-            :model="templateItems"
-            class="bg-natural-50 dark:bg-natural-800"
+            :model="openedFromBusiness ? businessTemplateItems : templateItems"
+            class="z-[502] bg-natural-50 dark:bg-natural-800"
             :popup="true"
             :pt="{
                 root: {
@@ -159,7 +185,7 @@ function handleUserClick() {
             />
         </div>
         <div class="px-2.5 pb-2 pt-2">
-            <div class="flex">
+            <div class="flex font-nunito">
                 <h3
                     v-tooltip.top="{
                         value: template?.name,
@@ -168,7 +194,7 @@ function handleUserClick() {
                     class="w-full truncate text-xl font-medium"
                 >
                     <div
-                        class="block overflow-hidden overflow-ellipsis text-nowrap"
+                        class="block overflow-hidden overflow-ellipsis text-nowrap font-nunito"
                         :class="!isCurrentUser ? 'w-full' : 'w-11/12'"
                     >
                         {{ template?.name }}
@@ -185,7 +211,7 @@ function handleUserClick() {
                     />
                 </div>
                 <Button
-                    v-if="isCurrentUser"
+                    v-if="isCurrentUser || openedFromBusiness"
                     type="button"
                     icon="pi pi-ellipsis-v"
                     aria-haspopup="true"
@@ -199,7 +225,7 @@ function handleUserClick() {
                     value: template?.creator?.username,
                     pt: { root: 'font-nunito' },
                 }"
-                class="-mt-1 truncate text-xl text-natural-600 dark:text-natural-300"
+                class="-mt-1 truncate font-nunito text-xl text-natural-600 dark:text-natural-300"
             >
                 <T key-name="template.by" /><span
                     :class="
@@ -219,14 +245,18 @@ function handleUserClick() {
                     }"
                     class="flex flex-row items-center gap-x-1"
                 >
-                    <i class="pi pi-map-marker text-lg text-calypso-600" />
-                    <h5 class="truncate text-lg">
+                    <i
+                        class="pi pi-map-marker text-lg text-calypso-600 dark:text-calypso-400"
+                    />
+                    <h5 class="truncate font-nunito text-lg">
                         {{ template?.destination }}
                     </h5>
                 </div>
                 <div class="flex flex-row items-center gap-x-1">
-                    <i class="pi pi-calendar text-lg text-calypso-600" />
-                    <h5 class="truncate text-lg">
+                    <i
+                        class="pi pi-calendar text-lg text-calypso-600 dark:text-calypso-400"
+                    />
+                    <h5 class="truncate font-nunito text-lg">
                         {{ template?.length }}
                         <T
                             :key-name="
@@ -237,8 +267,10 @@ function handleUserClick() {
                         />
                     </h5>
                     <div class="ml-auto flex items-center gap-x-1">
-                        <i class="pi pi-star text-lg text-calypso-600" />
-                        <h5 class="truncate text-lg">
+                        <i
+                            class="pi pi-star text-lg text-calypso-600 dark:text-calypso-400"
+                        />
+                        <h5 class="truncate font-nunito text-lg">
                             {{
                                 Math.round(template?.average_rating * 100) / 100
                             }}

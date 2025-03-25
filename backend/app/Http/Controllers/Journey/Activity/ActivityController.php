@@ -13,6 +13,7 @@ use App\Services\MapboxService;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
@@ -34,9 +35,14 @@ class ActivityController extends Controller
     /**
      * Get all activities of the specified journey.
      */
-    public function index(Journey $journey)
+    public function index(Journey $journey, Request $request)
     {
-        Gate::authorize("viewAny", [Activity::class, $journey, true]);
+        Gate::authorize("viewAny", [
+            Activity::class,
+            $journey,
+            true,
+            request()->input("share_id"),
+        ]);
 
         $activities = $journey->activities()->with("calendarActivities")->get();
 
@@ -75,6 +81,7 @@ class ActivityController extends Controller
         // Create the calendar activity if the date is provided
         if (!static::createCalendarActivityIfNeeded($validated, $activity)) {
             $activity["calendar_activities"] = [];
+
             return response()->json($activity, 201);
         }
 
@@ -98,7 +105,12 @@ class ActivityController extends Controller
      */
     public function show(Journey $journey, Activity $activity)
     {
-        Gate::authorize("view", [$activity, $journey, true]);
+        Gate::authorize("view", [
+            $activity,
+            $journey,
+            true,
+            request()->input("share_id"),
+        ]);
 
         return response()->json($activity->load("calendarActivities"));
     }
@@ -331,6 +343,9 @@ class ActivityController extends Controller
                         $baseActivity->children()->get()
                         as $childActivity
                     ) {
+                        if ($childActivity->id === $editedActivity->id) {
+                            continue;
+                        }
                         $activities[] = static::updateActivitiesAfter(
                             $childActivity,
                             $baseActivity,
@@ -383,6 +398,9 @@ class ActivityController extends Controller
                         $baseActivity->children()->get()
                         as $childActivity
                     ) {
+                        if ($childActivity->id === $editedActivity->id) {
+                            continue;
+                        }
                         static::updateActivitiesAfter(
                             $childActivity,
                             $baseActivity,
@@ -424,6 +442,7 @@ class ActivityController extends Controller
             ...$baseActivity->children()->with("calendarActivities")->get()
         );
         $activities[] = $baseActivity->load("calendarActivities");
+
         return response()->json($activities, 200);
     }
 
@@ -472,6 +491,7 @@ class ActivityController extends Controller
             ->with("calendarActivities")
             ->get();
         $activities[] = $baseActivity->load("calendarActivities");
+
         return response()->json($activities, 200);
     }
 
@@ -488,6 +508,7 @@ class ActivityController extends Controller
             "repeat_end_date" => null,
             "repeat_end_occurrences" => null,
         ]);
+
         return $activity;
     }
 

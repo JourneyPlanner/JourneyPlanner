@@ -36,6 +36,14 @@ const props = defineProps({
         type: String,
         default: "",
     },
+    isSharedSite: {
+        type: Boolean,
+        default: false,
+    },
+    shareLink: {
+        type: String,
+        default: "",
+    },
 });
 
 const emits = defineEmits(["open-activity-dialog", "scrollToTarget"]);
@@ -43,6 +51,7 @@ const emits = defineEmits(["open-activity-dialog", "scrollToTarget"]);
 const client = useSanctumClient();
 const jsConfetti = new JSConfetti();
 const journeyStore = useJourneyStore();
+const router = useRouter();
 const { t } = useTranslate();
 const { isAuthenticated } = useSanctumAuth();
 
@@ -71,7 +80,8 @@ const flip = () => {
 
 const { data: weather, refresh } = await useAsyncData("weather", () =>
     client(
-        `/api/journey/${props.isTemplate ? props.templateId : journeyStore.getID()}/weather`,
+        `/api/journey/${props.isTemplate ? props.templateId : journeyStore.getID()}/weather` +
+            props.shareLink,
     ),
 );
 
@@ -864,7 +874,19 @@ function emitScroll(target: string) {
                             </p>
                         </div>
                         <button
-                            v-if="
+                            v-if="props.isSharedSite"
+                            to="/journey/new"
+                            class="mt-6 h-0 w-0 rounded-xl border-2 border-dandelion-300 bg-background py-2 font-bold hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:invisible max-lg:w-0 lg:h-3/6 lg:w-[80%] xl:w-[110%]"
+                            @click="router.push('/journey/new')"
+                        >
+                            <p class="text-lg">
+                                <T
+                                    key-name="dashboard.templates.nomoretemplates.link"
+                                />
+                            </p>
+                        </button>
+                        <button
+                            v-else-if="
                                 duringJourney ||
                                 (currUser?.role !== 1 && !isTemplate) ||
                                 (!isAuthenticated && !isTemplate)

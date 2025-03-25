@@ -76,6 +76,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    isSharedSite: {
+        type: Boolean,
+        default: false,
+    },
 });
 const activity = ref();
 const activityId = ref("");
@@ -321,6 +325,7 @@ const calendarOptions = reactive({
     eventDrop: initializeDrop,
     eventResize: editDrop,
     eventClick: showData,
+    editable: props.currentUserRole === 1,
     eventBackgroundColor: bg,
     eventBorderColor: border,
     eventTextColor: text,
@@ -330,7 +335,6 @@ const calendarOptions = reactive({
     droppable: true,
     initialDate: start,
     firstDay: 1,
-    editable: true,
     views: {
         fullweek: {
             type: "timeGrid",
@@ -738,6 +742,7 @@ function call(editType: string) {
                 :repeat-interval="repeatInterval"
                 :repeat-interval-unit="repeatIntervalUnit"
                 :repeat-on="repeatOn"
+                :is-shared-site="props.isSharedSite"
                 @close="isActivityInfoVisible = false"
                 @delete-activity="deleteActivity"
                 @remove-from-calendar="removeFromCalendar"
@@ -805,6 +810,7 @@ function call(editType: string) {
 .fc-timegrid-event.fc-event-mirror,
 .fc-timegrid-more-link {
     box-shadow: none;
+    cursor: pointer;
 }
 
 .dark .fc-theme-standard td,
