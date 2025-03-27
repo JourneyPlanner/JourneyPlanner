@@ -1,0 +1,65 @@
+{
+	"id": "9c0d214d-04ca-4ec8-8620-c8000f49c77b",
+	"journey_id": "9bec3dfc-c5e4-4605-851d-28f93e0b939c",
+	"name": "Frühstück",
+	"estimated_duration": "00:30:00",
+	"opening_hours": null,
+	"email": null,
+	"phone": null,
+	"link": null,
+	"cost": null,
+	"description": null,
+	"mapbox_id": "1234567890abcdefghij",
+	"mapbox_full_address": "Kirchplatz 7, 63512 Hainburg, Germany",
+	"address": "",
+	"longitude": null,
+	"latitude": null,
+	"created_at": "2024-05-15T19:41:12.000000Z",
+	"updated_at": "2025-03-23T09:35:32.000000Z",
+	"repeat_type": "custom",
+	"repeat_interval": 1,
+	"repeat_interval_unit": "days",
+	"repeat_on": [
+		""
+	],
+	"repeat_end_date": null,
+	"repeat_end_occurrences": 5,
+	"parent_id": null,
+	"calendar_activities": [
+		{
+			"id": "9e7feb9e-1483-4e90-a3b6-b81ec34380c0",
+			"activity_id": "9c0d214d-04ca-4ec8-8620-c8000f49c77b",
+			"start": "2024-04-17T07:00:00.000000Z",
+			"created_at": "2025-03-23T09:35:10.000000Z",
+			"updated_at": "2025-03-23T09:35:10.000000Z"
+		},
+		{
+			"id": "9e7febbf-11bb-498c-aec3-33402609ab2d",
+			"activity_id": "9c0d214d-04ca-4ec8-8620-c8000f49c77b",
+			"start": "2024-04-18T07:00:00.000000Z",
+			"created_at": "2025-03-23T09:35:32.000000Z",
+			"updated_at": "2025-03-23T09:35:32.000000Z"
+		},
+		{
+			"id": "9e7febbf-129e-4e43-915a-b3bca7b9d3dd",
+			"activity_id": "9c0d214d-04ca-4ec8-8620-c8000f49c77b",
+			"start": "2024-04-19T07:00:00.000000Z",
+			"created_at": "2025-03-23T09:35:32.000000Z",
+			"updated_at": "2025-03-23T09:35:32.000000Z"
+		},
+		{
+			"id": "9e7febbf-1358-4acb-a913-f78bd5a66e70",
+			"activity_id": "9c0d214d-04ca-4ec8-8620-c8000f49c77b",
+			"start": "2024-04-20T07:00:00.000000Z",
+			"created_at": "2025-03-23T09:35:32.000000Z",
+			"updated_at": "2025-03-23T09:35:32.000000Z"
+		},
+		{
+			"id": "9e7febbf-138d-49e7-bf95-fb88ce2854d3",
+			"activity_id": "9c0d214d-04ca-4ec8-8620-c8000f49c77b",
+			"start": "2024-04-21T07:00:00.000000Z",
+			"created_at": "2025-03-23T09:35:32.000000Z",
+			"updated_at": "2025-03-23T09:35:32.000000Z"
+		}
+	]
+}

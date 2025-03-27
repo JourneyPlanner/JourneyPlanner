@@ -10,12 +10,35 @@ use App\Models\CalendarActivity;
 use App\Models\Journey;
 use DateTime;
 use Illuminate\Support\Facades\DB;
+use Knuckles\Scribe\Attributes\ResponseField;
+use Knuckles\Scribe\Attributes\ResponseFromFile;
+use Knuckles\Scribe\Attributes\UrlParam;
 
+/**
+ * @group Activity
+ *
+ * @subgroup CalendarActivity
+ *
+ * @subGroupDescription APIs for managing calendar activities.
+ *
+ * Calendar activities are the instances of activities that are scheduled on a calendar.
+ */
 class CalendarActivityController extends Controller
 {
     /**
-     * Remove the specified calendar activity from storage.
+     * Delete calendar activity
+     *
+     * Remove the specified calendar activity from the calendar.
      */
+    #[UrlParam('journey_id', description: 'The ID of the journey.')]
+    #[UrlParam('activity_id', description: 'The ID of the activity.')]
+    #[UrlParam('id', description: 'The ID of the calendar activity.')]
+    #[ResponseFromFile('storage/responses/journey/activity/calendarActivity/destroy.200.json', status: 200, description: 'Success. Returns the remaining activities with their calendar activities.')]
+    #[ResponseFromFile('storage/responses/journey/activity/calendarActivity/destroy.403.json', status: 403, description: 'Forbidden.')]
+    #[ResponseFromFile('storage/responses/journey/activity/calendarActivity/destroy.404.json', status: 404, description: 'Journey, activity or calendar activity not found.')]
+    #[ResponseFromFile('storage/responses/journey/activity/calendarActivity/destroy.422.json', status: 422, description: 'Validation Error.')]
+    #[ResponseField('message', description: 'The error message.')]
+    #[ResponseField('errors', description: 'The validation error messages.')]
     public function destroy(
         DeleteCalendarActivityRequest $request,
         Journey $journey,
@@ -27,7 +50,7 @@ class CalendarActivityController extends Controller
         $emptyActivities = [];
 
         if (
-            $validated["edit_type"] === UpdateActivityRequest::EDIT_TYPE_SINGLE
+            $validated['edit_type'] === UpdateActivityRequest::EDIT_TYPE_SINGLE
         ) {
             $calendarActivity->delete();
             $emptyActivities = $this->generalizeActivityIfNeeded(
@@ -35,7 +58,7 @@ class CalendarActivityController extends Controller
                 $emptyActivities
             );
         } elseif (
-            $validated["edit_type"] ===
+            $validated['edit_type'] ===
             UpdateActivityRequest::EDIT_TYPE_FOLLOWING
         ) {
             $minDate = $calendarActivity->start;
@@ -69,10 +92,11 @@ class CalendarActivityController extends Controller
 
         $activities = $baseActivity
             ->children()
-            ->with("calendarActivities")
+            ->with('calendarActivities')
             ->get();
-        $activities[] = $baseActivity->load("calendarActivities");
+        $activities[] = $baseActivity->load('calendarActivities');
         $activities = $activities->merge($emptyActivities);
+
         return response()->json($activities, 200);
     }
 
@@ -86,7 +110,7 @@ class CalendarActivityController extends Controller
     ) {
         $activity
             ->calendarActivities()
-            ->where("start", ">=", $minDate)
+            ->where('start', '>=', $minDate)
             ->delete();
 
         return $this->generalizeActivityIfNeeded($activity, $emptyActivities);
@@ -100,6 +124,7 @@ class CalendarActivityController extends Controller
         array $emptyActivities = []
     ) {
         $activity->calendarActivities()->delete();
+
         return $this->generalizeActivityIfNeeded($activity, $emptyActivities);
     }
 

@@ -16,7 +16,7 @@ class BusinessImageAltText extends Model
      *
      * @var string[]
      */
-    protected $fillable = ["alt_text", "language", "business_image_id"];
+    protected $fillable = ['alt_text', 'language', 'business_image_id'];
 
     /**
      * The image that this alt text belongs to.

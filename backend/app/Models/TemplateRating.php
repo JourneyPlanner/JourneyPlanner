@@ -14,7 +14,7 @@ class TemplateRating extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ["user_id", "template_id", "rating"];
+    protected $fillable = ['user_id', 'template_id', 'rating'];
 
     /**
      * Bootstrap the model and its traits.
@@ -41,13 +41,13 @@ class TemplateRating extends Model
     {
         $template = Journey::find($template_id);
 
-        $average = TemplateRating::where("template_id", $template_id)->avg(
-            "rating"
+        $average = TemplateRating::where('template_id', $template_id)->avg(
+            'rating'
         );
-        $count = TemplateRating::where("template_id", $template_id)->count();
+        $count = TemplateRating::where('template_id', $template_id)->count();
 
-        $globalAverage = TemplateRating::avg("rating");
-        $weight = max(5, Journey::avg("total_ratings")); // Confidence value (weight constant)
+        $globalAverage = TemplateRating::avg('rating');
+        $weight = max(5, Journey::avg('total_ratings')); // Confidence value (weight constant)
 
         if ($count > 0) {
             $bayesianAverage =
@@ -56,7 +56,7 @@ class TemplateRating extends Model
             if (
                 $template
                     ->businesses()
-                    ->wherePivot("created_by_business", true)
+                    ->wherePivot('created_by_business', true)
                     ->count() > 0
             ) {
                 $bayesianAverage = $bayesianAverage * 0.9 + 0.5; // 5 * 0.1 = 0.5; 10% are automatically 5 stars to ensure business templates have a slightly higher rating
@@ -66,8 +66,8 @@ class TemplateRating extends Model
         }
 
         $template->update([
-            "average_rating" => $bayesianAverage,
-            "total_ratings" => $count,
+            'average_rating' => $bayesianAverage,
+            'total_ratings' => $count,
         ]);
     }
 

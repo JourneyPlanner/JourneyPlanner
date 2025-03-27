@@ -11,7 +11,7 @@ return [
     |
     */
 
-    "clockify_api_key" => env("CLOCKIFY_API_KEY"),
+    'clockify_api_key' => env('CLOCKIFY_API_KEY'),
 
     /*
     |--------------------------------------------------------------------------
@@ -23,7 +23,7 @@ return [
     |
     */
 
-    "clockify_workspace_id" => env("CLOCKIFY_WORKSPACE_ID"),
+    'clockify_workspace_id' => env('CLOCKIFY_WORKSPACE_ID'),
 
     /*
     |--------------------------------------------------------------------------
@@ -35,7 +35,7 @@ return [
     |
     */
 
-    "clockify_project_id" => env("CLOCKIFY_PROJECT_ID"),
+    'clockify_project_id' => env('CLOCKIFY_PROJECT_ID'),
 
     /*
     |--------------------------------------------------------------------------
@@ -47,7 +47,7 @@ return [
     |
     */
 
-    "jira_api_username" => env("JIRA_API_USERNAME"),
+    'jira_api_username' => env('JIRA_API_USERNAME'),
 
     /*
     |--------------------------------------------------------------------------
@@ -59,7 +59,7 @@ return [
     |
     */
 
-    "jira_api_key" => env("JIRA_API_KEY"),
+    'jira_api_key' => env('JIRA_API_KEY'),
 
     /*
     |--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ return [
     |
     */
 
-    "jira_subdomain" => env("JIRA_SUBDOMAIN"),
+    'jira_subdomain' => env('JIRA_SUBDOMAIN'),
 
     /*
     |--------------------------------------------------------------------------
@@ -83,5 +83,5 @@ return [
     |
     */
 
-    "jira_board_id" => env("JIRA_BOARD_ID"),
+    'jira_board_id' => env('JIRA_BOARD_ID'),
 ];

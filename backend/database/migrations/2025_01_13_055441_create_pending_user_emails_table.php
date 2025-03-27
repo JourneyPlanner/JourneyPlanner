@@ -13,12 +13,12 @@ class CreatePendingUserEmailsTable extends Migration
      */
     public function up()
     {
-        Schema::create("pending_user_emails", function (Blueprint $table) {
-            $table->bigIncrements("id");
-            $table->uuidMorphs("user");
-            $table->string("email")->index();
-            $table->string("token");
-            $table->timestamp("created_at")->nullable();
+        Schema::create('pending_user_emails', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->uuidMorphs('user');
+            $table->string('email')->index();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
         });
     }
 
@@ -29,6 +29,6 @@ class CreatePendingUserEmailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("pending_user_emails");
+        Schema::dropIfExists('pending_user_emails');
     }
 }

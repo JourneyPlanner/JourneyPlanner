@@ -1,0 +1,32 @@
+{
+    "current": {
+        "temperature": 12.6,
+        "weather_code": 2
+    },
+    "forecast": [
+        {
+            "date": "2025-03-23",
+            "temperature_max": 13.9,
+            "temperature_min": 7.7,
+            "weather_code": 80
+        },
+        {
+            "date": "2025-03-24",
+            "temperature_max": 15.9,
+            "temperature_min": 7.8,
+            "weather_code": 80
+        },
+        {
+            "date": "2025-03-25",
+            "temperature_max": 15.7,
+            "temperature_min": 7.6,
+            "weather_code": 3
+        },
+        {
+            "date": "2025-03-26",
+            "temperature_max": 15.9,
+            "temperature_min": 8.7,
+            "weather_code": 3
+        }
+    ]
+}

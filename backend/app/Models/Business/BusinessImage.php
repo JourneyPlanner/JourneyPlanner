@@ -17,7 +17,7 @@ class BusinessImage extends Model
      *
      * @var string[]
      */
-    protected $fillable = ["key", "file_name", "business_id"];
+    protected $fillable = ['key', 'file_name', 'business_id'];
 
     /**
      * The business image's alt texts.
@@ -51,7 +51,7 @@ class BusinessImage extends Model
         return url(
             "/api/business/{$this->business->slug}/image/{$this->id}",
             [],
-            config("app.env") === "production"
+            config('app.env') === 'production'
         );
     }
 }

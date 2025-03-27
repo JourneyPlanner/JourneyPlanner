@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Http\JsonResponse;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -18,11 +18,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): Response|JsonResponse
     {
-        $user = User::where("email", $request->email)->first();
-        if ($user && !$user->hasVerifiedEmail()) {
+        $user = User::where('email', $request->email)->first();
+        if ($user && ! $user->hasVerifiedEmail()) {
             return response()->json(
                 [
-                    "message" => "Your email address is not verified.",
+                    'message' => 'Your email address is not verified.',
                 ],
                 401
             );
@@ -40,7 +40,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): Response
     {
-        Auth::guard("web")->logout();
+        Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
@@ -55,7 +55,7 @@ class AuthenticatedSessionController extends Controller
     public function redirectToProviderMicrosoft()
     {
         return response()->json([
-            "url" => Socialite::driver("microsoft")->redirect()->getTargetUrl(),
+            'url' => Socialite::driver('microsoft')->redirect()->getTargetUrl(),
         ]);
     }
 
@@ -65,19 +65,19 @@ class AuthenticatedSessionController extends Controller
     public function handleProviderCallbackGoogle(Request $request)
     {
         $validated = $request->validate([
-            "token" => "required|string",
+            'token' => 'required|string',
         ]);
 
         /**
          * @disregard P1013 Undefined method
          * This is needed for my PHP plugin to not complain about the method
          */
-        $googleUser = Socialite::driver("google-one-tap")
+        $googleUser = Socialite::driver('google-one-tap')
             ->stateless()
-            ->userFromToken($validated["token"]);
+            ->userFromToken($validated['token']);
 
         // Create a new user if the user does not exist
-        $user = $this->findOrCreateUser($googleUser, "google");
+        $user = $this->findOrCreateUser($googleUser, 'google');
 
         Auth::login($user);
 
@@ -93,10 +93,10 @@ class AuthenticatedSessionController extends Controller
          * @disregard P1013 Undefined method
          * This is needed for my PHP plugin to recognize the method
          */
-        $microsoftUser = Socialite::driver("microsoft")->stateless()->user();
+        $microsoftUser = Socialite::driver('microsoft')->stateless()->user();
 
         // Create a new user if the user does not exist
-        $user = $this->findOrCreateUser($microsoftUser, "microsoft");
+        $user = $this->findOrCreateUser($microsoftUser, 'microsoft');
 
         Auth::login($user);
 
@@ -108,16 +108,16 @@ class AuthenticatedSessionController extends Controller
      */
     private function findOrCreateUser($oauthUser, $type): User
     {
-        if ($type === "google") {
-            $user = User::firstOrNew(["google_id" => $oauthUser->getId()]);
-        } elseif ($type === "microsoft") {
-            $user = User::firstOrNew(["microsoft_id" => $oauthUser->getId()]);
+        if ($type === 'google') {
+            $user = User::firstOrNew(['google_id' => $oauthUser->getId()]);
+        } elseif ($type === 'microsoft') {
+            $user = User::firstOrNew(['microsoft_id' => $oauthUser->getId()]);
         }
 
-        if (!$user->exists) {
-            $user = User::firstOrNew(["email" => $oauthUser->getEmail()]);
+        if (! $user->exists) {
+            $user = User::firstOrNew(['email' => $oauthUser->getEmail()]);
 
-            if (!$user->exists) {
+            if (! $user->exists) {
                 $user->display_name = $oauthUser->getName();
                 $user->username = User::generateUsername(
                     $oauthUser->getNickname() ?? $oauthUser->getName()
@@ -125,9 +125,9 @@ class AuthenticatedSessionController extends Controller
                 $user->email = $oauthUser->getEmail();
             }
 
-            if ($type === "google") {
+            if ($type === 'google') {
                 $user->google_id = $oauthUser->getId();
-            } elseif ($type === "microsoft") {
+            } elseif ($type === 'microsoft') {
                 $user->microsoft_id = $oauthUser->getId();
             }
             $user->save();

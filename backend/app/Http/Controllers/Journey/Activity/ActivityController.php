@@ -16,7 +16,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Knuckles\Scribe\Attributes\ResponseField;
+use Knuckles\Scribe\Attributes\ResponseFromFile;
+use Knuckles\Scribe\Attributes\UrlParam;
 
+/**
+ * @group Activity
+ * APIs for working with journey activities.
+ */
 class ActivityController extends Controller
 {
     /**
@@ -33,28 +40,76 @@ class ActivityController extends Controller
     }
 
     /**
+     * Get activities
+     *
      * Get all activities of the specified journey.
      */
-    public function index(Journey $journey, Request $request)
+    #[UrlParam('journey_id', description: 'The UUID of the journey.', type: 'uuid', example: '9c23279f-f2a7-4666-bc00-56dfe0c47342')]
+    #[ResponseFromFile('storage/responses/journey/activity/index.200.json', status: 200, description: 'Success.')]
+    #[ResponseFromFile('storage/responses/journey/activity/index.404.json', status: 404, description: 'Journey not found.')]
+    #[ResponseFromFile('storage/responses/journey/activity/index.403.json', status: 403, description: 'Unauthorized.')]
+    #[ResponseField('message', description: 'The error message.')]
+    #[ResponseField('activities', description: 'The activities of the journey.')]
+    #[ResponseField('activities.id', description: 'The ID of the activity.')]
+    #[ResponseField('activities.journey_id', description: 'The ID of the journey that the activity belongs to.')]
+    #[ResponseField('activities.name', description: 'The name of the activity.')]
+    #[ResponseField('activities.estimated_duration', description: 'The estimated duration of the activity.')]
+    #[ResponseField('activities.opening_hours', description: 'The opening hours of the activity.')]
+    #[ResponseField('activities.email', description: 'The email of the activity.')]
+    #[ResponseField('activities.phone', description: 'The phone number of the activity.')]
+    #[ResponseField('activities.link', description: 'The link of the activity.')]
+    #[ResponseField('activities.cost', description: 'The cost of the activity.')]
+    #[ResponseField('activities.description', description: 'The description of the activity.')]
+    #[ResponseField('activities.mapbox_id', description: 'The Mapbox ID of the activity, only for internal use.')]
+    #[ResponseField('activities.mapbox_full_address', description: 'The full address of the activity as provided by Mapbox.')]
+    #[ResponseField('activities.address', description: 'The address of the activity as provided by the user.')]
+    #[ResponseField('activities.longitude', description: 'The longitude of the activity provided by Mapbox.')]
+    #[ResponseField('activities.latitude', description: 'The latitude of the activity provided by Mapbox.')]
+    #[ResponseField('activities.created_at', description: 'The creation date of the activity.')]
+    #[ResponseField('activities.updated_at', description: 'The last update date of the activity.')]
+    #[ResponseField('activities.repeat_type', description: 'The type of repetition of the activity.', enum: ['daily', 'weekly', 'custom'])]
+    #[ResponseField('activities.repeat_interval', description: 'The repetition interval of the activity.')]
+    #[ResponseField('activities.repeat_interval_unit', description: 'The unit of the interval of repetition of the activity.', enum: ['days', 'weeks'])]
+    #[ResponseField('activities.repeat_on', description: 'The days of the week on which the activity is repeated. Array of day short forms.', enum: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])]
+    #[ResponseField('activities.repeat_end_date', description: 'The end date of the repetition of the activity.')]
+    #[ResponseField('activities.repeat_end_occurrences', description: 'The number of occurrences of the repetition of the activity.')]
+    #[ResponseField('activities.parent_id', description: 'The ID of the parent activity if the activity is a sub-activity.')]
+    #[ResponseField('activities.calendar_activities', description: 'The calendar activities of the activity.')]
+    #[ResponseField('activities.calendar_activities.id', description: 'The ID of the calendar activity.')]
+    #[ResponseField('activities.calendar_activities.activity_id', description: 'The ID of the activity that the calendar activity belongs to.')]
+    #[ResponseField('activities.calendar_activities.start', description: 'The start date of the calendar activity.')]
+    #[ResponseField('activities.calendar_activities.created_at', description: 'The creation date of the calendar activity.')]
+    #[ResponseField('activities.calendar_activities.updated_at', description: 'The last update date of the calendar activity.')]
+    #[ResponseField('count', description: 'The number of activities.')]
+    public function index(Journey $journey, Request $request): JsonResponse
     {
-        Gate::authorize("viewAny", [
+        Gate::authorize('viewAny', [
             Activity::class,
             $journey,
             true,
-            request()->input("share_id"),
+            request()->input('share_id'),
         ]);
 
-        $activities = $journey->activities()->with("calendarActivities")->get();
+        $activities = $journey->activities()->with('calendarActivities')->get();
 
         return response()->json([
-            "activities" => $activities,
-            "count" => $activities->count(),
+            'activities' => $activities,
+            'count' => $activities->count(),
         ]);
     }
 
     /**
+     * Store activity
+     *
      * Store a newly created activity in storage.
      */
+    #[UrlParam('journey_id', description: 'The UUID of the journey.', type: 'uuid', example: '9c23279f-f2a7-4666-bc00-56dfe0c47342')]
+    #[ResponseFromFile('storage/responses/journey/activity/store.201.json', status: 201, description: 'Success. Returns the activites with all details that have been stored and includes calendar activities if applicable. For a description of the parameters (and to see all possible options), see the request body.')]
+    #[ResponseFromFile('storage/responses/journey/activity/store.403.json', status: 403, description: 'Unauthorized.')]
+    #[ResponseFromFile('storage/responses/journey/activity/store.404.json', status: 404, description: 'Journey not found.')]
+    #[ResponseFromFile('storage/responses/journey/activity/store.422.json', status: 422, description: 'Validation error.')]
+    #[ResponseField('message', description: 'The error message.')]
+    #[ResponseField('errors', description: 'The validation errors, may include every field.')]
     public function store(
         StoreActivityRequest $request,
         Journey $journey
@@ -62,8 +117,8 @@ class ActivityController extends Controller
         // Validate the request
         $validated = $request->validated();
         // Limit the number of activities for guests
-        if ($journey->is_guest && $journey->activities()->count() >= 100) {
-            abort(403, "You have reached the maximum number of activities.");
+        if ($journey->is_guest && $journey->activities()->count() >= 10) {
+            abort(403, 'You have reached the maximum number of activities.');
         }
 
         // Handle destination and Mapbox address fetching
@@ -79,49 +134,96 @@ class ActivityController extends Controller
         $activity->save();
 
         // Create the calendar activity if the date is provided
-        if (!static::createCalendarActivityIfNeeded($validated, $activity)) {
-            $activity["calendar_activities"] = [];
+        if (! static::createCalendarActivityIfNeeded($validated, $activity)) {
+            $activity['calendar_activities'] = [];
 
             return response()->json($activity, 201);
         }
 
         // Handle repeating activities
-        if (!isset($validated["repeat_type"])) {
-            return response()->json($activity->load("calendarActivities"), 201);
+        if (! isset($validated['repeat_type'])) {
+            return response()->json($activity->load('calendarActivities'), 201);
         }
 
         $calendarActivity = $activity->calendarActivities()->first();
-        if (!$calendarActivity) {
+        if (! $calendarActivity) {
             return response()->json($activity, 201);
         }
 
         static::handleRepeatingActivity($journey, $activity, $calendarActivity);
 
-        return response()->json($activity->load("calendarActivities"), 201);
+        return response()->json($activity->load('calendarActivities'), 201);
     }
 
     /**
-     * Display the specified activity.
+     * Show activity
+     *
+     * Display the specified activity including its calendar activities.
      */
+    #[UrlParam('journey_id', description: 'The UUID of the journey.', type: 'uuid', example: '9c23279f-f2a7-4666-bc00-56dfe0c47342')]
+    #[UrlParam('id', description: 'The UUID of the activity.', type: 'uuid', example: '9c23279f-f2a7-4666-bc00-56dfe0c47342')]
+    #[ResponseFromFile('storage/responses/journey/activity/show.200.json', status: 200, description: 'Success.')]
+    #[ResponseFromFile('storage/responses/journey/activity/show.403.json', status: 403, description: 'Unauthorized.')]
+    #[ResponseFromFile('storage/responses/journey/activity/show.404.json', status: 404, description: 'Journey or activity not found.')]
+    #[ResponseField('message', description: 'The error message.')]
+    #[ResponseField('id', description: 'The ID of the activity.')]
+    #[ResponseField('journey_id', description: 'The ID of the journey that the activity belongs to.')]
+    #[ResponseField('name', description: 'The name of the activity.')]
+    #[ResponseField('estimated_duration', description: 'The estimated duration of the activity.')]
+    #[ResponseField('opening_hours', description: 'The opening hours of the activity.')]
+    #[ResponseField('email', description: 'The email of the activity.')]
+    #[ResponseField('phone', description: 'The phone number of the activity.')]
+    #[ResponseField('link', description: 'The link of the activity.')]
+    #[ResponseField('cost', description: 'The cost of the activity.')]
+    #[ResponseField('description', description: 'The description of the activity.')]
+    #[ResponseField('mapbox_id', description: 'The Mapbox ID of the activity, only for internal use.')]
+    #[ResponseField('mapbox_full_address', description: 'The full address of the activity as provided by Mapbox.')]
+    #[ResponseField('address', description: 'The address of the activity as provided by the user.')]
+    #[ResponseField('longitude', description: 'The longitude of the activity provided by Mapbox.')]
+    #[ResponseField('latitude', description: 'The latitude of the activity provided by Mapbox.')]
+    #[ResponseField('created_at', description: 'The creation date of the activity.')]
+    #[ResponseField('updated_at', description: 'The last update date of the activity.')]
+    #[ResponseField('repeat_type', description: 'The type of repetition of the activity.', enum: ['daily', 'weekly', 'custom'])]
+    #[ResponseField('repeat_interval', description: 'The repetition interval of the activity.')]
+    #[ResponseField('repeat_interval_unit', description: 'The unit of the interval of repetition of the activity.', enum: ['days', 'weeks'])]
+    #[ResponseField('repeat_on', description: 'The days of the week on which the activity is repeated. Array of day short forms.', enum: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])]
+    #[ResponseField('repeat_end_date', description: 'The end date of the repetition of the activity.')]
+    #[ResponseField('repeat_end_occurrences', description: 'The number of occurrences of the repetition of the activity.')]
+    #[ResponseField('parent_id', description: 'The ID of the parent activity if the activity is a sub-activity.')]
+    #[ResponseField('calendar_activities', description: 'The calendar activities of the activity.')]
+    #[ResponseField('calendar_activities.id', description: 'The ID of the calendar activity.')]
+    #[ResponseField('calendar_activities.activity_id', description: 'The ID of the activity that the calendar activity belongs to.')]
+    #[ResponseField('calendar_activities.start', description: 'The start date of the calendar activity.')]
+    #[ResponseField('calendar_activities.created_at', description: 'The creation date of the calendar activity.')]
+    #[ResponseField('calendar_activities.updated_at', description: 'The last update date of the calendar activity.')]
     public function show(Journey $journey, Activity $activity)
     {
-        Gate::authorize("view", [
+        Gate::authorize('view', [
             $activity,
             $journey,
             true,
-            request()->input("share_id"),
+            request()->input('share_id'),
         ]);
 
-        return response()->json($activity->load("calendarActivities"));
+        return response()->json($activity->load('calendarActivities'));
     }
 
     /**
+     * Update activity
+     *
      * Update the specified activity in storage.
-     * Do not remove the journey parameter, it is required for authorization.
      */
+    #[UrlParam('journey_id', description: 'The UUID of the journey.', type: 'uuid', example: '9c23279f-f2a7-4666-bc00-56dfe0c47342')]
+    #[UrlParam('id', description: 'The UUID of the activity.', type: 'uuid', example: '9c23279f-f2a7-4666-bc00-56dfe0c47342')]
+    #[ResponseFromFile('storage/responses/journey/activity/update.200.json', status: 200, description: 'Success. Returns the activites with all details that have been updated and includes calendar activities if applicable. For a description of the parameters (and to see all possible options), see the request body.')]
+    #[ResponseFromFile('storage/responses/journey/activity/update.403.json', status: 403, description: 'Unauthorized.')]
+    #[ResponseFromFile('storage/responses/journey/activity/update.404.json', status: 404, description: 'Journey or activity not found.')]
+    #[ResponseFromFile('storage/responses/journey/activity/update.422.json', status: 422, description: 'Validation error.')]
+    #[ResponseField('message', description: 'The error message.')]
+    #[ResponseField('errors', description: 'The validation errors, may include every field.')]
     public function update(
         UpdateActivityRequest $request,
-        Journey $journey,
+        Journey $journey, // Do not remove the journey parameter, it is required for authorization.
         Activity $activity
     ) {
         // Validate the request
@@ -135,18 +237,18 @@ class ActivityController extends Controller
         );
 
         $repeatedChanged =
-            array_key_exists("repeat_type", $validated) &&
-            (($activity->repeat_type ?? "") != $validated["repeat_type"] ||
+            array_key_exists('repeat_type', $validated) &&
+            (($activity->repeat_type ?? '') != $validated['repeat_type'] ||
                 ($activity->repeat_interval ?? 0) !=
-                    ($validated["repeat_interval"] ?? 0) ||
-                ($activity->repeat_interval_unit ?? "") !=
-                    ($validated["repeat_interval_unit"] ?? "") ||
-                ($activity->repeat_on ?? [""]) !=
-                    ($validated["repeat_on"] ?? [""]) ||
-                ($activity->repeat_end_date ?? "") !=
-                    ($validated["repeat_end_date"] ?? "") ||
+                ($validated['repeat_interval'] ?? 0) ||
+                ($activity->repeat_interval_unit ?? '') !=
+                ($validated['repeat_interval_unit'] ?? '') ||
+                ($activity->repeat_on ?? ['']) !=
+                ($validated['repeat_on'] ?? ['']) ||
+                ($activity->repeat_end_date ?? '') !=
+                ($validated['repeat_end_date'] ?? '') ||
                 ($activity->repeat_end_occurrences ?? 0) !=
-                    ($validated["repeat_end_occurrences"] ?? 0));
+                ($validated['repeat_end_occurrences'] ?? 0));
 
         $timeDifference = null;
         // Create the calendar activity if the date is provided and the activity is not repeated and has no calendar activities
@@ -167,24 +269,24 @@ class ActivityController extends Controller
                     );
                 }
             }
-        } elseif (isset($validated["date"])) {
+        } elseif (isset($validated['date'])) {
             $editedCalendarActivity = CalendarActivity::findOrFail(
-                $validated["calendar_activity_id"]
+                $validated['calendar_activity_id']
             );
 
-            Gate::authorize("update", [
+            Gate::authorize('update', [
                 $editedCalendarActivity,
                 $activity,
                 $journey,
                 true,
             ]);
 
-            if (!isset($validated["time"])) {
-                $validated["time"] = "00:00:00";
+            if (! isset($validated['time'])) {
+                $validated['time'] = '00:00:00';
             }
 
             $newStart = new DateTime(
-                $validated["date"] . " " . $validated["time"]
+                $validated['date'].' '.$validated['time']
             );
 
             $timeDifference = $editedCalendarActivity->start->diff($newStart);
@@ -204,10 +306,10 @@ class ActivityController extends Controller
         // Edit repeated activities
         $baseActivity = $activity->getBaseActivity();
         $activities = [];
-        if ($validated["edit_type"] == UpdateActivityRequest::EDIT_TYPE_ALL) {
+        if ($validated['edit_type'] == UpdateActivityRequest::EDIT_TYPE_ALL) {
             $repeatTypeChanged =
-                array_key_exists("repeat_type", $validated) &&
-                ($activity->repeat_type ?? "") != $validated["repeat_type"];
+                array_key_exists('repeat_type', $validated) &&
+                ($activity->repeat_type ?? '') != $validated['repeat_type'];
             if ($repeatTypeChanged) {
                 $activity = static::resetRepeat($activity);
             }
@@ -251,10 +353,10 @@ class ActivityController extends Controller
             if ($repeatedChanged) {
                 if ($activity->repeat_type == null) {
                     $editedCalendarActivity = CalendarActivity::findOrFail(
-                        $validated["calendar_activity_id"]
+                        $validated['calendar_activity_id']
                     );
 
-                    Gate::authorize("update", [
+                    Gate::authorize('update', [
                         $editedCalendarActivity,
                         $activity,
                         $journey,
@@ -278,10 +380,10 @@ class ActivityController extends Controller
             }
         } else {
             $editedCalendarActivity = CalendarActivity::findOrFail(
-                $validated["calendar_activity_id"]
+                $validated['calendar_activity_id']
             );
 
-            Gate::authorize("update", [
+            Gate::authorize('update', [
                 $editedCalendarActivity,
                 $activity,
                 $journey,
@@ -289,13 +391,13 @@ class ActivityController extends Controller
             ]);
 
             if (
-                $validated["edit_type"] ==
+                $validated['edit_type'] ==
                 UpdateActivityRequest::EDIT_TYPE_SINGLE
             ) {
-                if ($repeatedChanged && $validated["repeat_type"] != null) {
+                if ($repeatedChanged && $validated['repeat_type'] != null) {
                     abort(
                         400,
-                        "You cannot change the repeat settings of a single activity."
+                        'You cannot change the repeat settings of a single activity.'
                     );
                 }
                 $subActivity = $activity->replicate();
@@ -324,7 +426,7 @@ class ActivityController extends Controller
                 }
 
                 if ($repeatedChanged) {
-                    $activities[] = $subActivity->load("calendarActivities");
+                    $activities[] = $subActivity->load('calendarActivities');
                 }
             } else {
                 // Update the current activity, get changes and then apply changes to all activities after this one
@@ -340,8 +442,7 @@ class ActivityController extends Controller
 
                 if ($repeatedChanged) {
                     foreach (
-                        $baseActivity->children()->get()
-                        as $childActivity
+                        $baseActivity->children()->get() as $childActivity
                     ) {
                         if ($childActivity->id === $editedActivity->id) {
                             continue;
@@ -354,7 +455,7 @@ class ActivityController extends Controller
                             $editedActivity->getChanges(),
                             false,
                             $this->mapboxService
-                        )->load("calendarActivities");
+                        )->load('calendarActivities');
                     }
 
                     $mappings = static::calculateDateToActivityMappings(
@@ -392,11 +493,10 @@ class ActivityController extends Controller
                     $editedActivity->parent_id = null;
                     $editedActivity->save();
 
-                    $activities[] = $editedActivity->load("calendarActivities");
+                    $activities[] = $editedActivity->load('calendarActivities');
                 } else {
                     foreach (
-                        $baseActivity->children()->get()
-                        as $childActivity
+                        $baseActivity->children()->get() as $childActivity
                     ) {
                         if ($childActivity->id === $editedActivity->id) {
                             continue;
@@ -423,7 +523,7 @@ class ActivityController extends Controller
 
         // Replace base activity if it doesn't have any calendar activities
         if (
-            !$baseActivity->calendarActivities()->count() &&
+            ! $baseActivity->calendarActivities()->count() &&
             $baseActivity->children()->count()
         ) {
             $replacementActivity = static::replaceBaseActivity($baseActivity);
@@ -439,26 +539,36 @@ class ActivityController extends Controller
         // Combine newly created activities with the base activity and its children
         array_push(
             $activities,
-            ...$baseActivity->children()->with("calendarActivities")->get()
+            ...$baseActivity->children()->with('calendarActivities')->get()
         );
-        $activities[] = $baseActivity->load("calendarActivities");
+        $activities[] = $baseActivity->load('calendarActivities');
 
         return response()->json($activities, 200);
     }
 
     /**
+     * Delete activity
+     *
      * Delete the specified activity from storage.
      */
+    #[UrlParam('journey_id', description: 'The UUID of the journey.', type: 'uuid', example: '9c23279f-f2a7-4666-bc00-56dfe0c47342')]
+    #[UrlParam('id', description: 'The UUID of the activity.', type: 'uuid', example: '9c23279f-f2a7-4666-bc00-56dfe0c47342')]
+    #[ResponseFromFile('storage/responses/journey/activity/destroy.200.json', status: 200, description: 'Success. Returns the activites with all details that have been deleted and includes calendar activities if applicable.')]
+    #[ResponseFromFile('storage/responses/journey/activity/destroy.403.json', status: 403, description: 'Unauthorized.')]
+    #[ResponseFromFile('storage/responses/journey/activity/destroy.404.json', status: 404, description: 'Journey or activity not found.')]
+    #[ResponseFromFile('storage/responses/journey/activity/destroy.422.json', status: 422, description: 'Validation error.')]
+    #[ResponseField('message', description: 'The error message.')]
+    #[ResponseField('errors', description: 'The validation errors, may include every field.')]
     public function destroy(
         DeleteActivityRequest $request,
         Journey $journey,
         Activity $activity
     ) {
-        Gate::authorize("delete", [$activity, $journey, true]);
+        Gate::authorize('delete', [$activity, $journey, true]);
         $validated = $request->validated();
         $baseActivity = $activity->getBaseActivity();
 
-        if ($validated["edit_type"] == UpdateActivityRequest::EDIT_TYPE_ALL) {
+        if ($validated['edit_type'] == UpdateActivityRequest::EDIT_TYPE_ALL) {
             $baseActivity->children()->delete();
             $baseActivity->delete();
 
@@ -466,16 +576,16 @@ class ActivityController extends Controller
         }
 
         $calendarActivity = CalendarActivity::findOrFail(
-            $validated["calendar_activity_id"]
+            $validated['calendar_activity_id']
         );
 
         if (
-            $validated["edit_type"] == UpdateActivityRequest::EDIT_TYPE_SINGLE
+            $validated['edit_type'] == UpdateActivityRequest::EDIT_TYPE_SINGLE
         ) {
             $calendarActivity->delete();
             static::deleteActivityIfNeeded($activity);
         } elseif (
-            $validated["edit_type"] ==
+            $validated['edit_type'] ==
             UpdateActivityRequest::EDIT_TYPE_FOLLOWING
         ) {
             static::deleteAllCalendarActivitiesAfterBaseActivity(
@@ -488,9 +598,9 @@ class ActivityController extends Controller
 
         $activities = $baseActivity
             ->children()
-            ->with("calendarActivities")
+            ->with('calendarActivities')
             ->get();
-        $activities[] = $baseActivity->load("calendarActivities");
+        $activities[] = $baseActivity->load('calendarActivities');
 
         return response()->json($activities, 200);
     }
@@ -501,12 +611,12 @@ class ActivityController extends Controller
     public static function resetRepeat(Activity $activity)
     {
         $activity->fill([
-            "repeat_type" => null,
-            "repeat_interval" => null,
-            "repeat_interval_unit" => null,
-            "repeat_on" => null,
-            "repeat_end_date" => null,
-            "repeat_end_occurrences" => null,
+            'repeat_type' => null,
+            'repeat_interval' => null,
+            'repeat_interval_unit' => null,
+            'repeat_on' => null,
+            'repeat_end_date' => null,
+            'repeat_end_occurrences' => null,
         ]);
 
         return $activity;
@@ -521,8 +631,7 @@ class ActivityController extends Controller
     ): array {
         $activities = [];
         foreach (
-            $baseActivity->children()->with("calendarActivities")->get()
-            as $child
+            $baseActivity->children()->with('calendarActivities')->get() as $child
         ) {
             foreach ($child->calendarActivities as $calendarActivity) {
                 if ($calendarActivity->id != $calendarActivityToKeep->id) {
@@ -537,8 +646,7 @@ class ActivityController extends Controller
         }
 
         foreach (
-            $baseActivity->calendarActivities()->get()
-            as $calendarActivity
+            $baseActivity->calendarActivities()->get() as $calendarActivity
         ) {
             if ($calendarActivity->id != $calendarActivityToKeep->id) {
                 $calendarActivity->delete();
@@ -556,18 +664,18 @@ class ActivityController extends Controller
         // Get the first calendar activity which is
         $firstCalendarActivity = $baseActivity
             ->calendarActivities()
-            ->orderBy("start")
+            ->orderBy('start')
             ->first();
 
         foreach ($baseActivity->children()->get() as $child) {
             $childFirstCalendarActivity = $child
                 ->calendarActivities()
-                ->orderBy("start")
+                ->orderBy('start')
                 ->first();
             if (
                 $childFirstCalendarActivity &&
                 $childFirstCalendarActivity->start <
-                    $firstCalendarActivity->start
+                $firstCalendarActivity->start
             ) {
                 $firstCalendarActivity = $childFirstCalendarActivity;
             }
@@ -595,8 +703,7 @@ class ActivityController extends Controller
     ) {
         if ($timeDifference) {
             foreach (
-                $activity->calendarActivities()->get()
-                as $calendarActivity
+                $activity->calendarActivities()->get() as $calendarActivity
             ) {
                 $calendarActivity->start = $calendarActivity->start->add(
                     $timeDifference
@@ -615,21 +722,15 @@ class ActivityController extends Controller
         // Create a mapping from date to activity
         $dateToActivityMappings = [];
         foreach (
-            $baseActivity->calendarActivities()->get()
-            as $calendarActivity
+            $baseActivity->calendarActivities()->get() as $calendarActivity
         ) {
-            $dateToActivityMappings[
-                $calendarActivity->start->format("Y-m-d")
-            ] = $baseActivity;
+            $dateToActivityMappings[$calendarActivity->start->format('Y-m-d')] = $baseActivity;
         }
         foreach ($baseActivity->children()->get() as $childActivity) {
             foreach (
-                $childActivity->calendarActivities()->get()
-                as $calendarActivity
+                $childActivity->calendarActivities()->get() as $calendarActivity
             ) {
-                $dateToActivityMappings[
-                    $calendarActivity->start->format("Y-m-d")
-                ] = $childActivity;
+                $dateToActivityMappings[$calendarActivity->start->format('Y-m-d')] = $childActivity;
             }
         }
 
@@ -715,19 +816,19 @@ class ActivityController extends Controller
         array $validated,
         Activity $activity
     ): bool {
-        if (!isset($validated["date"])) {
+        if (! isset($validated['date'])) {
             return false;
         }
 
-        if (!isset($validated["time"])) {
-            $validated["time"] = "00:00:00";
+        if (! isset($validated['time'])) {
+            $validated['time'] = '00:00:00';
         }
 
-        $start = new DateTime($validated["date"] . " " . $validated["time"]);
+        $start = new DateTime($validated['date'].' '.$validated['time']);
 
         $calendarActivity = new CalendarActivity([
-            "activity_id" => $activity->id,
-            "start" => $start,
+            'activity_id' => $activity->id,
+            'start' => $start,
         ]);
         $calendarActivity->save();
 
@@ -743,7 +844,7 @@ class ActivityController extends Controller
         CalendarActivity $calendarActivity,
         array $mappings = []
     ) {
-        $mappingsExist = !empty($mappings);
+        $mappingsExist = ! empty($mappings);
         $calendarActivityStart = $calendarActivity->start;
         $repeatEndDate = $activity->repeat_end_date ?? $journey->to;
         if ($repeatEndDate > $journey->to) {
@@ -752,8 +853,8 @@ class ActivityController extends Controller
         $repeatEndDate->setTime(23, 59, 59);
 
         if (
-            $activity->repeat_type == "custom" &&
-            $activity->repeat_interval_unit == "weeks"
+            $activity->repeat_type == 'custom' &&
+            $activity->repeat_interval_unit == 'weeks'
         ) {
             $repeatOn = $activity->repeat_on ?? [];
             $occurences =
@@ -762,18 +863,18 @@ class ActivityController extends Controller
                     ->days +
                     1) /
                     7) *
-                    count($repeatOn);
-            $shiftInterval = new DateInterval("P1D");
+                count($repeatOn);
+            $shiftInterval = new DateInterval('P1D');
             while ($occurences > 1) {
                 $calendarActivityStart->add($shiftInterval);
                 if ($calendarActivityStart > $repeatEndDate) {
                     break;
                 }
-                if (in_array($calendarActivityStart->format("D"), $repeatOn)) {
+                if (in_array($calendarActivityStart->format('D'), $repeatOn)) {
                     $repeatedActivity = $calendarActivity
-                        ->replicate(["start"])
+                        ->replicate(['start'])
                         ->fill([
-                            "start" => $calendarActivityStart,
+                            'start' => $calendarActivityStart,
                         ]);
                     if ($mappingsExist) {
                         $repeatedActivity->activity_id = static::getActivityFromDateMapping(
@@ -784,10 +885,10 @@ class ActivityController extends Controller
                     $repeatedActivity->save();
                     $occurences--;
                 }
-                if ($calendarActivityStart->format("D") == "Sun") {
+                if ($calendarActivityStart->format('D') == 'Sun') {
                     $calendarActivityStart->add(
                         new DateInterval(
-                            "P" . ($activity->repeat_interval - 1) . "W"
+                            'P'.($activity->repeat_interval - 1).'W'
                         )
                     );
                 }
@@ -795,14 +896,14 @@ class ActivityController extends Controller
         } else {
             $repeatEveryDays =
                 $activity->repeat_interval ??
-                ($activity->repeat_type == "weekly" ? 7 : 1);
+                ($activity->repeat_type == 'weekly' ? 7 : 1);
             $occurences =
                 $activity->repeat_end_occurrences ??
                 ($calendarActivityStart->diffAsDateInterval($repeatEndDate)
                     ->days +
                     1) /
-                    $repeatEveryDays;
-            $shiftInterval = new DateInterval("P" . $repeatEveryDays . "D");
+                $repeatEveryDays;
+            $shiftInterval = new DateInterval('P'.$repeatEveryDays.'D');
 
             for ($i = 1; $i < $occurences; $i++) {
                 $calendarActivityStart->add($shiftInterval);
@@ -810,9 +911,9 @@ class ActivityController extends Controller
                     break;
                 }
                 $repeatedActivity = $calendarActivity
-                    ->replicate(["start"])
+                    ->replicate(['start'])
                     ->fill([
-                        "start" => $calendarActivityStart,
+                        'start' => $calendarActivityStart,
                     ]);
                 if ($mappingsExist) {
                     $repeatedActivity->activity_id = static::getActivityFromDateMapping(
@@ -834,7 +935,7 @@ class ActivityController extends Controller
     ) {
         $lastActivity = null;
         foreach ($mappings as $date => $activity) {
-            if ($date > $searchDate->format("Y-m-d")) {
+            if ($date > $searchDate->format('Y-m-d')) {
                 break;
             }
             $lastActivity = $activity;
@@ -884,7 +985,7 @@ class ActivityController extends Controller
             if ($childActivity->hasSameAttributesAs($baseActivity)) {
                 $childActivity
                     ->calendarActivities()
-                    ->update(["activity_id" => $baseActivity->id]);
+                    ->update(['activity_id' => $baseActivity->id]);
                 $childActivity->delete();
             }
         }
@@ -904,7 +1005,7 @@ class ActivityController extends Controller
                     // Update sibling's calendar activities to reference the current child
                     $siblingActivity
                         ->calendarActivities()
-                        ->update(["activity_id" => $childActivity->id]);
+                        ->update(['activity_id' => $childActivity->id]);
 
                     // Mark sibling as processed and delete it
                     $processed[] = $siblingActivity->id;
@@ -924,8 +1025,8 @@ class ActivityController extends Controller
     ) {
         $baseActivity
             ->children()
-            ->whereDoesntHave("calendarActivities")
-            ->where("id", "!=", $baseActivity->id)
+            ->whereDoesntHave('calendarActivities')
+            ->where('id', '!=', $baseActivity->id)
             ->delete();
     }
 
@@ -937,7 +1038,7 @@ class ActivityController extends Controller
         array $validated,
         MapboxService $mapboxService
     ) {
-        if ($activity->isDirty("mapbox_full_address")) {
+        if ($activity->isDirty('mapbox_full_address')) {
             $activity->longitude = null;
             $activity->latitude = null;
             $activity->mapbox_full_address = null;
@@ -961,8 +1062,8 @@ class ActivityController extends Controller
         $subActivity = $activity->replicate();
         $subActivity->save();
         $repeatTypeChanged =
-            array_key_exists("repeat_type", $changes) &&
-            ($activity->repeat_type ?? "") != $changes["repeat_type"];
+            array_key_exists('repeat_type', $changes) &&
+            ($activity->repeat_type ?? '') != $changes['repeat_type'];
         if ($repeatTypeChanged) {
             $subActivity = static::resetRepeat($subActivity);
         }

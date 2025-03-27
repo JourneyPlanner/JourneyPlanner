@@ -1,0 +1,17 @@
+{
+    "message": "The name field is required. (and 3 more errors)",
+    "errors": {
+        "name": [
+            "The name field is required."
+        ],
+        "destination": [
+            "The destination field is required."
+        ],
+        "from": [
+            "The from field is required."
+        ],
+        "to": [
+            "The to field is required."
+        ]
+    }
+}

@@ -23,14 +23,14 @@ class EmailUpdateConfirmation extends Mailable
     public function __construct(Model $pendingUserEmail)
     {
         $backendUrl = $pendingUserEmail->verificationUrl();
-        $path = explode("/", trim(parse_url($backendUrl, PHP_URL_PATH), "/"));
+        $path = explode('/', trim(parse_url($backendUrl, PHP_URL_PATH), '/'));
         $this->url =
-            config("app.frontend_url") .
-            "/verify-email?token=" .
-            $path[3] .
-            "&" .
-            parse_url($backendUrl, PHP_URL_QUERY) .
-            "&user_id=" .
+            config('app.frontend_url').
+            '/verify-email?token='.
+            $path[3].
+            '&'.
+            parse_url($backendUrl, PHP_URL_QUERY).
+            '&user_id='.
             $pendingUserEmail->user_id;
     }
 
@@ -39,7 +39,7 @@ class EmailUpdateConfirmation extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope(subject: "Verify Email Address");
+        return new Envelope(subject: 'Verify Email Address');
     }
 
     /**
@@ -48,9 +48,9 @@ class EmailUpdateConfirmation extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: "maizzle.emails.mail-address-update",
+            view: 'maizzle.emails.mail-address-update',
             with: [
-                "verificationUrl" => $this->url,
+                'verificationUrl' => $this->url,
             ]
         );
     }

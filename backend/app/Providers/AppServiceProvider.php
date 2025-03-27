@@ -3,8 +3,13 @@
 namespace App\Providers;
 
 use App\Mail\EmailConfirmation;
-use Illuminate\Support\ServiceProvider;
+use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Http\Request;
+use Illuminate\Support\ServiceProvider;
+use Knuckles\Camel\Extraction\ExtractedEndpointData;
+use Knuckles\Scribe\Scribe;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,5 +29,15 @@ class AppServiceProvider extends ServiceProvider
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
             return (new EmailConfirmation($url))->to($notifiable->email);
         });
+
+        if (class_exists(\Knuckles\Scribe\Scribe::class)) {
+            Scribe::beforeResponseCall(function (
+                Request $request,
+                ExtractedEndpointData $endpointData
+            ) {
+                $user = User::first();
+                Sanctum::actingAs($user, ['*']);
+            });
+        }
     }
 }

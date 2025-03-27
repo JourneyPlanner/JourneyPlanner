@@ -14,12 +14,12 @@ class Media extends Model
     /**
      * The table associated with the model.
      */
-    protected $table = "journey_media";
+    protected $table = 'journey_media';
 
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ["path"];
+    protected $fillable = ['path'];
 
     /**
      * Get the user that owns the media.
@@ -42,7 +42,7 @@ class Media extends Model
      */
     public function getMediaPath(): string
     {
-        return $this->getBasePath() . $this->getMediaSubpath();
+        return $this->getBasePath().$this->getMediaSubpath();
     }
 
     /**
@@ -50,7 +50,7 @@ class Media extends Model
      */
     public function getMediaSubpath(): string
     {
-        return $this->getSubfolder() . $this->journey->id . "/" . $this->name;
+        return $this->getSubfolder().$this->journey->id.'/'.$this->name;
     }
 
     /**
@@ -58,7 +58,7 @@ class Media extends Model
      */
     public function getThumbnailSubpath(): string
     {
-        return $this->getMediaSubpath() . "_thumbnail.jpg";
+        return $this->getMediaSubpath().'_thumbnail.jpg';
     }
 
     /**
@@ -66,7 +66,7 @@ class Media extends Model
      */
     public function getThumbnailPath(): string
     {
-        return $this->getBasePath() . $this->getThumbnailSubpath();
+        return $this->getBasePath().$this->getThumbnailSubpath();
     }
 
     /**
@@ -74,7 +74,7 @@ class Media extends Model
      */
     public static function getJourneyFolder(string $journeyId): string
     {
-        return Media::getBasePath() . Media::getSubfolder() . $journeyId;
+        return Media::getBasePath().Media::getSubfolder().$journeyId;
     }
 
     /**
@@ -82,7 +82,7 @@ class Media extends Model
      */
     public static function getBasePath(): string
     {
-        return storage_path("app/");
+        return storage_path('app/');
     }
 
     /**
@@ -90,6 +90,6 @@ class Media extends Model
      */
     public static function getSubfolder(): string
     {
-        return "journey_media/";
+        return 'journey_media/';
     }
 }

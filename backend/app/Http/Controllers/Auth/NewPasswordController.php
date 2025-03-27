@@ -22,9 +22,9 @@ class NewPasswordController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            "token" => ["required"],
-            "email" => ["required", "email"],
-            "password" => ["required", "confirmed", Rules\Password::defaults()],
+            'token' => ['required'],
+            'email' => ['required', 'email'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we
@@ -32,16 +32,16 @@ class NewPasswordController extends Controller
         // database. Otherwise we will parse the error and return the response.
         $status = Password::reset(
             $request->only(
-                "email",
-                "password",
-                "password_confirmation",
-                "token"
+                'email',
+                'password',
+                'password_confirmation',
+                'token'
             ),
             function ($user) use ($request) {
                 $user
                     ->forceFill([
-                        "password" => Hash::make($request->password),
-                        "remember_token" => Str::random(60),
+                        'password' => Hash::make($request->password),
+                        'remember_token' => Str::random(60),
                     ])
                     ->save();
 
@@ -51,10 +51,10 @@ class NewPasswordController extends Controller
 
         if ($status != Password::PASSWORD_RESET) {
             throw ValidationException::withMessages([
-                "email" => [__($status)],
+                'email' => [__($status)],
             ]);
         }
 
-        return response()->json(["status" => __($status)]);
+        return response()->json(['status' => __($status)]);
     }
 }

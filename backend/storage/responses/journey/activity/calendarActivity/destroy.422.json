@@ -1,0 +1,8 @@
+{
+    "message": "The edit type field is required.",
+    "errors": {
+        "edit_type": [
+            "The edit type field is required."
+        ]
+    }
+}

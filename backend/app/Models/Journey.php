@@ -6,8 +6,8 @@ use App\Models\Business\Business;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Journey extends Model
@@ -21,20 +21,20 @@ class Journey extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        "name",
-        "destination",
-        "from",
-        "to",
-        "invite",
-        "mapbox_id",
-        "mapbox_full_address",
-        "description",
-        "is_template",
-        "created_from",
-        "average_rating",
-        "total_ratings",
-        "longitude",
-        "latitude",
+        'name',
+        'destination',
+        'from',
+        'to',
+        'invite',
+        'mapbox_id',
+        'mapbox_full_address',
+        'description',
+        'is_template',
+        'created_from',
+        'average_rating',
+        'total_ratings',
+        'longitude',
+        'latitude',
     ];
 
     /**
@@ -43,8 +43,8 @@ class Journey extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        "from" => "datetime",
-        "to" => "datetime",
+        'from' => 'datetime',
+        'to' => 'datetime',
     ];
 
     /**
@@ -52,14 +52,14 @@ class Journey extends Model
      *
      * @var array<int, string>
      */
-    protected $hidden = ["pivot", "users", "businesses"];
+    protected $hidden = ['pivot', 'users', 'businesses'];
 
     /**
      * The attributes that should be appended to the model.
      *
      * @var array<int, string>
      */
-    protected $appends = ["creator"];
+    protected $appends = ['creator'];
 
     /**
      * Bootstrap the model and its traits.
@@ -72,7 +72,7 @@ class Journey extends Model
 
         // Update length if start or end has changed
         static::saving(function ($journey) {
-            if ($journey->isDirty("from") || $journey->isDirty("to")) {
+            if ($journey->isDirty('from') || $journey->isDirty('to')) {
                 $journey->length = $journey->from->diffInDays($journey->to) + 1;
             }
         });
@@ -93,8 +93,8 @@ class Journey extends Model
     {
         return $this->belongsToMany(
             Business::class,
-            "business_templates",
-            foreignPivotKey: "template_id"
+            'business_templates',
+            foreignPivotKey: 'template_id'
         );
     }
 
@@ -127,9 +127,9 @@ class Journey extends Model
      */
     public function templates(): HasMany
     {
-        return $this->hasMany(Journey::class, "created_from")->where(
-            "is_template",
-            "1"
+        return $this->hasMany(Journey::class, 'created_from')->where(
+            'is_template',
+            '1'
         );
     }
 
@@ -138,38 +138,42 @@ class Journey extends Model
      */
     public function createdFrom(): BelongsTo
     {
-        return $this->belongsTo(Journey::class, "created_from");
+        return $this->belongsTo(Journey::class, 'created_from');
     }
 
     /**
      * Get the creator of the template.
      *
      * This will return the business or user that created the template.
+     *
      * @return array|null Returns null if neither users nor businesses relationships are loaded
      */
     public function getCreatorAttribute()
     {
         if (
-            $this->relationLoaded("businesses") &&
+            $this->relationLoaded('businesses') &&
             $this->businesses->isNotEmpty()
         ) {
             $business = $this->businesses->first();
+
             return [
-                "business" => true,
-                "username" => $business->slug,
-                "display_name" => $business->name,
+                'business' => true,
+                'username' => $business->slug,
+                'display_name' => $business->name,
             ];
         } elseif (
-            $this->relationLoaded("users") &&
+            $this->relationLoaded('users') &&
             $this->users->isNotEmpty()
         ) {
             $user = $this->users->first();
+
             return [
-                "business" => false,
-                "username" => $user->username,
-                "display_name" => $user->display_name,
+                'business' => false,
+                'username' => $user->username,
+                'display_name' => $user->display_name,
             ];
         }
+
         return null;
     }
 }

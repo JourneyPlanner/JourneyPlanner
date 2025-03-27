@@ -1,0 +1,26 @@
+[
+    {
+        "id": "9c234579-6243-4c4a-ba0e-26fedbcd8fbe",
+        "display_name": "Severin",
+        "username": "severin",
+        "role": 1
+    },
+    {
+        "id": "9beb1151-7723-466a-8280-fa4a8a00dd14",
+        "display_name": "Stefania Manastirska",
+        "username": "findstef",
+        "role": 1
+    },
+    {
+        "id": "9bb69ac7-b927-4215-b870-42f718dffcf4",
+        "display_name": "Roman Krebs",
+        "username": "roman_krebs",
+        "role": 0
+    },
+    {
+        "id": "9bb2d6b1-8845-4174-abf0-9e8dc4a7955a",
+        "display_name": "Raven",
+        "username": "raven",
+        "role": 0
+    }
+]

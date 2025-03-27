@@ -3,3 +3,6 @@
 
 # Exclude deployment variables
 docker/.env
+
+# Ignore node_modules
+node_modules
