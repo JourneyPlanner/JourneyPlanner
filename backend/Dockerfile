@@ -13,6 +13,11 @@ RUN apt-get update && apt-get install -y bash curl && curl -1sLf \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY . /app
+COPY . /app
+
+# Set proper permissions
+RUN chmod -R 775 /app/storage /app/bootstrap/cache
+RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
  
 RUN composer install --optimize-autoloader --no-dev
 
