@@ -325,7 +325,9 @@ const calendarOptions = reactive({
     eventDrop: initializeDrop,
     eventResize: editDrop,
     eventClick: showData,
-    editable: props.currentUserRole === 1 || !isAuthenticated.value,
+    editable:
+        (props.currentUserRole === 1 || !isAuthenticated.value) &&
+        !props.isSharedSite,
     eventBackgroundColor: bg,
     eventBorderColor: border,
     eventTextColor: text,
