@@ -126,7 +126,7 @@ function handleUserClick() {
                             class="pi pi-star text-sm text-calypso-600 dark:text-calypso-400 xl:text-base"
                         />
                         <h5 class="truncate text-sm xl:text-base">
-                            {{ template.average_rating }}
+                            {{ template?.average_rating?.toFixed(2) }}
                             ({{ template.total_ratings }})
                         </h5>
                     </div>
