@@ -4,6 +4,7 @@ title: '[bug]: <title>'
 labels:
   - bug
   - to-check
+type: Bug
 body:
   - type: markdown
     attributes:
