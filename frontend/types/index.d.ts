@@ -11,6 +11,7 @@ declare global {
         from: string;
         to: string;
         role: number;
+        share_id: string;
     }
 
     interface Feature {
@@ -155,7 +156,58 @@ declare global {
         to: string;
         average_rating: number;
         total_ratings: number;
+        visible: number;
     }
+
+    interface VisibleTemplate {
+        template_id: string;
+        visible: number;
+    }
+
+    interface Business {
+        id: string;
+        name: string;
+        slug: string;
+    }
+
+    interface AltTexts {
+        de: string;
+        en: string;
+    }
+
+    interface BusinessTexts {
+        texts: {
+            company_name: string;
+            button_link: string;
+            button: string;
+            text: string;
+        }[];
+    }
+
+    interface InternationalBusinessSiteTexts {
+        de: {
+            company_name: string;
+            button_link: string;
+            button: string;
+            text: string;
+            alt_texts: {
+                banner: string;
+                image: string;
+            };
+        };
+        en: {
+            company_name: string;
+            button_link: string;
+            button: string;
+            text: string;
+            alt_texts: {
+                banner: string;
+                image: string;
+            };
+        };
+    }
+
+    type ImageEditFileType = "banner" | "image";
 
     interface WebsocketEvent {
         model: Journey | Activity | User | object;

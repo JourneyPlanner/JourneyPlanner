@@ -10,6 +10,10 @@ const props = defineProps({
         type: Object as PropType<User>,
         required: true,
     },
+    shareId: {
+        type: String,
+        default: "",
+    },
     journeyId: {
         type: String,
         required: true,
@@ -24,6 +28,7 @@ const emit = defineEmits([
     "leave-journey",
     "journey-edited",
     "close",
+    "open-qrcode",
     "open-unlock-dialog",
 ]);
 
@@ -31,6 +36,7 @@ const journeyStore = useJourneyStore();
 const { t } = useTranslate();
 const { isAuthenticated } = useSanctumAuth();
 const currentTemplate = ref(props.template);
+const toast = useToast();
 
 const isVisible = ref(props.isMenuSidebarVisible);
 const isJourneyEditMenuVisible = ref(false);
@@ -72,6 +78,20 @@ function closeTemplateDialog() {
 
 function changeToUpdate(template: Template) {
     currentTemplate.value = template;
+}
+
+function copyToClipboard() {
+    navigator.clipboard.writeText(props.shareId);
+    toast.add({
+        severity: "info",
+        summary: t.value("common.toast.info.heading"),
+        detail: t.value("common.invite.toast.info"),
+        life: 2000,
+    });
+}
+
+function openQRCode(tolgeeKey: string) {
+    emit("open-qrcode", tolgeeKey, "share");
 }
 </script>
 
@@ -144,6 +164,82 @@ function changeToUpdate(template: Template) {
                             >
                                 <T key-name="dashboard.edit.short" />
                             </button>
+                        </div>
+                    </AccordionTab>
+                    <AccordionTab
+                        v-if="currUser?.role === 1 || !isAuthenticated"
+                        :header="t('journey.share')"
+                        :pt="{
+                            root: {
+                                class: 'border-b-2 border-natural-300 dark:border-natural-700',
+                            },
+                            headerAction: {
+                                class: `pl-0 pr-0 bg-background dark:bg-background-dark text-text dark:text-natural-50 ${!isAuthenticated ? 'blur-[1.75px]' : ''}`,
+                            },
+                            content: {
+                                class: 'pl-0 bg-background dark:bg-background-dark text-text dark:text-natural-50',
+                            },
+                        }"
+                    >
+                        <div class="relative">
+                            <div
+                                :class="!isAuthenticated ? 'blur-[1.75px]' : ''"
+                            >
+                                <p
+                                    class="text-base font-medium text-natural-600 dark:text-natural-300"
+                                >
+                                    <T key-name="journey.share.detail" />
+                                </p>
+                                <h2
+                                    class="mt-3 text-xl text-text dark:text-natural-50"
+                                >
+                                    <T key-name="journey.share.link" />
+                                </h2>
+                                <div class="flex items-center">
+                                    <input
+                                        class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
+                                        disabled
+                                        :value="
+                                            isAuthenticated ? props.shareId : ''
+                                        "
+                                    />
+                                    <div class="flex w-1/5 justify-end">
+                                        <button
+                                            :disabled="!isAuthenticated"
+                                            class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 disabled:hover:bg-natural-50 dark:bg-natural-800 dark:hover:bg-pesto-600 disabled:hover:dark:bg-natural-800"
+                                            @click="copyToClipboard"
+                                        >
+                                            <SvgCopy class="w-4" />
+                                        </button>
+                                    </div>
+                                    <div class="flex w-1/5 justify-end">
+                                        <button
+                                            :disabled="!isAuthenticated"
+                                            class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 disabled:hover:bg-natural-50 dark:bg-natural-800 dark:hover:bg-pesto-600 disabled:hover:dark:bg-natural-800"
+                                            @click="
+                                                openQRCode(
+                                                    'journey.share.qrcode',
+                                                )
+                                            "
+                                        >
+                                            <span
+                                                class="pi pi-qrcode text-text dark:text-natural-50"
+                                            />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                v-if="!isAuthenticated"
+                                class="absolute top-0 flex w-full items-center justify-center"
+                            >
+                                <button
+                                    class="mt-10 flex w-32 justify-center rounded-md border-2 border-dandelion-300 bg-dandelion-200 px-4 py-1 text-base font-medium text-text hover:bg-dandelion-300 dark:border-dandelion-300 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
+                                    @click="openUnlockDialog"
+                                >
+                                    <T key-name="journey.unlock.button" />
+                                </button>
+                            </div>
                         </div>
                     </AccordionTab>
                     <AccordionTab

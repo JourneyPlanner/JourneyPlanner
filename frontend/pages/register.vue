@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { T, useTranslate } from "@tolgee/vue";
+import { T, useTolgee, useTranslate } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 
@@ -14,9 +14,12 @@ const isConfirmEmailDialogVisible = ref<boolean>(false);
 const email = ref<string>("");
 
 const title = t.value("form.header.register");
+const tolgee = useTolgee(["language"]);
 
-useHead({
-    title: `${title} | JourneyPlanner`,
+useSeoMeta({
+    title: () => `${title} | JourneyPlanner`,
+    description: () => t.value("startpage.text"),
+    ogImage: () => `/og/index/${tolgee.value?.getLanguage() || "en"}.png`,
 });
 
 if (route.query.redirect?.toString().startsWith("/invite")) {

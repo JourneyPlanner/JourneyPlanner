@@ -98,6 +98,9 @@ class Journey extends Model
             ->withTimestamps();
     }
 
+    /**
+     * The businesses that are a part of the journey.
+     */
     public function businesses(): BelongsToMany
     {
         return $this->belongsToMany(

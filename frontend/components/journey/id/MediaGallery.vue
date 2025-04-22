@@ -32,6 +32,14 @@ let lightGallery = null;
 
 const props = defineProps({
     uploadData: { type: String, default: "" },
+    isSharedSite: {
+        type: Boolean,
+        default: false,
+    },
+    shareLink: {
+        type: String,
+        default: "",
+    },
 });
 
 /**
@@ -62,14 +70,17 @@ async function fetchMedia() {
     if (isAuthenticated.value) {
         let data = null;
 
-        await client(`/api/journey/${journey.getID()}/media`, {
-            method: "GET",
-            async onResponse({ response }) {
-                if (response.ok) {
-                    data = response._data;
-                }
+        await client(
+            `/api/journey/${journey.getID()}/media` + props.shareLink,
+            {
+                method: "GET",
+                async onResponse({ response }) {
+                    if (response.ok) {
+                        data = response._data;
+                    }
+                },
             },
-        });
+        );
 
         if (data && data !== null) {
             data.forEach((media) => {
@@ -226,23 +237,27 @@ const setImage = (media) => {
                     <i
                         v-badge.info="docs.length"
                         v-tooltip.top="{
-                            value: isAuthenticated
-                                ? t('journey.media.docs.tooltip')
-                                : '',
+                            value:
+                                isAuthenticated || props.shareLink
+                                    ? t('journey.media.docs.tooltip')
+                                    : '',
                             pt: { root: 'font-nunito' },
                         }"
                         class="pi pi-file-pdf text-2xl"
                         :class="
-                            isAuthenticated
+                            isAuthenticated || props.shareLink
                                 ? 'hover:cursor-pointer'
                                 : 'cursor-not-allowed'
                         "
                         @click="
-                            isAuthenticated ? (isDocDialogOpen = true) : null
+                            isAuthenticated || props.shareLink
+                                ? (isDocDialogOpen = true)
+                                : null
                         "
                     />
 
                     <Button
+                        v-if="!props.isSharedSite"
                         v-tooltip.top="{
                             value: isAuthenticated
                                 ? t('journey.media.download.tooltip')
@@ -260,7 +275,7 @@ const setImage = (media) => {
                         }"
                         class="ml-auto flex items-center rounded-xl border-2 border-dandelion-300 bg-natural-50 px-2 py-1.5 text-base font-bold dark:bg-natural-800 dark:text-natural-50 sm:text-base lg:mb-1"
                         :class="
-                            isAuthenticated
+                            isAuthenticated || props.shareLink
                                 ? 'hover:bg-dandelion-200 dark:hover:bg-pesto-600'
                                 : 'cursor-not-allowed'
                         "

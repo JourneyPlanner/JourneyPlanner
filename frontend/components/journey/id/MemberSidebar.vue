@@ -30,16 +30,20 @@ const emit = defineEmits([
     "open-qrcode",
     "open-unlock-dialog",
     "kick",
+    "regenerated-invite",
 ]);
 
 const toast = useToast();
 const { t } = useTranslate();
 const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
+const journeyStore = useJourneyStore();
 
 const isEditEnabled = ref(false);
 const users = ref(props.users);
 const isVisible = ref(props.isMemberSidebarVisible);
+const shareDialog = ref();
+const isRegenerating = ref(false);
 
 watch(
     () => props.isMemberSidebarVisible,
@@ -138,11 +142,47 @@ function leave(event: Event) {
 }
 
 function openQRCode(tolgeeKey: string) {
-    emit("open-qrcode", tolgeeKey);
+    emit("open-qrcode", tolgeeKey, "invite");
 }
 
 function openUnlockDialog() {
     emit("open-unlock-dialog");
+}
+
+async function regenerateInvite() {
+    isRegenerating.value = true;
+    await client(`/api/journey/${props.journeyID}/regenerate-invite`, {
+        method: "POST",
+        async onResponse({ response }) {
+            if (response.ok) {
+                toast.add({
+                    severity: "success",
+                    summary: t.value(
+                        "journey.invite.regenerate.toast.success.summary",
+                    ),
+                    detail: t.value(
+                        "journey.invite.regenerate.toast.success.detail",
+                    ),
+                    life: 6000,
+                });
+                journeyStore.setInvite(response._data.invite);
+                emit("regenerated-invite");
+            }
+        },
+        async onResponseError() {
+            toast.add({
+                severity: "error",
+                summary: t.value("common.toast.error.heading"),
+                detail: t.value("common.error.unknown"),
+                life: 6000,
+            });
+        },
+    });
+    isRegenerating.value = false;
+}
+
+function toggleShareDialog(event: Event) {
+    shareDialog.value.toggle(event);
 }
 </script>
 
@@ -189,33 +229,60 @@ function openUnlockDialog() {
                     :class="!isAuthenticated ? 'blur-[1.75px]' : ''"
                 >
                     <div
+                        v-if="currUser?.role === 1"
                         class="text-xl font-medium text-text dark:text-natural-50"
                     >
                         <T key-name="sidebar.invite.link" />
                     </div>
                     <div
+                        v-if="currUser?.role === 1"
                         class="flex items-center border-b-2 border-natural-200 pb-4 dark:border-natural-900"
                     >
                         <input
+                            :disabled="isRegenerating"
+                            readonly
                             class="w-5/6 rounded-md bg-natural-100 px-1 pb-1 pt-1 text-base text-text focus:outline-none focus:ring-1 dark:bg-natural-600 dark:text-natural-50"
-                            disabled
+                            :class="
+                                isRegenerating
+                                    ? 'pointer-events-none cursor-not-allowed select-none'
+                                    : 'cursor-default'
+                            "
                             :value="invite"
                         />
                         <div class="flex w-1/5 justify-end">
                             <button
+                                :disabled="isRegenerating"
                                 class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                                @click="copyToClipboard"
+                                :class="
+                                    isRegenerating
+                                        ? 'cursor-not-allowed'
+                                        : 'cursor-pointer'
+                                "
+                                @click="toggleShareDialog"
                             >
-                                <SvgCopy class="w-4" />
+                                <i
+                                    class="pi pi-share-alt text-text dark:text-natural-50"
+                                />
                             </button>
                         </div>
                         <div class="flex w-1/5 justify-end">
                             <button
+                                :disabled="isRegenerating"
                                 class="ml-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600"
-                                @click="openQRCode('journey.qrcode')"
+                                :class="
+                                    isRegenerating
+                                        ? 'cursor-not-allowed'
+                                        : 'cursor-pointer'
+                                "
+                                @click="regenerateInvite"
                             >
                                 <span
-                                    class="pi pi-qrcode text-text dark:text-natural-50"
+                                    class="pi scale-x-[-1] text-text dark:text-natural-50"
+                                    :class="
+                                        isRegenerating
+                                            ? 'pi-spin pi-spinner'
+                                            : 'pi-refresh'
+                                    "
                                 />
                             </button>
                         </div>
@@ -282,5 +349,38 @@ function openUnlockDialog() {
                 </div>
             </div>
         </Sidebar>
+        <div id="dialogs">
+            <OverlayPanel
+                ref="shareDialog"
+                class="z-20"
+                :pt="{
+                    content: 'p-0',
+                    root: 'rounded-lg bg-natural-50 dark:bg-natural-950 border border-natural-200 dark:border-natural-900',
+                }"
+            >
+                <div
+                    class="flex flex-col gap-y-1 rounded-lg px-1 py-1 font-nunito text-text dark:text-natural-50"
+                >
+                    <div
+                        class="flex cursor-pointer items-center gap-x-2 rounded-md p-1 pl-1.5 hover:bg-dandelion-100 dark:hover:bg-pesto-600"
+                        @click="copyToClipboard"
+                    >
+                        <i class="pi pi-clone" />
+                        <span>
+                            <T key-name="journey.invite.copy" />
+                        </span>
+                    </div>
+                    <div
+                        class="flex cursor-pointer items-center gap-x-2 rounded-md p-1 pl-1.5 hover:bg-dandelion-100 dark:hover:bg-pesto-600"
+                        @click="openQRCode('journey.qrcode')"
+                    >
+                        <i class="pi pi-qrcode" />
+                        <span>
+                            <T key-name="journey.invite.qrcode" />
+                        </span>
+                    </div>
+                </div>
+            </OverlayPanel>
+        </div>
     </div>
 </template>

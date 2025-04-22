@@ -4,6 +4,7 @@ title: '[feat]: '
 labels:
   - to-check
   - enhancement
+type: Feature
 body:
   - type: checkboxes
     id: existing-feat-request

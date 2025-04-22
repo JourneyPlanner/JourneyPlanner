@@ -15,6 +15,7 @@ const client = useSanctumClient();
 const { isAuthenticated } = useSanctumAuth();
 const { t } = useTranslate();
 const fullConfig = resolveConfig(tailwindConfig);
+const colorMode = useColorMode();
 const echo = useEcho();
 
 const journeyId = route.params.id;
@@ -34,7 +35,9 @@ const isMenuSidebarVisible = ref(false);
 const isActivityDialogVisible = ref(false);
 
 const isUnlockDialogVisible = ref(false);
-const qrcode = ref("");
+const qrcodeInvite = ref<string>("");
+const qrcodeShare = ref<string>("");
+const showQrcode = ref<string>("");
 const qrcodeTolgeeKey = ref("");
 const isQRCodeVisible = ref(false);
 
@@ -43,6 +46,13 @@ const upload = ref();
 const calendar = ref();
 const clearCalendar = ref(false);
 const template = ref();
+const shareLink = ref<string>("");
+const isSharedSite = ref<boolean>(false);
+
+if (route.query.share_id) {
+    shareLink.value = ("?share_id=" + route.query.share_id) as string;
+    isSharedSite.value = true;
+}
 
 onMounted(() => {
     if (route.query.username) {
@@ -111,8 +121,10 @@ function calendarActivityRemoved(e: WebsocketEvent) {
     activityStore.removeCalendarActivity(e.model);
 }
 
+const journeyAPIBaseURL = `/api/journey/${journeyId}`;
+
 const { data, error } = await useAsyncData("journey", () =>
-    client(`/api/journey/${journeyId}`),
+    client(journeyAPIBaseURL + shareLink?.value),
 );
 
 if (error.value?.statusCode === 404) {
@@ -144,7 +156,7 @@ if (isAuthenticated.value) {
     localStorage.removeItem("JP_invite_journey_id");
 }
 
-await client(`/api/journey/${journeyId}/activity`, {
+await client(`/api/journey/${journeyId}/activity` + shareLink?.value, {
     async onResponse({ response }) {
         if (response.ok) {
             activityStore.setActivities(response._data.activities);
@@ -169,7 +181,12 @@ const journeyData = data as Ref<Journey>;
 journeyStore.setJourney(journeyData);
 
 const title = journeyData.value.name;
-
+journeyData.value.share_id =
+    window.location.origin +
+    "/journey/" +
+    journeyId +
+    "?share_id=" +
+    journeyData.value.share_id;
 useHead({
     title: `${title} | JourneyPlanner`,
 });
@@ -239,8 +256,6 @@ function userLeft(user: User) {
     }
 }
 
-const colorMode = useColorMode();
-
 function updateInvite() {
     const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
     let darkColor = fullConfig.theme.accentColor["text"] as string;
@@ -262,10 +277,11 @@ function updateInvite() {
         },
     };
 
-    journeyData.value.invite =
-        window.location.origin + "/invite/" + journeyData.value.invite;
     QRCode.toDataURL(journeyStore.getInvite(), opts, function (error, url) {
-        qrcode.value = url;
+        qrcodeInvite.value = url;
+    });
+    QRCode.toDataURL(journeyStore.getShareLink(), opts, function (error, url) {
+        qrcodeShare.value = url;
     });
 }
 
@@ -416,7 +432,12 @@ async function leaveJourney() {
     });
 }
 
-function openQRCode(tolgeeKey: string) {
+function openQRCode(tolgeeKey: string, qrCodeType: string) {
+    if (qrCodeType === "share") {
+        showQrcode.value = qrcodeShare.value;
+    } else if (qrCodeType === "invite") {
+        showQrcode.value = qrcodeInvite.value;
+    }
     isQRCodeVisible.value = true;
     qrcodeTolgeeKey.value = tolgeeKey;
 }
@@ -435,6 +456,7 @@ function scrollToTarget(target: string) {
         class="flex flex-col overflow-x-hidden font-nunito text-text dark:text-natural-50"
     >
         <JourneyIdMemberSidebar
+            v-if="!isSharedSite"
             :journey-i-d="String(journeyId)"
             :is-member-sidebar-visible="isMemberSidebarVisible"
             :invite="String(journeyStore.getInvite())"
@@ -445,18 +467,23 @@ function scrollToTarget(target: string) {
             @open-qrcode="openQRCode"
             @open-unlock-dialog="isUnlockDialogVisible = true"
             @kick="refreshUsers"
+            @regenerated-invite="updateInvite"
         />
         <JourneyIdMenuSidebar
+            v-if="!isSharedSite"
             :is-menu-sidebar-visible="isMenuSidebarVisible"
             :curr-user="currUser! || {}"
             :journey-id="String(journeyId)"
             :template="template"
+            :share-id="String(journeyStore.getShareLink())"
             @leave-journey="confirmLeave"
             @journey-edited="journeyEdited"
             @close="isMenuSidebarVisible = false"
             @open-unlock-dialog="isUnlockDialogVisible = true"
+            @open-qrcode="openQRCode"
         />
         <div
+            v-if="!isSharedSite"
             id="header"
             class="mt-5 flex w-full items-center justify-between px-4 font-semibold"
         >
@@ -488,6 +515,21 @@ function scrollToTarget(target: string) {
                 />
             </div>
         </div>
+        <div
+            v-else
+            id="header"
+            class="mt-5 flex w-full items-center justify-between px-4 font-semibold"
+        >
+            <button
+                to="/journey/new"
+                class="mx-1 flex items-center text-nowrap rounded-xl border-2 border-dandelion-300 bg-background px-2 py-1 text-sm hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-md:w-full max-md:justify-center sm:ml-1 md:ml-2 md:text-base"
+                @click="router.push('/journey/new')"
+            >
+                <p class="text-lg">
+                    <T key-name="dashboard.templates.nomoretemplates.link" />
+                </p>
+            </button>
+        </div>
         <JourneyIdTicketSection
             :daysto-end="daystoEnd"
             :day="day"
@@ -496,6 +538,8 @@ function scrollToTarget(target: string) {
             :during-journey="duringJourney"
             :journey-ended="journeyEnded"
             :curr-user="currUser! || {}"
+            :is-shared-site="isSharedSite"
+            :share-link="shareLink"
             @scroll-to-target="scrollToTarget"
             @open-activity-dialog="isActivityDialogVisible = true"
         />
@@ -510,6 +554,7 @@ function scrollToTarget(target: string) {
             </div>
         </div>
         <JourneyIdActivitySection
+            v-if="!isSharedSite"
             :curr-user="currUser! || {}"
             :is-activity-dialog-visible="isActivityDialogVisible"
             :journey-start="fromDate"
@@ -524,11 +569,13 @@ function scrollToTarget(target: string) {
                 :during-journey="duringJourney"
                 :journey-startdate="journeyData.from"
                 :journey-enddate="journeyData.to"
+                :is-shared-site="isSharedSite"
                 :clear="clearCalendar"
             />
         </div>
         <JourneyIdActivityMap v-if="activityDataLoaded" />
         <div
+            v-if="!isSharedSite"
             ref="upload"
             class="relative flex items-center justify-center md:justify-start"
             :class="!isAuthenticated ? 'cursor-not-allowed' : ''"
@@ -554,15 +601,25 @@ function scrollToTarget(target: string) {
         </div>
         <div
             class="relative flex items-center justify-center md:justify-start"
-            :class="!isAuthenticated ? 'cursor-not-allowed' : ''"
-            @click="!isAuthenticated ? (isUnlockDialogVisible = true) : null"
+            :class="
+                !isAuthenticated && !isSharedSite ? 'cursor-not-allowed' : ''
+            "
+            @click="
+                !isAuthenticated && !isSharedSite
+                    ? (isUnlockDialogVisible = true)
+                    : null
+            "
         >
             <JourneyIdMediaGallery
                 :upload-data="uploadResult"
-                :class="!isAuthenticated ? 'blur-[1.75px]' : ''"
+                :is-shared-site="isSharedSite"
+                :share-link="shareLink"
+                :class="
+                    !isAuthenticated && !isSharedSite ? 'blur-[1.75px]' : ''
+                "
             />
             <div
-                v-if="!isAuthenticated"
+                v-if="!isAuthenticated && !isSharedSite"
                 class="absolute bottom-0 flex h-40 w-[90%] items-center sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] md:justify-between lg:ml-10 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
             >
                 <div class="flex w-full items-center justify-center">
@@ -584,7 +641,7 @@ function scrollToTarget(target: string) {
             />
 
             <JourneyIdDialogsQRCodeDialog
-                :qrcode="qrcode"
+                :qrcode="showQrcode"
                 :visible="isQRCodeVisible"
                 :tolgee-key="qrcodeTolgeeKey"
                 @close="isQRCodeVisible = false"

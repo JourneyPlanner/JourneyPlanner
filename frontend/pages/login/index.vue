@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { T, useTranslate } from "@tolgee/vue";
+import { T, useTolgee, useTranslate } from "@tolgee/vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 
 const { t } = useTranslate();
+const tolgee = useTolgee(["language"]);
 const toast = useToast();
 const { login } = useSanctumAuth();
 const route = useRoute();
@@ -13,8 +14,10 @@ const email = ref<string>("");
 
 const title = t.value("form.header.login");
 
-useHead({
-    title: `${title} | JourneyPlanner`,
+useSeoMeta({
+    title: () => `${title} | JourneyPlanner`,
+    description: () => t.value("startpage.text"),
+    ogImage: () => `/og/index/${tolgee.value?.getLanguage() || "en"}.png`,
 });
 
 definePageMeta({

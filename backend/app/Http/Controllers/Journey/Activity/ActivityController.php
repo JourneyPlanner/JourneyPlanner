@@ -13,6 +13,7 @@ use App\Services\MapboxService;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
@@ -34,9 +35,14 @@ class ActivityController extends Controller
     /**
      * Get all activities of the specified journey.
      */
-    public function index(Journey $journey)
+    public function index(Journey $journey, Request $request)
     {
-        Gate::authorize("viewAny", [Activity::class, $journey, true]);
+        Gate::authorize("viewAny", [
+            Activity::class,
+            $journey,
+            true,
+            request()->input("share_id"),
+        ]);
 
         $activities = $journey->activities()->with("calendarActivities")->get();
 
@@ -56,7 +62,7 @@ class ActivityController extends Controller
         // Validate the request
         $validated = $request->validated();
         // Limit the number of activities for guests
-        if ($journey->is_guest && $journey->activities()->count() >= 100) {
+        if ($journey->is_guest && $journey->activities()->count() >= 15) {
             abort(403, "You have reached the maximum number of activities.");
         }
 
@@ -74,26 +80,21 @@ class ActivityController extends Controller
 
         // Create the calendar activity if the date is provided
         if (!static::createCalendarActivityIfNeeded($validated, $activity)) {
-            $activity["calendar_activities"] = [];
-            //return response()->json($activity, 201);
             return response()->noContent();
         }
 
         // Handle repeating activities
         if (!isset($validated["repeat_type"])) {
-            //return response()->json($activity->load("calendarActivities"), 201);
             return response()->noContent();
         }
 
         $calendarActivity = $activity->calendarActivities()->first();
         if (!$calendarActivity) {
-            //return response()->json($activity, 201);
             return response()->noContent();
         }
 
         static::handleRepeatingActivity($journey, $activity, $calendarActivity);
 
-        //return response()->json($activity->load("calendarActivities"), 201);
         return response()->noContent();
     }
 
@@ -102,7 +103,12 @@ class ActivityController extends Controller
      */
     public function show(Journey $journey, Activity $activity)
     {
-        Gate::authorize("view", [$activity, $journey, true]);
+        Gate::authorize("view", [
+            $activity,
+            $journey,
+            true,
+            request()->input("share_id"),
+        ]);
 
         return response()->json($activity->load("calendarActivities"));
     }
@@ -433,7 +439,7 @@ class ActivityController extends Controller
             ...$baseActivity->children()->with("calendarActivities")->get()
         );
         $activities[] = $baseActivity->load("calendarActivities");
-        //return response()->json($activities, 200);
+
         return response()->noContent();
     }
 
@@ -482,7 +488,7 @@ class ActivityController extends Controller
             ->with("calendarActivities")
             ->get();
         $activities[] = $baseActivity->load("calendarActivities");
-        //return response()->json($activities, 200);
+
         return response()->noContent();
     }
 
@@ -499,6 +505,7 @@ class ActivityController extends Controller
             "repeat_end_date" => null,
             "repeat_end_occurrences" => null,
         ]);
+
         return $activity;
     }
 
