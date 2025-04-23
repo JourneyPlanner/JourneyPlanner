@@ -54,6 +54,8 @@ services:
     pull_policy: build
     restart: unless-stopped
     command: /app/start_ws.sh
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/up"]
     environment:
       - INFISICAL_API_URL=$BACKEND_INFISICAL_API_URL
       - INFISICAL_TOKEN=$BACKEND_INFISICAL_TOKEN
