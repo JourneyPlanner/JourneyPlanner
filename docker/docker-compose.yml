@@ -49,11 +49,11 @@ services:
       - uploads:/tusd-data
       - journey_media:/app/storage/app/journey_media
       - business_images:/app/storage/app/business_images
-  realtime:
+  ws:
     build: ../backend
     pull_policy: build
     restart: unless-stopped
-    command: infisical run --env=prod -- php artisan config:cache && infisical run --env=prod -- php artisan reverb:start
+    command: /app/start_ws.sh
     environment:
       - INFISICAL_API_URL=$BACKEND_INFISICAL_API_URL
       - INFISICAL_TOKEN=$BACKEND_INFISICAL_TOKEN
