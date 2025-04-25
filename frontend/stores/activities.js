@@ -30,7 +30,7 @@ export const useActivityStore = defineStore("activities", () => {
             (obj) => obj.id === activity.id,
         );
         if (activityIndex == -1) {
-            this.addedActivity = activity;
+            this.addedActivity.value = activity;
         }
     }
 
@@ -92,15 +92,10 @@ export const useActivityStore = defineStore("activities", () => {
     }
 
     function removeActivity(removedActivity) {
-        return activityData.value
-            .filter((activity) => activity.id === removedActivity.id)
-            .forEach(async (activity) => {
-                activityData.value.splice(
-                    activityData.value.indexOf(activity),
-                    1,
-                );
-                setActivities(activityData.value);
-            });
+        activityData.value = activityData.value.filter(
+            (activity) => activity.id !== removedActivity.id,
+        );
+        setActivities(activityData.value);
     }
 
     function createOrUpdateCalendarActivity(addCalendarActivity) {
@@ -167,10 +162,12 @@ export const useActivityStore = defineStore("activities", () => {
                 (obj) => obj.id === addCalendarActivity.id,
             );
 
-            activityData.value[activityIndex].calendar_activities.splice(
-                calendarActivityIndex,
-                1,
-            );
+            if (activityIndex != -1 && calendarActivityIndex != -1) {
+                activityData.value[activityIndex].calendar_activities.splice(
+                    calendarActivityIndex,
+                    1,
+                );
+            }
 
             calendarActivityMap.value.set(
                 addCalendarActivity.id,
