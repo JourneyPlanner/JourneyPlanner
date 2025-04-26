@@ -11,9 +11,12 @@ export const useActivityStore = defineStore("activities", () => {
     const oldActivity = ref([]);
     const calendarActivityMap = ref(new Map());
 
-    function setActivities(activityData) {
-        this.activityData = [];
-        this.activityData = activityData;
+    function setActivities(newActivityData) {
+        activityData.value.splice(
+            0,
+            activityData.value.length,
+            ...newActivityData,
+        );
     }
 
     function addActivity(activity) {
@@ -21,7 +24,7 @@ export const useActivityStore = defineStore("activities", () => {
             (obj) => obj.id === activity.id,
         );
         if (activityIndex == -1) {
-            this.activityData.push(activity);
+            activityData.value.push(activity);
         }
     }
 
@@ -41,13 +44,14 @@ export const useActivityStore = defineStore("activities", () => {
         );
         if (activityIndex == -1) {
             this.activityData.push(activity);
+            setNewActivity(activity);
         } else {
             Object.assign(activity, {
                 calendar_activities: [],
             });
             activity.calendar_activities =
                 this.activityData[activityIndex].calendar_activities;
-            this.activityData[activityIndex] = activity;
+            activityData.value[activityIndex] = activity;
             activity.calendar_activities?.forEach((calendarActivity) => {
                 Object.assign(calendarActivity, {
                     activity: basicActivity,
@@ -56,7 +60,7 @@ export const useActivityStore = defineStore("activities", () => {
                     createOrUpdateCalendarActivity(calendarActivity);
                 }, 50);
             });
-            this.setNewActivity(activity);
+            setNewActivity(activity);
         }
     }
 
@@ -113,6 +117,8 @@ export const useActivityStore = defineStore("activities", () => {
         oldCalendarActivity = calendarActivityMap.value.get(
             addCalendarActivity.id,
         );
+
+        console.log(oldCalendarActivity);
 
         if (!activityData.value[activityIndex].calendar_activities) {
             Object.assign(activityData.value[activityIndex], {

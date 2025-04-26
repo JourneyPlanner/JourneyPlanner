@@ -191,7 +191,6 @@ async function deleteActivityCall(editType: string) {
                     ),
                     life: 6000,
                 });
-                store.updateActivity(response._data);
             }
         },
         async onRequestError() {
@@ -241,7 +240,6 @@ async function removeFromCalendarCall(editType: string) {
                         detail: t.value("calendar.remove.success.detail"),
                         life: 6000,
                     });
-                    store.updateActivity(response._data);
                 }
             },
             async onRequestError() {
@@ -479,7 +477,6 @@ async function initializeDropCall(editType: string) {
                     detail: t.value("calendar.add.toast.success.detail"),
                     life: 6000,
                 });
-                store.updateActivity(response._data);
             }
         },
         async onRequestError() {
@@ -558,7 +555,6 @@ async function editDropCall(editType: string) {
                     life: 6000,
                 });
                 close();
-                store.updateActivity(response._data);
             }
         },
     });

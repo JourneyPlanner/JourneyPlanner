@@ -155,7 +155,9 @@ export default defineNuxtConfig({
     },
     echo: {
         key: process.env.NUXT_REVERB_APP_KEY,
-        scheme: "http",
+        scheme: process.env.NUXT_REVERB_SCHEME === "http" ? "http" : "https",
+        host: process.env.NUXT_REVERB_HOST,
+        port: parseInt(process.env.NUXT_REVERB_PORT as string),
         authentication: {
             baseUrl: process.env.NUXT_BACKEND_URL || "http://localhost:8000",
             mode: "cookie",
