@@ -98,7 +98,6 @@ function subscribeToChannel() {
 }
 
 function activityUpdated(e: WebsocketEvent) {
-    console.log(e);
     activityStore.updateActivity(e.model);
 }
 
