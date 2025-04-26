@@ -43,14 +43,14 @@ export const useActivityStore = defineStore("activities", () => {
             (obj) => obj.id === activity.id,
         );
         if (activityIndex == -1) {
-            this.activityData.push(activity);
+            activityData.push(activity);
             setNewActivity(activity);
         } else {
             Object.assign(activity, {
                 calendar_activities: [],
             });
             activity.calendar_activities =
-                this.activityData[activityIndex].calendar_activities;
+                activityData[activityIndex].calendar_activities;
             activityData.value[activityIndex] = activity;
             activity.calendar_activities?.forEach((calendarActivity) => {
                 Object.assign(calendarActivity, {
@@ -154,7 +154,7 @@ export const useActivityStore = defineStore("activities", () => {
 
         if (
             oldCalendarActivity &&
-            oldCalendarActivity != addCalendarActivity.activity_id
+            oldCalendarActivity !== addCalendarActivity.activity_id
         ) {
             activityIndex = activityData.value.findIndex(
                 (obj) => obj.id === oldCalendarActivity,
