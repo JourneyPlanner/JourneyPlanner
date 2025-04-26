@@ -103,10 +103,7 @@ function activityUpdated(e: WebsocketEvent) {
 }
 
 function activityCreated(e: WebsocketEvent) {
-    const responseData = Array.isArray(e) ? e : [e];
     activityStore.addActivity(e.model);
-    const activites = [] as Activity[];
-    activites.push(...responseData);
     activityStore.setNewActivity(e.model);
 }
 

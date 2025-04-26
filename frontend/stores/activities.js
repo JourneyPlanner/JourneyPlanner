@@ -33,7 +33,7 @@ export const useActivityStore = defineStore("activities", () => {
             (obj) => obj.id === activity.id,
         );
         if (activityIndex == -1) {
-            this.addedActivity.value = activity;
+            addedActivity.value = activity;
         }
     }
 
@@ -117,8 +117,6 @@ export const useActivityStore = defineStore("activities", () => {
         oldCalendarActivity = calendarActivityMap.value.get(
             addCalendarActivity.id,
         );
-
-        console.log(oldCalendarActivity);
 
         if (!activityData.value[activityIndex].calendar_activities) {
             Object.assign(activityData.value[activityIndex], {
