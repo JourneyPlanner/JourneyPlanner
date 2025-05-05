@@ -1428,16 +1428,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.3.0",
+            "version": "v12.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "ca0412e978f78ecea0cafbe34dd8b18010064f73"
+                "reference": "a4ba76e06fe6dd02312359f8184ab259900a7780"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/ca0412e978f78ecea0cafbe34dd8b18010064f73",
-                "reference": "ca0412e978f78ecea0cafbe34dd8b18010064f73",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/a4ba76e06fe6dd02312359f8184ab259900a7780",
+                "reference": "a4ba76e06fe6dd02312359f8184ab259900a7780",
                 "shasum": ""
             },
             "require": {
@@ -1639,7 +1639,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-03-18T13:49:19+00:00"
+            "time": "2025-04-03T18:00:49+00:00"
         },
         {
             "name": "laravel/octane",
@@ -2785,16 +2785,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "3.8.6",
+            "version": "3.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CarbonPHP/carbon.git",
-                "reference": "ff2f20cf83bd4d503720632ce8a426dc747bf7fd"
+                "reference": "6d16a8a015166fe54e22c042e0805c5363aef50d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/ff2f20cf83bd4d503720632ce8a426dc747bf7fd",
-                "reference": "ff2f20cf83bd4d503720632ce8a426dc747bf7fd",
+                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/6d16a8a015166fe54e22c042e0805c5363aef50d",
+                "reference": "6d16a8a015166fe54e22c042e0805c5363aef50d",
                 "shasum": ""
             },
             "require": {
@@ -2887,7 +2887,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-02-20T17:33:38+00:00"
+            "time": "2025-03-27T12:57:33+00:00"
         },
         {
             "name": "nette/schema",
@@ -2953,16 +2953,16 @@
         },
         {
             "name": "nette/utils",
-            "version": "v4.0.5",
+            "version": "v4.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "736c567e257dbe0fcf6ce81b4d6dbe05c6899f96"
+                "reference": "ce708655043c7050eb050df361c5e313cf708309"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/736c567e257dbe0fcf6ce81b4d6dbe05c6899f96",
-                "reference": "736c567e257dbe0fcf6ce81b4d6dbe05c6899f96",
+                "url": "https://api.github.com/repos/nette/utils/zipball/ce708655043c7050eb050df361c5e313cf708309",
+                "reference": "ce708655043c7050eb050df361c5e313cf708309",
                 "shasum": ""
             },
             "require": {
@@ -3033,9 +3033,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/utils/issues",
-                "source": "https://github.com/nette/utils/tree/v4.0.5"
+                "source": "https://github.com/nette/utils/tree/v4.0.6"
             },
-            "time": "2024-08-07T15:39:19+00:00"
+            "time": "2025-03-30T21:06:30+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -3301,16 +3301,16 @@
         },
         {
             "name": "pbmedia/laravel-ffmpeg",
-            "version": "8.7.0",
+            "version": "8.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/protonemedia/laravel-ffmpeg.git",
-                "reference": "01249a226bce0172a7e87a43fc5448b975a56282"
+                "reference": "596804eee95b97bca146653770e7622159976bb1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/protonemedia/laravel-ffmpeg/zipball/01249a226bce0172a7e87a43fc5448b975a56282",
-                "reference": "01249a226bce0172a7e87a43fc5448b975a56282",
+                "url": "https://api.github.com/repos/protonemedia/laravel-ffmpeg/zipball/596804eee95b97bca146653770e7622159976bb1",
+                "reference": "596804eee95b97bca146653770e7622159976bb1",
                 "shasum": ""
             },
             "require": {
@@ -3320,6 +3320,7 @@
                 "ramsey/collection": "^2.0"
             },
             "require-dev": {
+                "laravel/pint": "^1.21",
                 "league/flysystem-memory": "^3.10",
                 "mockery/mockery": "^1.4.4",
                 "nesbot/carbon": "^2.66|^3.0",
@@ -3367,7 +3368,7 @@
             ],
             "support": {
                 "issues": "https://github.com/protonemedia/laravel-ffmpeg/issues",
-                "source": "https://github.com/protonemedia/laravel-ffmpeg/tree/8.7.0"
+                "source": "https://github.com/protonemedia/laravel-ffmpeg/tree/8.7.1"
             },
             "funding": [
                 {
@@ -3375,20 +3376,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-16T22:06:08+00:00"
+            "time": "2025-04-01T21:11:35+00:00"
         },
         {
             "name": "php-ffmpeg/php-ffmpeg",
-            "version": "v1.3.1",
+            "version": "v1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-FFMpeg/PHP-FFMpeg.git",
-                "reference": "0fbbc4c6a6336155679adc800616001ae3328c7a"
+                "reference": "8e74bdc07ad200da7a6cfb21ec2652875e4368e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-FFMpeg/PHP-FFMpeg/zipball/0fbbc4c6a6336155679adc800616001ae3328c7a",
-                "reference": "0fbbc4c6a6336155679adc800616001ae3328c7a",
+                "url": "https://api.github.com/repos/PHP-FFMpeg/PHP-FFMpeg/zipball/8e74bdc07ad200da7a6cfb21ec2652875e4368e0",
+                "reference": "8e74bdc07ad200da7a6cfb21ec2652875e4368e0",
                 "shasum": ""
             },
             "require": {
@@ -3462,9 +3463,9 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-FFMpeg/PHP-FFMpeg/issues",
-                "source": "https://github.com/PHP-FFMpeg/PHP-FFMpeg/tree/v1.3.1"
+                "source": "https://github.com/PHP-FFMpeg/PHP-FFMpeg/tree/v1.3.2"
             },
-            "time": "2025-01-10T20:23:57+00:00"
+            "time": "2025-04-01T20:36:46+00:00"
         },
         {
             "name": "phpoption/phpoption",
