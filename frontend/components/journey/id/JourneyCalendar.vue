@@ -44,7 +44,8 @@ const activities = computed(() => store.activityData as Activity[]);
 const client = useSanctumClient();
 const alreadyAdded = ref(false);
 const { t } = useTranslate();
-const { addedActivity } = storeToRefs(store);
+const { newCalendarActivity } = storeToRefs(store);
+const { removedCalendarActivity } = storeToRefs(store);
 const { oldActivity } = storeToRefs(store);
 const toast = useToast();
 const props = defineProps({
@@ -172,7 +173,7 @@ async function deleteActivityCall(editType: string) {
         const activityToDelete = store.getActivity(
             activityId.value,
         ) as Activity;
-        store.updateActivity([activityToDelete], true);
+        store.updateActivity(activityToDelete);
     }
 
     await client(`/api/journey/${props.id}/activity/${activityId.value}`, {
@@ -190,7 +191,6 @@ async function deleteActivityCall(editType: string) {
                     ),
                     life: 6000,
                 });
-                store.updateActivity(response._data);
             }
         },
         async onRequestError() {
@@ -240,7 +240,6 @@ async function removeFromCalendarCall(editType: string) {
                         detail: t.value("calendar.remove.success.detail"),
                         life: 6000,
                     });
-                    store.updateActivity(response._data);
                 }
             },
             async onRequestError() {
@@ -349,8 +348,12 @@ const calendarOptions = reactive({
     },
 }) as unknown as CalendarOptions;
 
-watch(addedActivity, () => {
-    addNewActivities(addedActivity.value);
+watch(removedCalendarActivity, () => {
+    removeActivity(removedCalendarActivity.value);
+});
+
+watch(newCalendarActivity, () => {
+    addActivity(newCalendarActivity.value);
 });
 
 watch(
@@ -474,7 +477,6 @@ async function initializeDropCall(editType: string) {
                     detail: t.value("calendar.add.toast.success.detail"),
                     life: 6000,
                 });
-                store.updateActivity(response._data);
             }
         },
         async onRequestError() {
@@ -553,7 +555,6 @@ async function editDropCall(editType: string) {
                     life: 6000,
                 });
                 close();
-                store.updateActivity(response._data);
             }
         },
     });
@@ -632,37 +633,22 @@ async function removeOldActivities(oldActivities: Activity[]) {
     });
 }
 
-async function addNewActivities(activities: Activity[]) {
+function addActivity(addCalendarActivity: CalendarActivity) {
     const calApi = fullCalendar.value.getApi();
-    const activity = Array.isArray(activities) ? activities : [activities];
-    activity.forEach((activity: Activity) => {
-        if (activity.calendar_activities != null) {
-            activity.calendar_activities.forEach(
-                (calendar_activity: CalendarActivity) => {
-                    if (calApi.getEventById(calendar_activity.id) !== null) {
-                        calApi.getEventById(calendar_activity.id).remove();
-                    }
-                    const newEnd = add(new UTCDate(calendar_activity.start), {
-                        hours: parseInt(
-                            activity.estimated_duration.split(":")[0],
-                        ),
-                        minutes: parseInt(
-                            activity.estimated_duration.split(":")[1],
-                        ),
-                    }).toISOString();
-                    calendar_activity.end = newEnd;
-                    calendar_activity.title = activity.name;
-                    if (calendar_activity.start.split(" ")[1] <= "06:00:00") {
-                        calApi.setOption("slotMinTime", "00:00:00");
-                        document.getElementsByClassName(
-                            "fc-showAllHours-button",
-                        )[0].innerHTML = "0:00 - 0:00";
-                    }
-                    calApi.addEvent(calendar_activity);
-                },
-            );
-        }
-    });
+    if (calApi.getEventById(addCalendarActivity.id) !== null) {
+        calApi.getEventById(addCalendarActivity.id).remove();
+    }
+    if (addCalendarActivity.start.split(" ")[1] <= "06:00:00") {
+        calApi.setOption("slotMinTime", "00:00:00");
+        document.getElementsByClassName("fc-showAllHours-button")[0].innerHTML =
+            "0:00 - 0:00";
+    }
+    calApi.addEvent(addCalendarActivity);
+}
+
+function removeActivity(removedCalendarActivity: CalendarActivity) {
+    const calApi = fullCalendar.value.getApi();
+    calApi.getEventById(removedCalendarActivity.id).remove();
 }
 
 function call(editType: string) {

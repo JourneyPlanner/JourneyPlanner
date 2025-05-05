@@ -208,4 +208,8 @@ declare global {
     }
 
     type ImageEditFileType = "banner" | "image";
+
+    interface WebsocketEvent {
+        model: Journey | Activity | User | object;
+    }
 }
