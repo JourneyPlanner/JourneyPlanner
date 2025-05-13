@@ -42,6 +42,8 @@ export const useActivityStore = defineStore("activities", () => {
         let activityIndex = activityData.value.findIndex(
             (obj) => obj.id === activity.id,
         );
+
+        console.log(activityIndex);
         if (activityIndex == -1) {
             activityData.push(activity);
             setNewActivity(activity);
@@ -50,7 +52,7 @@ export const useActivityStore = defineStore("activities", () => {
                 calendar_activities: [],
             });
             activity.calendar_activities =
-                activityData[activityIndex].calendar_activities;
+                activityData.value[activityIndex].calendar_activities;
             activityData.value[activityIndex] = activity;
             activity.calendar_activities?.forEach((calendarActivity) => {
                 Object.assign(calendarActivity, {
