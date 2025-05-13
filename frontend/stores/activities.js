@@ -43,7 +43,6 @@ export const useActivityStore = defineStore("activities", () => {
             (obj) => obj.id === activity.id,
         );
 
-        console.log(activityIndex);
         if (activityIndex == -1) {
             activityData.push(activity);
             setNewActivity(activity);
