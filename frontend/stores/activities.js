@@ -7,7 +7,7 @@ export const useActivityStore = defineStore("activities", () => {
     const activityData = ref([]);
     const addedActivity = ref([]);
     const newCalendarActivity = ref();
-    const removedCalendarActivity = ref();
+    const removedCalendarActivities = ref([]);
     const oldActivity = ref([]);
     const calendarActivityMap = ref(new Map());
 
@@ -189,12 +189,10 @@ export const useActivityStore = defineStore("activities", () => {
     }
 
     function removeCalendarActivity(rmdCalendarActivity) {
-        console.log(rmdCalendarActivity);
         let activityIndex = activityData.value.findIndex(
             (obj) => obj.id === rmdCalendarActivity.activity_id,
         );
 
-        console.log(activityIndex);
         if (!activityData.value[activityIndex].calendar_activities) {
             Object.assign(activityData.value[activityIndex], {
                 calendar_activities: [],
@@ -218,7 +216,6 @@ export const useActivityStore = defineStore("activities", () => {
             rmdCalendarActivity.id,
         );
 
-        console.log(oldCalendarActivity);
         if (oldCalendarActivity) {
             activityIndex = activityData.value.findIndex(
                 (obj) => obj.id === oldCalendarActivity,
@@ -236,8 +233,9 @@ export const useActivityStore = defineStore("activities", () => {
             );
         }
 
-        console.log(calendarActivityWithoutMainActivity);
-        removedCalendarActivity.value = calendarActivityWithoutMainActivity;
+        removedCalendarActivities.value.push(
+            calendarActivityWithoutMainActivity,
+        );
     }
 
     return {
@@ -255,6 +253,6 @@ export const useActivityStore = defineStore("activities", () => {
         createOrUpdateCalendarActivity,
         removeCalendarActivity,
         newCalendarActivity,
-        removedCalendarActivity,
+        removedCalendarActivities,
     };
 });

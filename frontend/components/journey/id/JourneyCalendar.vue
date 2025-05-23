@@ -45,7 +45,7 @@ const client = useSanctumClient();
 const alreadyAdded = ref(false);
 const { t } = useTranslate();
 const { newCalendarActivity } = storeToRefs(store);
-const { removedCalendarActivity } = storeToRefs(store);
+const { removedCalendarActivities } = storeToRefs(store);
 const { oldActivity } = storeToRefs(store);
 const toast = useToast();
 const props = defineProps({
@@ -348,10 +348,16 @@ const calendarOptions = reactive({
     },
 }) as unknown as CalendarOptions;
 
-watch(removedCalendarActivity, () => {
-    console.log(removedCalendarActivity);
-    removeActivity(removedCalendarActivity.value);
-});
+watch(
+    removedCalendarActivities,
+    () => {
+        if (removedCalendarActivities.value[0] != null) {
+            removeActivity(removedCalendarActivities.value[0]);
+            removedCalendarActivities.value.shift();
+        }
+    },
+    { deep: true },
+);
 
 watch(newCalendarActivity, () => {
     addActivity(newCalendarActivity.value);
