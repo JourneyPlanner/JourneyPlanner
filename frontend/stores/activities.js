@@ -23,6 +23,7 @@ export const useActivityStore = defineStore("activities", () => {
         let activityIndex = activityData.value.findIndex(
             (obj) => obj.id === activity.id,
         );
+
         if (activityIndex == -1) {
             activityData.value.push(activity);
         }
@@ -97,6 +98,21 @@ export const useActivityStore = defineStore("activities", () => {
     }
 
     function removeActivity(removedActivity) {
+        let activityIndex = activityData.value.findIndex(
+            (obj) => obj.id === removedActivity.id,
+        );
+
+        Object.assign(removedActivity, {
+            calendar_activities: [],
+        });
+
+        removedActivity.calendar_activities =
+            activityData.value[activityIndex].calendar_activities;
+
+        removedActivity.calendar_activities?.forEach((calendarActivity) => {
+            removedCalendarActivities.value.push(calendarActivity);
+        });
+
         activityData.value = activityData.value.filter(
             (activity) => activity.id !== removedActivity.id,
         );
@@ -185,6 +201,7 @@ export const useActivityStore = defineStore("activities", () => {
             );
         }
 
+        console.log(activityData.value);
         newCalendarActivity.value = calendarActivityWithoutMainActivity;
     }
 
