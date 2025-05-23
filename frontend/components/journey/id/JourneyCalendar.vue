@@ -650,7 +650,9 @@ function addActivity(addCalendarActivity: CalendarActivity) {
         document.getElementsByClassName("fc-showAllHours-button")[0].innerHTML =
             "0:00 - 0:00";
     }
-    calApi.addEvent(addCalendarActivity);
+    setTimeout(() => {
+        calApi.addEvent(addCalendarActivity);
+    }, 50);
 }
 
 function removeActivity(removedCalendarActivity: CalendarActivity) {
