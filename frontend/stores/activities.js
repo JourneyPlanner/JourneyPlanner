@@ -236,9 +236,6 @@ export const useActivityStore = defineStore("activities", () => {
         removedCalendarActivities.value.push(
             calendarActivityWithoutMainActivity,
         );
-
-        console.log(calendarActivityWithoutMainActivity);
-        console.log(removedCalendarActivities.value);
     }
 
     return {
