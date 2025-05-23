@@ -642,15 +642,16 @@ async function removeOldActivities(oldActivities: Activity[]) {
 
 function addActivity(addCalendarActivity: CalendarActivity) {
     const calApi = fullCalendar.value.getApi();
-    if (calApi.getEventById(addCalendarActivity.id) !== null) {
-        calApi.getEventById(addCalendarActivity.id).remove();
-    }
-    if (addCalendarActivity.start.split(" ")[1] <= "06:00:00") {
-        calApi.setOption("slotMinTime", "00:00:00");
-        document.getElementsByClassName("fc-showAllHours-button")[0].innerHTML =
-            "0:00 - 0:00";
-    }
     setTimeout(() => {
+        if (calApi.getEventById(addCalendarActivity.id) !== null) {
+            calApi.getEventById(addCalendarActivity.id).remove();
+        }
+        if (addCalendarActivity.start.split(" ")[1] <= "06:00:00") {
+            calApi.setOption("slotMinTime", "00:00:00");
+            document.getElementsByClassName(
+                "fc-showAllHours-button",
+            )[0].innerHTML = "0:00 - 0:00";
+        }
         calApi.addEvent(addCalendarActivity);
     }, 50);
 }
