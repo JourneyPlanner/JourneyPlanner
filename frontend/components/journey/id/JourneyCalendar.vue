@@ -349,6 +349,7 @@ const calendarOptions = reactive({
 }) as unknown as CalendarOptions;
 
 watch(removedCalendarActivity, () => {
+    console.log(removedCalendarActivity);
     removeActivity(removedCalendarActivity.value);
 });
 

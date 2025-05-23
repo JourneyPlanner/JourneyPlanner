@@ -189,9 +189,12 @@ export const useActivityStore = defineStore("activities", () => {
     }
 
     function removeCalendarActivity(rmdCalendarActivity) {
+        console.log(rmdCalendarActivity);
         let activityIndex = activityData.value.findIndex(
             (obj) => obj.id === rmdCalendarActivity.activity_id,
         );
+
+        console.log(activityIndex);
         if (!activityData.value[activityIndex].calendar_activities) {
             Object.assign(activityData.value[activityIndex], {
                 calendar_activities: [],
@@ -215,6 +218,7 @@ export const useActivityStore = defineStore("activities", () => {
             rmdCalendarActivity.id,
         );
 
+        console.log(oldCalendarActivity);
         if (oldCalendarActivity) {
             activityIndex = activityData.value.findIndex(
                 (obj) => obj.id === oldCalendarActivity,
@@ -232,6 +236,7 @@ export const useActivityStore = defineStore("activities", () => {
             );
         }
 
+        console.log(calendarActivityWithoutMainActivity);
         removedCalendarActivity.value = calendarActivityWithoutMainActivity;
     }
 
