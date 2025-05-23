@@ -655,9 +655,12 @@ function addActivity(addCalendarActivity: CalendarActivity) {
 }
 
 function removeActivity(removedCalendarActivity: CalendarActivity) {
-    console.log(removedCalendarActivity);
+    console.log(removedCalendarActivity.id);
     const calApi = fullCalendar.value.getApi();
-    calApi.getEventById(removedCalendarActivity.id).remove();
+    setTimeout(() => {
+        const event = calApi.getEventById(String(removedCalendarActivity.id));
+        if (event) event.remove();
+    }, 50);
 }
 
 function call(editType: string) {
