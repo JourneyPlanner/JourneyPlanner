@@ -198,19 +198,9 @@ export const useActivityStore = defineStore("activities", () => {
                 calendar_activities: [],
             });
         }
-
-        const calendarActivityIndex = activityData.value[
-            activityIndex
-        ].calendar_activities.findIndex(
-            (obj) => obj.id === rmdCalendarActivity.id,
-        );
         // eslint-disable-next-line no-unused-vars
         const { activity, ...calendarActivityWithoutMainActivity } =
             rmdCalendarActivity;
-        activityData.value[activityIndex].calendar_activities.splice(
-            calendarActivityIndex,
-            1,
-        );
 
         const oldCalendarActivity = calendarActivityMap.value.get(
             rmdCalendarActivity.id,
