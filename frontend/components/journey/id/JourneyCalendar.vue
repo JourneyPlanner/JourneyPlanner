@@ -350,8 +350,9 @@ const calendarOptions = reactive({
 
 watch(
     removedCalendarActivities,
-    () => {
+    async (test) => {
         if (removedCalendarActivities.value[0] != null) {
+            console.log(test);
             removeActivity(removedCalendarActivities.value[0]);
             removedCalendarActivities.value.shift();
         }
@@ -654,6 +655,7 @@ function addActivity(addCalendarActivity: CalendarActivity) {
 }
 
 function removeActivity(removedCalendarActivity: CalendarActivity) {
+    console.log(removedCalendarActivity);
     const calApi = fullCalendar.value.getApi();
     calApi.getEventById(removedCalendarActivity.id).remove();
 }
