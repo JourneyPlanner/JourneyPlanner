@@ -1,49 +1,68 @@
+import { UTCDate } from "@date-fns/utc";
+import { add } from "date-fns";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useActivityStore = defineStore("activities", () => {
     const activityData = ref([]);
     const addedActivity = ref([]);
+    const newCalendarActivity = ref();
+    const removedCalendarActivities = ref([]);
     const oldActivity = ref([]);
+    const calendarActivityMap = ref(new Map());
 
-    function setActivities(activityData) {
-        this.activityData = [];
-        this.activityData = activityData;
+    function setActivities(newActivityData) {
+        activityData.value.splice(
+            0,
+            activityData.value.length,
+            ...newActivityData,
+        );
     }
 
     function addActivity(activity) {
-        this.activityData.push(activity);
+        let activityIndex = activityData.value.findIndex(
+            (obj) => obj.id === activity.id,
+        );
+
+        if (activityIndex == -1) {
+            activityData.value.push(activity);
+        }
     }
 
     function setNewActivity(activity) {
-        this.addedActivity = activity;
+        let activityIndex = activityData.value.findIndex(
+            (obj) => obj.id === activity.id,
+        );
+        if (activityIndex == -1) {
+            addedActivity.value = activity;
+        }
     }
 
-    function updateActivity(activity, shouldDelete = false) {
-        oldActivity.value = [];
-        activity.forEach((element) => {
-            if (
-                element.parent_id == null &&
-                this.activityData.findIndex((obj) => obj.id === element.id) !=
-                    -1
-            ) {
-                const baseActivity = this.findBaseActivity(element);
-                const activities = this.getAllChildren(baseActivity.id);
-                activities.push(baseActivity);
-                activities.forEach((activity) => {
-                    const index = this.activityData.findIndex(
-                        (obj) => obj.id === activity.id,
-                    );
-                    oldActivity.value.push(this.activityData[index]);
-                    this.activityData = this.activityData
-                        .slice(0, index)
-                        .concat(this.activityData.slice(index + 1));
+    function updateActivity(activity) {
+        const basicActivity = activity;
+        let activityIndex = activityData.value.findIndex(
+            (obj) => obj.id === activity.id,
+        );
+
+        if (activityIndex == -1) {
+            activityData.push(activity);
+            setNewActivity(activity);
+        } else {
+            Object.assign(activity, {
+                calendar_activities: [],
+            });
+            activity.calendar_activities =
+                activityData.value[activityIndex].calendar_activities;
+            activityData.value[activityIndex] = activity;
+            activity.calendar_activities?.forEach((calendarActivity) => {
+                Object.assign(calendarActivity, {
+                    activity: basicActivity,
                 });
-            }
-        });
-        if (!shouldDelete) {
-            this.activityData.push(...activity);
-            this.setNewActivity(activity);
+                setTimeout(() => {
+                    createOrUpdateCalendarActivity(calendarActivity);
+                }, 50);
+            });
+            setNewActivity(activity);
         }
     }
 
@@ -78,6 +97,154 @@ export const useActivityStore = defineStore("activities", () => {
         ];
     }
 
+    function removeActivity(removedActivity) {
+        let activityIndex = activityData.value.findIndex(
+            (obj) => obj.id === removedActivity.id,
+        );
+
+        Object.assign(removedActivity, {
+            calendar_activities: [],
+        });
+
+        removedActivity.calendar_activities =
+            activityData.value[activityIndex].calendar_activities;
+
+        removedActivity.calendar_activities?.forEach((calendarActivity) => {
+            removedCalendarActivities.value.push(calendarActivity);
+        });
+
+        activityData.value = activityData.value.filter(
+            (activity) => activity.id !== removedActivity.id,
+        );
+        setActivities(activityData.value);
+    }
+
+    function createOrUpdateCalendarActivity(addCalendarActivity) {
+        let oldCalendarActivity;
+        let activityIndex = activityData.value.findIndex(
+            (obj) => obj.id === addCalendarActivity.activity_id,
+        );
+        if (activityIndex == -1) {
+            activityData.value.push(addCalendarActivity.activity);
+            activityIndex = activityData.value.findIndex(
+                (obj) => obj.id === addCalendarActivity.activity_id,
+            );
+        }
+
+        oldCalendarActivity = calendarActivityMap.value.get(
+            addCalendarActivity.id,
+        );
+
+        if (!activityData.value[activityIndex].calendar_activities) {
+            Object.assign(activityData.value[activityIndex], {
+                calendar_activities: [],
+            });
+        }
+        const calendarActivityIndex = activityData.value[
+            activityIndex
+        ].calendar_activities.findIndex(
+            (obj) => obj.id === addCalendarActivity.id,
+        );
+
+        const newEnd = add(new UTCDate(addCalendarActivity.start), {
+            hours: parseInt(
+                addCalendarActivity.activity.estimated_duration.split(":")[0],
+            ),
+            minutes: parseInt(
+                addCalendarActivity.activity.estimated_duration.split(":")[1],
+            ),
+        }).toISOString();
+        addCalendarActivity.end = newEnd;
+        addCalendarActivity.title = addCalendarActivity.activity.name;
+        // eslint-disable-next-line no-unused-vars
+        const { activity, ...calendarActivityWithoutMainActivity } =
+            addCalendarActivity;
+        if (calendarActivityIndex != -1) {
+            activityData.value[activityIndex].calendar_activities[
+                calendarActivityIndex
+            ] = calendarActivityWithoutMainActivity;
+        } else {
+            activityData.value[activityIndex].calendar_activities.push(
+                calendarActivityWithoutMainActivity,
+            );
+        }
+
+        if (
+            oldCalendarActivity &&
+            oldCalendarActivity !== addCalendarActivity.activity_id
+        ) {
+            activityIndex = activityData.value.findIndex(
+                (obj) => obj.id === oldCalendarActivity,
+            );
+
+            const calendarActivityIndex = activityData.value[
+                activityIndex
+            ].calendar_activities.findIndex(
+                (obj) => obj.id === addCalendarActivity.id,
+            );
+
+            if (activityIndex != -1 && calendarActivityIndex != -1) {
+                activityData.value[activityIndex].calendar_activities.splice(
+                    calendarActivityIndex,
+                    1,
+                );
+            }
+
+            calendarActivityMap.value.set(
+                addCalendarActivity.id,
+                addCalendarActivity.activity_id,
+            );
+        } else {
+            calendarActivityMap.value.set(
+                addCalendarActivity.id,
+                addCalendarActivity.activity_id,
+            );
+        }
+
+        console.log(activityData.value);
+        newCalendarActivity.value = calendarActivityWithoutMainActivity;
+    }
+
+    function removeCalendarActivity(rmdCalendarActivity) {
+        let activityIndex = activityData.value.findIndex(
+            (obj) => obj.id === rmdCalendarActivity.activity_id,
+        );
+
+        if (!activityData.value[activityIndex].calendar_activities) {
+            Object.assign(activityData.value[activityIndex], {
+                calendar_activities: [],
+            });
+        }
+        // eslint-disable-next-line no-unused-vars
+        const { activity, ...calendarActivityWithoutMainActivity } =
+            rmdCalendarActivity;
+
+        const oldCalendarActivity = calendarActivityMap.value.get(
+            rmdCalendarActivity.id,
+        );
+
+        if (oldCalendarActivity) {
+            activityIndex = activityData.value.findIndex(
+                (obj) => obj.id === oldCalendarActivity,
+            );
+
+            const calendarActivityIndex = activityData.value[
+                activityIndex
+            ].calendar_activities.findIndex(
+                (obj) => obj.id === rmdCalendarActivity.id,
+            );
+
+            activityData.value[activityIndex].calendar_activities.splice(
+                calendarActivityIndex,
+                1,
+            );
+        }
+
+        removedCalendarActivities.value.push(
+            calendarActivityWithoutMainActivity,
+        );
+    }
+
     return {
         activityData,
         setActivities,
@@ -89,5 +256,10 @@ export const useActivityStore = defineStore("activities", () => {
         updateActivity,
         findBaseActivity,
         getAllChildren,
+        removeActivity,
+        createOrUpdateCalendarActivity,
+        removeCalendarActivity,
+        newCalendarActivity,
+        removedCalendarActivities,
     };
 });

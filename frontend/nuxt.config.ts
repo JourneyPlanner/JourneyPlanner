@@ -61,6 +61,7 @@ export default defineNuxtConfig({
         "@nuxt/eslint",
         "@nuxt/image",
         "@nuxtjs/seo",
+        "nuxt-laravel-echo",
     ],
     css: [
         "@/assets/css/fonts/fonts.css",
@@ -82,6 +83,7 @@ export default defineNuxtConfig({
             NUXT_UPLOAD_URL: process.env.NUXT_UPLOAD_URL,
             NUXT_LIGHTGALLERY_KEY: process.env.NUXT_LIGHTGALLERY_KEY,
             NUXT_GOOGLE_CLIENT_ID: process.env.NUXT_GOOGLE_CLIENT_ID,
+            NUXT_REVERB_APP_KEY: process.env.NUXT_REVERB_APP_KEY,
         },
     },
     primevue: {
@@ -149,6 +151,21 @@ export default defineNuxtConfig({
         },
         endpoints: {
             user: "/api/me",
+        },
+    },
+    echo: {
+        key: process.env.NUXT_REVERB_APP_KEY,
+        scheme: process.env.NUXT_REVERB_SCHEME === "http" ? "http" : "https",
+        host: process.env.NUXT_REVERB_HOST,
+        port: parseInt(process.env.NUXT_REVERB_PORT as string),
+        authentication: {
+            baseUrl: process.env.NUXT_BACKEND_URL || "http://localhost:8000",
+            mode: "cookie",
+        },
+    },
+    vite: {
+        optimizeDeps: {
+            include: ["nuxt-laravel-echo > pusher-js"], // or ['nuxt-laravel-echo > pusher-js'] for newer Vite versions
         },
     },
 });

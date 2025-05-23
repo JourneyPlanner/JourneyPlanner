@@ -16,6 +16,7 @@ const { isAuthenticated } = useSanctumAuth();
 const { t } = useTranslate();
 const fullConfig = resolveConfig(tailwindConfig);
 const colorMode = useColorMode();
+const echo = useEcho();
 
 const journeyId = route.params.id;
 const activityDataLoaded = ref(false);
@@ -60,7 +61,63 @@ onMounted(() => {
 
     calculateDays(journeyData.value.from, journeyData.value.to);
     updateInvite();
+    subscribeToChannel();
 });
+
+function subscribeToChannel() {
+    const name = "App.Models.Journey." + journeyId;
+
+    echo.private(name)
+        .listen(".JourneyUpdated", (e: WebsocketEvent) =>
+            journeyEdited(e.model as Journey),
+        )
+        .listen(".JourneyUserCreated", (e: WebsocketEvent) =>
+            userJoined(e.model as User),
+        )
+        .listen(".JourneyUserUpdated", (e: WebsocketEvent) =>
+            userEdited(e.model as User),
+        )
+        .listen(".JourneyUserDeleted", (e: WebsocketEvent) =>
+            userLeft(e.model as User),
+        )
+        .listen(".ActivityUpdated", (e: WebsocketEvent) => activityUpdated(e))
+        .listen(".ActivityCreated", (e: WebsocketEvent) => activityCreated(e))
+        .listen(".ActivityDeleted", (e: WebsocketEvent) => activityDeleted(e))
+        .listen(".CalendarActivityUpdated", (e: WebsocketEvent) =>
+            calendarActivityCreated(e),
+        )
+        .listen(".CalendarActivityCreated", (e: WebsocketEvent) =>
+            calendarActivityCreated(e),
+        )
+        .listen(".CalendarActivityDeleted", (e: WebsocketEvent) =>
+            calendarActivityRemoved(e),
+        )
+        .error((e: object) => {
+            console.error("Private channel error", e);
+        });
+}
+
+function activityUpdated(e: WebsocketEvent) {
+    activityStore.updateActivity(e.model);
+}
+
+function activityCreated(e: WebsocketEvent) {
+    activityStore.addActivity(e.model);
+    activityStore.setNewActivity(e.model);
+}
+
+function activityDeleted(e: WebsocketEvent) {
+    activityStore.removeActivity(e.model);
+}
+
+function calendarActivityCreated(e: WebsocketEvent) {
+    activityStore.createOrUpdateCalendarActivity(e.model);
+}
+
+function calendarActivityRemoved(e: WebsocketEvent) {
+    activityStore.removeCalendarActivity(e.model);
+}
+
 const journeyAPIBaseURL = `/api/journey/${journeyId}`;
 
 const { data, error } = await useAsyncData("journey", () =>
@@ -157,6 +214,43 @@ if (isAuthenticated.value) {
     watch(data, () => {
         users.value = data?.value || [];
     });
+}
+
+function userJoined(user: User) {
+    if (users.value?.find((u) => u.id === user.id)) {
+        return;
+    }
+    users.value?.push(user);
+}
+
+function userEdited(user: User) {
+    if (user.id === currUser.value?.id) {
+        currUser.value = user;
+    }
+
+    const index = users.value?.findIndex((u) => u.id === user.id);
+
+    if (index !== undefined && index !== -1) {
+        users.value![index] = user;
+    }
+}
+
+function userLeft(user: User) {
+    if (currUser.value?.id === user.id) {
+        /* toast.add({
+            severity: "info",
+            summary: t.value("journey.kicked.toast.success"),
+            detail: t.value("journey.kicked.toast.detail"),
+            life: 3000,
+        }); */
+
+        navigateTo("/dashboard");
+    }
+
+    const index = users.value?.findIndex((u) => u.id === user.id);
+    if (index !== undefined && index !== -1) {
+        users.value!.splice(index, 1);
+    }
 }
 
 function updateInvite() {
@@ -269,12 +363,12 @@ function calculateDays(from: string, to: string) {
 
 async function journeyEdited(journey: Journey) {
     clearCalendar.value = false;
-    journeyStore.setJourney(journey);
+    journeyStore.updateJourney(journey);
     useHead({
         title: `${journey.name} | JourneyPlanner`,
     });
     calculateDays(journey.from, journey.to);
-
+    updateInvite();
     await client(`/api/journey/${journeyId}/activity`, {
         async onResponse({ response }) {
             if (response.ok) {
