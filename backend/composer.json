@@ -12,7 +12,7 @@
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.3",
         "laravel/octane": "^2.5",
-        "laravel/sanctum": "^4.0",
+        "laravel/sanctum": "^4.1",
         "laravel/socialite": "^5.18",
         "laravel/tinker": "^2.10",
         "pbmedia/laravel-ffmpeg": "^8.7",
