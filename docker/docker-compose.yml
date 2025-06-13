@@ -49,6 +49,18 @@ services:
       - uploads:/tusd-data
       - journey_media:/app/storage/app/journey_media
       - business_images:/app/storage/app/business_images
+  ws:
+    build: ../backend
+    pull_policy: build
+    restart: unless-stopped
+    command: /app/start_ws.sh
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/up"]
+    environment:
+      - INFISICAL_API_URL=$BACKEND_INFISICAL_API_URL
+      - INFISICAL_TOKEN=$BACKEND_INFISICAL_TOKEN
+    depends_on:
+      - db
   db:
     image: mariadb:latest
     pull_policy: always

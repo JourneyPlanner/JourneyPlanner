@@ -73,7 +73,8 @@ class CalendarActivityController extends Controller
             ->get();
         $activities[] = $baseActivity->load("calendarActivities");
         $activities = $activities->merge($emptyActivities);
-        return response()->json($activities, 200);
+        //return response()->json($activities, 200);
+        return response()->noContent();
     }
 
     /**
@@ -84,10 +85,15 @@ class CalendarActivityController extends Controller
         DateTime $minDate,
         $emptyActivities
     ) {
-        $activity
-            ->calendarActivities()
-            ->where("start", ">=", $minDate)
-            ->delete();
+        foreach (
+            $activity
+                ->calendarActivities()
+                ->where("start", ">=", $minDate)
+                ->get()
+            as $calendarActivity
+        ) {
+            $calendarActivity->delete();
+        }
 
         return $this->generalizeActivityIfNeeded($activity, $emptyActivities);
     }
@@ -99,7 +105,9 @@ class CalendarActivityController extends Controller
         Activity $activity,
         array $emptyActivities = []
     ) {
-        $activity->calendarActivities()->delete();
+        foreach ($activity->calendarActivities()->get() as $calendarActivity) {
+            $calendarActivity->delete();
+        }
         return $this->generalizeActivityIfNeeded($activity, $emptyActivities);
     }
 

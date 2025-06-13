@@ -93,7 +93,7 @@ const activeIndex = ref(0);
 const confirm = useConfirm();
 
 const store = useJourneyStore();
-const activityStore = useActivityStore();
+//const activityStore = useActivityStore();
 const to = new Date(store.getToDate());
 const from = new Date(store.getFromDate());
 
@@ -357,7 +357,7 @@ async function editActivity(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
-                    activityStore.updateActivity(response._data);
+                    //activityStore.updateActivity(response._data);
                     if (props.calendarActivity) {
                         emit("editCalendarActivity", activity.name);
                         emit("calendarMoved", start, end);
@@ -402,13 +402,14 @@ async function editActivity(values: ActivityForm) {
                     });
                     close();
                     loadingSave.value = false;
+                    /*  
                     const responseData = Array.isArray(response._data)
                         ? response._data
                         : [response._data];
                     activityStore.addActivity(response._data);
                     const activites = [] as Activity[];
                     activites.push(...responseData);
-                    activityStore.setNewActivity(response._data);
+                    activityStore.setNewActivity(response._data); */
                 }
             },
             async onRequestError() {

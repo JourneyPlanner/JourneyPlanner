@@ -32,6 +32,13 @@ onMounted(() => {
             }
         },
     );
+
+    watch(
+        () => props.role,
+        (value) => {
+            currentRole.value = value;
+        },
+    );
 });
 
 function changeRole(selectedRole: number) {
@@ -79,7 +86,7 @@ const roleType = computed(() => {
         </div>
     </div>
     <form
-        v-if="edit && currentId !== props.id"
+        v-if="edit && currentId !== id"
         class="flex justify-end text-end font-nunito"
     >
         <h4

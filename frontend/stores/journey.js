@@ -82,6 +82,10 @@ export const useJourneyStore = defineStore("journey", () => {
         return this.journey.description;
     }
 
+    function updateJourney(journey) {
+        this.journey = { ...journey };
+    }
+
     return {
         journey,
         media,
@@ -105,5 +109,6 @@ export const useJourneyStore = defineStore("journey", () => {
         setDocs,
         getDocs,
         getDescription,
+        updateJourney,
     };
 });
