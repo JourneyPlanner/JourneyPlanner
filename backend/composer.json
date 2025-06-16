@@ -8,7 +8,7 @@
     "license": "All rights reserved",
     "require": {
         "php": "^8.2",
-        "google/apiclient-services": "^0.396.0",
+        "google/apiclient-services": "^0.399.0",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.3",
         "laravel/octane": "^2.5",
