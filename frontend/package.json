@@ -69,7 +69,7 @@
         "@types/qrcode": "^1.5.5",
         "eslint": "^9.28.0",
         "husky": "^9.1.5",
-        "lint-staged": "^16.1.0",
+        "lint-staged": "^16.1.2",
         "mapbox-gl": "^3.12.0",
         "nuxt-auth-sanctum": "^0.6.6",
         "nuxt-primevue": "^3.0.0",
