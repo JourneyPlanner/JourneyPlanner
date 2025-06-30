@@ -23,7 +23,7 @@
         "@fullcalendar/daygrid": "^6.1.15",
         "@fullcalendar/interaction": "^6.1.15",
         "@fullcalendar/timegrid": "^6.1.15",
-        "@fullcalendar/vue3": "^6.1.17",
+        "@fullcalendar/vue3": "^6.1.18",
         "@gravatar-com/quick-editor": "^0.8.0",
         "@mapbox/mapbox-gl-geocoder": "^5.0.3",
         "@mapbox/search-js-web": "^1.0.0",
