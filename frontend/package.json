@@ -33,7 +33,7 @@
         "@pinia/nuxt": "^0.11.0",
         "@studiometa/vue-mapbox-gl": "^2.7.2",
         "@tolgee/vue": "^6.2.5",
-        "@uppy/core": "^4.4.4",
+        "@uppy/core": "^4.4.7",
         "@uppy/dashboard": "^4.3.2",
         "@uppy/drag-drop": "^4.1.2",
         "@uppy/file-input": "^4.1.2",
