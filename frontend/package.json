@@ -76,7 +76,7 @@
         "prettier": "^3.5.3",
         "prettier-plugin-tailwindcss": "^0.6.11",
         "typescript": "^5.8.3",
-        "vue-tsc": "^2.2.10",
+        "vue-tsc": "^3.0.5",
         "wait-on": "^8.0.3"
     },
     "lint-staged": {
