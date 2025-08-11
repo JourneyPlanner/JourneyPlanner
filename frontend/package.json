@@ -71,7 +71,7 @@
         "husky": "^9.1.5",
         "lint-staged": "^16.1.0",
         "mapbox-gl": "^3.12.0",
-        "nuxt-auth-sanctum": "^0.6.6",
+        "nuxt-auth-sanctum": "^1.1.2",
         "nuxt-primevue": "^3.0.0",
         "prettier": "^3.5.3",
         "prettier-plugin-tailwindcss": "^0.6.11",
