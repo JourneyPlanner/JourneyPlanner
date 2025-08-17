@@ -41,7 +41,7 @@
         "@uppy/progress-bar": "^4.2.1",
         "@uppy/tus": "^4.2.2",
         "@uppy/vue": "^2.1.1",
-        "@vee-validate/nuxt": "^4.15.0",
+        "@vee-validate/nuxt": "^4.15.1",
         "@vee-validate/yup": "^4.15.0",
         "concurrently": "^9.1.2",
         "date-fns": "^4.1.0",
