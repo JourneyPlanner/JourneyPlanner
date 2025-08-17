@@ -25,7 +25,7 @@
         "@fullcalendar/timegrid": "^6.1.15",
         "@fullcalendar/vue3": "^6.1.17",
         "@gravatar-com/quick-editor": "^0.8.0",
-        "@mapbox/mapbox-gl-geocoder": "^5.0.3",
+        "@mapbox/mapbox-gl-geocoder": "^5.1.0",
         "@mapbox/search-js-web": "^1.0.0",
         "@nuxt/eslint": "^1.8.0",
         "@nuxt/image": "^1.9.0",
