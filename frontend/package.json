@@ -74,7 +74,7 @@
         "nuxt-auth-sanctum": "^0.6.6",
         "nuxt-primevue": "^3.0.0",
         "prettier": "^3.6.2",
-        "prettier-plugin-tailwindcss": "^0.6.11",
+        "prettier-plugin-tailwindcss": "^0.6.14",
         "typescript": "^5.8.3",
         "vue-tsc": "^2.2.10",
         "wait-on": "^8.0.3"
