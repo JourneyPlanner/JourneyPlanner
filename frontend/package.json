@@ -46,7 +46,7 @@
         "concurrently": "^9.2.1",
         "date-fns": "^4.1.0",
         "file-saver": "^2.0.5",
-        "js-confetti": "^0.12.0",
+        "js-confetti": "^0.13.1",
         "jszip": "^3.10.1",
         "lightgallery": "^2.8.3",
         "nuxt": "^3.16.0",
