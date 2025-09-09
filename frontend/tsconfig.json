@@ -1,5 +1,10 @@
 {
     // https://nuxt.com/docs/guide/concepts/typescript
     "extends": "./.nuxt/tsconfig.json",
-    "includes": ["types/*.d.ts"]
+    "includes": ["types/*.d.ts"],
+    "compilerOptions": {
+        "moduleResolution": "bundler",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true
+    }
 }
