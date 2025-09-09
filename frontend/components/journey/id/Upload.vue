@@ -46,7 +46,9 @@ const uppy = new Uppy({
     })
     .on("complete", (result) => {
         // emit atleast first result id to initiate media gallery refetch
-        emit("uploaded", result?.successful?.[0].id);
+        if (result.successful?.length) {
+            emit("uploaded", result?.successful?.[0].id);
+        }
     });
 </script>
 
