@@ -40,7 +40,7 @@
         "@uppy/locales": "^4.5.2",
         "@uppy/progress-bar": "^4.3.2",
         "@uppy/tus": "^4.2.2",
-        "@uppy/vue": "^2.1.1",
+        "@uppy/vue": "^3.0.2",
         "@vee-validate/nuxt": "^4.15.1",
         "@vee-validate/yup": "^4.15.1",
         "concurrently": "^9.2.1",
