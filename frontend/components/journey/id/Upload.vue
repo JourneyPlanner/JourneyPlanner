@@ -44,8 +44,9 @@ const uppy = new Uppy({
         },
         removeFingerprintOnSuccess: true,
     })
-    .on("complete", (response) => {
-        emit("uploaded", response.uploadID);
+    .on("complete", (result) => {
+        // emit atleast first result id to initiate media gallery refetch
+        emit("uploaded", result?.successful?.[0].id);
     });
 </script>
 
