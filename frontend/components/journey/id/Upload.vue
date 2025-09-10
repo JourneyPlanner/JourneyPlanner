@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useTolgee } from "@tolgee/vue";
 import Uppy from "@uppy/core";
-import "@uppy/core/dist/style.css";
-import "@uppy/dashboard/dist/style.css";
+import "@uppy/core/css/style.css";
+import "@uppy/dashboard/css/style.css";
 import German from "@uppy/locales/lib/de_DE";
 import English from "@uppy/locales/lib/en_US";
 import Tus from "@uppy/tus";
-import { Dashboard } from "@uppy/vue";
+import Dashboard from "@uppy/vue/dashboard";
 
 const tolgee = useTolgee(["language"]);
 const journey = useJourneyStore();
@@ -44,8 +44,11 @@ const uppy = new Uppy({
         },
         removeFingerprintOnSuccess: true,
     })
-    .on("complete", (response) => {
-        emit("uploaded", response.uploadID);
+    .on("complete", (result) => {
+        // emit atleast first result id to initiate media gallery refetch
+        if (result.successful?.length) {
+            emit("uploaded", result?.successful?.[0].id);
+        }
     });
 </script>
 
@@ -71,7 +74,6 @@ const uppy = new Uppy({
             <Dashboard
                 :uppy="uppy"
                 :props="{
-                    showProgressDetails: true,
                     locale: locale,
                     disabled: !isAuthenticated,
                 }"
