@@ -46,6 +46,9 @@ export default defineNuxtConfig({
             markdown: true,
         },
     },
+    site: {
+        url: "https://journeyplanner.io",
+    },
     vue: {
         compilerOptions: {
             isCustomElement: (tag) => ["mapbox-search-box"].includes(tag),

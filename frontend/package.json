@@ -18,6 +18,9 @@
         "install-all": "npm install && cd ../backend && npm install && composer install && cd ../docker/dev && docker compose pull"
     },
     "dependencies": {
+        "@capacitor/android": "^7.4.3",
+        "@capacitor/cli": "^7.4.3",
+        "@capacitor/core": "^7.4.3",
         "@date-fns/utc": "^2.1.0",
         "@fullcalendar/core": "^6.1.17",
         "@fullcalendar/daygrid": "^6.1.15",
