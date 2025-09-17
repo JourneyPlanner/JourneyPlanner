@@ -71,15 +71,13 @@ const isVisible = ref(props.visible);
             >
                 <p><T key-name="profile.gravatar.info.description" /></p>
                 <div class="flex justify-center">
-                    <button
+                    <NuxtLink
+                        to="https://gravatar.com/emails/"
+                        target="_blank"
                         class="mt-auto flex h-9 w-44 flex-row items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:cursor-pointer hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                     >
-                        <NuxtLink
-                            to="https://gravatar.com/emails/"
-                            target="_blank"
-                            ><T key-name="profile.gravatar.info.button"
-                        /></NuxtLink>
-                    </button>
+                        <T key-name="profile.gravatar.info.button" />
+                    </NuxtLink>
                 </div>
             </div>
         </Dialog>
@@ -112,6 +110,7 @@ const isVisible = ref(props.visible);
                     class: 'sm:collapse bg-natural-50',
                 },
             }"
+            @hide="close"
         >
             <template #header>
                 <button class="-ml-6 flex justify-center pr-4" @click="close">
@@ -127,11 +126,13 @@ const isVisible = ref(props.visible);
                 >
                     <p><T key-name="profile.gravatar.info.description" /></p>
                     <div class="mt-2 flex justify-center">
-                        <button
+                        <NuxtLink
+                            to="https://gravatar.com/emails/"
+                            target="_blank"
                             class="mt-auto flex h-9 w-44 flex-row items-center justify-center rounded-xl border-2 border-dandelion-300 bg-natural-50 text-center text-text hover:cursor-pointer hover:bg-dandelion-200 dark:bg-natural-900 dark:text-natural-50 dark:hover:bg-pesto-600"
                         >
                             <T key-name="profile.gravatar.info.button" />
-                        </button>
+                        </NuxtLink>
                     </div>
                 </div>
             </div>
