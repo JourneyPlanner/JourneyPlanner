@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "@date-fns/utc": "^2.1.0",
-        "@fullcalendar/core": "^6.1.17",
+        "@fullcalendar/core": "^6.1.19",
         "@fullcalendar/daygrid": "^6.1.15",
         "@fullcalendar/interaction": "^6.1.15",
         "@fullcalendar/timegrid": "^6.1.15",
