@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import {
-    MapboxGeolocateControl,
-    MapboxMap,
-    MapboxMarker,
-    MapboxNavigationControl,
-} from "@studiometa/vue-mapbox-gl";
 import { useTranslate } from "@tolgee/vue";
+import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { onUnmounted } from "vue";
 
 const journeyStore = useJourneyStore();
 const activitiesStore = useActivityStore();
@@ -34,6 +30,8 @@ if (
     colorNotAdded = "#6A95A6";
 }
 
+const map = ref();
+const mapContainer = ref();
 const activities = ref();
 const activitiesWithLocation = ref();
 const activitiesWithoutLocation = ref();
@@ -42,7 +40,15 @@ const lat = ref(Number(journeyStore.getLat()));
 const long = ref(Number(journeyStore.getLong()));
 
 onMounted(() => {
+    initMap();
     updateActivities();
+});
+
+onUnmounted(() => {
+    if (map.value) {
+        map.value.remove();
+    }
+    map.value = null;
 });
 
 watch(
@@ -58,10 +64,38 @@ watch(journey, () => {
     long.value = Number(journeyStore.getLong());
 });
 
+function initMap() {
+    const tempMap = new mapboxgl.Map({
+        container: mapContainer.value,
+        style: style.value,
+        center: long.value && lat.value ? [long.value, lat.value] : [0, 20],
+        zoom: zoom.value,
+        accessToken: config.public.NUXT_MAPBOX_API_KEY,
+    });
+    tempMap.addControl(new mapboxgl.NavigationControl(), "top-left");
+    tempMap.addControl(
+        new mapboxgl.GeolocateControl({
+            positionOptions: { enableHighAccuracy: true },
+            trackUserLocation: true,
+        }),
+    );
+
+    map.value = tempMap;
+}
+
 function updateActivities() {
+    if (activitiesWithLocation.value) {
+        for (const activity of activitiesWithLocation.value) {
+            if (activity.marker) {
+                activity.marker.remove();
+            }
+        }
+    }
+
     activities.value = activityData.value.map((activity: Activity) => ({
         ...activity,
         color: markerColor(activity),
+        marker: undefined,
     }));
 
     activitiesWithLocation.value = activities.value.filter(
@@ -71,6 +105,22 @@ function updateActivities() {
     activitiesWithoutLocation.value = activities.value.filter(
         (activity: Activity) => !activity.latitude || !activity.longitude,
     );
+
+    for (const activity of activitiesWithLocation.value) {
+        const popup = new mapboxgl.Popup({ offset: 10 }).setHTML(
+            `<div class="flex flex-col font-nunito text-text dark:text-natural-50">
+                <h1 class="font-bold">${activity.name}</h1>
+                <p>${activity.mapbox_full_address}</p>
+            </div>`,
+        );
+
+        const marker = new mapboxgl.Marker({ color: activity.color })
+            .setLngLat([activity.longitude, activity.latitude])
+            .setPopup(popup)
+            .addTo(map.value);
+
+        activity.marker = marker;
+    }
 }
 
 function markerColor(activity: Activity) {
@@ -112,37 +162,7 @@ const style = computed(() =>
             <div
                 class="relative mt-5 flex h-44 w-[90%] items-end sm:h-[13rem] sm:w-5/6 md:ml-[10%] md:h-[17rem] md:w-[calc(50%+16rem)] md:justify-start lg:ml-10 lg:h-96 lg:w-[calc(33.33vw+38.5rem)] xl:ml-[10%] xl:w-[calc(33.33vw+44rem)]"
             >
-                <div>
-                    <MapboxMap
-                        style="position: absolute; top: 0; bottom: 0"
-                        class="h-full w-full rounded-xl"
-                        :access-token="config.public.NUXT_MAPBOX_API_KEY"
-                        :zoom="zoom"
-                        :map-style="style"
-                        :center="[long, lat]"
-                    >
-                        <MapboxMarker
-                            v-for="activity in activitiesWithLocation"
-                            :key="activity.id"
-                            :lng-lat="[activity.longitude, activity.latitude]"
-                            :color="activity.color"
-                            popup
-                        >
-                            <template #popup>
-                                <div
-                                    class="flex flex-col font-nunito text-text dark:text-natural-50"
-                                >
-                                    <h1 class="font-bold">
-                                        {{ activity.name }}
-                                    </h1>
-                                    <p>{{ activity.mapbox_full_address }}</p>
-                                </div>
-                            </template>
-                        </MapboxMarker>
-                        <MapboxGeolocateControl />
-                        <MapboxNavigationControl position="top-left" />
-                    </MapboxMap>
-                </div>
+                <div ref="mapContainer" class="h-full w-full rounded-xl" />
                 <Dialog
                     v-model:visible="isNotFoundActivitiesDialogVisible"
                     modal
