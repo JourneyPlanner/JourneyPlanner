@@ -33,7 +33,7 @@
         "@pinia/nuxt": "^0.11.2",
         "@studiometa/vue-mapbox-gl": "^2.7.2",
         "@tolgee/vue": "^6.2.7",
-        "@uppy/core": "^5.0.1",
+        "@uppy/core": "^5.0.2",
         "@uppy/dashboard": "^5.0.1",
         "@uppy/locales": "^5.0.0",
         "@uppy/tus": "^5.0.0",
