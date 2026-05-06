@@ -19,7 +19,7 @@ pipeline {
             steps {
                 dir('frontend') {
                     script {
-                        sh 'npm install'
+                        sh 'npm ci'
                         sh 'npx prettier . --check'
                         sh 'npx eslint .'
                     }
