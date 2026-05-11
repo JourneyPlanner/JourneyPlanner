@@ -63,7 +63,7 @@
         "@trivago/prettier-plugin-sort-imports": "^5.2.2",
         "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
         "@types/mapbox-gl": "^3.4.1",
-        "@types/qrcode": "^1.5.5",
+        "@types/qrcode": "^1.5.6",
         "eslint": "^9.35.0",
         "husky": "^9.1.5",
         "lint-staged": "^16.1.6",
