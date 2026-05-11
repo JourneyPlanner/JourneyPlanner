@@ -1,28 +1,37 @@
 pipeline {
-    agent any
+    agent none 
     environment {
         FRONTEND_IMAGE = 'journeyplanner/frontend:latest'
         FRONTEND_INFISICAL_API_URL = credentials('frontend_infisical_api_url')
         FRONTEND_INFISICAL_TOKEN = credentials('frontend_infisical_token')
     }
     stages {
-        stage('Build Frontend') {
+        stage('Check Frontend Code') {
+            agent {
+                docker { 
+                    image 'node:24' 
+                    args '-u root:root' 
+                }
+            }
             steps {
                 dir('frontend') {
-                    script {
-                        docker.build(env.FRONTEND_IMAGE, '--build-arg INFISICAL_API_URL=${FRONTEND_INFISICAL_API_URL} --build-arg INFISICAL_TOKEN=${FRONTEND_INFISICAL_TOKEN} .')
-                    }
+                    sh 'CI=true npm ci'
+                    sh 'npx prettier . --check'
+                    sh 'npx eslint .'
                 }
             }
         }
-        stage('Check Frontend Code') {
+        stage('Build Docker Image') {
+            agent {
+                label 'docker' 
+            }
             steps {
                 dir('frontend') {
-                    script {
-                        sh 'npm ci'
-                        sh 'npx prettier . --check'
-                        sh 'npx eslint .'
-                    }
+                    sh """
+                    docker build -t ${env.FRONTEND_IMAGE} \
+                      --build-arg INFISICAL_API_URL=${FRONTEND_INFISICAL_API_URL} \
+                      --build-arg INFISICAL_TOKEN=${FRONTEND_INFISICAL_TOKEN} .
+                    """
                 }
             }
         }
