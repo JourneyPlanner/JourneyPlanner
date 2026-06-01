@@ -41,7 +41,7 @@
         "@vee-validate/nuxt": "^4.15.1",
         "@vee-validate/yup": "^4.15.1",
         "concurrently": "^9.2.1",
-        "date-fns": "^4.1.0",
+        "date-fns": "^4.4.0",
         "file-saver": "^2.0.5",
         "js-confetti": "^0.13.1",
         "jszip": "^3.10.1",
