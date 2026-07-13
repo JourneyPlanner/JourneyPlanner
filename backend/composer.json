@@ -9,7 +9,7 @@
     "require": {
         "php": "^8.2",
         "google/apiclient-services": "^0.443.0",
-        "guzzlehttp/guzzle": "^7.10",
+        "guzzlehttp/guzzle": "^7.14",
         "laravel/framework": "^12.28",
         "laravel/octane": "^2.17",
         "laravel/sanctum": "^4.2",
