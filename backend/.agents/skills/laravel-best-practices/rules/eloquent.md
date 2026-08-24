@@ -21,14 +21,16 @@ public function author(): BelongsTo
 Extract reusable query constraints into local scopes to avoid duplication.
 
 Incorrect:
+
 ```php
-$active = User::where('verified', true)->whereNotNull('activated_at')->get();
-$articles = Article::whereHas('user', function ($q) {
-    $q->where('verified', true)->whereNotNull('activated_at');
+$active = User::where("verified", true)->whereNotNull("activated_at")->get();
+$articles = Article::whereHas("user", function ($q) {
+    $q->where("verified", true)->whereNotNull("activated_at");
 })->get();
 ```
 
 Correct:
+
 ```php
 #[Scope]
 protected function active(Builder $query): Builder
@@ -46,18 +48,20 @@ $articles = Article::whereHas('user', fn ($q) => $q->active())->get();
 Global scopes silently modify every query on the model, making debugging difficult. Prefer local scopes and reserve global scopes for truly universal constraints like soft deletes or multi-tenancy.
 
 Incorrect (global scope for a conditional filter):
+
 ```php
 class PublishedScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
-        $builder->where('published', true);
+        $builder->where("published", true);
     }
 }
 // Now admin panels, reports, and background jobs all silently skip drafts
 ```
 
 Correct (local scope you opt into):
+
 ```php
 #[Scope]
 protected function published(Builder $query): Builder
@@ -89,11 +93,13 @@ protected function casts(): array
 Always cast date columns. Use Carbon instances in templates instead of formatting strings manually.
 
 Incorrect:
+
 ```blade
 {{ Carbon::createFromFormat('Y-d-m H-i', $order->ordered_at)->toDateString() }}
 ```
 
 Correct:
+
 ```php
 protected function casts(): array
 {
@@ -113,14 +119,16 @@ protected function casts(): array
 Cleaner than manually specifying foreign keys.
 
 Incorrect:
+
 ```php
-Post::where('user_id', $user->id)->get();
+Post::where("user_id", $user->id)->get();
 ```
 
 Correct:
+
 ```php
 Post::whereBelongsTo($user)->get();
-Post::whereBelongsTo($user, 'author')->get();
+Post::whereBelongsTo($user, "author")->get();
 ```
 
 ## Avoid Hardcoded Table Names in Queries
@@ -128,21 +136,23 @@ Post::whereBelongsTo($user, 'author')->get();
 Never use string literals for table names in raw queries, joins, or subqueries. Hardcoded table names make it impossible to find all places a model is used and break refactoring (e.g., renaming a table requires hunting through every raw string).
 
 Incorrect:
+
 ```php
-DB::table('users')->where('active', true)->get();
+DB::table("users")->where("active", true)->get();
 
-$query->join('companies', 'companies.id', '=', 'users.company_id');
+$query->join("companies", "companies.id", "=", "users.company_id");
 
-DB::select('SELECT * FROM orders WHERE status = ?', ['pending']);
+DB::select("SELECT * FROM orders WHERE status = ?", ["pending"]);
 ```
 
 Correct — reference the model's table:
+
 ```php
-DB::table((new User)->getTable())->where('active', true)->get();
+DB::table((new User())->getTable())->where("active", true)->get();
 
 // Even better — use Eloquent or the query builder instead of raw SQL
-User::where('active', true)->get();
-Order::where('status', 'pending')->get();
+User::where("active", true)->get();
+Order::where("status", "pending")->get();
 ```
 
 Prefer Eloquent queries and relationships over `DB::table()` whenever possible — they already reference the model's table. When `DB::table()` or raw joins are unavoidable, always use `(new Model)->getTable()` to keep the reference traceable.

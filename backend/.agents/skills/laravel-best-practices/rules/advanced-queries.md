@@ -54,8 +54,8 @@ $statuses = Feature::toBase()
 When a parent model is eager-loaded with its children, and the view also needs `$child->parent`, use `setRelation()` to inject the already-loaded parent rather than letting Eloquent fire N additional queries.
 
 ```php
-$feature->load('comments.user');
-$feature->comments->each->setRelation('feature', $feature);
+$feature->load("comments.user");
+$feature->comments->each->setRelation("feature", $feature);
 ```
 
 ## Prefer `whereIn` + Subquery Over `whereHas`
@@ -65,13 +65,16 @@ $feature->comments->each->setRelation('feature', $feature);
 Incorrect (correlated EXISTS re-executes per row):
 
 ```php
-$query->whereHas('company', fn ($q) => $q->where('name', 'like', $term));
+$query->whereHas("company", fn($q) => $q->where("name", "like", $term));
 ```
 
 Correct (index-friendly subquery, no PHP memory overhead):
 
 ```php
-$query->whereIn('company_id', Company::where('name', 'like', $term)->select('id'));
+$query->whereIn(
+    "company_id",
+    Company::where("name", "like", $term)->select("id")
+);
 ```
 
 ## Sometimes Two Simple Queries Beat One Complex Query
@@ -84,10 +87,10 @@ When ordering by multiple columns, create a single compound index in the same co
 
 ```php
 // Migration
-$table->index(['last_name', 'first_name']);
+$table->index(["last_name", "first_name"]);
 
 // Query — column order must match the index
-User::query()->orderBy('last_name')->orderBy('first_name')->paginate();
+User::query()->orderBy("last_name")->orderBy("first_name")->paginate();
 ```
 
 ## Use Correlated Subqueries for Has-Many Ordering

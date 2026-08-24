@@ -37,7 +37,5 @@ Correct: `$user = User::factory()->create(); Event::fake();`
 Without `recycle()`, nested factories create separate instances of the same conceptual entity.
 
 ```php
-Ticket::factory()
-    ->recycle(Airline::factory()->create())
-    ->create();
+Ticket::factory()->recycle(Airline::factory()->create())->create();
 ```

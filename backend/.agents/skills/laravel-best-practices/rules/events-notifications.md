@@ -13,7 +13,9 @@ Event discovery scans the filesystem per-request in dev. Cache it in production:
 Without it, a queued listener may process before the DB transaction commits, reading data that doesn't exist yet.
 
 ```php
-class OrderShipped implements ShouldDispatchAfterCommit {}
+class OrderShipped implements ShouldDispatchAfterCommit
+{
+}
 ```
 
 ## Always Queue Notifications
@@ -44,7 +46,7 @@ Mail and database notifications have different priorities. Use `viaQueues()` to 
 Avoid creating dummy models to send notifications to arbitrary addresses.
 
 ```php
-Notification::route('mail', 'admin@example.com')->notify(new SystemAlert());
+Notification::route("mail", "admin@example.com")->notify(new SystemAlert());
 ```
 
 ## Implement `HasLocalePreference` on Notifiable Models

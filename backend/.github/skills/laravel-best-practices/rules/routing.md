@@ -5,6 +5,7 @@
 Let Laravel resolve models automatically from route parameters.
 
 Incorrect:
+
 ```php
 public function show(int $id)
 {
@@ -13,6 +14,7 @@ public function show(int $id)
 ```
 
 Correct:
+
 ```php
 public function show(Post $post)
 {
@@ -25,7 +27,7 @@ public function show(Post $post)
 Enforce parent-child relationships automatically.
 
 ```php
-Route::get('/users/{user}/posts/{post}', function (User $user, Post $post) {
+Route::get("/users/{user}/posts/{post}", function (User $user, Post $post) {
     // $post is automatically scoped to $user
 })->scopeBindings();
 ```
@@ -35,9 +37,9 @@ Route::get('/users/{user}/posts/{post}', function (User $user, Post $post) {
 Use `Route::resource()` or `apiResource()` for RESTful endpoints.
 
 ```php
-Route::resource('posts', PostController::class);
+Route::resource("posts", PostController::class);
 // In routes/api.php — the /api prefix is applied automatically
-Route::apiResource('posts', Api\PostController::class);
+Route::apiResource("posts", Api\PostController::class);
 ```
 
 ## Keep Controllers Thin
@@ -45,6 +47,7 @@ Route::apiResource('posts', Api\PostController::class);
 Aim for under 10 lines per method. Extract business logic to action or service classes.
 
 Incorrect:
+
 ```php
 public function store(Request $request)
 {
@@ -60,6 +63,7 @@ public function store(Request $request)
 ```
 
 Correct:
+
 ```php
 public function store(StorePostRequest $request, CreatePostAction $create)
 {
@@ -74,6 +78,7 @@ public function store(StorePostRequest $request, CreatePostAction $create)
 Type-hinting Form Requests triggers automatic validation and authorization before the method executes.
 
 Incorrect:
+
 ```php
 public function store(Request $request): RedirectResponse
 {
@@ -89,6 +94,7 @@ public function store(Request $request): RedirectResponse
 ```
 
 Correct:
+
 ```php
 public function store(StorePostRequest $request): RedirectResponse
 {

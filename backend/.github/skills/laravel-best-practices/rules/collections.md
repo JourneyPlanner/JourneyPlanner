@@ -3,6 +3,7 @@
 ## Use Higher-Order Messages for Simple Operations
 
 Incorrect:
+
 ```php
 $users->each(function (User $user) {
     $user->markAsVip();
@@ -15,8 +16,8 @@ Works with `each`, `map`, `sum`, `filter`, `reject`, `contains`, etc.
 
 ## Choose `cursor()` vs. `lazy()` Correctly
 
-- `cursor()` — one model in memory, but cannot eager-load relationships (N+1 risk).
-- `lazy()` — chunked pagination returning a flat LazyCollection, supports eager loading.
+-   `cursor()` — one model in memory, but cannot eager-load relationships (N+1 risk).
+-   `lazy()` — chunked pagination returning a flat LazyCollection, supports eager loading.
 
 Incorrect: `User::with('roles')->cursor()` — eager loading silently ignored.
 
@@ -40,5 +41,7 @@ More declarative than overriding `newCollection()`.
 
 ```php
 #[CollectedBy(UserCollection::class)]
-class User extends Model {}
+class User extends Model
+{
+}
 ```

@@ -1,8 +1,5 @@
 {
-    "agents": [
-        "antigravity",
-        "copilot"
-    ],
+    "agents": ["antigravity", "copilot"],
     "cloud": false,
     "guidelines": true,
     "mcp": true,

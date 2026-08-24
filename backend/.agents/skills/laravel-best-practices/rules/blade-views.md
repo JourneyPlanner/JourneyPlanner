@@ -27,8 +27,10 @@ If every controller rendering a sidebar must pass `$categories`, that's duplicat
 A single view can return either the full page or just a fragment, keeping routing clean.
 
 ```php
-return view('dashboard', compact('users'))
-    ->fragmentIf($request->hasHeader('HX-Request'), 'user-list');
+return view("dashboard", compact("users"))->fragmentIf(
+    $request->hasHeader("HX-Request"),
+    "user-list"
+);
 ```
 
 ## Use `@aware` for Deeply Nested Component Props

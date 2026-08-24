@@ -3,7 +3,7 @@ name: socialite-development
 description: "Manages OAuth social authentication with Laravel Socialite. Activate when adding social login providers; configuring OAuth redirect/callback flows; retrieving authenticated user details; customizing scopes or parameters; setting up community providers; testing with Socialite fakes; or when the user mentions social login, OAuth, Socialite, or third-party authentication."
 license: MIT
 metadata:
-  author: laravel
+    author: laravel
 ---
 
 # Socialite Authentication
@@ -23,9 +23,10 @@ Configuration key in `config/services.php` must match the driver name exactly �
 Twitter/X: Use `twitter-oauth-2` (OAuth 2.0) for new projects. The legacy `twitter` driver is OAuth 1.0. Driver names remain unchanged despite the platform rebrand.
 
 Community providers differ from built-in providers in the following ways:
-- Installed via `composer require socialiteproviders/{name}`
-- Must register via event listener — NOT auto-discovered like built-in providers
-- Use `search-docs` for the registration pattern
+
+-   Installed via `composer require socialiteproviders/{name}`
+-   Must register via event listener — NOT auto-discovered like built-in providers
+-   Use `search-docs` for the registration pattern
 
 ## Adding a Provider
 
@@ -43,11 +44,11 @@ In the callback, use `updateOrCreate` to find or create a user record from the p
 
 ### 4. Customize the redirect (optional)
 
-- `scopes()` — merge additional scopes with the provider's defaults
-- `setScopes()` — replace all scopes entirely
-- `with()` — pass optional parameters (e.g., `['hd' => 'example.com']` for Google)
-- `asBotUser()` — Slack only; generates a bot token (`xoxb-`) instead of a user token (`xoxp-`). Must be called before both `redirect()` and `user()`. Only the `token` property will be hydrated on the user object.
-- `stateless()` — for API/SPA contexts where session state is not maintained
+-   `scopes()` — merge additional scopes with the provider's defaults
+-   `setScopes()` — replace all scopes entirely
+-   `with()` — pass optional parameters (e.g., `['hd' => 'example.com']` for Google)
+-   `asBotUser()` — Slack only; generates a bot token (`xoxb-`) instead of a user token (`xoxp-`). Must be called before both `redirect()` and `user()`. Only the `token` property will be hydrated on the user object.
+-   `stateless()` — for API/SPA contexts where session state is not maintained
 
 ### 5. Verify
 
@@ -70,11 +71,11 @@ Socialite provides `Socialite::fake()` for testing redirects and callbacks. Use 
 
 ## Common Pitfalls
 
-- Config key must match driver name exactly — hyphenated drivers need hyphenated keys (`linkedin-openid`, `slack-openid`, `twitter-oauth-2`). Mismatch silently fails.
-- Every provider needs `client_id`, `client_secret`, and `redirect` in `config/services.php`. Missing any one causes cryptic errors.
-- `scopes()` merges with defaults; `setScopes()` replaces all scopes entirely.
-- Missing `stateless()` in API/SPA contexts causes `InvalidStateException`.
-- Redirect URL in `config/services.php` must exactly match the provider's OAuth dashboard (including trailing slashes and protocol).
-- Do not pass `state`, `response_type`, `client_id`, `redirect_uri`, or `scope` via `with()` — these are reserved.
-- Community providers require event listener registration via `SocialiteWasCalled`.
-- `user()` throws when the user declines authorization. Always handle denied grants.
+-   Config key must match driver name exactly — hyphenated drivers need hyphenated keys (`linkedin-openid`, `slack-openid`, `twitter-oauth-2`). Mismatch silently fails.
+-   Every provider needs `client_id`, `client_secret`, and `redirect` in `config/services.php`. Missing any one causes cryptic errors.
+-   `scopes()` merges with defaults; `setScopes()` replaces all scopes entirely.
+-   Missing `stateless()` in API/SPA contexts causes `InvalidStateException`.
+-   Redirect URL in `config/services.php` must exactly match the provider's OAuth dashboard (including trailing slashes and protocol).
+-   Do not pass `state`, `response_type`, `client_id`, `redirect_uri`, or `scope` via `with()` — these are reserved.
+-   Community providers require event listener registration via `SocialiteWasCalled`.
+-   `user()` throws when the user declines authorization. Always handle denied grants.

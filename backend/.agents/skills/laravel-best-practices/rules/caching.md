@@ -5,17 +5,19 @@
 Cleaner cache-aside pattern that removes boilerplate. use `Cache::lock()` for race conditions.
 
 Incorrect:
+
 ```php
-$val = Cache::get('stats');
-if (! $val) {
+$val = Cache::get("stats");
+if (!$val) {
     $val = $this->computeStats();
-    Cache::put('stats', $val, 60);
+    Cache::put("stats", $val, 60);
 }
 ```
 
 Correct:
+
 ```php
-$val = Cache::remember('stats', 60, fn () => $this->computeStats());
+$val = Cache::remember("stats", 60, fn() => $this->computeStats());
 ```
 
 ## Use `Cache::flexible()` for Stale-While-Revalidate
@@ -37,7 +39,7 @@ If the same cache key is read multiple times per request (e.g., a service called
 Without tags, invalidating a group of entries requires tracking every key. Tags let you flush atomically. Not supported by the `file`, `dynamodb`, `database` or `storage` drivers.
 
 ```php
-Cache::tags(['user-1'])->flush();
+Cache::tags(["user-1"])->flush();
 ```
 
 ## Use `Cache::add()` for Atomic Conditional Writes

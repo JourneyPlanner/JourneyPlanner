@@ -17,7 +17,9 @@ By default, tasks at the same tick run sequentially. A slow first task delays al
 Prevent accidental execution of production-only tasks (billing, reporting) on staging.
 
 ```php
-Schedule::command('billing:charge')->monthly()->environments(['production']);
+Schedule::command("billing:charge")
+    ->monthly()
+    ->environments(["production"]);
 ```
 
 ## Use `takeUntilTimeout()` for Time-Bounded Processing
@@ -31,9 +33,9 @@ Avoid repeating `->onOneServer()->timezone('America/New_York')` across many task
 ```php
 Schedule::daily()
     ->onOneServer()
-    ->timezone('America/New_York')
+    ->timezone("America/New_York")
     ->group(function () {
-        Schedule::command('emails:send --force');
-        Schedule::command('emails:prune');
+        Schedule::command("emails:send --force");
+        Schedule::command("emails:prune");
     });
 ```
