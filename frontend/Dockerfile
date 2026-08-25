@@ -1,4 +1,4 @@
-FROM node:lts AS build-stage
+FROM node:24 AS build-stage
 WORKDIR /app
 ARG INFISICAL_API_URL
 ARG INFISICAL_TOKEN
@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y bash curl && curl -1sLf \
 COPY --link . . 
 RUN infisical run --env=prod -- npm run build
 
-FROM node:lts AS production-stage
+FROM node:24 AS production-stage
 WORKDIR /app
 
 COPY ecosystem.config.cjs .

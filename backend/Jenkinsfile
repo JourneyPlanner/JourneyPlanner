@@ -1,25 +1,30 @@
 pipeline {
-    agent any
+    agent none
     environment {
         BACKEND_IMAGE = 'journeyplanner/backend:latest'
     }
     stages {
-        stage('Build Backend') {
+        stage('Check Backend Code') {
+            agent {
+                docker { 
+                    image 'node:24'
+                    args '-u root:root' 
+                }
+            }
             steps {
                 dir('backend') {
-                    script {
-                        docker.build(env.BACKEND_IMAGE)
-                    }
+                    sh 'CI=true npm ci' 
+                    sh 'npx prettier . --check'
                 }
             }
         }
-        stage('Check Backend Code') {
+        stage('Build Backend Image') {
+            agent {
+                label 'docker' 
+            }
             steps {
                 dir('backend') {
-                    script {
-                        sh 'npm install'
-                        sh 'npx prettier . --check'
-                    }
+                    sh "docker build -t ${env.BACKEND_IMAGE} ."
                 }
             }
         }
