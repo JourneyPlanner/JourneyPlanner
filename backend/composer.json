@@ -6,28 +6,36 @@
         "JourneyPlanner"
     ],
     "license": "All rights reserved",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/JourneyPlanner/laravel-verify-new-email"
+        }
+    ],
     "require": {
         "php": "^8.2",
         "google/apiclient-services": "^0.452.0",
         "guzzlehttp/guzzle": "^7.10",
-        "laravel/framework": "^12.28",
+        "laravel/framework": "^13.0",
         "laravel/octane": "^2.17",
         "laravel/sanctum": "^4.2",
         "laravel/socialite": "^5.18",
-        "laravel/tinker": "^2.10",
+        "laravel/tinker": "^3.0",
         "pbmedia/laravel-ffmpeg": "^8.9",
-        "protonemedia/laravel-verify-new-email": "^1.13",
+        "protonemedia/laravel-verify-new-email": "dev-master",
         "serdud/socialite-google-one-tap": "^2.2",
         "socialiteproviders/microsoft": "^4.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24.1",
+        "laravel/boost": "^2.5",
         "laravel/breeze": "^2.3",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.58",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.8",
-        "phpunit/phpunit": "^11.5",
+        "phpunit/phpunit": "^12.0",
+        "pestphp/pest": "^4.0",
         "spatie/laravel-ignition": "^2.12"
     },
     "autoload": {
@@ -48,7 +56,8 @@
             "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@php artisan boost:update --ansi --discover"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""

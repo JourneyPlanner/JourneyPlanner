@@ -82,8 +82,8 @@
         ]
     },
     "allowScripts": {
-        "unrs-resolver@1.12.2": true,
+        "esbuild@0.25.10": true,
         "sharp@0.32.6": true,
-        "esbuild@0.28.2": true
+        "unrs-resolver@1.11.1": true
     }
 }
