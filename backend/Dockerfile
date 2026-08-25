@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp
+FROM dunglas/frankenphp:php8.4
 WORKDIR /app
 
 RUN install-php-extensions \
