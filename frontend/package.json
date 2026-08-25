@@ -31,7 +31,6 @@
         "@nuxt/image": "^1.11.0",
         "@nuxtjs/seo": "^3.1.0",
         "@pinia/nuxt": "^0.11.2",
-        "@studiometa/vue-mapbox-gl": "^2.7.2",
         "@tolgee/vue": "^6.2.7",
         "@uppy/core": "^5.0.1",
         "@uppy/dashboard": "^5.0.1",
