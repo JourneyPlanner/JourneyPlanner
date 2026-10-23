@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { GravatarQuickEditorCore } from "@gravatar-com/quick-editor";
 import { useTolgee, useTranslate } from "@tolgee/vue";
 import { format } from "date-fns";
 import { de } from "date-fns/locale/de";
@@ -12,7 +11,6 @@ const tolgee = useTolgee(["language"]);
 const user = useSanctumUser<User>();
 const { isAuthenticated } = useSanctumAuth<boolean>();
 const client = useSanctumClient();
-const gravatarEditor = ref<GravatarQuickEditorCore | undefined>();
 
 const ALLOWED_ROUTES = ["/journey", "/dashboard?tab=templates"];
 const screenWidth = ref(window.innerWidth);
@@ -23,6 +21,9 @@ const username = ref<string>(
 );
 const displayname = ref<string>("");
 const joinDate = ref<Date | null>(null);
+const email = ref<string>("");    
+
+const isGravatarInfoVisible = ref<boolean>(false);
 
 const showMoreTemplates = ref<boolean>(false);
 const openedTemplate = ref<Template | undefined>();
@@ -38,7 +39,7 @@ const maxDisplayedTemplates = computed(() => {
 });
 
 const { data, error } = await useAsyncData("user", () =>
-    client(`/api/user/${username.value}`),
+    client("/api/me"),
 );
 
 if (error.value) {
@@ -61,6 +62,7 @@ isCurrentUser.value = data.value?.username === user.value?.username;
 displayname.value = data.value?.display_name;
 username.value = data.value?.username;
 joinDate.value = new Date(data.value?.created_at);
+email.value = data.value?.email;
 
 const { avatarUrl, refreshAvatar } = useGravatar(
     data.value?.email_hash,
@@ -90,15 +92,6 @@ onMounted(() => {
     }
 
     window.addEventListener("resize", updateScreenWidth);
-
-    gravatarEditor.value = new GravatarQuickEditorCore({
-        email: user?.value?.email,
-        scope: ["avatars"],
-        locale: tolgee.value?.getLanguage(),
-        onProfileUpdated: () => {
-            refreshAvatar();
-        },
-    });
 });
 
 onUnmounted(async () => {
@@ -156,6 +149,15 @@ const locale = computed(() => {
         return enUS;
     }
 });
+
+function openGravatarInfo() {
+    isGravatarInfoVisible.value = true;
+}
+
+function closeGravatarInfo() {
+    isGravatarInfoVisible.value = false;
+    refreshAvatar();
+}
 </script>
 
 <template>
@@ -176,9 +178,9 @@ const locale = computed(() => {
                 <button
                     v-if="isCurrentUser"
                     class="mr-5 flex h-8 w-8 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 sm:h-9 sm:w-9 lg:hidden"
-                    @click="gravatarEditor?.open()"
+                    @click="openGravatarInfo"
                 >
-                    <i class="pi pi-pencil" />
+                    <i class="pi pi-image" />
                 </button>
             </div>
         </div>
@@ -193,14 +195,14 @@ const locale = computed(() => {
                 <button
                     v-if="isCurrentUser"
                     class="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-dandelion-300 hover:bg-dandelion-200 dark:bg-natural-800 dark:hover:bg-pesto-600 max-lg:hidden"
-                    @click="gravatarEditor?.open()"
+                    @click="openGravatarInfo"
                 >
-                    <i class="pi pi-pencil" />
+                    <i class="pi pi-image" />
                 </button>
                 <div
                     id="picture"
                     class="group relative"
-                    @click="isCurrentUser && gravatarEditor?.open()"
+                    @click="isCurrentUser && openGravatarInfo()"
                 >
                     <NuxtImg
                         :src="avatarUrl"
@@ -395,6 +397,11 @@ const locale = computed(() => {
                         class: 'z-[1000] ',
                     },
                 }"
+            />
+            <UserGravatarInfo
+                :visible="isGravatarInfoVisible"
+                :email="email"
+                @close="closeGravatarInfo"
             />
         </div>
     </div>
