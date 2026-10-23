@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const props = defineProps({
     visible: { type: Boolean, required: true },
+    email: { type: String, required: true}
 });
 
 watch(
@@ -69,7 +70,7 @@ const isVisible = ref(props.visible);
             <div
                 class="flex flex-col gap-y-4 font-normal text-natural-950 dark:text-natural-50"
             >
-                <p><T key-name="profile.gravatar.info.description" /></p>
+                <p><T key-name="profile.gravatar.info.description" :params="{email: props.email}" /></p>
                 <div class="flex justify-center">
                     <NuxtLink
                         to="https://gravatar.com/emails/"
