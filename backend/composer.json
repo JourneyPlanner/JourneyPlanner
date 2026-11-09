@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "google/apiclient-services": "^0.452.0",
+        "google/apiclient-services": "^0.465.1",
         "guzzlehttp/guzzle": "^7.10",
         "laravel/framework": "^13.0",
         "laravel/octane": "^2.17",
