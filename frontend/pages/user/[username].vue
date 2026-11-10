@@ -21,7 +21,6 @@ const username = ref<string>(
 );
 const displayname = ref<string>("");
 const joinDate = ref<Date | null>(null);
-const email = ref<string>("");    
 
 const isGravatarInfoVisible = ref<boolean>(false);
 
@@ -39,7 +38,7 @@ const maxDisplayedTemplates = computed(() => {
 });
 
 const { data, error } = await useAsyncData("user", () =>
-    client("/api/me"),
+    client(`/api/user/${username.value}`),
 );
 
 if (error.value) {
@@ -62,7 +61,6 @@ isCurrentUser.value = data.value?.username === user.value?.username;
 displayname.value = data.value?.display_name;
 username.value = data.value?.username;
 joinDate.value = new Date(data.value?.created_at);
-email.value = data.value?.email;
 
 const { avatarUrl, refreshAvatar } = useGravatar(
     data.value?.email_hash,
@@ -400,7 +398,7 @@ function closeGravatarInfo() {
             />
             <UserGravatarInfo
                 :visible="isGravatarInfoVisible"
-                :email="email"
+                :email="user.email"
                 @close="closeGravatarInfo"
             />
         </div>

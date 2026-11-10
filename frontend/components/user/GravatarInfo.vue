@@ -125,7 +125,7 @@ const isVisible = ref(props.visible);
                 <div
                     class="ml-4 w-11/12 flex-col gap-y-5 pb-5 text-natural-950 dark:text-natural-50"
                 >
-                    <p><T key-name="profile.gravatar.info.description" /></p>
+                    <p><T key-name="profile.gravatar.info.description" :params="{email: props.email}" /></p>
                     <div class="mt-2 flex justify-center">
                         <NuxtLink
                             to="https://gravatar.com/emails/"
