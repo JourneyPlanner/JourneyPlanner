@@ -31,6 +31,7 @@ Route::middleware(["auth:sanctum"])->get("/me", function (Request $request) {
     return response()->json([
         "id" => $user->id,
         "email" => $user->email,
+        "email_hash" => $user->email_hash,
         "username" => $user->username,
         "display_name" => $user->display_name,
         "email_needs_verification" => $user->getPendingEmail(),
