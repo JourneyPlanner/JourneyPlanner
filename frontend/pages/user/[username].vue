@@ -397,6 +397,7 @@ function closeGravatarInfo() {
                 }"
             />
             <UserGravatarInfo
+                :if="isCurrentUser && user"
                 :visible="isGravatarInfoVisible"
                 :email="user.email"
                 @close="closeGravatarInfo"
