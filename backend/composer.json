@@ -20,7 +20,7 @@
         "laravel/octane": "^2.17",
         "laravel/sanctum": "^4.2",
         "laravel/socialite": "^5.18",
-        "laravel/tinker": "^3.0",
+        "laravel/tinker": "^3.1",
         "pbmedia/laravel-ffmpeg": "^8.9",
         "protonemedia/laravel-verify-new-email": "dev-master",
         "serdud/socialite-google-one-tap": "^2.2",
